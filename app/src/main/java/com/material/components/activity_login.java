@@ -20,7 +20,7 @@ public class activity_login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_login_image_teal);
+        setContentView(R.layout.activity_login);
         parent_view = findViewById(android.R.id.content);
         progress_bar = (ProgressBar) findViewById(R.id.progress_bar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
