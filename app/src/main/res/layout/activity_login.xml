@@ -76,6 +76,7 @@
                 android:inputType="text"
                 android:maxLength="50"
                 android:maxLines="1"
+                android:id="@+id/usrname"
                 android:singleLine="true"
                 android:textColor="@color/grey_10"
                 android:theme="@style/EditText.White" />
@@ -98,6 +99,7 @@
                 android:layout_marginLeft="-4dp"
                 android:layout_marginRight="-4dp"
                 android:hint="PASSWORD"
+                android:id="@+id/usrpass"
                 android:inputType="textPassword"
                 android:maxLength="50"
                 android:maxLines="1"
