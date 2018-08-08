@@ -15,11 +15,52 @@
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_activity_mainmenu"
-        app:menu="@menu/activity_mainmenu_drawer" />
+        android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/side_nav_bar"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/activity_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="80sp"
+                    android:layout_height="80sp"
+                    android:contentDescription="@string/nav_header_desc"
+                    android:paddingTop="@dimen/nav_header_vertical_spacing"
+                    app:srcCompat="@mipmap/ic_launcher_round" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/nav_header_vertical_spacing"
+                    android:text="@string/nav_header_title"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+
+            </LinearLayout>
+            <ExpandableListView
+                android:id="@+id/lvExp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start" />
+
+        </LinearLayout>
+
+
+    </android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>

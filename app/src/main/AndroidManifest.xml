@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.material.components">
+    package="prima.optimasi.indonesia.payroll">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -581,8 +581,20 @@
             android:name=".activity.dashboard.DashboardFlight"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity_mainmenu"
-            android:label="@string/title_activity_mainmenu"
+            android:name=".main_hrd.mainmenu_hrd"
+            android:label="@string/title_activity_mainmenu_hrd"
+            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".main_owner.mainmenu_owner"
+            android:label="@string/title_activity_mainmenu_owner"
+            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".main_karyawan.mainmenu_karyawan"
+            android:label="@string/title_activity_mainmenu_kabag"
+            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".main_kabag.mainmenu_kabag"
+            android:label="@string/title_activity_mainmenu_karyawan"
             android:theme="@style/AppTheme"></activity>
     </application>
 
