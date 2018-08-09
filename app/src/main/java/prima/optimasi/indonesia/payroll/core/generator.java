@@ -10,6 +10,11 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 
+import prima.optimasi.indonesia.payroll.activity_login;
+import prima.optimasi.indonesia.payroll.main_hrd.mainmenu_hrd;
+import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
+import prima.optimasi.indonesia.payroll.main_karyawan.mainmenu_karyawan;
+import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
 import prima.optimasi.indonesia.payroll.okhttpclass;
 
 import org.json.JSONObject;
@@ -20,10 +25,12 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class generator {
-
-    public static String Server="192.168.1.254";
-
+    public static String Server="192.168.1.222";
+    public static String keepaliveurl="http://"+ generator.Server+"/poihrd/auth/login_ajax";
+    public static JSONObject jsondatalogin = null ;
 
     public static Boolean isconnected(Context context){
         Boolean status = false;
@@ -37,27 +44,30 @@ public class generator {
 
     }
 
-    private class ConnectionAsync extends AsyncTask<Void, Integer, String>
+    private static class retrivedata extends AsyncTask<Void, Integer, String>
     {
         String response = "";
-        JSONObject object = null;
+        String error = "";
         String username=  "" ;
         String password = "" ;
         ProgressDialog dialog ;
         String urldata ;
 
-        public  ConnectionAsync (Context context, String url, String username , String password)
+        public  retrivedata (Context context,String url,String username , String password,String error)
         {
             dialog = new ProgressDialog(context);
             this.urldata = url;
             this.username = username;
             this.password = password;
+            this.error = error ;
         }
 
         String TAG = getClass().getSimpleName();
 
         protected void onPreExecute (){
             super.onPreExecute();
+            this.dialog.setMessage("Getting Data...");
+            this.dialog.show();
             Log.d(TAG + " PreExceute","On pre Exceute......");
         }
 
@@ -66,15 +76,15 @@ public class generator {
 
             try {
                 response = okhttpclass.getJsonlogin(urldata,username,password).toString();
-                object = okhttpclass.getJsonlogin(urldata,username,password);
+                generator.jsondatalogin = okhttpclass.getJsonlogin(urldata,username,password);
             } catch (IOException e) {
-                object = null;
+                generator.jsondatalogin  = null;
                 response = "Error IOException";
             } catch (NullPointerException e){
-                object = null;
-                response = "Error Data Null Occured";
+                generator.jsondatalogin  = null;
+                response = "Please check Connection and Server";
             }catch (Exception e){
-                object = null;
+                generator.jsondatalogin  = null;
                 response = "Error Occured, PLease Contact Administrator/Support";
             }
 
@@ -89,30 +99,10 @@ public class generator {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
+            if(dialog.isShowing()){
+                dialog.dismiss();
+            }
             try {
-                if(object!=null){
-                    JSONObject responseObject = new JSONObject(response);
-                    String status= responseObject.getString("status");
-
-                    if(status.equals("true")){
-
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-
-
-                            }
-                        }, 1000);
-
-                    }
-                    else if(status.equals("false")) {
-                    }
-                    else {
-                    }
-
-                }
-                else {
-                }
 
 
 
@@ -124,6 +114,7 @@ public class generator {
                 //}
             } catch (Exception e) {
                 e.printStackTrace();
+                error = e.getMessage();
             }
 
 

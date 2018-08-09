@@ -36,6 +36,7 @@ public class activity_login extends FragmentActivity {
     TextView usr;
     TextView pass;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,11 +111,13 @@ public class activity_login extends FragmentActivity {
         progress_bar.setVisibility(View.VISIBLE);
         fab.setAlpha(0f);
 
+        TestAsync sync = new TestAsync(activity_login.this,"http://"+ generator.Server+"/poihrd/auth/login_ajax",username,password);
+        sync.execute();
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                TestAsync sync = new TestAsync(activity_login.this,"http://"+ generator.Server+"/poihrd/auth/login_ajax",username,password);
-                sync.execute();
+
 
 
             }
@@ -142,6 +145,8 @@ public class activity_login extends FragmentActivity {
 
         protected void onPreExecute (){
             super.onPreExecute();
+            this.dialog.setMessage("Login...");
+            this.dialog.show();
             Log.d(TAG + " PreExceute","On pre Exceute......");
         }
 
@@ -172,6 +177,9 @@ public class activity_login extends FragmentActivity {
 
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
+            if(this.dialog.isShowing()){
+                this.dialog.dismiss();
+            }
 
             try {
                 if(object!=null){
@@ -252,6 +260,7 @@ public class activity_login extends FragmentActivity {
             Log.d(TAG + " onPostExecute", "" + result);
         }
     }
+
 
 
 }

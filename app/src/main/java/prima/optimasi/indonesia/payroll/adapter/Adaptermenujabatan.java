@@ -58,8 +58,12 @@ public class Adaptermenujabatan extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return this._listDataChild.get(this._listDataHeader.get(groupPosition))
-                .size();
+        try {
+            return this._listDataChild.get(this._listDataHeader.get(groupPosition))
+                    .size();
+        }catch (Exception e){
+            return 0;
+        }
     }
 
     @Override
@@ -89,7 +93,6 @@ public class Adaptermenujabatan extends BaseExpandableListAdapter {
 
         TextView lblListHeader = (TextView) convertView
                 .findViewById(R.id.lblListHeader);
-        lblListHeader.setTypeface(null, Typeface.BOLD);
         lblListHeader.setText(headerTitle);
 
         return convertView;

@@ -1,5 +1,7 @@
 package prima.optimasi.indonesia.payroll.main_hrd;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -10,21 +12,34 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.JsonObject;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.zip.Inflater;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
+import prima.optimasi.indonesia.payroll.core.generator;
 
-public class mainmenu_hrd extends FragmentActivity
+public class mainmenu_hrd extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     Adaptermenujabatan listAdapter;
@@ -36,8 +51,9 @@ public class mainmenu_hrd extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
 
 
 
@@ -51,7 +67,21 @@ public class mainmenu_hrd extends FragmentActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        prepareListData();
+        LinearLayout linear = navigationView.findViewById(R.id.datanav);
+        ImageView imageuser = linear.findViewById(R.id.imageView);
+        TextView username = linear.findViewById(R.id.username);
+
+        JSONObject data = null;
+
+
+
+        try {
+            username.setText(data.getString("username"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        preparehrd();
 
         listAdapter = new Adaptermenujabatan(this, listDataHeader, listDataChild);
 
@@ -60,9 +90,9 @@ public class mainmenu_hrd extends FragmentActivity
 
         expListView.setGroupIndicator(null);
         expListView.setChildIndicator(null);
-        expListView.setChildDivider(getResources().getDrawable(R.color.white_transparency));
-        expListView.setDivider(getResources().getDrawable(R.color.white_transparency));
-        expListView.setDividerHeight(2);
+        expListView.setChildDivider(null);
+        expListView.setDivider(null);
+        expListView.setDividerHeight(0);
 
         expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 
@@ -145,7 +175,19 @@ public class mainmenu_hrd extends FragmentActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_logout) {
+            Intent logout = new Intent(mainmenu_hrd.this,activity_login.class);
+            SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
+            SharedPreferences.Editor edit = prefs.edit();
+
+            edit.putString("username","");
+            edit.putString("password","");
+            edit.putString("level","");
+            edit.apply();
+
+            startActivity(logout);
+
+            finish();
             return true;
         }
 
@@ -158,61 +200,34 @@ public class mainmenu_hrd extends FragmentActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    private void prepareListData() {
+    private void preparehrd() {
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
 
         // Adding child data
-        listDataHeader.add("Top 250");
-        listDataHeader.add("Now Showing");
-        listDataHeader.add("Coming Soon..");
+        listDataHeader.add("Home");
+        listDataHeader.add("Profil");
+        listDataHeader.add("Pengumuman");
+        listDataHeader.add("List Karyawan");
+        listDataHeader.add("Cek Gaji");
+        listDataHeader.add("Pengajuan");
+
+        List<String> top2501 = new ArrayList<String>();
+        top2501.add("Seluruh Karyawan");
+        top2501.add("Sendiri");
 
         // Adding child data
         List<String> top250 = new ArrayList<String>();
-        top250.add("The Shawshank Redemption");
-        top250.add("The Godfather");
-        top250.add("The Godfather: Part II");
-        top250.add("Pulp Fiction");
-        top250.add("The Good, the Bad and the Ugly");
-        top250.add("The Dark Knight");
-        top250.add("12 Angry Men");
+        top250.add("Izin");
+        top250.add("Cuti");
+        top250.add("Pinjaman");
+        top250.add("Sakit");
 
-        List<String> nowShowing = new ArrayList<String>();
-        nowShowing.add("The Conjuring");
-        nowShowing.add("Despicable Me 2");
-        nowShowing.add("Turbo");
-        nowShowing.add("Grown Ups 2");
-        nowShowing.add("Red 2");
-        nowShowing.add("The Wolverine");
+        listDataChild.put(listDataHeader.get(4), top2501);
 
-        List<String> comingSoon = new ArrayList<String>();
-        comingSoon.add("2 Guns");
-        comingSoon.add("The Smurfs 2");
-        comingSoon.add("The Spectacular Now");
-        comingSoon.add("The Canyons");
-        comingSoon.add("Europa Report");
-
-        listDataChild.put(listDataHeader.get(0), top250); // Header, Child data
-        listDataChild.put(listDataHeader.get(1), nowShowing);
-        listDataChild.put(listDataHeader.get(2), comingSoon);
+        listDataChild.put(listDataHeader.get(5), top250);
     }
 }
