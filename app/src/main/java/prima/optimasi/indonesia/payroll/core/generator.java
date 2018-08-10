@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.main_hrd.mainmenu_hrd;
@@ -29,6 +30,8 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class generator {
     public static String Server="192.168.1.222";
+    public static String username = "";
+    public static String password = "";
     public static String keepaliveurl="http://"+ generator.Server+"/poihrd/auth/login_ajax";
     public static JSONObject jsondatalogin = null ;
 
@@ -40,25 +43,38 @@ public class generator {
         return  status;
     }
 
+    public generator (Context context){
+        SharedPreferences pref = context.getSharedPreferences("poipayroll",MODE_PRIVATE);
+        generator.username=pref.getString("username","");
+        if(generator.username.equals("")){
+            Log.e("Warning", "User is Empty" );
+        }
+
+        generator.password=pref.getString("password","");
+        if(generator.password.equals("")){
+            Log.e("Warning", "password is Empty" );
+        }
+    }
+
     public static void retryconnection(Context context){
 
     }
 
-    private static class retrivedata extends AsyncTask<Void, Integer, String>
+    public static class retrivedata extends AsyncTask<Void, Integer, String>
     {
         String response = "";
         String error = "";
         String username=  "" ;
         String password = "" ;
+        SharedPreferences prefs ;
         ProgressDialog dialog ;
-        String urldata ;
+        String urldata = keepaliveurl;
 
-        public  retrivedata (Context context,String url,String username , String password,String error)
+        public  retrivedata (Context context,ProgressDialog dialogue)
         {
-            dialog = new ProgressDialog(context);
-            this.urldata = url;
-            this.username = username;
-            this.password = password;
+            dialog = dialogue;
+            this.username = generator.username;
+            this.password = generator.password;
             this.error = error ;
         }
 
@@ -67,27 +83,49 @@ public class generator {
         protected void onPreExecute (){
             super.onPreExecute();
             this.dialog.setMessage("Getting Data...");
-            this.dialog.show();
             Log.d(TAG + " PreExceute","On pre Exceute......");
         }
 
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
 
-            try {
-                response = okhttpclass.getJsonlogin(urldata,username,password).toString();
-                generator.jsondatalogin = okhttpclass.getJsonlogin(urldata,username,password);
-            } catch (IOException e) {
-                generator.jsondatalogin  = null;
-                response = "Error IOException";
-            } catch (NullPointerException e){
-                generator.jsondatalogin  = null;
-                response = "Please check Connection and Server";
-            }catch (Exception e){
-                generator.jsondatalogin  = null;
-                response = "Error Occured, PLease Contact Administrator/Support";
-            }
+            int data = 0;
 
+            while (data==0) {
+                try {
+                    this.dialog.setMessage("Loading Data...");
+                    response = okhttpclass.getJsonlogin(urldata, generator.username, generator.password).toString();
+                    JSONObject dataJSON = okhttpclass.getJsonlogin(urldata, generator.username, generator.password);
+
+                    generator.setJsondatalogin(dataJSON);
+                    data=1;
+                    break;
+                } catch (IOException e) {
+                    this.dialog.setMessage("Loading Data... IOError Occured,retrying...");
+                    this.dialog.dismiss();
+                    Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                    generator.jsondatalogin = null;
+                    response = "Error IOException";
+                } catch (NullPointerException e) {
+                    this.dialog.setMessage("Loading Data... Internet Error Occured,retrying...");
+                    this.dialog.dismiss();
+                    Log.e("doInBackground: ", "null data" + e.getMessage());
+                    generator.jsondatalogin = null;
+                    response = "Please check Connection and Server";
+                } catch (Exception e) {
+                    this.dialog.setMessage("Loading Data... Error Occured,retrying...");
+                    this.dialog.dismiss();
+                    Log.e("doInBackground: ", e.getMessage());
+                    generator.jsondatalogin = null;
+                    response = "Error Occured, PLease Contact Administrator/Support";
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
             return response;
         }
 
@@ -99,11 +137,7 @@ public class generator {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
-            if(dialog.isShowing()){
-                dialog.dismiss();
-            }
             try {
-
 
 
                 //JSONArray bArray= responseObject.getJSONArray("B");
@@ -120,5 +154,9 @@ public class generator {
 
             Log.d(TAG + " onPostExecute", "" + result);
         }
+    }
+
+    public static void setJsondatalogin(JSONObject jsondatalogin) {
+        generator.jsondatalogin = jsondatalogin;
     }
 }

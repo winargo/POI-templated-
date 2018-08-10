@@ -185,11 +185,15 @@ public class activity_login extends FragmentActivity {
                 if(object!=null){
                     JSONObject responseObject = new JSONObject(response);
                     String status= responseObject.getString("status");
-                    JSONObject array = object.getJSONObject("data");
-                    final String level = array.getString("level");
+
+
+
 
                     if(status.equals("true")){
                         Snackbar.make(parent_view, "Success , Loging in ...", Snackbar.LENGTH_SHORT).show();
+
+                        JSONObject array = object.getJSONObject("data");
+                        final String level = array.getString("level");
 
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -229,7 +233,7 @@ public class activity_login extends FragmentActivity {
 
                     }
                     else if(status.equals("false")) {
-                        Snackbar.make(parent_view, status, Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(parent_view, "Username atau Password Salah", Snackbar.LENGTH_SHORT).show();
                     }
                     else {
                         Snackbar.make(parent_view, status, Snackbar.LENGTH_SHORT).show();

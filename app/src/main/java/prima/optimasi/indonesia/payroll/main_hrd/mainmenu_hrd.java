@@ -1,5 +1,6 @@
 package prima.optimasi.indonesia.payroll.main_hrd;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,12 +40,14 @@ import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
+import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
 
 public class mainmenu_hrd extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     Adaptermenujabatan listAdapter;
     ExpandableListView expListView;
+    ProgressDialog loadingdata;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
 
@@ -52,10 +56,12 @@ public class mainmenu_hrd extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
 
+        loadingdata = ProgressDialog.show(this,"Please Wait","Loading Data...",false);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
+        generator initializedata = new generator(mainmenu_hrd.this);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         expListView = drawer.findViewById(R.id.lvExp);
@@ -73,12 +79,41 @@ public class mainmenu_hrd extends AppCompatActivity
 
         JSONObject data = null;
 
+        generator.retrivedata async = new generator.retrivedata(mainmenu_hrd.this,loadingdata);
+        async.execute();
 
+        while(generator.jsondatalogin==null){
+            if(generator.jsondatalogin==null) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Log.e("json generator status", "empty" );
+            }
+            else {
+                Log.e("json generator status", "not empty" );
+                break;
+            }
+        }
+
+        data = generator.jsondatalogin;
+        Log.e("JSON data",data.toString() );
+
+        JSONObject second = null;
 
         try {
-            username.setText(data.getString("username"));
+            second = data.getJSONObject("data");
+            username.setText(second.getString("username"));
+            Log.e("onCreate: ",second.getString("username") );
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+
+
+
+        if(loadingdata.isShowing()){
+            loadingdata.dismiss();
         }
 
         preparehrd();

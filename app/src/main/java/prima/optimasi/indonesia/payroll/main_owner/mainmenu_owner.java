@@ -1,5 +1,6 @@
 package prima.optimasi.indonesia.payroll.main_owner;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,10 +13,18 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,25 +33,46 @@ import java.util.List;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
+import prima.optimasi.indonesia.payroll.core.generator;
+import prima.optimasi.indonesia.payroll.main_hrd.mainmenu_hrd;
 
 public class mainmenu_owner extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     Adaptermenujabatan listAdapter;
+    private ProgressDialog loadingprogress=null;
     ExpandableListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        loadingprogress = new ProgressDialog(this);
+        loadingprogress.setTitle("Please Wait");
+        loadingprogress.setMessage("Loading Data...");
+        loadingprogress.show();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
+
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
+        generator initializedata = new generator(mainmenu_owner.this);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        expListView = drawer.findViewById(R.id.lvExp);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -50,6 +80,118 @@ public class mainmenu_owner extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        LinearLayout linear = navigationView.findViewById(R.id.datanav);
+        ImageView imageuser = linear.findViewById(R.id.imageView);
+        TextView username = linear.findViewById(R.id.username);
+
+
+
+        preparehrd();
+
+        listAdapter = new Adaptermenujabatan(this, listDataHeader, listDataChild);
+
+        // setting list adapter
+        expListView.setAdapter(listAdapter);
+
+        expListView.setGroupIndicator(null);
+        expListView.setChildIndicator(null);
+        expListView.setChildDivider(null);
+        expListView.setDivider(null);
+        expListView.setDividerHeight(0);
+
+        expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v,
+                                        int groupPosition, long id) {
+                // Toast.makeText(getApplicationContext(),
+                // "Group Clicked " + listDataHeader.get(groupPosition),
+                // Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+
+        // Listview Group expanded listener
+        expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                Toast.makeText(getApplicationContext(),
+                        listDataHeader.get(groupPosition) + " Expanded",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Listview Group collasped listener
+        expListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+
+            @Override
+            public void onGroupCollapse(int groupPosition) {
+                Toast.makeText(getApplicationContext(),
+                        listDataHeader.get(groupPosition) + " Collapsed",
+                        Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        // Listview on child click listener
+        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v,
+                                        int groupPosition, int childPosition, long id) {
+                // TODO Auto-generated method stub
+                Toast.makeText(
+                        getApplicationContext(),
+                        listDataHeader.get(groupPosition)
+                                + " : "
+                                + listDataChild.get(
+                                listDataHeader.get(groupPosition)).get(
+                                childPosition), Toast.LENGTH_SHORT)
+                        .show();
+                return false;
+            }
+        });
+
+        JSONObject data = null;
+
+        generator.retrivedata async = new generator.retrivedata(mainmenu_owner.this,loadingprogress);
+        async.execute();
+
+        while(generator.jsondatalogin==null){
+            if(generator.jsondatalogin==null) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Log.e("json generator status", "empty" );
+            }
+            else {
+                Log.e("json generator status", "not empty" );
+                break;
+            }
+        }
+
+        data = generator.jsondatalogin;
+        Log.e("JSON data",data.toString() );
+
+        JSONObject second = null;
+
+
+        try {
+            second = data.getJSONObject("data");
+            username.setText(second.getString("username"));
+            Log.e("onCreate: ",second.getString("username") );
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        if(loadingprogress.isShowing()){
+            loadingprogress.dismiss();
+        }
     }
 
     @Override
@@ -142,4 +284,5 @@ public class mainmenu_owner extends AppCompatActivity
 
         listDataChild.put(listDataHeader.get(4), top2510);
     }
+
 }
