@@ -203,7 +203,7 @@ public class activity_login extends FragmentActivity {
                                 prefedit.putString("username",username);
                                 prefedit.putString("password",password);
                                 prefedit.putString("level",level);
-                                prefedit.apply();
+                                prefedit.commit();
 
                                 if(level.equals("hrd")){
                                     Intent mainmenu = new Intent(activity_login.this,mainmenu_hrd.class);

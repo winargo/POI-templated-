@@ -29,7 +29,7 @@ import okhttp3.Response;
 import static android.content.Context.MODE_PRIVATE;
 
 public class generator {
-    public static String Server="192.168.1.222";
+    public static String Server="192.168.1.254";
     public static String username = "";
     public static String password = "";
     public static String keepaliveurl="http://"+ generator.Server+"/poihrd/auth/login_ajax";

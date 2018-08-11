@@ -8,18 +8,40 @@
     android:background="@color/overlay_light_10">
 
     <ImageView
-        android:layout_width="wrap_content"
+        android:layout_width="24dp"
+        android:id="@+id/menu_icon"
         android:tint="@color/overlay_dark_90"
-        android:src="@drawable/ic_settings_backup_restore"
-        android:layout_height="match_parent" />
+        android:layout_height="24dp" />
 
     <TextView
         android:id="@+id/lblListHeader"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0sp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textAlignment="textStart"
+        android:paddingLeft="4sp"
+        android:gravity="center"
         android:layout_marginLeft="4sp"
         android:textSize="8pt"
         android:text="awawawaw"
         android:textColor="@color/overlay_dark_90" />
+
+    <ImageView
+        android:layout_width="18dp"
+        android:id="@+id/arrow_icon"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:src="@drawable/baseline_keyboard_arrow_down_black_18dp"
+        android:tint="@color/overlay_dark_90"
+        android:layout_height="18dp" />
+    <ImageView
+        android:layout_width="18dp"
+        android:id="@+id/arrow_iconup"
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:src="@drawable/baseline_keyboard_arrow_up_black_18dp"
+        android:tint="@color/overlay_dark_90"
+        android:layout_height="18dp" />
 
 </LinearLayout>

@@ -2,10 +2,12 @@ package prima.optimasi.indonesia.payroll.adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -82,7 +84,7 @@ public class Adaptermenujabatan extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getGroupView(int groupPosition, boolean isExpanded,
+    public View getGroupView(int groupPosition, final boolean isExpanded,
                              View convertView, ViewGroup parent) {
         String headerTitle = (String) getGroup(groupPosition);
         if (convertView == null) {
@@ -94,6 +96,48 @@ public class Adaptermenujabatan extends BaseExpandableListAdapter {
         TextView lblListHeader = (TextView) convertView
                 .findViewById(R.id.lblListHeader);
         lblListHeader.setText(headerTitle);
+        ImageView icon = (ImageView) convertView.findViewById(R.id.menu_icon);
+
+        final ImageView expadingarrowdown = convertView.findViewById(R.id.arrow_icon);
+        final ImageView expadingarrowup = convertView.findViewById(R.id.arrow_iconup);
+
+
+
+
+        if(headerTitle.equals("Pengumuman")){
+            icon.setBackgroundResource(R.drawable.baseline_announcement_black_24dp);
+        }else if(headerTitle.equals("Approval")){
+            expadingarrowdown.setVisibility(View.VISIBLE);
+            icon.setBackgroundResource(R.drawable.baseline_check_circle_outline_black_24dp);
+        }else if(headerTitle.equals("Chart Kehadiran")){
+            expadingarrowdown.setVisibility(View.GONE);
+            icon.setBackgroundResource(R.drawable.baseline_pie_chart_black_24dp);
+        }else if(headerTitle.equals("Total Gaji")){
+            expadingarrowdown.setVisibility(View.GONE);
+            icon.setBackgroundResource(R.drawable.baseline_monetization_on_black_24dp);
+        }else if(headerTitle.equals("Seluruh Karyawan")){
+            expadingarrowdown.setVisibility(View.GONE);
+            icon.setBackgroundResource(R.drawable.baseline_person_black_24dp);
+        }else if(headerTitle.equals("List Karyawan")){
+            expadingarrowdown.setVisibility(View.GONE);
+            icon.setBackgroundResource(R.drawable.baseline_person_black_24dp);
+        }else if(headerTitle.equals("Home")){
+            expadingarrowdown.setVisibility(View.GONE);
+            icon.setBackgroundResource(R.drawable.baseline_home_black_18dp);
+        }else if(headerTitle.equals("Cek Gaji")){
+            expadingarrowdown.setVisibility(View.VISIBLE);
+            icon.setBackgroundResource(R.drawable.baseline_monetization_on_black_24dp);
+
+        }else if(headerTitle.equals("Profil")){
+            expadingarrowdown.setVisibility(View.GONE);
+            icon.setBackgroundResource(R.drawable.baseline_account_circle_black_24dp);
+        }else if(headerTitle.equals("Pengajuan")){
+            expadingarrowdown.setVisibility(View.VISIBLE);
+            icon.setBackgroundResource(R.drawable.baseline_assignment_black_24dp);
+        }
+        else{
+            expadingarrowdown.setVisibility(View.GONE);
+        }
 
         return convertView;
     }

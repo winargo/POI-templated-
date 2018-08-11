@@ -98,6 +98,7 @@ public class mainmenu_hrd extends AppCompatActivity
         }
 
         data = generator.jsondatalogin;
+        generator.jsondatalogin=null;
         Log.e("JSON data",data.toString() );
 
         JSONObject second = null;
@@ -218,7 +219,7 @@ public class mainmenu_hrd extends AppCompatActivity
             edit.putString("username","");
             edit.putString("password","");
             edit.putString("level","");
-            edit.apply();
+            edit.commit();
 
             startActivity(logout);
 
