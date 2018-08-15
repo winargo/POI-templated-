@@ -1,5 +1,7 @@
 package prima.optimasi.indonesia.payroll.main_hrd;
 
+import android.graphics.Color;
+import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -7,14 +9,20 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,6 +39,7 @@ import com.google.gson.JsonObject;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +49,10 @@ import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
+import prima.optimasi.indonesia.payroll.fragment.FragmentEmployee;
+import prima.optimasi.indonesia.payroll.fragment.FragmentHome;
+import prima.optimasi.indonesia.payroll.fragment.FragmentPengumuman;
+import prima.optimasi.indonesia.payroll.fragment.FragmentProfil;
 import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
 
 public class mainmenu_hrd extends AppCompatActivity
@@ -50,6 +63,9 @@ public class mainmenu_hrd extends AppCompatActivity
     ProgressDialog loadingdata;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
+
+    ViewPager pager;
+    TabLayout tabpager ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +79,7 @@ public class mainmenu_hrd extends AppCompatActivity
 
         generator initializedata = new generator(mainmenu_hrd.this);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         expListView = drawer.findViewById(R.id.lvExp);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -111,7 +127,24 @@ public class mainmenu_hrd extends AppCompatActivity
             e.printStackTrace();
         }
 
+        tabpager = findViewById(R.id.tab_layout);
+        pager = findViewById(R.id.viewpager);
 
+
+
+        ExamplePagerAdapter adapter = new ExamplePagerAdapter(getSupportFragmentManager());
+
+        pager.setAdapter(adapter);
+
+        tabpager.setupWithViewPager(pager);
+
+        for (int i = 0; i < tabpager.getTabCount(); i++) {
+            //noinspection ConstantConditions
+            TextView tv=(TextView)LayoutInflater.from(this).inflate(R.layout.customtablayout,null);
+            tv.setTextColor(Color.WHITE);
+            tabpager.getTabAt(i).setCustomView(tv);
+
+        }
 
         if(loadingdata.isShowing()){
             loadingdata.dismiss();
@@ -135,9 +168,19 @@ public class mainmenu_hrd extends AppCompatActivity
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v,
                                         int groupPosition, long id) {
-                // Toast.makeText(getApplicationContext(),
-                // "Group Clicked " + listDataHeader.get(groupPosition),
-                // Toast.LENGTH_SHORT).show();
+                if(listDataHeader.get(groupPosition).equals("Pengumuman")){
+                    pager.setCurrentItem(1);
+                    drawer.closeDrawer(Gravity.START);
+                }else if(listDataHeader.get(groupPosition).equals("List Karyawan")){
+                    pager.setCurrentItem(2);
+                    drawer.closeDrawer(Gravity.START);
+                }else if(listDataHeader.get(groupPosition).equals("Home")){
+                    pager.setCurrentItem(0);
+                    drawer.closeDrawer(Gravity.START);
+                }else if(listDataHeader.get(groupPosition).equals("Profil")){
+                    pager.setCurrentItem(3);
+                    drawer.closeDrawer(Gravity.START);
+                }
                 return false;
             }
         });
@@ -147,9 +190,7 @@ public class mainmenu_hrd extends AppCompatActivity
 
             @Override
             public void onGroupExpand(int groupPosition) {
-                Toast.makeText(getApplicationContext(),
-                        listDataHeader.get(groupPosition) + " Expanded",
-                        Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -158,9 +199,9 @@ public class mainmenu_hrd extends AppCompatActivity
 
             @Override
             public void onGroupCollapse(int groupPosition) {
-                Toast.makeText(getApplicationContext(),
-                        listDataHeader.get(groupPosition) + " Collapsed",
-                        Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(getApplicationContext(),
+                    //    listDataHeader.get(groupPosition) + " Collapsed",
+                     //   Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -180,6 +221,7 @@ public class mainmenu_hrd extends AppCompatActivity
                                 listDataHeader.get(groupPosition)).get(
                                 childPosition), Toast.LENGTH_SHORT)
                         .show();
+
                 return false;
             }
         });
@@ -245,9 +287,9 @@ public class mainmenu_hrd extends AppCompatActivity
 
         // Adding child data
         listDataHeader.add("Home");
-        listDataHeader.add("Profil");
         listDataHeader.add("Pengumuman");
         listDataHeader.add("List Karyawan");
+        listDataHeader.add("Profil");
         listDataHeader.add("Cek Gaji");
         listDataHeader.add("Pengajuan");
 
@@ -265,5 +307,43 @@ public class mainmenu_hrd extends AppCompatActivity
         listDataChild.put(listDataHeader.get(4), top2501);
 
         listDataChild.put(listDataHeader.get(5), top250);
+    }
+
+    public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
+
+        // tab titles
+        private String[] tabTitles = new String[]{"Home", "Pengumuman","Karyawan", "Profil"};
+
+        public ExamplePagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        // overriding getPageTitle()
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return tabTitles[position];
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return new FragmentHome();
+                case 1:
+                    return new FragmentPengumuman();
+                case 2:
+                    return new FragmentEmployee();
+                case 3:
+                    return new FragmentProfil();
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return tabTitles.length;
+        }
+        // ...
     }
 }

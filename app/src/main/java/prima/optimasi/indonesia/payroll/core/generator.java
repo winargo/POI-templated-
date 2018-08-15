@@ -32,6 +32,7 @@ public class generator {
     public static String Server="192.168.1.254";
     public static String username = "";
     public static String password = "";
+    public static String jabatan = "";
     public static String keepaliveurl="http://"+ generator.Server+"/poihrd/auth/login_ajax";
     public static JSONObject jsondatalogin = null ;
 
