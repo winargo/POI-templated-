@@ -34,7 +34,6 @@ import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.main_hrd.mainmenu_hrd;
 import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
 
 public class mainmenu_karyawan extends AppCompatActivity

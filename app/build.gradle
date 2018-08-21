@@ -55,4 +55,10 @@ dependencies {
     implementation 'com.google.android:flexbox:0.3.2'
     // google flexible box
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
+    implementation files('lib/jsoup-1.11.3.jar')
+
+    implementation "com.google.zxing:core:3.3.3"
+    implementation 'com.google.zxing:javase:3.3.3'
+
+    implementation 'com.github.blikoon:QRCodeScanner:0.1.2'
 }

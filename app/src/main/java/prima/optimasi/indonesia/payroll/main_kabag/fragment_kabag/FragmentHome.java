@@ -1,4 +1,4 @@
-package prima.optimasi.indonesia.payroll.fragment;
+package prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,13 +8,13 @@ import android.view.ViewGroup;
 
 import prima.optimasi.indonesia.payroll.R;
 
-public class FragmentProfil extends Fragment {
+public class FragmentHome extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
-                R.layout.fragment_profil, container, false);
+                R.layout.fragment_home, container, false);
 
         return rootView;
     }

@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -595,6 +597,10 @@
         <activity
             android:name=".main_kabag.mainmenu_kabag"
             android:label="@string/title_activity_mainmenu_karyawan"
+            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".qrscanner"
+            android:label="Scan Barcode"
             android:theme="@style/AppTheme"></activity>
     </application>
 

@@ -30,10 +30,14 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class generator {
     public static String Server="192.168.1.254";
+    public static String port = "4000";
     public static String username = "";
     public static String password = "";
+    public static String token = "";
     public static String jabatan = "";
-    public static String keepaliveurl="http://"+ generator.Server+"/poihrd/auth/login_ajax";
+    public static String keepaliveurl="http://"+ generator.Server+":"+port+"/login";
+    public static String imageurl="http://"+ generator.Server+"/poihrd/uploads/aktivitas/pengumuman/";
+    public static String pengumumanurl="http://"+ generator.Server+":4000/pengumuman";
     public static JSONObject jsondatalogin = null ;
 
     public static Boolean isconnected(Context context){

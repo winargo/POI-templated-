@@ -3,17 +3,25 @@ package prima.optimasi.indonesia.payroll.main_owner;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +43,11 @@ import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.main_hrd.mainmenu_hrd;
+import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentApproval;
+import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentChartKehadiran;
+import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentEmployee;
+import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentPengumuman;
+import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentTotalGaji;
 
 public class mainmenu_owner extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -44,6 +57,8 @@ public class mainmenu_owner extends AppCompatActivity
     ExpandableListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
+    ViewPager pager;
+    TabLayout tabpager ;
 
     @Override
     protected void onStart() {
@@ -71,7 +86,7 @@ public class mainmenu_owner extends AppCompatActivity
 
         generator initializedata = new generator(mainmenu_owner.this);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         expListView = drawer.findViewById(R.id.lvExp);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -85,7 +100,28 @@ public class mainmenu_owner extends AppCompatActivity
         ImageView imageuser = linear.findViewById(R.id.imageView);
         TextView username = linear.findViewById(R.id.username);
 
+        SharedPreferences pref = this.getSharedPreferences("poipayroll",MODE_PRIVATE);
 
+        username.setText(pref.getString("username",""));
+
+        tabpager = findViewById(R.id.tab_layout);
+        pager = findViewById(R.id.viewpager);
+
+
+
+        ExamplePagerAdapter adapter = new ExamplePagerAdapter(getSupportFragmentManager());
+
+        pager.setAdapter(adapter);
+
+        tabpager.setupWithViewPager(pager);
+
+        for (int i = 0; i < tabpager.getTabCount(); i++) {
+            //noinspection ConstantConditions
+            TextView tv=(TextView) LayoutInflater.from(this).inflate(R.layout.customtablayout,null);
+            tv.setTextColor(Color.WHITE);
+            tabpager.getTabAt(i).setCustomView(tv);
+
+        }
 
         preparehrd();
 
@@ -105,9 +141,19 @@ public class mainmenu_owner extends AppCompatActivity
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v,
                                         int groupPosition, long id) {
-                // Toast.makeText(getApplicationContext(),
-                // "Group Clicked " + listDataHeader.get(groupPosition),
-                // Toast.LENGTH_SHORT).show();
+                if(listDataHeader.get(groupPosition).equals("Chart Kehadiran")){
+                    pager.setCurrentItem(0);
+                    drawer.closeDrawer(Gravity.START);
+                }else if(listDataHeader.get(groupPosition).equals("Total Gaji")){
+                    pager.setCurrentItem(1);
+                    drawer.closeDrawer(Gravity.START);
+                }else if(listDataHeader.get(groupPosition).equals("Seluruh Karyawan")){
+                    pager.setCurrentItem(2);
+                    drawer.closeDrawer(Gravity.START);
+                }else if(listDataHeader.get(groupPosition).equals("Pengumuman")){
+                    pager.setCurrentItem(3);
+                    drawer.closeDrawer(Gravity.START);
+                }
                 return false;
             }
         });
@@ -117,9 +163,7 @@ public class mainmenu_owner extends AppCompatActivity
 
             @Override
             public void onGroupExpand(int groupPosition) {
-                Toast.makeText(getApplicationContext(),
-                        listDataHeader.get(groupPosition) + " Expanded",
-                        Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -128,9 +172,7 @@ public class mainmenu_owner extends AppCompatActivity
 
             @Override
             public void onGroupCollapse(int groupPosition) {
-                Toast.makeText(getApplicationContext(),
-                        listDataHeader.get(groupPosition) + " Collapsed",
-                        Toast.LENGTH_SHORT).show();
+
 
             }
         });
@@ -156,7 +198,7 @@ public class mainmenu_owner extends AppCompatActivity
 
         JSONObject data = null;
 
-        generator.retrivedata async = new generator.retrivedata(mainmenu_owner.this,loadingprogress);
+      /*  generator.retrivedata async = new generator.retrivedata(mainmenu_owner.this,loadingprogress);
         async.execute();
 
         while(generator.jsondatalogin==null){
@@ -188,7 +230,7 @@ public class mainmenu_owner extends AppCompatActivity
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
+*/
 
         if(loadingprogress.isShowing()){
             loadingprogress.dismiss();
@@ -272,8 +314,8 @@ public class mainmenu_owner extends AppCompatActivity
         // Adding child data
         listDataHeader.add("Chart Kehadiran");
         listDataHeader.add("Total Gaji");
-        listDataHeader.add("Seluruh Karyawan");
         listDataHeader.add("Pengumuman");
+        listDataHeader.add("Seluruh Karyawan");
         listDataHeader.add("Approval");
 
 
@@ -287,4 +329,43 @@ public class mainmenu_owner extends AppCompatActivity
         listDataChild.put(listDataHeader.get(4), top2510);
     }
 
+    public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
+
+        // tab titles
+        private String[] tabTitles = new String[]{"Chart Kehadiran", "Total Gaji", "Seluruh Karyawan","Pengumuman","Approval"};
+
+        public ExamplePagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        // overriding getPageTitle()
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return tabTitles[position];
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return new FragmentChartKehadiran();
+                case 1:
+                    return new FragmentTotalGaji();
+                case 2:
+                    return new FragmentPengumuman();
+                case 3:
+                    return new FragmentEmployee();
+                case 4:
+                    return new FragmentApproval();
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return tabTitles.length;
+        }
+        // ...
+    }
 }

@@ -49,11 +49,10 @@ import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.fragment.FragmentEmployee;
-import prima.optimasi.indonesia.payroll.fragment.FragmentHome;
-import prima.optimasi.indonesia.payroll.fragment.FragmentPengumuman;
-import prima.optimasi.indonesia.payroll.fragment.FragmentProfil;
-import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
+import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentEmployee;
+import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentHome;
+import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentPengumuman;
+import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentProfil;
 
 public class mainmenu_hrd extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -312,7 +311,7 @@ public class mainmenu_hrd extends AppCompatActivity
     public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
 
         // tab titles
-        private String[] tabTitles = new String[]{"Home", "Pengumuman","Karyawan", "Profil"};
+        private String[] tabTitles = new String[]{"Home", "Pengumuman","Karyawan", "Profil","Cek Gaji","Pengajuan"};
 
         public ExamplePagerAdapter(FragmentManager fm) {
             super(fm);

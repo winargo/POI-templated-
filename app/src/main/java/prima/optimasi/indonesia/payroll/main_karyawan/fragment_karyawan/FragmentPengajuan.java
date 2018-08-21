@@ -1,21 +1,20 @@
-package prima.optimasi.indonesia.payroll.fragment;
+package prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan;
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import prima.optimasi.indonesia.payroll.R;
 
-public class FragmentPengumuman extends Fragment {
+public class FragmentPengajuan extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
-                R.layout.fragment_pengumuman, container, false);
+                R.layout.fragment_home, container, false);
 
         return rootView;
     }
