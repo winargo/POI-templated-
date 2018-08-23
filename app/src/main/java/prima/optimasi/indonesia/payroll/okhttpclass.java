@@ -101,56 +101,20 @@ public class okhttpclass {
         }
     }
 
-    public static JSONObject getJsonlogin(String url,String token,String user , String Pass) throws IOException {
-        try {
-            OkHttpClient client = new OkHttpClient();
-
-            JSONArray array = new JSONArray();
-
-            RequestBody body = new FormBody.Builder()
-                    .add("username", user)
-                    .add("password", Pass)
-                    .build();
-
-            Request request = new Request.Builder()
-                    .url(url)
-                    .post(body)
-                    .build();
-            Response responses = null;
-
-            try {
-                responses = client.newCall(request).execute();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }catch (Exception e){
-                e.printStackTrace();
-                return  null;
-            }
-
-            if (responses==null){
-                return null;
-            }
-            else {
-                JSONObject jsonObject = new JSONObject(responses.body().string());
-                return jsonObject;
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public static JSONObject getJsonpengumuman(String url,String token) throws IOException {
         try {
             OkHttpClient client = new OkHttpClient();
 
             JSONArray array = new JSONArray();
 
+            RequestBody body = new FormBody.Builder()
+                    //.add()
+                    .build();
+
             Request request = new Request.Builder()
                     .url(url)
                     .addHeader("Authorization", token)
+                    .post(body)
                     .build();
             Response responses = null;
 
