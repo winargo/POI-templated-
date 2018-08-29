@@ -27,8 +27,8 @@ public class FragmentPengumuman extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_pengumuman, container, false);
 
-        getpengumuman exec = new getpengumuman(getActivity());
-        exec.execute();
+        //getpengumuman exec = new getpengumuman(getActivity());
+        //exec.execute();
 
         return rootView;
     }

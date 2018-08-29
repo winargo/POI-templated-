@@ -112,6 +112,9 @@ public class Adaptermenujabatan extends BaseExpandableListAdapter {
         }else if(headerTitle.equals("Chart Kehadiran")){
             expadingarrowdown.setVisibility(View.GONE);
             icon.setBackgroundResource(R.drawable.baseline_pie_chart_black_24dp);
+        }else if(headerTitle.equals("Log Absensi")){
+            expadingarrowdown.setVisibility(View.GONE);
+            icon.setBackgroundResource(R.drawable.baseline_pie_chart_black_24dp);
         }else if(headerTitle.equals("Total Gaji")){
             expadingarrowdown.setVisibility(View.GONE);
             icon.setBackgroundResource(R.drawable.baseline_monetization_on_black_24dp);

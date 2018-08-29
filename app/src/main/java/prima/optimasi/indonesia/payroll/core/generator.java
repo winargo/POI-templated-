@@ -35,9 +35,14 @@ public class generator {
     public static String password = "";
     public static String token = "";
     public static String jabatan = "";
+
+
     public static String keepaliveurl="http://"+ generator.Server+":"+port+"/login";
     public static String imageurl="http://"+ generator.Server+"/poihrd/uploads/aktivitas/pengumuman/";
     public static String pengumumanurl="http://"+ generator.Server+":4000/pengumuman";
+    public static String scanloginurl = "http://"+ generator.Server+":4000/loginScan";
+    public static String sendtokenurl = "http://"+ generator.Server+":4000/postnotif";
+
     public static JSONObject jsondatalogin = null ;
 
     public static Boolean isconnected(Context context){

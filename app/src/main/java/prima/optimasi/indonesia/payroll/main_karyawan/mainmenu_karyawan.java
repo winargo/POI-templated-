@@ -3,17 +3,24 @@ package prima.optimasi.indonesia.payroll.main_karyawan;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +41,15 @@ import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
+import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentAbsensi;
+import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentCekGaji;
+import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentPengajuan;
+import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentProfil;
+import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentApproval;
+import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentChartKehadiran;
+import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentEmployee;
+import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentPengumuman;
+import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentTotalGaji;
 import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
 
 public class mainmenu_karyawan extends AppCompatActivity
@@ -45,6 +61,9 @@ public class mainmenu_karyawan extends AppCompatActivity
     ProgressDialog loadingdata;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
+
+    ViewPager pager;
+    TabLayout tabpager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +96,26 @@ public class mainmenu_karyawan extends AppCompatActivity
         LinearLayout linear = navigationView.findViewById(R.id.datanav);
         ImageView imageuser = linear.findViewById(R.id.imageView);
         TextView username = linear.findViewById(R.id.username);
+        username.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("username",""));
+
+        tabpager = findViewById(R.id.tab_layout);
+        pager = findViewById(R.id.viewpager);
 
 
+
+        ExamplePagerAdapter adapter = new ExamplePagerAdapter(getSupportFragmentManager());
+
+        pager.setAdapter(adapter);
+
+        tabpager.setupWithViewPager(pager);
+
+        for (int i = 0; i < tabpager.getTabCount(); i++) {
+            //noinspection ConstantConditions
+            TextView tv=(TextView) LayoutInflater.from(this).inflate(R.layout.customtablayout,null);
+            tv.setTextColor(Color.WHITE);
+            tabpager.getTabAt(i).setCustomView(tv);
+
+        }
 
         preparekaryawan();
 
@@ -274,6 +311,46 @@ public class mainmenu_karyawan extends AppCompatActivity
         top250.add("Cuti");
         top250.add("Pinjaman");
 
-        listDataChild.put(listDataHeader.get(5), top250);
+        listDataChild.put(listDataHeader.get(4), top250);
+    }
+
+    public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
+
+        // tab titles
+        private String[] tabTitles = new String[]{"Pengumuman", "Profil", "Cek Gaji","Log Absensi","Pengajuan"};
+
+        public ExamplePagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        // overriding getPageTitle()
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return tabTitles[position];
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return new FragmentPengumuman();
+                case 1:
+                    return new FragmentProfil();
+                case 2:
+                    return new FragmentCekGaji();
+                case 3:
+                    return new FragmentAbsensi();
+                case 4:
+                    return new FragmentPengajuan();
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return tabTitles.length;
+        }
+        // ...
     }
 }

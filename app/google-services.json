@@ -1,0 +1,86 @@
+{
+  "project_info": {
+    "project_number": "148421898893",
+    "firebase_url": "https://poihrd-418d3.firebaseio.com",
+    "project_id": "poihrd-418d3",
+    "storage_bucket": "poihrd-418d3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:148421898893:android:b6e22c43d76aadf1",
+        "android_client_info": {
+          "package_name": "com.example.dannytan.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "148421898893-pq9e4kq8qbpspsba29raasm5v95t4ufp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSHM4fU1s8DpTE3lQuVgeQ8mr6TEMDd4E"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:148421898893:android:77cd2baf4802fa01",
+        "android_client_info": {
+          "package_name": "prima.optimasi.indonesia.payroll"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "148421898893-rc8o529f67016ava92826dosk21c61pd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "prima.optimasi.indonesia.payroll",
+            "certificate_hash": "9bd61a2856d63dc17825204216bb114a843ad765"
+          }
+        },
+        {
+          "client_id": "148421898893-pq9e4kq8qbpspsba29raasm5v95t4ufp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSHM4fU1s8DpTE3lQuVgeQ8mr6TEMDd4E"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "148421898893-pq9e4kq8qbpspsba29raasm5v95t4ufp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

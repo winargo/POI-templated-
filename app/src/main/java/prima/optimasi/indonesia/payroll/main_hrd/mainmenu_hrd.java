@@ -91,6 +91,7 @@ public class mainmenu_hrd extends AppCompatActivity
         LinearLayout linear = navigationView.findViewById(R.id.datanav);
         ImageView imageuser = linear.findViewById(R.id.imageView);
         TextView username = linear.findViewById(R.id.username);
+        username.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("username",""));
 
         JSONObject data = null;
 

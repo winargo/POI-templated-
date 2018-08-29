@@ -25,7 +25,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.blikoon.qrcodescanner.QrCodeActivity;
+import com.google.gson.JsonObject;
 
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.main_hrd.mainmenu_hrd;
 import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
@@ -34,6 +40,7 @@ import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -56,13 +63,46 @@ public class activity_login extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
+
         pref = getSharedPreferences("poipayroll",MODE_PRIVATE);
 
-        if(!pref.getString("username","").equals("")){
+        if(!generator.token.equals("")){
+            pref.edit().putString("tokennotif",generator.token).commit();
+            pref.edit().putInt("statustoken",0).commit();
+            Log.e(TAG, "Data saved");
+        }
 
-                Intent mainmenu = new Intent(activity_login.this,mainmenu_owner.class);
+        /*if(pref.getInt("statustoken",0)==0){
+            registertokentoserver register = new registertokentoserver(this,pref.getString("tokennotif",""));
+            register.execute();
+
+        }*/
+
+        if(!pref.getString("level","").equals("")){
+            String declare = pref.getString("level","");
+            if(declare.equals("hrd")){
+                Intent mainmenu = new Intent(activity_login.this,mainmenu_hrd.class);
                 startActivity(mainmenu);
                 finish();
+            }
+            else if(declare.equals("kepala")){
+                Intent mainmenu = new Intent(activity_login.this,mainmenu_kabag.class);
+                startActivity(mainmenu);
+                finish();
+            }
+            else {
+                Intent mainmenu = new Intent(activity_login.this,mainmenu_karyawan.class);
+                startActivity(mainmenu);
+                finish();
+            }
+
+        }
+        else if(!pref.getString("username","").equals("")){
+
+            Intent mainmenu = new Intent(activity_login.this,mainmenu_owner.class);
+            startActivity(mainmenu);
+            finish();
         }
         else {
 
@@ -169,21 +209,19 @@ public class activity_login extends FragmentActivity {
                     object = okhttpclass.getJsonlogin(urldata, username, password);
                     token = okhttpclass.getJsonlogin(urldata, username, password);
 
-                    if(object!=null && token!=null ){
-                        edit.putString("Authorization",token.getString("token"));
-                        edit.putString("username",username);
-                        edit.commit();
-                        Log.e(TAG, "saved");
-                    }
+
                 } catch (IOException e) {
                     object = null;
+                    Log.e(TAG, "doInBackground: "+e.getMessage().toString() );
                     response = "Error IOException";
                 } catch (NullPointerException e) {
                     object = null;
+                    Log.e(TAG, "doInBackground: "+e.getMessage().toString() );
                     response = "Please check Connection and Server";
                 } catch (Exception e) {
                     object = null;
-                    response = "Error Occured, PLease Contact Administrator/Support";
+                    Log.e(TAG, "doInBackground: "+e.getMessage().toString() );
+                    response = "Error Occured, Please Contact Administrator/Support";
                 }
             return response;
         }
@@ -208,13 +246,17 @@ public class activity_login extends FragmentActivity {
 
 
                     if(status.equals("true")){
+                        if(object!=null && token!=null ){
+                            edit.putString("Authorization",token.getString("token"));
+                            edit.putString("username",username);
+                            edit.commit();
+                            Log.e(TAG, "saved");
+                        }
+
                         Snackbar.make(parent_view, "Success , Loging in ...", Snackbar.LENGTH_SHORT).show();
-
-
                                     Intent mainmenu = new Intent(activity_login.this,mainmenu_owner.class);
                                     startActivity(mainmenu);
                                     finish();
-
                     }
                     else if(status.equals("false")) {
                         Snackbar.make(parent_view, "Username atau Password Salah", Snackbar.LENGTH_SHORT).show();
@@ -268,6 +310,11 @@ public class activity_login extends FragmentActivity {
                 //Getting the passed result
                 String result = intent.getStringExtra("com.blikoon.qrcodescanner.got_qr_scan_relult");
                 Log.d(TAG,"Have scan result in your app activity :"+ result);
+
+                loginselainowner owner = new loginselainowner(activity_login.this,result);
+                owner.execute();
+                /*
+
                 AlertDialog alertDialog = new AlertDialog.Builder(activity_login.this).create();
                 alertDialog.setTitle("Scan result");
                 alertDialog.setMessage(result);
@@ -278,6 +325,11 @@ public class activity_login extends FragmentActivity {
                             }
                         });
                 alertDialog.show();
+
+                */
+
+
+
                 return;
 
             }
@@ -325,6 +377,383 @@ public class activity_login extends FragmentActivity {
 
             }
 
-        }}
+        }
+    }
 
+    public class loginselainowner extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result ;
+        ProgressDialog dialog ;
+        String urldata = generator.scanloginurl;
+        String passeddata = "" ;
+
+        public  loginselainowner(Context context,String passed)
+        {
+            dialog = new ProgressDialog(context);
+            passeddata = passed;
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            this.dialog.show();
+            super.onPreExecute();
+            this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            int data = 0;
+
+            while (data==0) {
+                try {
+                    this.dialog.setMessage("Loading Data...");
+
+                    JSONObject jsonObject;
+
+                    try {
+                        OkHttpClient client = new OkHttpClient();
+
+
+                        RequestBody body = new FormBody.Builder()
+                                .add("kode",passeddata)
+                                .build();
+
+                        Request request = new Request.Builder()
+                                .post(body)
+                                .url(urldata)
+                                .build();
+                        Response responses = null;
+
+                        try {
+                            responses = client.newCall(request).execute();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            jsonObject =  null;
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            jsonObject = null;
+                        }
+
+                        if (responses==null){
+                            jsonObject = null;
+                        }
+                        else {
+                            jsonObject = new JSONObject(responses.body().string());
+                        }
+                        result = jsonObject;
+                        data=1;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+
+
+                    break;
+                } catch (IOException e) {
+                    this.dialog.setMessage("Loading Data... IOError Occured,retrying...");
+                    this.dialog.dismiss();
+                    Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                    generator.jsondatalogin = null;
+                    response = "Error IOException";
+                } catch (NullPointerException e) {
+                    this.dialog.setMessage("Loading Data... Internet Error Occured,retrying...");
+                    this.dialog.dismiss();
+                    Log.e("doInBackground: ", "null data" + e.getMessage());
+                    generator.jsondatalogin = null;
+                    response = "Please check Connection and Server";
+                } catch (Exception e) {
+                    this.dialog.setMessage("Loading Data... Error Occured,retrying...");
+                    this.dialog.dismiss();
+                    Log.e("doInBackground: ", e.getMessage());
+                    generator.jsondatalogin = null;
+                    response = "Error Occured, PLease Contact Administrator/Support";
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+            super.onPostExecute(result1);
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }
+            try {
+                JSONArray data = result.getJSONArray("data");
+                JSONObject dataisi = data.getJSONObject(0);
+                String declare = dataisi.getString("jabatan");
+                String iduser = dataisi.getString("idfp");
+                if(declare.contains("hrd")){
+                    Intent hrd = new Intent(activity_login.this,mainmenu_hrd.class);
+                    startActivity(hrd);
+                    pref.edit().putString("level","hrd").commit();
+                    pref.edit().putString("jabatan",declare).commit();
+                    pref.edit().putString("iduser",iduser).commit();
+                    pref.edit().putString("username",dataisi.getString("nama")).commit();
+                    registertokentoserver token = new registertokentoserver(activity_login.this,pref.getString("notiftoken",""));
+                    token.execute();
+
+
+                }
+                else if(declare.contains("Kepala")){
+                    Intent hrd = new Intent(activity_login.this,mainmenu_kabag.class);
+                    startActivity(hrd);
+                    pref.edit().putString("level","kabag").commit();
+                    pref.edit().putString("jabatan",declare).commit();
+                    pref.edit().putString("iduser",iduser).commit();
+                    pref.edit().putString("username",dataisi.getString("nama")).commit();
+                    registertokentoserver token = new registertokentoserver(activity_login.this,pref.getString("notiftoken",""));
+                    token.execute();
+                }
+                else{
+                    Intent hrd = new Intent(activity_login.this,mainmenu_karyawan.class);
+                    startActivity(hrd);
+                    pref.edit().putString("level","karyawan").commit();
+                    pref.edit().putString("jabatan",declare).commit();
+                    pref.edit().putString("iduser",iduser).commit();
+                    pref.edit().putString("username",dataisi.getString("nama")).commit();
+
+                    registertokentoserver token = new registertokentoserver(activity_login.this,pref.getString("notiftoken",""));
+                    token.execute();
+
+                }
+
+                //JSONArray bArray= responseObject.getJSONArray("B");
+                //for(int i=0;i<bArray.length();i++){
+                //    JSONObject innerObject=bArray.getJSONObject(i);
+                //    String a= innerObject.getString("a");
+                //    String b= innerObject.getString("b");
+                //}
+            } catch (Exception e) {
+                Log.e(TAG, "onPostExecute: "+e.getMessage() );
+                e.printStackTrace();
+                if(result!=null){
+                    AlertDialog alertDialog = new AlertDialog.Builder(activity_login.this).create();
+                    alertDialog.setTitle("Terjadi Kesalahan");
+
+                    alertDialog.setMessage(e.getMessage().toString() + " "+ result.toString());
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else {
+                    AlertDialog alertDialog = new AlertDialog.Builder(activity_login.this).create();
+                    alertDialog.setTitle("Terjadi Kesalahan Koneksi");
+
+                    alertDialog.setMessage("Sihlakan Periksa Koneksi Anda Kembali  !");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+            }
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
+    public class registertokentoserver extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result ;
+        ProgressDialog dialog ;
+        String urldata = generator.scanloginurl;
+        String passeddata = "" ;
+
+        public  registertokentoserver(Context context, String passed)
+        {
+            prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
+            dialog = new ProgressDialog(context);
+            passeddata = passed;
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            this.dialog.show();
+            super.onPreExecute();
+            this.dialog.setMessage("Registering Device...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            int data = 0;
+
+            try {
+                this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    RequestBody body = new FormBody.Builder()
+                            .add("tokennotif",passeddata)
+                            .add("level",prefs.getString("level",""))
+                            .add("userid",prefs.getString("iduser",""))
+                            .build();
+
+                    Request request = new Request.Builder()
+                            .url(generator.sendtokenurl)
+                            .post(body)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "sendRegistrationToServer: failed" + e.getMessage() );
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        Log.e(TAG, "sendRegistrationToServer: failed" + e.getMessage() );
+                    }
+
+                    if (responses==null){
+                        Log.e(TAG, "sendRegistrationToServer: failed" );
+                        AlertDialog alertDialog = new AlertDialog.Builder(activity_login.this).create();
+                        alertDialog.setTitle("Connection Error Occured");
+                        alertDialog.setMessage("please restart application");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
+
+                    }
+                    else {
+                        jsonObject = new JSONObject(responses.body().string());
+                        Log.e(TAG, "success" );
+                        result = jsonObject;
+                        data=1;
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "sendRegistrationToServer: failed" + e.getMessage() );
+                }
+            } catch (IOException e) {
+                this.dialog.setMessage("Loading Data... IOError Occured,retrying...");
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                this.dialog.setMessage("Loading Data... Internet Error Occured,retrying...");
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                this.dialog.setMessage("Loading Data... Error Occured,retrying...");
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+            super.onPostExecute(result1);
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }
+            String res = "";
+
+            if(result!=null){
+                try {
+                    if(result.getString("status").equals("true")){
+                        prefs.edit().putInt("statustoken",1).commit();
+                        res = "OK";
+                        finish();
+                    }
+                    else {
+                        res = "Fail";
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+
+            try {
+                AlertDialog alertDialog = new AlertDialog.Builder(activity_login.this).create();
+                alertDialog.setTitle("Scan result");
+                alertDialog.setMessage(result.toString() + res);
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+
+                //JSONArray bArray= responseObject.getJSONArray("B");
+                //for(int i=0;i<bArray.length();i++){
+                //    JSONObject innerObject=bArray.getJSONObject(i);
+                //    String a= innerObject.getString("a");
+                //    String b= innerObject.getString("b");
+                //}
+            } catch (Exception e) {
+                e.printStackTrace();
+                error = e.getMessage();
+            }
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
 }

@@ -61,4 +61,8 @@ dependencies {
     implementation 'com.google.zxing:javase:3.3.3'
 
     implementation project(path: ':qrcodescanner')
+    implementation 'com.google.firebase:firebase-messaging:11.8.0'
 }
+
+
+apply plugin: 'com.google.gms.google-services'

@@ -602,6 +602,18 @@
             android:name=".qrscanner"
             android:label="Scan Barcode"
             android:theme="@style/AppTheme"></activity>
+
+        <service android:name=".notification.firebasenotif">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".notification.firebaseservice">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
