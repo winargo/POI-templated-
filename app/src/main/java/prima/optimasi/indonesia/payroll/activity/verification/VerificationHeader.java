@@ -9,6 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -33,6 +34,7 @@ public class VerificationHeader extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(null);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
 

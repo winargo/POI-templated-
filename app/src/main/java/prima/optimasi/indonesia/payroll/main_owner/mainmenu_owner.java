@@ -25,11 +25,15 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,6 +47,7 @@ import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.main_hrd.mainmenu_hrd;
+import prima.optimasi.indonesia.payroll.main_karyawan.mainmenu_karyawan;
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentApproval;
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentChartKehadiran;
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentEmployee;
@@ -59,6 +64,11 @@ public class mainmenu_owner extends AppCompatActivity
     HashMap<String, List<String>> listDataChild;
     ViewPager pager;
     TabLayout tabpager ;
+    Menu tempmenu ;
+
+    int posi = 0;
+
+    SharedPreferences prefs;
 
     @Override
     protected void onStart() {
@@ -77,6 +87,15 @@ public class mainmenu_owner extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
+
+        prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
+
+        if(prefs.getInt("statustoken",0)==0){
+            generator.registertokentoserver register = new generator.registertokentoserver(this,prefs.getString("tokennotif",""));
+            register.execute();
+
+            FirebaseMessaging.getInstance().subscribeToTopic("owner");
+        }
 
 
 
@@ -115,6 +134,35 @@ public class mainmenu_owner extends AppCompatActivity
 
         tabpager.setupWithViewPager(pager);
 
+        tabpager.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener(){
+            @Override
+            public void onTabSelected(TabLayout.Tab tab){
+                int position = tab.getPosition();
+                if(position==2){
+                    if(tempmenu!=null){
+                        tempmenu.findItem(R.id.action_search).setVisible(true);
+                        tempmenu.findItem(R.id.action_add).setVisible(true);
+                    }
+                }
+                else {
+                    if(tempmenu!=null){
+                        tempmenu.findItem(R.id.action_search).setVisible(false);
+                        tempmenu.findItem(R.id.action_add).setVisible(false);
+                    }
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
         for (int i = 0; i < tabpager.getTabCount(); i++) {
             //noinspection ConstantConditions
             TextView tv=(TextView) LayoutInflater.from(this).inflate(R.layout.customtablayout,null);
@@ -148,10 +196,10 @@ public class mainmenu_owner extends AppCompatActivity
                     pager.setCurrentItem(1);
                     drawer.closeDrawer(Gravity.START);
                 }else if(listDataHeader.get(groupPosition).equals("Seluruh Karyawan")){
-                    pager.setCurrentItem(2);
+                    pager.setCurrentItem(3);
                     drawer.closeDrawer(Gravity.START);
                 }else if(listDataHeader.get(groupPosition).equals("Pengumuman")){
-                    pager.setCurrentItem(3);
+                    pager.setCurrentItem(2);
                     drawer.closeDrawer(Gravity.START);
                 }
                 return false;
@@ -252,6 +300,9 @@ public class mainmenu_owner extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_mainmenu, menu);
+
+        tempmenu = menu;
+
         return true;
     }
 
@@ -264,18 +315,33 @@ public class mainmenu_owner extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic("owner");
+
             Intent logout = new Intent(mainmenu_owner.this,activity_login.class);
             SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
+
+            if(prefs.getInt("statustoken",0)==0){
+
+            }
+            else {
+
+
+                generator.unregistertokentoserver unregistertokentoserver = new generator.unregistertokentoserver(mainmenu_owner.this,prefs.getString("tokennotif",""),prefs.getString("Authorization",""));
+                unregistertokentoserver.execute();
+            }
+
             SharedPreferences.Editor edit = prefs.edit();
 
             edit.putString("username","");
             edit.putString("password","");
             edit.putString("level","");
+            edit.putString("token","");
+            edit.putString("jabatan","");
+
             edit.commit();
 
             startActivity(logout);
 
-            finish();
             return true;
         }
 
@@ -332,7 +398,7 @@ public class mainmenu_owner extends AppCompatActivity
     public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
 
         // tab titles
-        private String[] tabTitles = new String[]{"Chart Kehadiran", "Total Gaji", "Seluruh Karyawan","Pengumuman","Approval"};
+        private String[] tabTitles = new String[]{"Chart Kehadiran", "Total Gaji", "Pengumuman","Seluruh Karyawan","Approval"};
 
         public ExamplePagerAdapter(FragmentManager fm) {
             super(fm);

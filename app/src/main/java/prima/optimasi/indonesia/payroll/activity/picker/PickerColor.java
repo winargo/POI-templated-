@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 public class PickerColor extends AppCompatActivity {
 
@@ -39,6 +40,7 @@ public class PickerColor extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Color");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import prima.optimasi.indonesia.payroll.R;
-import prima.optimasi.indonesia.payroll.utils.Tools;
 
 public class LoginImageTeal extends AppCompatActivity {
 
@@ -24,8 +23,6 @@ public class LoginImageTeal extends AppCompatActivity {
         parent_view = findViewById(android.R.id.content);
         progress_bar = (ProgressBar) findViewById(R.id.progress_bar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
-
-        Tools.setSystemBarColor(this, R.color.cyan_800);
 
         ((View) findViewById(R.id.sign_up_for_account)).setOnClickListener(new View.OnClickListener() {
             @Override

@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.fragment.DialogPaymentSuccessFragment;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 
 public class PaymentSuccessDialog extends AppCompatActivity {
@@ -46,6 +47,7 @@ public class PaymentSuccessDialog extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Payment Success");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void submitAction() {

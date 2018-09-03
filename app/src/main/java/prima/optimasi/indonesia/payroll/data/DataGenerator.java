@@ -2,6 +2,7 @@ package prima.optimasi.indonesia.payroll.data;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.v7.content.res.AppCompatResources;
 
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.model.MusicAlbum;
@@ -198,7 +199,7 @@ public class DataGenerator {
             obj.image_bg = drw_arr_bg.getResourceId(i, -1);
             obj.title = title_arr[i];
             obj.brief = brief_arr[i];
-            obj.imageDrw = ctx.getResources().getDrawable(obj.image);
+            obj.imageDrw = AppCompatResources.getDrawable(ctx, obj.image);
             items.add(obj);
         }
         return items;

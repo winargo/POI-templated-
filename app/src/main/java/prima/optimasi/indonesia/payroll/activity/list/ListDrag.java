@@ -17,6 +17,7 @@ import prima.optimasi.indonesia.payroll.adapter.AdapterListDrag;
 import prima.optimasi.indonesia.payroll.data.DataGenerator;
 import prima.optimasi.indonesia.payroll.helper.DragItemTouchHelper;
 import prima.optimasi.indonesia.payroll.model.Social;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 import java.util.List;
 
@@ -44,6 +45,7 @@ public class ListDrag extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Drag");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/lyt_parent"
+    android:padding="4px"
     style="@style/RippleStyleBlack"
     android:layout_width="match_parent"
     android:layout_height="240dp">
@@ -65,16 +66,7 @@
 
             </LinearLayout>
 
-            <View
-                android:layout_width="@dimen/spacing_large"
-                android:layout_height="0dp" />
 
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:tint="@color/grey_40"
-                app:srcCompat="@drawable/ic_star_border" />
 
         </LinearLayout>
 

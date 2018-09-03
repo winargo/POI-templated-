@@ -22,6 +22,7 @@ import prima.optimasi.indonesia.payroll.adapter.AdapterListMusicSong;
 import prima.optimasi.indonesia.payroll.data.DataGenerator;
 import prima.optimasi.indonesia.payroll.model.MusicSong;
 import prima.optimasi.indonesia.payroll.utils.MusicUtils;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 import java.util.List;
 
@@ -57,6 +58,7 @@ public class PlayerMusicSongList extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Songs");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

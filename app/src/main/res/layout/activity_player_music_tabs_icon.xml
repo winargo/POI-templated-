@@ -43,18 +43,24 @@
         android:paddingBottom="61dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <android.support.v7.widget.CardView
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:cardBackgroundColor="@color/colorPrimary"
-        app:cardCornerRadius="0dp"
-        app:cardElevation="10dp">
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:background="@drawable/bg_gradient_soft" />
 
         <LinearLayout
             android:id="@+id/player_control"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/colorPrimary"
             android:orientation="vertical"
             android:paddingTop="@dimen/spacing_small">
 
@@ -118,7 +124,7 @@
 
         </LinearLayout>
 
-    </android.support.v7.widget.CardView>
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
 

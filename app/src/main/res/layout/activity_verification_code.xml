@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_medium"
                 android:text="OTP has been sent to you on your mobile phone. Please enter it below"
-                android:textAlignment="center"
+                android:gravity="center"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
                 android:textColor="@color/grey_60" />
 

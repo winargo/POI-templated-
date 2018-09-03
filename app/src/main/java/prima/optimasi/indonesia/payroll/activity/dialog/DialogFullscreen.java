@@ -15,6 +15,7 @@ import android.widget.Toast;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.fragment.DialogFullscreenFragment;
 import prima.optimasi.indonesia.payroll.model.Event;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 public class DialogFullscreen extends AppCompatActivity {
 
@@ -41,6 +42,7 @@ public class DialogFullscreen extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("FullScreen");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     @Override

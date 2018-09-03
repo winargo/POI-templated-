@@ -30,6 +30,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -62,6 +64,8 @@ public class mainmenu_karyawan extends AppCompatActivity
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
 
+    SharedPreferences prefs;
+
     ViewPager pager;
     TabLayout tabpager;
 
@@ -75,8 +79,14 @@ public class mainmenu_karyawan extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
 
+        prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
 
+        if(prefs.getInt("statustoken",0)==0){
+            generator.registertokentoserver register = new generator.registertokentoserver(this,prefs.getString("tokennotif",""));
+            register.execute();
 
+            FirebaseMessaging.getInstance().subscribeToTopic("karyawan");
+        }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -251,18 +261,32 @@ public class mainmenu_karyawan extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic("karyawan");
+
+
             Intent logout = new Intent(mainmenu_karyawan.this,activity_login.class);
             SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
+
+            if(prefs.getInt("statustoken",0)==0){
+
+            }
+            else {
+                generator.unregistertokentoserver unregistertokentoserver = new generator.unregistertokentoserver(mainmenu_karyawan.this,prefs.getString("tokennotif",""),prefs.getString("Authorization",""));
+                unregistertokentoserver.execute();
+            }
+
             SharedPreferences.Editor edit = prefs.edit();
 
             edit.putString("username","");
             edit.putString("password","");
             edit.putString("level","");
+            edit.putString("Authorization","");
+            edit.putString("jabatan","");
+
             edit.commit();
 
             startActivity(logout);
 
-            finish();
             return true;
         }
 

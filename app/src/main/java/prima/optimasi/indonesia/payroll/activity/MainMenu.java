@@ -2,20 +2,37 @@ package prima.optimasi.indonesia.payroll.activity;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.BuildConfig;
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.activity.about.AboutApp;
+import prima.optimasi.indonesia.payroll.activity.about.AboutAppSimple;
+import prima.optimasi.indonesia.payroll.activity.about.AboutAppSimpleBlue;
+import prima.optimasi.indonesia.payroll.activity.about.AboutCompany;
+import prima.optimasi.indonesia.payroll.activity.about.AboutCompanyCard;
+import prima.optimasi.indonesia.payroll.activity.about.AboutCompanyImage;
+import prima.optimasi.indonesia.payroll.activity.about.AboutDialogMainAction;
+import prima.optimasi.indonesia.payroll.activity.article.ArticleBigHeader;
+import prima.optimasi.indonesia.payroll.activity.article.ArticleCard;
+import prima.optimasi.indonesia.payroll.activity.article.ArticleFood;
+import prima.optimasi.indonesia.payroll.activity.article.ArticleFoodReview;
+import prima.optimasi.indonesia.payroll.activity.article.ArticleMedium;
+import prima.optimasi.indonesia.payroll.activity.article.ArticleMediumDark;
+import prima.optimasi.indonesia.payroll.activity.article.ArticleSimple;
+import prima.optimasi.indonesia.payroll.activity.article.ArticleStepper;
 import prima.optimasi.indonesia.payroll.activity.bottomnavigation.BottomNavigationBasic;
 import prima.optimasi.indonesia.payroll.activity.bottomnavigation.BottomNavigationDark;
 import prima.optimasi.indonesia.payroll.activity.bottomnavigation.BottomNavigationIcon;
@@ -41,10 +58,14 @@ import prima.optimasi.indonesia.payroll.activity.card.CardWizardLight;
 import prima.optimasi.indonesia.payroll.activity.card.CardWizardOverlap;
 import prima.optimasi.indonesia.payroll.activity.chip.ChipBasic;
 import prima.optimasi.indonesia.payroll.activity.chip.ChipTag;
+import prima.optimasi.indonesia.payroll.activity.dashboard.DashboardCryptocurrency;
+import prima.optimasi.indonesia.payroll.activity.dashboard.DashboardFinance;
 import prima.optimasi.indonesia.payroll.activity.dashboard.DashboardFlight;
 import prima.optimasi.indonesia.payroll.activity.dashboard.DashboardGridFab;
 import prima.optimasi.indonesia.payroll.activity.dashboard.DashboardPayBill;
 import prima.optimasi.indonesia.payroll.activity.dashboard.DashboardStatistics;
+import prima.optimasi.indonesia.payroll.activity.dashboard.DashboardWallet;
+import prima.optimasi.indonesia.payroll.activity.dashboard.DashboardWalletGreen;
 import prima.optimasi.indonesia.payroll.activity.dialog.DialogAddPost;
 import prima.optimasi.indonesia.payroll.activity.dialog.DialogAddReview;
 import prima.optimasi.indonesia.payroll.activity.dialog.DialogBasic;
@@ -54,6 +75,10 @@ import prima.optimasi.indonesia.payroll.activity.dialog.DialogCustomInfo;
 import prima.optimasi.indonesia.payroll.activity.dialog.DialogCustomLight;
 import prima.optimasi.indonesia.payroll.activity.dialog.DialogCustomWarning;
 import prima.optimasi.indonesia.payroll.activity.dialog.DialogFullscreen;
+import prima.optimasi.indonesia.payroll.activity.dialog.DialogGDPRBasic;
+import prima.optimasi.indonesia.payroll.activity.dialog.DialogHeader;
+import prima.optimasi.indonesia.payroll.activity.dialog.DialogImage;
+import prima.optimasi.indonesia.payroll.activity.dialog.DialogTermOfServices;
 import prima.optimasi.indonesia.payroll.activity.expansionpanel.ExpansionPanelBasic;
 import prima.optimasi.indonesia.payroll.activity.expansionpanel.ExpansionPanelInvoice;
 import prima.optimasi.indonesia.payroll.activity.expansionpanel.ExpansionPanelTicket;
@@ -118,6 +143,8 @@ import prima.optimasi.indonesia.payroll.activity.player.PlayerMusicLight;
 import prima.optimasi.indonesia.payroll.activity.player.PlayerMusicSongList;
 import prima.optimasi.indonesia.payroll.activity.player.PlayerMusicTabs;
 import prima.optimasi.indonesia.payroll.activity.player.PlayerMusicTabsIcon;
+import prima.optimasi.indonesia.payroll.activity.player.PlayerVideoBasic;
+import prima.optimasi.indonesia.payroll.activity.player.PlayerVideoSimple;
 import prima.optimasi.indonesia.payroll.activity.profile.ProfileBlueAppbar;
 import prima.optimasi.indonesia.payroll.activity.profile.ProfileCardList;
 import prima.optimasi.indonesia.payroll.activity.profile.ProfileDrawerImage;
@@ -139,6 +166,9 @@ import prima.optimasi.indonesia.payroll.activity.progressactivity.ProgressLinear
 import prima.optimasi.indonesia.payroll.activity.progressactivity.ProgressOnScroll;
 import prima.optimasi.indonesia.payroll.activity.progressactivity.ProgressPullRefresh;
 import prima.optimasi.indonesia.payroll.activity.search.SearchCity;
+import prima.optimasi.indonesia.payroll.activity.search.SearchFilterHotel;
+import prima.optimasi.indonesia.payroll.activity.search.SearchFilterProduct;
+import prima.optimasi.indonesia.payroll.activity.search.SearchFilterProperty;
 import prima.optimasi.indonesia.payroll.activity.search.SearchHistoryCard;
 import prima.optimasi.indonesia.payroll.activity.search.SearchPrimary;
 import prima.optimasi.indonesia.payroll.activity.search.SearchPrimaryBg;
@@ -149,10 +179,16 @@ import prima.optimasi.indonesia.payroll.activity.settings.SettingFlat;
 import prima.optimasi.indonesia.payroll.activity.settings.SettingProfile;
 import prima.optimasi.indonesia.payroll.activity.settings.SettingProfileLight;
 import prima.optimasi.indonesia.payroll.activity.settings.SettingSectioned;
+import prima.optimasi.indonesia.payroll.activity.shopping.ShoppingCartCard;
+import prima.optimasi.indonesia.payroll.activity.shopping.ShoppingCartCardDark;
+import prima.optimasi.indonesia.payroll.activity.shopping.ShoppingCartSimple;
 import prima.optimasi.indonesia.payroll.activity.shopping.ShoppingCategoryCard;
 import prima.optimasi.indonesia.payroll.activity.shopping.ShoppingCategoryImage;
 import prima.optimasi.indonesia.payroll.activity.shopping.ShoppingCategoryList;
 import prima.optimasi.indonesia.payroll.activity.shopping.ShoppingCheckoutCard;
+import prima.optimasi.indonesia.payroll.activity.shopping.ShoppingCheckoutOnePage;
+import prima.optimasi.indonesia.payroll.activity.shopping.ShoppingCheckoutStep;
+import prima.optimasi.indonesia.payroll.activity.shopping.ShoppingCheckoutTimeline;
 import prima.optimasi.indonesia.payroll.activity.shopping.ShoppingProductAdvDetails;
 import prima.optimasi.indonesia.payroll.activity.shopping.ShoppingProductDetails;
 import prima.optimasi.indonesia.payroll.activity.shopping.ShoppingProductGrid;
@@ -200,6 +236,7 @@ import prima.optimasi.indonesia.payroll.activity.verification.VerificationOrange
 import prima.optimasi.indonesia.payroll.activity.verification.VerificationPhone;
 import prima.optimasi.indonesia.payroll.adapter.ExpandableRecyclerAdapter;
 import prima.optimasi.indonesia.payroll.adapter.MainMenuAdapter;
+import prima.optimasi.indonesia.payroll.data.SharedPref;
 import prima.optimasi.indonesia.payroll.model.MenuType;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 
@@ -210,11 +247,13 @@ public class MainMenu extends AppCompatActivity {
 
     private RecyclerView recycler;
     private MainMenuAdapter adapter;
+    private SharedPref sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        sharedPref = new SharedPref(this);
         initComponentMenu();
         Tools.setSystemBarColor(this, R.color.grey_1000);
     }
@@ -227,14 +266,30 @@ public class MainMenu extends AppCompatActivity {
                 onMenuItemSelected(itemId);
             }
         });
+        ((ImageButton) findViewById(R.id.bt_about)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialogAbout();
+            }
+        });
 
         adapter.setMode(ExpandableRecyclerAdapter.MODE_ACCORDION);
         recycler.setLayoutManager(new LinearLayoutManager(this));
         recycler.setNestedScrollingEnabled(false);
         recycler.setAdapter(adapter);
+
+        if (sharedPref.isFirstLaunch()) {
+            showDialogAbout();
+        }
     }
 
     private void onMenuItemSelected(int itemId) {
+
+        if (sharedPref.actionClickOffer()) {
+            showDialogOffer();
+            return;
+        }
+
         switch (itemId) {
             // Bottom Navigation -------------------------------------------------------------------
             case 101:
@@ -348,6 +403,18 @@ public class MainMenu extends AppCompatActivity {
                 break;
             case 609:
                 startActivity(new Intent(this, DialogAddReview.class));
+                break;
+            case 610:
+                startActivity(new Intent(this, DialogGDPRBasic.class));
+                break;
+            case 611:
+                startActivity(new Intent(this, DialogTermOfServices.class));
+                break;
+            case 612:
+                startActivity(new Intent(this, DialogHeader.class));
+                break;
+            case 613:
+                startActivity(new Intent(this, DialogImage.class));
                 break;
 
             // Expansion Panels --------------------------------------------------------------------
@@ -667,14 +734,20 @@ public class MainMenu extends AppCompatActivity {
             case 20009:
                 startActivity(new Intent(this, PlayerMusicTabsIcon.class));
                 break;
-            case 200010:
+            case 20010:
                 startActivity(new Intent(this, PlayerMusicGenre.class));
                 break;
-            case 200011:
+            case 20011:
                 startActivity(new Intent(this, PlayerMusicGenreImage.class));
                 break;
-            case 200012:
+            case 20012:
                 startActivity(new Intent(this, PlayerMusicGenreLight.class));
+                break;
+            case 20013:
+                startActivity(new Intent(this, PlayerVideoBasic.class));
+                break;
+            case 20014:
+                startActivity(new Intent(this, PlayerVideoSimple.class));
                 break;
 
             // Timeline ----------------------------------------------------------------------------
@@ -719,6 +792,24 @@ public class MainMenu extends AppCompatActivity {
             case 22008:
                 startActivity(new Intent(this, ShoppingCheckoutCard.class));
                 break;
+            case 22009:
+                startActivity(new Intent(this, ShoppingCheckoutStep.class));
+                break;
+            case 22010:
+                startActivity(new Intent(this, ShoppingCheckoutOnePage.class));
+                break;
+            case 22011:
+                startActivity(new Intent(this, ShoppingCheckoutTimeline.class));
+                break;
+            case 22012:
+                startActivity(new Intent(this, ShoppingCartSimple.class));
+                break;
+            case 22013:
+                startActivity(new Intent(this, ShoppingCartCard.class));
+                break;
+            case 22014:
+                startActivity(new Intent(this, ShoppingCartCardDark.class));
+                break;
 
             // Search Page -------------------------------------------------------------------------
             case 23001:
@@ -741,6 +832,15 @@ public class MainMenu extends AppCompatActivity {
                 break;
             case 23007:
                 startActivity(new Intent(this, SearchCity.class));
+                break;
+            case 23008:
+                startActivity(new Intent(this, SearchFilterHotel.class));
+                break;
+            case 23009:
+                startActivity(new Intent(this, SearchFilterProduct.class));
+                break;
+            case 23010:
+                startActivity(new Intent(this, SearchFilterProperty.class));
                 break;
 
             // Slider Image ------------------------------------------------------------------------
@@ -841,8 +941,70 @@ public class MainMenu extends AppCompatActivity {
             case 29004:
                 startActivity(new Intent(this, DashboardFlight.class));
                 break;
+            case 29005:
+                startActivity(new Intent(this, DashboardWallet.class));
+                break;
+            case 29006:
+                startActivity(new Intent(this, DashboardWalletGreen.class));
+                break;
+            case 29007:
+                startActivity(new Intent(this, DashboardFinance.class));
+                break;
+            case 29008:
+                startActivity(new Intent(this, DashboardCryptocurrency.class));
+                break;
 
-            // about -------------------------------------------------------------------------------
+            // Article -----------------------------------------------------------------------------
+            case 30001:
+                startActivity(new Intent(this, ArticleSimple.class));
+                break;
+            case 30002:
+                startActivity(new Intent(this, ArticleMedium.class));
+                break;
+            case 30003:
+                startActivity(new Intent(this, ArticleMediumDark.class));
+                break;
+            case 30004:
+                startActivity(new Intent(this, ArticleBigHeader.class));
+                break;
+            case 30005:
+                startActivity(new Intent(this, ArticleStepper.class));
+                break;
+            case 30006:
+                startActivity(new Intent(this, ArticleCard.class));
+                break;
+            case 30007:
+                startActivity(new Intent(this, ArticleFood.class));
+                break;
+            case 30008:
+                startActivity(new Intent(this, ArticleFoodReview.class));
+                break;
+
+
+            // About -------------------------------------------------------------------------------
+            case 31001:
+                startActivity(new Intent(this, AboutApp.class));
+                break;
+            case 31002:
+                startActivity(new Intent(this, AboutAppSimple.class));
+                break;
+            case 31003:
+                startActivity(new Intent(this, AboutAppSimpleBlue.class));
+                break;
+            case 31004:
+                startActivity(new Intent(this, AboutCompany.class));
+                break;
+            case 31005:
+                startActivity(new Intent(this, AboutCompanyImage.class));
+                break;
+            case 31006:
+                startActivity(new Intent(this, AboutCompanyCard.class));
+                break;
+            case 31007:
+                startActivity(new Intent(this, AboutDialogMainAction.class));
+                break;
+
+            // about material x ---------------------------------------------------------------------
             case 1:
                 showDialogAbout();
                 break;
@@ -888,7 +1050,7 @@ public class MainMenu extends AppCompatActivity {
         items.add(new MainMenuAdapter.ListItem(501, "Basic", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(502, "Tag", -1, MenuType.SUB_HEADER));
 
-        items.add(new MainMenuAdapter.ListItem(600, "Dialogs", R.drawable.ic_picture_in_picture, MenuType.HEADER));
+        items.add(new MainMenuAdapter.ListItem(600, "Dialogs", R.drawable.ic_picture_in_picture, true, MenuType.HEADER));
         items.add(new MainMenuAdapter.ListItem(601, "Basic", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(602, "Fullscreen", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(603, "Custom", -1, MenuType.SUB_HEADER));
@@ -898,6 +1060,10 @@ public class MainMenu extends AppCompatActivity {
         items.add(new MainMenuAdapter.ListItem(607, "Custom Dark", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(608, "Custom Add Post", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(609, "Custom Add Review", -1, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(610, "GDPR Basic", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(611, "Term of Services", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(612, "Header", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(613, "Image", -1, true, MenuType.SUB_HEADER));
 
         items.add(new MainMenuAdapter.ListItem(700, "Expansion Panels", R.drawable.ic_arrow_downward, MenuType.HEADER));
         items.add(new MainMenuAdapter.ListItem(701, "Basic", -1, MenuType.SUB_HEADER));
@@ -1016,7 +1182,7 @@ public class MainMenu extends AppCompatActivity {
         items.add(new MainMenuAdapter.ListItem(19006, "Bg Cactus", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(19007, "Tabs", -1, MenuType.SUB_HEADER));
 
-        items.add(new MainMenuAdapter.ListItem(20000, "Player", R.drawable.ic_live_tv, MenuType.HEADER));
+        items.add(new MainMenuAdapter.ListItem(20000, "Player", R.drawable.ic_live_tv, true, MenuType.HEADER));
         items.add(new MainMenuAdapter.ListItem(20001, "Music Basic", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(20002, "Music Light", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(20003, "Music Album Dark", -1, MenuType.SUB_HEADER));
@@ -1026,9 +1192,13 @@ public class MainMenu extends AppCompatActivity {
         items.add(new MainMenuAdapter.ListItem(20007, "Music Album Grid", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(20008, "Music Tabs", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(20009, "Music Tabs Icon", -1, MenuType.SUB_HEADER));
-        items.add(new MainMenuAdapter.ListItem(200010, "Music Genre", -1, MenuType.SUB_HEADER));
-        items.add(new MainMenuAdapter.ListItem(200011, "Music Genre Image", -1, MenuType.SUB_HEADER));
-        items.add(new MainMenuAdapter.ListItem(200012, "Music Genre Light", -1, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(20010, "Music Genre", -1, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(20011, "Music Genre Image", -1, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(20012, "Music Genre Light", -1, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(20011, "Music Genre Image", -1, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(20012, "Music Genre Light", -1, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(20013, "Video Basic", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(20014, "Video Simple", -1, true, MenuType.SUB_HEADER));
 
         items.add(new MainMenuAdapter.ListItem(21000, "Timeline", R.drawable.ic_wrap_text, MenuType.HEADER));
         items.add(new MainMenuAdapter.ListItem(21001, "Timeline Feed", -1, MenuType.SUB_HEADER));
@@ -1037,7 +1207,7 @@ public class MainMenu extends AppCompatActivity {
         items.add(new MainMenuAdapter.ListItem(21004, "Timeline Twitter", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(21005, "Timeline Simple", -1, MenuType.SUB_HEADER));
 
-        items.add(new MainMenuAdapter.ListItem(22000, "Shopping", R.drawable.ic_shopping_cart, MenuType.HEADER));
+        items.add(new MainMenuAdapter.ListItem(22000, "Shopping", R.drawable.ic_shopping_cart, true, MenuType.HEADER));
         items.add(new MainMenuAdapter.ListItem(22001, "Category List", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(22002, "Category Card", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(22003, "Category Image", -1, MenuType.SUB_HEADER));
@@ -1046,8 +1216,14 @@ public class MainMenu extends AppCompatActivity {
         items.add(new MainMenuAdapter.ListItem(22006, "Product Details", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(22007, "Product Adv Details", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(22008, "Checkout Card", -1, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(22009, "Checkout Step", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(22010, "Checkout One Page", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(22011, "Checkout Timeline", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(22012, "Cart Simple", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(22013, "Cart Card", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(22014, "Cart Dark", -1, true, MenuType.SUB_HEADER));
 
-        items.add(new MainMenuAdapter.ListItem(23000, "Search Page", R.drawable.ic_search, MenuType.HEADER));
+        items.add(new MainMenuAdapter.ListItem(23000, "Search Page", R.drawable.ic_search, true, MenuType.HEADER));
         items.add(new MainMenuAdapter.ListItem(23001, "Toolbar Light", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(23002, "Toolbar Dark", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(23003, "Store", -1, MenuType.SUB_HEADER));
@@ -1055,6 +1231,9 @@ public class MainMenu extends AppCompatActivity {
         items.add(new MainMenuAdapter.ListItem(23005, "Primary Bg", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(23006, "History Card", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(23007, "City", -1, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(23008, "Filter Hotel", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(23009, "Filter Product", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(23010, "Filter Property", -1, true, MenuType.SUB_HEADER));
 
         items.add(new MainMenuAdapter.ListItem(24000, "Slider Image", R.drawable.ic_photo_library, MenuType.HEADER));
         items.add(new MainMenuAdapter.ListItem(24001, "Header", -1, MenuType.SUB_HEADER));
@@ -1091,11 +1270,34 @@ public class MainMenu extends AppCompatActivity {
         items.add(new MainMenuAdapter.ListItem(28004, "Profile", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(28005, "Success Dialog", -1, MenuType.SUB_HEADER));
 
-        items.add(new MainMenuAdapter.ListItem(29000, "Dashboard", R.drawable.ic_event_seat, MenuType.HEADER));
+        items.add(new MainMenuAdapter.ListItem(29000, "Dashboard", R.drawable.ic_event_seat, true, MenuType.HEADER));
         items.add(new MainMenuAdapter.ListItem(29001, "Grid Fab", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(29002, "Statistics", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(29003, "Pay Bill", -1, MenuType.SUB_HEADER));
         items.add(new MainMenuAdapter.ListItem(29004, "Flight", -1, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(29005, "Wallet", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(29006, "Wallet Green", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(29007, "Finance", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(29008, "Cryptocurrency", -1, true, MenuType.SUB_HEADER));
+
+        items.add(new MainMenuAdapter.ListItem(30000, "Article", R.drawable.ic_subject, true, MenuType.HEADER));
+        items.add(new MainMenuAdapter.ListItem(30001, "Simple", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(30002, "Medium", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(30003, "Medium Dark", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(30004, "Big Header", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(30005, "Stepper", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(30006, "Card", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(30007, "Food", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(30008, "Food Review", -1, true, MenuType.SUB_HEADER));
+
+        items.add(new MainMenuAdapter.ListItem(31000, "About", R.drawable.ic_perm_device_info, true, MenuType.HEADER));
+        items.add(new MainMenuAdapter.ListItem(31001, "App", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(31002, "App Simple", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(31003, "App Simple Blue", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(31004, "Company", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(31005, "Company Image", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(31006, "Company Card", -1, true, MenuType.SUB_HEADER));
+        items.add(new MainMenuAdapter.ListItem(31007, "Dialog Main Action", -1, true, MenuType.SUB_HEADER));
 
         items.add(new MainMenuAdapter.ListItem(-1, "Application", -1, MenuType.DIVIDER));
         items.add(new MainMenuAdapter.ListItem(1, "About", R.drawable.ic_error_outline, MenuType.NORMAL));
@@ -1124,6 +1326,7 @@ public class MainMenu extends AppCompatActivity {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
         dialog.setContentView(R.layout.dialog_about);
         dialog.setCancelable(true);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(dialog.getWindow().getAttributes());
@@ -1132,7 +1335,7 @@ public class MainMenu extends AppCompatActivity {
 
         ((TextView) dialog.findViewById(R.id.tv_version)).setText("Version " + BuildConfig.VERSION_NAME);
 
-        ((AppCompatButton) dialog.findViewById(R.id.bt_getcode)).setOnClickListener(new View.OnClickListener() {
+        ((View) dialog.findViewById(R.id.bt_getcode)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(Intent.ACTION_VIEW);
@@ -1141,13 +1344,47 @@ public class MainMenu extends AppCompatActivity {
             }
         });
 
-        ((AppCompatButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+        ((ImageButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
             }
         });
 
+        ((Button) dialog.findViewById(R.id.bt_rate)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Tools.rateAction(MainMenu.this);
+            }
+        });
+
+        sharedPref.setFirstLaunch(false);
+        dialog.show();
+        dialog.getWindow().setAttributes(lp);
+    }
+
+    private void showDialogOffer() {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        dialog.setContentView(R.layout.dialog_offer);
+        dialog.setCancelable(true);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+        ((View) dialog.findViewById(R.id.bt_getcode)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse("https://codecanyon.net/user/dream_space/portfolio"));
+                startActivity(i);
+            }
+        });
+
+        sharedPref.setFirstLaunch(false);
         dialog.show();
         dialog.getWindow().setAttributes(lp);
     }

@@ -34,6 +34,7 @@ public class PickerDateDark extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Date Dark");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

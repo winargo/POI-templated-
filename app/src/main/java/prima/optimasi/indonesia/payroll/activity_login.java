@@ -23,8 +23,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.blikoon.qrcodescanner.QrCodeActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.JsonObject;
 
 import okhttp3.FormBody;
@@ -74,7 +78,7 @@ public class activity_login extends FragmentActivity {
         }
 
         /*if(pref.getInt("statustoken",0)==0){
-            registertokentoserver register = new registertokentoserver(this,pref.getString("tokennotif",""));
+            generator.registertokentoserver register = new generator.registertokentoserver(this,pref.getString("tokennotif",""));
             register.execute();
 
         }*/
@@ -83,6 +87,10 @@ public class activity_login extends FragmentActivity {
             String declare = pref.getString("level","");
             if(declare.equals("hrd")){
                 Intent mainmenu = new Intent(activity_login.this,mainmenu_hrd.class);
+                startActivity(mainmenu);
+                finish();
+            }else if(declare.equals("owner")){
+                Intent mainmenu = new Intent(activity_login.this,mainmenu_owner.class);
                 startActivity(mainmenu);
                 finish();
             }
@@ -158,7 +166,7 @@ public class activity_login extends FragmentActivity {
         progress_bar.setVisibility(View.VISIBLE);
         fab.setAlpha(0f);
 
-            TestAsync sync = new TestAsync(activity_login.this,generator.keepaliveurl,username,password);
+            TestAsync sync = new TestAsync(activity_login.this,generator.keepaliveurl,username,password,"");
             sync.execute();
 
 
@@ -178,13 +186,15 @@ public class activity_login extends FragmentActivity {
         JSONObject token = null;
         JSONObject object = null;
         String username=  "" ;
+        String retoken = "";
         SharedPreferences.Editor edit;
         String password = "" ;
         ProgressDialog dialog ;
         String urldata ;
 
-        public  TestAsync (Context context,String url,String username , String password)
+        public  TestAsync (Context context,String url,String username , String password,String reauthorization)
         {
+            retoken = reauthorization;
             edit = context.getSharedPreferences("poipayroll",MODE_PRIVATE).edit();
             dialog = new ProgressDialog(context);
             this.urldata = url;
@@ -202,7 +212,8 @@ public class activity_login extends FragmentActivity {
         }
 
         protected String doInBackground(Void...arg0) {
-            Log.d(TAG + " DoINBackGround","On doInBackground...");
+            if (retoken.equals("")) {
+                Log.d(TAG + " DoINBackGround", "On doInBackground...");
 
                 try {
                     response = okhttpclass.getJsonlogin(urldata, username, password).toString();
@@ -212,18 +223,64 @@ public class activity_login extends FragmentActivity {
 
                 } catch (IOException e) {
                     object = null;
-                    Log.e(TAG, "doInBackground: "+e.getMessage().toString() );
+                    Log.e(TAG, "doInBackground: " + e.getMessage().toString());
                     response = "Error IOException";
                 } catch (NullPointerException e) {
                     object = null;
-                    Log.e(TAG, "doInBackground: "+e.getMessage().toString() );
+                    Log.e(TAG, "doInBackground: " + e.getMessage().toString());
                     response = "Please check Connection and Server";
                 } catch (Exception e) {
                     object = null;
-                    Log.e(TAG, "doInBackground: "+e.getMessage().toString() );
+                    Log.e(TAG, "doInBackground: " + e.getMessage().toString());
                     response = "Error Occured, Please Contact Administrator/Support";
                 }
-            return response;
+                return response;
+            } else {
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    JSONArray array = new JSONArray();
+
+                    RequestBody body = new FormBody.Builder()
+                            .add("username", username)
+                            .add("password", password)
+                            .build();
+
+                    Request request = new Request.Builder()
+                            .url(generator.keepaliveurl)
+                            .addHeader("Authorization", retoken)
+                            .post(body)
+                            .build();
+                    Response responses = null;
+
+                    responses = client.newCall(request).execute();
+
+                    if (responses == null) {
+                        return null;
+                    } else {
+                        response = responses.body().toString();
+                        object = new JSONObject(responses.body().string());
+                        token = new JSONObject(responses.body().string());
+                    }
+
+                } catch (IOException e) {
+                    object = null;
+                    Log.e(TAG, "doInBackground: " + e.getMessage().toString());
+                    response = "Error IOException";
+                } catch (NullPointerException e) {
+                    object = null;
+                    Log.e(TAG, "doInBackground: " + e.getMessage().toString());
+                    response = "Please check Connection and Server";
+                } catch (Exception e) {
+                    object = null;
+                    Log.e(TAG, "doInBackground: " + e.getMessage().toString());
+                    response = "Error Occured, Please Contact Administrator/Support";
+                }
+
+                return response;
+
+
+            }
         }
 
         protected void onProgressUpdate(Integer...a){
@@ -233,61 +290,118 @@ public class activity_login extends FragmentActivity {
 
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
+
             if(this.dialog.isShowing()){
                 this.dialog.dismiss();
             }
 
-            try {
-                if(object!=null){
-                    JSONObject responseObject = object;
-                    String status= responseObject.getString("status");
 
-                    Log.e( "onPostExecute: ", object.toString());
+            if(retoken.equals("")){
+                try {
+                    if(object!=null){
+                        JSONObject responseObject = object;
+                        String status= responseObject.getString("status");
+
+                        Log.e( "onPostExecute: ", object.toString());
 
 
-                    if(status.equals("true")){
-                        if(object!=null && token!=null ){
-                            edit.putString("Authorization",token.getString("token"));
-                            edit.putString("username",username);
-                            edit.commit();
-                            Log.e(TAG, "saved");
+                        if(status.equals("true")){
+                            if(object!=null && token!=null ){
+                                pref.edit().putString("level","owner").commit();
+                                pref.edit().putString("Authorization",token.getString("token")).commit();
+                                pref.edit().putString("jabatan","owner").commit();
+                                pref.edit().putString("iduser","").commit();
+                                pref.edit().putString("username",username).commit();
+                            }
+
+                            Snackbar.make(parent_view, "Success , Loging in ...", Snackbar.LENGTH_SHORT).show();
+                            Intent mainmenu = new Intent(activity_login.this,mainmenu_owner.class);
+                            startActivity(mainmenu);
+                            finish();
+                        }
+                        else if(status.equals("false")) {
+                            Snackbar.make(parent_view, "Username atau Password Salah", Snackbar.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Snackbar.make(parent_view, status, Snackbar.LENGTH_SHORT).show();
                         }
 
-                        Snackbar.make(parent_view, "Success , Loging in ...", Snackbar.LENGTH_SHORT).show();
-                                    Intent mainmenu = new Intent(activity_login.this,mainmenu_owner.class);
-                                    startActivity(mainmenu);
-                                    finish();
-                    }
-                    else if(status.equals("false")) {
-                        Snackbar.make(parent_view, "Username atau Password Salah", Snackbar.LENGTH_SHORT).show();
+                        progress_bar.setVisibility(View.GONE);
+                        fab.setAlpha(1f);
                     }
                     else {
-                        Snackbar.make(parent_view, status, Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(parent_view, response, Snackbar.LENGTH_SHORT).show();
+                        progress_bar.setVisibility(View.GONE);
+                        fab.setAlpha(1f);
                     }
 
-                    progress_bar.setVisibility(View.GONE);
-                    fab.setAlpha(1f);
+
+
+                    //JSONArray bArray= responseObject.getJSONArray("B");
+                    //for(int i=0;i<bArray.length();i++){
+                    //    JSONObject innerObject=bArray.getJSONObject(i);
+                    //    String a= innerObject.getString("a");
+                    //    String b= innerObject.getString("b");
+                    //}
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                else {
-                    Snackbar.make(parent_view, response, Snackbar.LENGTH_SHORT).show();
-                    progress_bar.setVisibility(View.GONE);
-                    fab.setAlpha(1f);
+
+            }
+            else {
+                try {
+                    if(object!=null){
+                        JSONObject responseObject = object;
+                        String status= responseObject.getString("status");
+
+                        Log.e( "onPostExecute: ", object.toString());
+
+
+                        if(status.equals("true")){
+                            if(object!=null && token!=null ){
+                                pref.edit().putString("level","owner").commit();
+                                pref.edit().putString("Authorization",retoken).commit();
+                                pref.edit().putString("jabatan","owner").commit();
+                                pref.edit().putString("iduser","").commit();
+                                pref.edit().putString("username",username).commit();
+                            }
+
+                            Snackbar.make(parent_view, "Success , Loging in ...", Snackbar.LENGTH_SHORT).show();
+                            Intent mainmenu = new Intent(activity_login.this,mainmenu_owner.class);
+                            startActivity(mainmenu);
+                            finish();
+                        }
+                        else if(status.equals("false")) {
+                            Snackbar.make(parent_view, "Username atau Password Salah", Snackbar.LENGTH_SHORT).show();
+                        }
+                        else {
+                            Snackbar.make(parent_view, status, Snackbar.LENGTH_SHORT).show();
+                        }
+
+                        progress_bar.setVisibility(View.GONE);
+                        fab.setAlpha(1f);
+                    }
+                    else {
+                        Snackbar.make(parent_view, response, Snackbar.LENGTH_SHORT).show();
+                        progress_bar.setVisibility(View.GONE);
+                        fab.setAlpha(1f);
+                    }
+
+
+
+                    //JSONArray bArray= responseObject.getJSONArray("B");
+                    //for(int i=0;i<bArray.length();i++){
+                    //    JSONObject innerObject=bArray.getJSONObject(i);
+                    //    String a= innerObject.getString("a");
+                    //    String b= innerObject.getString("b");
+                    //}
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-
-
-                //JSONArray bArray= responseObject.getJSONArray("B");
-                //for(int i=0;i<bArray.length();i++){
-                //    JSONObject innerObject=bArray.getJSONObject(i);
-                //    String a= innerObject.getString("a");
-                //    String b= innerObject.getString("b");
-                //}
-            } catch (Exception e) {
-                e.printStackTrace();
             }
 
 
-            Log.d(TAG + " onPostExecute", "" + result);
+
         }
     }
 
@@ -500,43 +614,63 @@ public class activity_login extends FragmentActivity {
                 dialog.dismiss();
             }
             try {
-                JSONArray data = result.getJSONArray("data");
-                JSONObject dataisi = data.getJSONObject(0);
-                String declare = dataisi.getString("jabatan");
-                String iduser = dataisi.getString("idfp");
-                if(declare.contains("hrd")){
-                    Intent hrd = new Intent(activity_login.this,mainmenu_hrd.class);
-                    startActivity(hrd);
-                    pref.edit().putString("level","hrd").commit();
-                    pref.edit().putString("jabatan",declare).commit();
-                    pref.edit().putString("iduser",iduser).commit();
-                    pref.edit().putString("username",dataisi.getString("nama")).commit();
-                    registertokentoserver token = new registertokentoserver(activity_login.this,pref.getString("notiftoken",""));
-                    token.execute();
+                if(result.getString("status").equals("true")){
+                    JSONArray data = result.getJSONArray("data");
+                    JSONObject dataisi = data.getJSONObject(0);
+                    String declare = dataisi.getString("jabatan");
+                    String iduser = dataisi.getString("idfp");
+                    if(declare.contains("hrd")){
 
+                        Snackbar.make(parent_view, "Success , Loging in ...", Snackbar.LENGTH_SHORT).show();
+
+                        Intent hrd = new Intent(activity_login.this,mainmenu_hrd.class);
+                        startActivity(hrd);
+                        pref.edit().putString("level","hrd").commit();
+                        pref.edit().putString("Authorization",result.getString("token")).commit();
+                        pref.edit().putString("jabatan",declare).commit();
+                        pref.edit().putString("iduser",iduser).commit();
+                        pref.edit().putString("username",dataisi.getString("nama")).commit();
+
+                        FirebaseMessaging.getInstance().subscribeToTopic("hrd");
+
+
+
+                    }
+                    else if(declare.contains("Kepala") || declare.toUpperCase().contains("KEPALA") || declare.toLowerCase().contains("kepala")){
+
+                        Snackbar.make(parent_view, "Success , Loging in ...", Snackbar.LENGTH_SHORT).show();
+
+                        Intent hrd = new Intent(activity_login.this,mainmenu_kabag.class);
+                        startActivity(hrd);
+                        pref.edit().putString("level","kabag").commit();
+                        pref.edit().putString("Authorization",result.getString("token")).commit();
+                        pref.edit().putString("jabatan",declare).commit();
+                        pref.edit().putString("iduser",iduser).commit();
+                        pref.edit().putString("username",dataisi.getString("nama")).commit();
+
+                        FirebaseMessaging.getInstance().subscribeToTopic("kabag");
+
+                    }
+                    else{
+
+                        Snackbar.make(parent_view, "Success , Loging in ...", Snackbar.LENGTH_SHORT).show();
+
+                        Intent hrd = new Intent(activity_login.this,mainmenu_karyawan.class);
+                        startActivity(hrd);
+                        pref.edit().putString("level","karyawan").commit();
+                        pref.edit().putString("Authorization",result.getString("token")).commit();
+                        pref.edit().putString("jabatan",declare).commit();
+                        pref.edit().putString("iduser",iduser).commit();
+                        pref.edit().putString("username",dataisi.getString("nama")).commit();
+
+                        FirebaseMessaging.getInstance().subscribeToTopic("karyawan");
+
+
+                    }
 
                 }
-                else if(declare.contains("Kepala")){
-                    Intent hrd = new Intent(activity_login.this,mainmenu_kabag.class);
-                    startActivity(hrd);
-                    pref.edit().putString("level","kabag").commit();
-                    pref.edit().putString("jabatan",declare).commit();
-                    pref.edit().putString("iduser",iduser).commit();
-                    pref.edit().putString("username",dataisi.getString("nama")).commit();
-                    registertokentoserver token = new registertokentoserver(activity_login.this,pref.getString("notiftoken",""));
-                    token.execute();
-                }
-                else{
-                    Intent hrd = new Intent(activity_login.this,mainmenu_karyawan.class);
-                    startActivity(hrd);
-                    pref.edit().putString("level","karyawan").commit();
-                    pref.edit().putString("jabatan",declare).commit();
-                    pref.edit().putString("iduser",iduser).commit();
-                    pref.edit().putString("username",dataisi.getString("nama")).commit();
-
-                    registertokentoserver token = new registertokentoserver(activity_login.this,pref.getString("notiftoken",""));
-                    token.execute();
-
+                else {
+                    Snackbar.make(parent_view, result.getString("message"), Snackbar.LENGTH_SHORT).show();
                 }
 
                 //JSONArray bArray= responseObject.getJSONArray("B");
@@ -550,7 +684,7 @@ public class activity_login extends FragmentActivity {
                 e.printStackTrace();
                 if(result!=null){
                     AlertDialog alertDialog = new AlertDialog.Builder(activity_login.this).create();
-                    alertDialog.setTitle("Terjadi Kesalahan");
+                    alertDialog.setTitle("Hasil");
 
                     alertDialog.setMessage(e.getMessage().toString() + " "+ result.toString());
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
@@ -562,17 +696,7 @@ public class activity_login extends FragmentActivity {
                     alertDialog.show();
                 }
                 else {
-                    AlertDialog alertDialog = new AlertDialog.Builder(activity_login.this).create();
-                    alertDialog.setTitle("Terjadi Kesalahan Koneksi");
-
-                    alertDialog.setMessage("Sihlakan Periksa Koneksi Anda Kembali  !");
-                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                    alertDialog.show();
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi", Snackbar.LENGTH_SHORT).show();
                 }
             }
 
@@ -581,179 +705,4 @@ public class activity_login extends FragmentActivity {
         }
     }
 
-    public class registertokentoserver extends AsyncTask<Void, Integer, String>
-    {
-        String response = "";
-        String error = "";
-        String username=  "" ;
-        String password = "" ;
-        SharedPreferences prefs ;
-        JSONObject result ;
-        ProgressDialog dialog ;
-        String urldata = generator.scanloginurl;
-        String passeddata = "" ;
-
-        public  registertokentoserver(Context context, String passed)
-        {
-            prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
-            dialog = new ProgressDialog(context);
-            passeddata = passed;
-            this.username = generator.username;
-            this.password = generator.password;
-            this.error = error ;
-        }
-
-        String TAG = getClass().getSimpleName();
-
-        protected void onPreExecute (){
-            this.dialog.show();
-            super.onPreExecute();
-            this.dialog.setMessage("Registering Device...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
-
-        protected String doInBackground(Void...arg0) {
-            Log.d(TAG + " DoINBackGround","On doInBackground...");
-
-            int data = 0;
-
-            try {
-                this.dialog.setMessage("Loading Data...");
-
-                JSONObject jsonObject;
-
-                try {
-                    OkHttpClient client = new OkHttpClient();
-
-                    RequestBody body = new FormBody.Builder()
-                            .add("tokennotif",passeddata)
-                            .add("level",prefs.getString("level",""))
-                            .add("userid",prefs.getString("iduser",""))
-                            .build();
-
-                    Request request = new Request.Builder()
-                            .url(generator.sendtokenurl)
-                            .post(body)
-                            .build();
-                    Response responses = null;
-
-                    try {
-                        responses = client.newCall(request).execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "sendRegistrationToServer: failed" + e.getMessage() );
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        Log.e(TAG, "sendRegistrationToServer: failed" + e.getMessage() );
-                    }
-
-                    if (responses==null){
-                        Log.e(TAG, "sendRegistrationToServer: failed" );
-                        AlertDialog alertDialog = new AlertDialog.Builder(activity_login.this).create();
-                        alertDialog.setTitle("Connection Error Occured");
-                        alertDialog.setMessage("please restart application");
-                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        alertDialog.show();
-
-                    }
-                    else {
-                        jsonObject = new JSONObject(responses.body().string());
-                        Log.e(TAG, "success" );
-                        result = jsonObject;
-                        data=1;
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.e(TAG, "sendRegistrationToServer: failed" + e.getMessage() );
-                }
-            } catch (IOException e) {
-                this.dialog.setMessage("Loading Data... IOError Occured,retrying...");
-                this.dialog.dismiss();
-                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
-                generator.jsondatalogin = null;
-                response = "Error IOException";
-            } catch (NullPointerException e) {
-                this.dialog.setMessage("Loading Data... Internet Error Occured,retrying...");
-                this.dialog.dismiss();
-                Log.e("doInBackground: ", "null data" + e.getMessage());
-                generator.jsondatalogin = null;
-                response = "Please check Connection and Server";
-            } catch (Exception e) {
-                this.dialog.setMessage("Loading Data... Error Occured,retrying...");
-                this.dialog.dismiss();
-                Log.e("doInBackground: ", e.getMessage());
-                generator.jsondatalogin = null;
-                response = "Error Occured, PLease Contact Administrator/Support";
-            }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            return response;
-        }
-
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
-        }
-
-        protected void onPostExecute(String result1) {
-            super.onPostExecute(result1);
-            if(this.dialog.isShowing()){
-                dialog.dismiss();
-            }
-            String res = "";
-
-            if(result!=null){
-                try {
-                    if(result.getString("status").equals("true")){
-                        prefs.edit().putInt("statustoken",1).commit();
-                        res = "OK";
-                        finish();
-                    }
-                    else {
-                        res = "Fail";
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-
-            try {
-                AlertDialog alertDialog = new AlertDialog.Builder(activity_login.this).create();
-                alertDialog.setTitle("Scan result");
-                alertDialog.setMessage(result.toString() + res);
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
-
-                //JSONArray bArray= responseObject.getJSONArray("B");
-                //for(int i=0;i<bArray.length();i++){
-                //    JSONObject innerObject=bArray.getJSONObject(i);
-                //    String a= innerObject.getString("a");
-                //    String b= innerObject.getString("b");
-                //}
-            } catch (Exception e) {
-                e.printStackTrace();
-                error = e.getMessage();
-            }
-
-
-            Log.d(TAG + " onPostExecute", "" + result1);
-        }
-    }
 }

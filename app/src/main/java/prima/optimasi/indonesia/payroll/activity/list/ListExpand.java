@@ -16,6 +16,7 @@ import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.adapter.AdapterListExpand;
 import prima.optimasi.indonesia.payroll.data.DataGenerator;
 import prima.optimasi.indonesia.payroll.model.Social;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.widget.LineItemDecoration;
 
 import java.util.List;
@@ -42,6 +43,7 @@ public class ListExpand extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Expandable");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

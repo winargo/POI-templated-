@@ -46,7 +46,7 @@ public class BottomSheetFloating extends AppCompatActivity {
 
         initComponent();
         initToolbar();
-        showBottomSheetDialog(mAdapter.getItem(0));
+        //showBottomSheetDialog(mAdapter.getItem(0));
     }
 
     private void initComponent() {
@@ -61,7 +61,7 @@ public class BottomSheetFloating extends AppCompatActivity {
         items.addAll(DataGenerator.getImageDate(this));
 
         //set data and list adapter
-        mAdapter = new AdapterGridTwoLineLight(this, items);
+        //mAdapter = new AdapterGridTwoLineLight(this, items);
         recyclerView.setAdapter(mAdapter);
 
         // on item list clicked

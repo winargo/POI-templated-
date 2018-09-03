@@ -43,6 +43,7 @@ public class ShoppingCategoryCard extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Categories");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

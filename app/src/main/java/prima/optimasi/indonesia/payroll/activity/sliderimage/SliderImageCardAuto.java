@@ -77,6 +77,7 @@ public class SliderImageCardAuto extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Places");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

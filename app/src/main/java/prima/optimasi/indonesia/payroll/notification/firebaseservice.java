@@ -50,7 +50,7 @@ public class firebaseservice extends FirebaseMessagingService {
 
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
-            showNotification("New Message",remoteMessage.getNotification().getBody());
+            showNotification(remoteMessage.getNotification().getTitle(),remoteMessage.getNotification().getBody());
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
         }
 
@@ -69,7 +69,7 @@ public class firebaseservice extends FirebaseMessagingService {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel("default",
-                    "ShopeeFake",
+                    "Prima Optimasi",
                     NotificationManager.IMPORTANCE_DEFAULT);
             channel.setDescription("Shopeefakedata");
             mNotificationManager.createNotificationChannel(channel);
@@ -77,7 +77,9 @@ public class firebaseservice extends FirebaseMessagingService {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "default")
                 .setSmallIcon(R.drawable.logo) // notification icon
                 .setContentTitle(title) // title for notification
-                .setContentText(content)// message for notification
+                .setContentText(content)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
+                // message for notification
                 //  .setSound(alarmSound) // set alarm sound for notification
                 .setAutoCancel(true); // clear notification after click
         Intent intent = new Intent(getApplicationContext(), activity_login.class);

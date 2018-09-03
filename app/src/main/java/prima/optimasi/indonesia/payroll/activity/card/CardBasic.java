@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 public class CardBasic extends AppCompatActivity {
 
@@ -25,6 +26,7 @@ public class CardBasic extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Basic");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     @Override

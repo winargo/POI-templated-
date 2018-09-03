@@ -13,6 +13,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 public class DialogCustomInfo extends AppCompatActivity {
 
@@ -39,6 +40,7 @@ public class DialogCustomInfo extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Custom Info");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     @Override

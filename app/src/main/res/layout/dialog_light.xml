@@ -70,6 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_large"
             android:background="@drawable/btn_rounded_red"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:paddingLeft="@dimen/spacing_mlarge"
             android:paddingRight="@dimen/spacing_mlarge"
             android:text="FOLLOW"

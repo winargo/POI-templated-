@@ -15,6 +15,7 @@ import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.adapter.AdapterListSectioned;
 import prima.optimasi.indonesia.payroll.data.DataGenerator;
 import prima.optimasi.indonesia.payroll.model.People;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.utils.ViewAnimation;
 
 import java.util.List;
@@ -40,6 +41,7 @@ public class FabMoreText extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Fab More Text");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
 
         final FloatingActionButton fab_mic = (FloatingActionButton) findViewById(R.id.fab_mic);
         final FloatingActionButton fab_call = (FloatingActionButton) findViewById(R.id.fab_call);

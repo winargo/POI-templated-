@@ -57,6 +57,7 @@ public class SliderImageCard extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Product");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

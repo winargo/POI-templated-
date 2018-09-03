@@ -1,6 +1,7 @@
 package prima.optimasi.indonesia.payroll.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,16 +9,22 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.model.Image;
+import prima.optimasi.indonesia.payroll.objects.pengumuman;
+import prima.optimasi.indonesia.payroll.universal.viewpengumuman;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AdapterGridTwoLineLight extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<Image> items = new ArrayList<>();
+    private List<pengumuman> items = new ArrayList<>();
 
     private OnLoadMoreListener onLoadMoreListener;
 
@@ -32,7 +39,7 @@ public class AdapterGridTwoLineLight extends RecyclerView.Adapter<RecyclerView.V
         this.mOnItemClickListener = mItemClickListener;
     }
 
-    public AdapterGridTwoLineLight(Context context, List<Image> items) {
+    public AdapterGridTwoLineLight(Context context, List<pengumuman> items) {
         this.items = items;
         ctx = context;
     }
@@ -63,18 +70,24 @@ public class AdapterGridTwoLineLight extends RecyclerView.Adapter<RecyclerView.V
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        Image obj = items.get(position);
-        if (holder instanceof OriginalViewHolder) {
-            OriginalViewHolder view = (OriginalViewHolder) holder;
-            view.name.setText(obj.name);
-            view.brief.setText(obj.brief);
-            Tools.displayImageOriginal(ctx, view.image, obj.image);
+        final pengumuman obj = items.get(position);
+        if (holder instanceof AdapterGridTwoLine.OriginalViewHolder) {
+            AdapterGridTwoLine.OriginalViewHolder view = (AdapterGridTwoLine.OriginalViewHolder) holder;
+            view.name.setText(obj.getTitle());
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+            view.brief.setText(format.format(obj.getCreatedate()));
+
+            Picasso.get().load(obj.getImagelink()).into(view.image);
+
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (mOnItemClickListener != null) {
-                        mOnItemClickListener.onItemClick(view, items.get(position), position);
-                    }
+                    generator.temppengumumanpassdata = new ArrayList<>();
+
+                    generator.temppengumumanpassdata.add(obj);
+
+                    Intent a = new Intent(ctx,viewpengumuman.class);
+                    ctx.startActivity(a);
                 }
             });
         }
@@ -85,7 +98,7 @@ public class AdapterGridTwoLineLight extends RecyclerView.Adapter<RecyclerView.V
         return items.size();
     }
 
-    public Image getItem(int position) {
+    public pengumuman getItem(int position) {
         return items.get(position);
     }
 

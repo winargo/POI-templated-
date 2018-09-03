@@ -25,3 +25,7 @@
 #-renamesourcefileattribute SourceFile
 
 -dontwarn com.beloo.widget.chipslayoutmanager.**
+-ignorewarnings
+-keep class * {
+    public private *;
+}

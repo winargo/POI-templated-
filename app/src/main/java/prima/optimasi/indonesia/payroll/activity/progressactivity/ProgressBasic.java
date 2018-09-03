@@ -10,6 +10,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 public class ProgressBasic extends AppCompatActivity {
 
@@ -33,6 +34,7 @@ public class ProgressBasic extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Basic");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

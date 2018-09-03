@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,7 @@ public class TabsBasic extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Basic");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

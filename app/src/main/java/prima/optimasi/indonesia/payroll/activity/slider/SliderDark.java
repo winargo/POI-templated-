@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 public class SliderDark extends AppCompatActivity {
 
@@ -32,6 +33,7 @@ public class SliderDark extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Dark");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

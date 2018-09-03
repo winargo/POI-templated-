@@ -49,6 +49,7 @@ public class FragmentBottomSheetDialogFull extends BottomSheetDialogFragment {
         Tools.displayImageRound(getActivity(), (ImageView) view.findViewById(R.id.image), people.image);
         ((TextView) view.findViewById(R.id.name)).setText(people.name);
         ((TextView) view.findViewById(R.id.name_toolbar)).setText(people.name);
+        ((View) view.findViewById(R.id.lyt_spacer)).setMinimumHeight(Tools.getScreenHeight() / 2);
 
         hideView(app_bar_layout);
 

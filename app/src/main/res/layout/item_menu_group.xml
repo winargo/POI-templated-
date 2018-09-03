@@ -17,8 +17,8 @@
             android:id="@+id/item_menu_group_image"
             android:layout_width="@dimen/spacing_mxlarge"
             android:layout_height="@dimen/spacing_mxlarge"
-            app:srcCompat="@drawable/ic_event"
-            android:tint="@color/colorPrimary" />
+            android:tint="@color/colorPrimary"
+            app:srcCompat="@drawable/ic_event" />
 
         <TextView
             android:id="@+id/item_menu_group_name"
@@ -31,6 +31,16 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
             android:textColor="@color/grey_10"
             tools:text="Group Name" />
+
+        <ImageView
+            android:id="@+id/item_menu_group_badge"
+            android:layout_width="@dimen/spacing_xmedium"
+            android:layout_height="@dimen/spacing_xmedium"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="@dimen/spacing_large"
+            android:layout_marginRight="@dimen/spacing_large"
+            android:tint="@color/colorAccentDark"
+            app:srcCompat="@drawable/shape_circle" />
 
         <ImageView
             android:id="@+id/item_arrow"

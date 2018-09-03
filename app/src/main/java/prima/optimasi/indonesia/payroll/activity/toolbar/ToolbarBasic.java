@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 public class ToolbarBasic extends AppCompatActivity {
 
@@ -24,6 +25,7 @@ public class ToolbarBasic extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Toolbar");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     @Override

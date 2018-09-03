@@ -270,4 +270,19 @@ public class ViewAnimation {
                 })
                 .start();
     }
+
+    public static void hideFab(View fab) {
+        int moveY = 2 * fab.getHeight();
+        fab.animate()
+                .translationY(moveY)
+                .setDuration(300)
+                .start();
+    }
+
+    public static void showFab(View fab) {
+        fab.animate()
+                .translationY(0)
+                .setDuration(300)
+                .start();
+    }
 }

@@ -17,6 +17,7 @@ import prima.optimasi.indonesia.payroll.adapter.AdapterListSwipe;
 import prima.optimasi.indonesia.payroll.data.DataGenerator;
 import prima.optimasi.indonesia.payroll.helper.SwipeItemTouchHelper;
 import prima.optimasi.indonesia.payroll.model.Social;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 import java.util.List;
 
@@ -43,6 +44,7 @@ public class ListSwipe extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Swipe");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

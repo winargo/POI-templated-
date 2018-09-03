@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 public class DialogBasic extends AppCompatActivity {
 
@@ -42,6 +43,7 @@ public class DialogBasic extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Basic");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     @Override

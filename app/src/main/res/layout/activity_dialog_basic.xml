@@ -27,7 +27,7 @@
             android:descendantFocusability="blocksDescendants"
             android:orientation="vertical">
 
-            <android.support.v7.widget.AppCompatButton
+            <Button
                 android:id="@+id/confirm_dialog"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -45,7 +45,7 @@
                 android:layout_height="1dp"
                 android:background="@color/grey_10" />
 
-            <android.support.v7.widget.AppCompatButton
+            <Button
                 android:id="@+id/alert_dialog"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
                 android:background="@color/grey_10" />
 
 
-            <android.support.v7.widget.AppCompatButton
+            <Button
                 android:id="@+id/single_choice_dialog"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -82,7 +82,7 @@
                 android:layout_height="1dp"
                 android:background="@color/grey_10" />
 
-            <android.support.v7.widget.AppCompatButton
+            <Button
                 android:id="@+id/multi_choice_dialog"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

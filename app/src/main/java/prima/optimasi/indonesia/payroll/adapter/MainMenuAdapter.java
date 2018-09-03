@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.model.MenuType;
@@ -37,12 +36,21 @@ public class MainMenuAdapter extends ExpandableRecyclerAdapter<MainMenuAdapter.L
         public int Id = -1;
         public int Icon = -1;
         public String Text;
+        public boolean New = false;
 
         public ListItem(int id, String title, int icon, MenuType type) {
             super(type.getValue());
             Id = id;
             Text = title;
             Icon = icon;
+        }
+
+        public ListItem(int id, String title, int icon, boolean isNew, MenuType type) {
+            super(type.getValue());
+            Id = id;
+            Text = title;
+            Icon = icon;
+            New = isNew;
         }
     }
 
@@ -79,17 +87,20 @@ public class MainMenuAdapter extends ExpandableRecyclerAdapter<MainMenuAdapter.L
     public class HeaderViewHolder extends ExpandableRecyclerAdapter.HeaderViewHolder {
         TextView name;
         ImageView icon;
+        ImageView badge;
 
         public HeaderViewHolder(View view) {
             super(view, (ImageView) view.findViewById(R.id.item_arrow));
             name = (TextView) view.findViewById(R.id.item_menu_group_name);
             icon = (ImageView) view.findViewById(R.id.item_menu_group_image);
+            badge = (ImageView) view.findViewById(R.id.item_menu_group_badge);
         }
 
         public void bind(final int position) {
             super.bind(position);
             name.setText(visibleItems.get(position).Text);
             icon.setImageResource(visibleItems.get(position).Icon);
+            badge.setVisibility(visibleItems.get(position).New ? View.VISIBLE : View.INVISIBLE);
         }
     }
 
@@ -99,11 +110,13 @@ public class MainMenuAdapter extends ExpandableRecyclerAdapter<MainMenuAdapter.L
     public class SubHeaderViewHolder extends ExpandableRecyclerAdapter.ViewHolder {
         View view;
         TextView name;
+        ImageView badge;
 
         public SubHeaderViewHolder(View view) {
             super(view);
             this.view = view;
             name = (TextView) view.findViewById(R.id.item_menu_sub_group_name);
+            badge = (ImageView) view.findViewById(R.id.item_menu_sub_group_badge);
         }
 
         public void bind(final int position) {
@@ -114,6 +127,7 @@ public class MainMenuAdapter extends ExpandableRecyclerAdapter<MainMenuAdapter.L
                     onItemClickListener.onItemClick(view, visibleItems.get(position).Id);
                 }
             });
+            badge.setVisibility(visibleItems.get(position).New ? View.VISIBLE : View.INVISIBLE);
         }
     }
 

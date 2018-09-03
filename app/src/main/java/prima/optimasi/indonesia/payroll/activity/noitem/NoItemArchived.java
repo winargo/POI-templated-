@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 public class NoItemArchived extends AppCompatActivity {
 
@@ -25,6 +26,7 @@ public class NoItemArchived extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Archived");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

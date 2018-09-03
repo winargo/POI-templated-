@@ -27,6 +27,7 @@ import prima.optimasi.indonesia.payroll.adapter.AdapterListMusicSong;
 import prima.optimasi.indonesia.payroll.fragment.FragmentMusicAlbum;
 import prima.optimasi.indonesia.payroll.fragment.FragmentMusicSong;
 import prima.optimasi.indonesia.payroll.utils.MusicUtils;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +69,7 @@ public class PlayerMusicTabsIcon extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Songs");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

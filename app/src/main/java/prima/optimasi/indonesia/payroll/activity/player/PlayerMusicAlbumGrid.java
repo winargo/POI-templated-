@@ -59,6 +59,7 @@ public class PlayerMusicAlbumGrid extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Albums");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

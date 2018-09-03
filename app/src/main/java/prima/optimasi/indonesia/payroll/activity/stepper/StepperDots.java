@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.utils.ViewAnimation;
 
 public class StepperDots extends AppCompatActivity {
@@ -37,6 +38,7 @@ public class StepperDots extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Dots");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

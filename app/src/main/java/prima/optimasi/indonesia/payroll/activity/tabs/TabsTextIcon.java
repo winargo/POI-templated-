@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.fragment.FragmentTabsStore;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,7 @@ public class TabsTextIcon extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Store");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

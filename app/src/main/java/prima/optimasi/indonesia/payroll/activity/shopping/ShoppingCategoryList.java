@@ -15,6 +15,7 @@ import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.adapter.AdapterListShopCategory;
 import prima.optimasi.indonesia.payroll.data.DataGenerator;
 import prima.optimasi.indonesia.payroll.model.ShopCategory;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 import java.util.List;
 
@@ -41,6 +42,7 @@ public class ShoppingCategoryList extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Categories");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

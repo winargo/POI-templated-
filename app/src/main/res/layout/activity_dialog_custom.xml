@@ -241,9 +241,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:background="@drawable/btn_rounded_accent"
-            android:paddingLeft="@dimen/spacing_mlarge"
-            android:paddingRight="@dimen/spacing_mlarge"
+            android:paddingLeft="@dimen/spacing_xlarge"
+            android:paddingRight="@dimen/spacing_xlarge"
             android:text="SHOW DIALOG"
             android:textColor="@android:color/white" />
 

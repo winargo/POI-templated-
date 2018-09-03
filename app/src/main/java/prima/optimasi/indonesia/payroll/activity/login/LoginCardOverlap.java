@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 public class LoginCardOverlap extends AppCompatActivity {
 
@@ -24,5 +25,7 @@ public class LoginCardOverlap extends AppCompatActivity {
                 Snackbar.make(parent_view, "Sign Up", Snackbar.LENGTH_SHORT).show();
             }
         });
+
+        Tools.setSystemBarColor(this);
     }
 }

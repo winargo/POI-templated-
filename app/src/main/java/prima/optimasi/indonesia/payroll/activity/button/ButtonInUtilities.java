@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 public class ButtonInUtilities extends AppCompatActivity {
 
@@ -20,6 +21,7 @@ public class ButtonInUtilities extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Button In Utilities");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     @Override

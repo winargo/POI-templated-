@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.utils.ViewAnimation;
 
 public class StepperProgress extends AppCompatActivity {
@@ -37,6 +38,7 @@ public class StepperProgress extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Progress");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

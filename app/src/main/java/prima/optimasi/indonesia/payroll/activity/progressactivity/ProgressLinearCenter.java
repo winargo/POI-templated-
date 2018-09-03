@@ -17,6 +17,7 @@ import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.adapter.AdapterListFolderFile;
 import prima.optimasi.indonesia.payroll.model.FolderFile;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.utils.ViewAnimation;
 
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class ProgressLinearCenter extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(null);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
 
         loadingAndDisplayContent();
     }

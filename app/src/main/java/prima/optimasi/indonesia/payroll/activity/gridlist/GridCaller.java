@@ -12,9 +12,7 @@ import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.adapter.AdapterGridCaller;
-import prima.optimasi.indonesia.payroll.adapter.AdapterGridTwoLine;
 import prima.optimasi.indonesia.payroll.data.DataGenerator;
-import prima.optimasi.indonesia.payroll.model.Image;
 import prima.optimasi.indonesia.payroll.model.People;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
@@ -35,6 +33,8 @@ public class GridCaller extends AppCompatActivity {
         parent_view = findViewById(android.R.id.content);
 
         initComponent();
+
+        Tools.setSystemBarColor(this);
     }
 
 

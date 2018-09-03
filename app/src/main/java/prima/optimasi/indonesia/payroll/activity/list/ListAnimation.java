@@ -17,6 +17,7 @@ import prima.optimasi.indonesia.payroll.adapter.AdapterListAnimation;
 import prima.optimasi.indonesia.payroll.data.DataGenerator;
 import prima.optimasi.indonesia.payroll.model.People;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +46,7 @@ public class ListAnimation extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Animation");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

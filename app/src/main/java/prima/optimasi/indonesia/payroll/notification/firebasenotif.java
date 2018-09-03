@@ -36,7 +36,7 @@ public class firebasenotif extends FirebaseInstanceIdService{
     }
 
     private void sendRegistrationToServer(final String refreshedToken) {
-        getSharedPreferences("poipayroll",MODE_PRIVATE).edit().putString("notiftoken",refreshedToken).commit();
+        getSharedPreferences("poipayroll",MODE_PRIVATE).edit().putString("tokennotif",refreshedToken).commit();
         getSharedPreferences("poipayroll",MODE_PRIVATE).edit().putInt("statustoken",0).commit();
         SharedPreferences a =getSharedPreferences("poipayroll", MODE_PRIVATE);
         Log.e(TAG, "sendRegistrationToServer: " + a.getString("notiftoken",""));

@@ -35,6 +35,7 @@ public class ShoppingProductDetails extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Fashion");
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

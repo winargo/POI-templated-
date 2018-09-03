@@ -43,6 +43,8 @@
                         android:layout_centerInParent="true"
                         android:src="@drawable/photo_singer_male"
                         app:civ_border_color="@color/grey_20"
+                        app:civ_shadow="true"
+                        app:civ_shadow_radius="0"
                         app:civ_border_width="1dp" />
 
                     <ProgressBar

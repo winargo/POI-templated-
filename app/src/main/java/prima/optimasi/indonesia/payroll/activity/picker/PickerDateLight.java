@@ -33,6 +33,7 @@ public class PickerDateLight extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Date Light");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

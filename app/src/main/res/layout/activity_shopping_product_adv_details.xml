@@ -415,7 +415,7 @@
                             android:layout_width="115dp"
                             android:layout_height="wrap_content"
                             android:text="1"
-                            android:textAlignment="center"
+                            android:gravity="center"
                             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                             android:textColor="@color/grey_80"
                             android:textStyle="bold" />

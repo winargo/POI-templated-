@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_medium"
             android:text="Please enter your mobile number to receive a verification code. Carrier rates may apply"
-            android:textAlignment="center"
+            android:gravity="center"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
             android:textColor="@color/grey_60" />
 

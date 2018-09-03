@@ -13,6 +13,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 public class DialogCustomWarning extends AppCompatActivity {
 
@@ -39,6 +40,7 @@ public class DialogCustomWarning extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Custom Warning");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     @Override

@@ -19,6 +19,7 @@ import prima.optimasi.indonesia.payroll.adapter.AdapterContacts;
 import prima.optimasi.indonesia.payroll.data.DataGenerator;
 import prima.optimasi.indonesia.payroll.model.People;
 import prima.optimasi.indonesia.payroll.model.PeopleChip;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 import com.pchmn.materialchips.ChipsInput;
 import com.pchmn.materialchips.model.ChipInterface;
 
@@ -48,6 +49,7 @@ public class ChipBasic extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Basic");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void iniComponent() {

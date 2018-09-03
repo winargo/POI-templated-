@@ -42,6 +42,7 @@ public class GridSingleLine extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Singe Line");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

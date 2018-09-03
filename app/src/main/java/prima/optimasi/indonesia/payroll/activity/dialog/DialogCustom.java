@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.model.Event;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 public class DialogCustom extends AppCompatActivity {
 
@@ -45,6 +46,7 @@ public class DialogCustom extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Custom");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void displayDataResult(Event event) {

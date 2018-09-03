@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 public class MenuDrawerSimpleDark extends AppCompatActivity {
 
@@ -35,6 +36,7 @@ public class MenuDrawerSimpleDark extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
         actionBar.setTitle("Drawer Simple Dark");
+        Tools.setSystemBarColor(this);
     }
 
     private void initNavigationMenu() {

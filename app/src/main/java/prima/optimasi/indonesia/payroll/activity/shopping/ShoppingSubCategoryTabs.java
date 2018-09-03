@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.fragment.FragmentProductGrid;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,7 @@ public class ShoppingSubCategoryTabs extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Fashion");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

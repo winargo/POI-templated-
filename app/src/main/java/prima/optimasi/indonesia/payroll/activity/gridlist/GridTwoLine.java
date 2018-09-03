@@ -52,14 +52,14 @@ public class GridTwoLine extends AppCompatActivity {
         recyclerView.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(this, 3), true));
         recyclerView.setHasFixedSize(true);
 
-        List<Image> items = DataGenerator.getImageDate(this);
+       /* List<Image> items = DataGenerator.getImageDate(this);
         items.addAll(DataGenerator.getImageDate(this));
         items.addAll(DataGenerator.getImageDate(this));
         items.addAll(DataGenerator.getImageDate(this));
 
         //set data and list adapter
         mAdapter = new AdapterGridTwoLine(this, items);
-        recyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);*/
 
         // on item list clicked
         mAdapter.setOnItemClickListener(new AdapterGridTwoLine.OnItemClickListener() {

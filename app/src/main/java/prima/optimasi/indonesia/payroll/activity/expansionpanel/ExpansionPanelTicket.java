@@ -42,6 +42,7 @@ public class ExpansionPanelTicket extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Flight Ticket");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

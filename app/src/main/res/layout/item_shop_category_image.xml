@@ -11,9 +11,13 @@
         android:id="@+id/image_bg"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:foreground="@color/overlay_dark_30"
         android:scaleType="centerCrop"
         android:src="@drawable/image_8" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:background="@color/overlay_dark_30" />
 
     <com.balysv.materialripple.MaterialRippleLayout
         style="@style/RippleStyleWhite"

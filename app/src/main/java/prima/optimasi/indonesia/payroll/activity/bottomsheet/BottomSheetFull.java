@@ -45,14 +45,14 @@ public class BottomSheetFull extends AppCompatActivity {
             public void onItemClick(View view, People obj, int pos) {
                 FragmentBottomSheetDialogFull fragment = new FragmentBottomSheetDialogFull();
                 fragment.setPeople(obj);
-                fragment.show(getSupportFragmentManager(), "dialog");
+                fragment.show(getSupportFragmentManager(), fragment.getTag());
             }
         });
 
         // display first sheet
         FragmentBottomSheetDialogFull fragment = new FragmentBottomSheetDialogFull();
         fragment.setPeople(adapter.getItem(0));
-        fragment.show(getSupportFragmentManager(), "dialog");
+        fragment.show(getSupportFragmentManager(), fragment.getTag());
     }
 
     private void initToolbar() {

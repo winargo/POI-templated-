@@ -32,6 +32,7 @@ public class NoItemBgCity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("City");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

@@ -43,6 +43,7 @@ public class ShoppingProductGrid extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Products");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

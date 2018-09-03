@@ -97,6 +97,8 @@
                             android:layout_height="@dimen/spacing_xlarge"
                             android:foreground="@color/overlay_light_20"
                             android:src="@drawable/photo_female_1"
+                            app:civ_shadow="true"
+                            app:civ_shadow_radius="0"
                             app:civ_border="false" />
 
                         <View
@@ -219,6 +221,8 @@
                         android:layout_height="@dimen/spacing_xlarge"
                         android:foreground="@color/overlay_light_20"
                         android:src="@drawable/photo_male_8"
+                        app:civ_shadow="true"
+                        app:civ_shadow_radius="0"
                         app:civ_border="false" />
 
                     <View
@@ -321,6 +325,8 @@
                         android:layout_height="@dimen/spacing_xlarge"
                         android:foreground="@color/overlay_light_20"
                         android:src="@drawable/photo_male_2"
+                        app:civ_shadow="true"
+                        app:civ_shadow_radius="0"
                         app:civ_border="false" />
 
                     <View
@@ -430,6 +436,8 @@
                             android:layout_height="@dimen/spacing_xlarge"
                             android:foreground="@color/overlay_light_20"
                             android:src="@drawable/photo_female_1"
+                            app:civ_shadow="true"
+                            app:civ_shadow_radius="0"
                             app:civ_border="false" />
 
                         <View
@@ -551,6 +559,8 @@
                         android:layout_height="@dimen/spacing_xlarge"
                         android:foreground="@color/overlay_light_20"
                         android:src="@drawable/photo_female_6"
+                        app:civ_shadow="true"
+                        app:civ_shadow_radius="0"
                         app:civ_border="false" />
 
                     <View
@@ -669,6 +679,8 @@
                             android:layout_height="@dimen/spacing_xlarge"
                             android:foreground="@color/overlay_light_20"
                             android:src="@drawable/photo_male_7"
+                            app:civ_shadow="true"
+                            app:civ_shadow_radius="0"
                             app:civ_border="false" />
 
                         <View
@@ -793,6 +805,8 @@
                         android:layout_height="@dimen/spacing_xlarge"
                         android:foreground="@color/overlay_light_20"
                         android:src="@drawable/photo_female_6"
+                        app:civ_shadow="true"
+                        app:civ_shadow_radius="0"
                         app:civ_border="false" />
 
                     <View

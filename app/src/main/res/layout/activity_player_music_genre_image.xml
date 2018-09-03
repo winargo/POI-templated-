@@ -7,9 +7,13 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:foreground="@color/overlay_dark_70"
         android:scaleType="centerCrop"
         android:src="@drawable/image_21" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/overlay_dark_70" />
 
     <LinearLayout
         android:layout_width="match_parent"

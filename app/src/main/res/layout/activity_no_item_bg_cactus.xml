@@ -54,7 +54,7 @@
                     android:layout_marginTop="@dimen/spacing_medium"
                     android:lineSpacingExtra="@dimen/spacing_middle"
                     android:text="There is no account available \nTap button below to add new account"
-                    android:textAlignment="center"
+                    android:gravity="center"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
                     android:textColor="@color/grey_60" />
             </LinearLayout>

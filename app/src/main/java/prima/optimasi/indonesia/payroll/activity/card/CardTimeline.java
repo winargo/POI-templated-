@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 public class CardTimeline extends AppCompatActivity {
 
@@ -25,6 +26,7 @@ public class CardTimeline extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Timeline");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this);
     }
 
     @Override

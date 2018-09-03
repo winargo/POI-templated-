@@ -2,6 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_add"
+        android:icon="@drawable/ic_baseline_add_circle_outline_24px"
+        android:title="Add Item"
+        android:visible="false"
+        android:iconTint="@color/mdtp_white"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search"
+        android:visible="false"
+        android:title="Search"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/action_logout"
         android:icon="@drawable/logoutresized"
         android:title="@string/action_settings"

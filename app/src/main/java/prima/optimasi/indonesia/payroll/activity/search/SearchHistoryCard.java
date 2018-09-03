@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.adapter.AdapterSuggestionSearch;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.utils.ViewAnimation;
 
 public class SearchHistoryCard extends AppCompatActivity {
@@ -47,6 +48,7 @@ public class SearchHistoryCard extends AppCompatActivity {
     }
 
     private void initToolbar() {
+        Tools.setSystemBarColor(this);
     }
 
     private void initComponent() {

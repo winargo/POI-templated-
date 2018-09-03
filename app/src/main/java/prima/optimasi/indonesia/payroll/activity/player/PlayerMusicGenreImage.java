@@ -14,7 +14,6 @@ public class PlayerMusicGenreImage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_music_genre_image);
-        Tools.setSystemBarColor(this, R.color.indigo_600);
     }
 
     public void genreClick(View view) {
