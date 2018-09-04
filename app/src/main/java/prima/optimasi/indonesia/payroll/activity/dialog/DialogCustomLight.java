@@ -60,7 +60,7 @@ public class DialogCustomLight extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        List<People> items = DataGenerator.getPeopleData(this);
+        /*List<People> items = DataGenerator.getPeopleData(this);
         items.addAll(DataGenerator.getPeopleData(this));
         items.addAll(DataGenerator.getPeopleData(this));
 
@@ -75,7 +75,7 @@ public class DialogCustomLight extends AppCompatActivity {
                 showCustomDialog(obj);
             }
         });
-        showCustomDialog(items.get(0));
+        showCustomDialog(items.get(0));*/
     }
 
     private void showCustomDialog(People p) {

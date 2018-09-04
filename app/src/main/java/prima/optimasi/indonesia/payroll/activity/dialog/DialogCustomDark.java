@@ -57,22 +57,22 @@ public class DialogCustomDark extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        List<People> items = DataGenerator.getPeopleData(this);
+        /*List<People> items = DataGenerator.getPeopleData(this);
         items.addAll(DataGenerator.getPeopleData(this));
         items.addAll(DataGenerator.getPeopleData(this));
 
         //set data and list adapter
         mAdapter = new AdapterListBasic(this, items);
-        recyclerView.setAdapter(mAdapter);
+        */recyclerView.setAdapter(mAdapter);
 
         // on item list clicked
         mAdapter.setOnItemClickListener(new AdapterListBasic.OnItemClickListener() {
             @Override
             public void onItemClick(View view, People obj, int position) {
-                showCustomDialog(obj);
+                /*showCustomDialog(obj);*/
             }
         });
-        showCustomDialog(items.get(0));
+        /*showCustomDialog(items.get(0));*/
     }
 
     private void showCustomDialog(People p) {

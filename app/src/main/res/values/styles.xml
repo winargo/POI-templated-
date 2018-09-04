@@ -1,6 +1,9 @@
 <resources>
 
-    <style name="AppTheme" parent="BaseTheme" />
+    <style name="AppTheme" parent="BaseTheme" >
+        <item name="colorControlNormal">@color/white_transparency</item>
+        <item name="android:textColorSecondary">@color/white_transparency</item>
+    </style>
 
     <style name="BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
@@ -147,8 +150,8 @@
     </style>
 
     <style name="Toolbar.Light" parent="@style/AppTheme">
-        <item name="colorControlNormal">@color/grey_60</item>
-        <item name="android:textColorPrimary">@color/grey_60</item>
+        <item name="colorControlNormal">@color/overlay_light_90</item>
+        <item name="android:textColorPrimary">@color/overlay_light_90</item>
     </style>
 
     <!-- Base application theme. -->

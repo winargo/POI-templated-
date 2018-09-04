@@ -52,6 +52,7 @@ import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentApprov
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentChartKehadiran;
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentEmployee;
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentPengumuman;
+import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentReport;
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentTotalGaji;
 
 public class mainmenu_owner extends AppCompatActivity
@@ -220,8 +221,13 @@ public class mainmenu_owner extends AppCompatActivity
 
             @Override
             public void onGroupCollapse(int groupPosition) {
-
-
+                if(listDataHeader.get(groupPosition).equals("Approval")){
+                    pager.setCurrentItem(4);
+                    drawer.closeDrawer(Gravity.START);
+                }else if(listDataHeader.get(groupPosition).equals("Laporan")){
+                    pager.setCurrentItem(5);
+                    drawer.closeDrawer(Gravity.START);
+                }
             }
         });
 
@@ -383,6 +389,7 @@ public class mainmenu_owner extends AppCompatActivity
         listDataHeader.add("Pengumuman");
         listDataHeader.add("Seluruh Karyawan");
         listDataHeader.add("Approval");
+        listDataHeader.add("Laporan");
 
 
         List<String> top2510 = new ArrayList<String>();
@@ -392,13 +399,22 @@ public class mainmenu_owner extends AppCompatActivity
         top2510.add("Promosi");
         top2510.add("Reward / Punish");
 
+        List<String> lapor = new ArrayList<String>();
+        lapor.add("Cuti");
+        lapor.add("Izin");
+        lapor.add("Sakit");
+        lapor.add("Pinjaman");
+        lapor.add("Pengajian");
+
+
         listDataChild.put(listDataHeader.get(4), top2510);
+        listDataChild.put(listDataHeader.get(5), lapor);
     }
 
     public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
 
         // tab titles
-        private String[] tabTitles = new String[]{"Chart Kehadiran", "Total Gaji", "Pengumuman","Seluruh Karyawan","Approval"};
+        private String[] tabTitles = new String[]{"Chart Kehadiran", "Total Gaji", "Pengumuman","Seluruh Karyawan","Approval","Laporan"};
 
         public ExamplePagerAdapter(FragmentManager fm) {
             super(fm);
@@ -423,6 +439,8 @@ public class mainmenu_owner extends AppCompatActivity
                     return new FragmentEmployee();
                 case 4:
                     return new FragmentApproval();
+                case 5:
+                    return new FragmentReport();
                 default:
                     return null;
             }

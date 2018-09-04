@@ -62,7 +62,7 @@ public class AdapterGridTwoLineLight extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder vh;
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_grid_image_two_line_light, parent, false);
+        View v = LayoutInflater.from(ctx).inflate(R.layout.item_grid_image_two_line_light, null);
         vh = new OriginalViewHolder(v);
         return vh;
     }
@@ -71,13 +71,13 @@ public class AdapterGridTwoLineLight extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final pengumuman obj = items.get(position);
-        if (holder instanceof AdapterGridTwoLine.OriginalViewHolder) {
-            AdapterGridTwoLine.OriginalViewHolder view = (AdapterGridTwoLine.OriginalViewHolder) holder;
+            AdapterGridTwoLineLight.OriginalViewHolder view = (AdapterGridTwoLineLight.OriginalViewHolder) holder;
             view.name.setText(obj.getTitle());
             SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-            view.brief.setText(format.format(obj.getCreatedate()));
+            view.brief.setText(format.format(obj.getCreatedate())+" - Oleh "+obj.getCreated());
 
-            Picasso.get().load(obj.getImagelink()).into(view.image);
+            Picasso.get().load(obj.getImagelink()).centerCrop()
+                .resize(450,450).into(view.image);
 
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -90,7 +90,6 @@ public class AdapterGridTwoLineLight extends RecyclerView.Adapter<RecyclerView.V
                     ctx.startActivity(a);
                 }
             });
-        }
     }
 
     @Override

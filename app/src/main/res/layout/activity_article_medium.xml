@@ -8,17 +8,16 @@
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="wrap_content">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/white"
+            android:background="@color/colorPrimary"
             app:contentInsetStartWithNavigation="0dp"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:popupTheme="@style/AppTheme"
             app:theme="@style/Toolbar.Light">
 
             <LinearLayout
@@ -51,7 +50,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Miller Wilson"
-                        android:textColor="@color/grey_80" />
+                        android:textColor="@color/overlay_light_90"/>
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -64,7 +63,7 @@
                             android:layout_height="wrap_content"
                             android:text="Jul 13"
                             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                            android:textColor="@color/grey_60" />
+                            android:textColor="@color/overlay_light_90" />
 
                         <ImageView
                             android:layout_width="@dimen/spacing_medium"
@@ -73,14 +72,14 @@
                             android:layout_marginRight="@dimen/spacing_medium"
                             android:layout_marginTop="1dp"
                             android:src="@drawable/shape_circle"
-                            android:tint="@color/grey_40" />
+                            android:tint="@color/green_50" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="5 min read"
                             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                            android:textColor="@color/grey_60" />
+                            android:textColor="@color/overlay_light_90" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -116,12 +115,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="3"
+                    android:id="@+id/pengtitle"
                     android:text="@string/short_lorem_ipsum"
                     android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                     android:textColor="@color/grey_90"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/pengbrief"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
@@ -133,22 +134,16 @@
 
             <ImageView
                 android:layout_width="match_parent"
+                android:id="@+id/pengimage"
                 android:layout_height="250dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/image_11"
                 android:visibility="visible" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:maxLines="1"
-                android:text="Image source : pexels.com"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:textColor="@color/grey_80" />
 
             <TextView
                 android:layout_width="match_parent"
+                android:id="@+id/pengisi"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/spacing_large"
                 android:text="@string/very_long_lorem_ipsum"
@@ -157,149 +152,11 @@
                 android:visibility="visible" />
 
             <!--likes layout-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingLeft="@dimen/spacing_large"
-                android:paddingRight="@dimen/spacing_large">
-
-                <TextView
-                    android:id="@+id/name"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="3,556 Likes"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                    android:textColor="@color/grey_80" />
-
-                <View
-                    android:layout_width="@dimen/spacing_large"
-                    android:layout_height="wrap_content" />
-
-                <ImageButton
-                    android:id="@+id/more"
-                    android:layout_width="wrap_content"
-                    android:layout_height="?attr/actionBarSize"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:tint="@color/grey_80"
-                    app:srcCompat="@drawable/ic_more_vert" />
-
-            </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/grey_10" />
-
-            <!--related article-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/grey_5"
-                android:orientation="vertical"
-                android:padding="@dimen/spacing_large">
-
-                <android.support.v7.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="visible"
-                    app:cardBackgroundColor="@android:color/white"
-                    app:cardCornerRadius="3dp"
-                    app:cardUseCompatPadding="true">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="120dp"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/image_2" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="@dimen/spacing_large">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="More from Miller Wilson"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                                android:textColor="@color/grey_40" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Mauris sagittis non elit quis fermentum. Aenean at"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                                android:textColor="@color/grey_90" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                </android.support.v7.widget.CardView>
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/spacing_large" />
-
-                <android.support.v7.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="visible"
-                    app:cardBackgroundColor="@android:color/white"
-                    app:cardCornerRadius="3dp"
-                    app:cardUseCompatPadding="true">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="120dp"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/image_5" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="@dimen/spacing_large">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="More from Miller Wilson"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                                android:textColor="@color/grey_40" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Nam non pulvinar ligula, eget tincidunt ante"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                                android:textColor="@color/grey_90" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                </android.support.v7.widget.CardView>
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/spacing_large" />
-
-            </LinearLayout>
 
         </LinearLayout>
 

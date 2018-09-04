@@ -50,12 +50,12 @@ public class ListBasic extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        List<People> items = DataGenerator.getPeopleData(this);
+        /*List<People> items = DataGenerator.getPeopleData(this);
         items.addAll(DataGenerator.getPeopleData(this));
         items.addAll(DataGenerator.getPeopleData(this));
 
         //set data and list adapter
-        mAdapter = new AdapterListBasic(this, items);
+        mAdapter = new AdapterListBasic(this, items);*/
         recyclerView.setAdapter(mAdapter);
 
         // on item list clicked
