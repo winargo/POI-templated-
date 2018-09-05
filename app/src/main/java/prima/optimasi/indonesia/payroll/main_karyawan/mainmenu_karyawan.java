@@ -27,10 +27,13 @@ import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +42,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
@@ -53,6 +57,7 @@ import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentEmploy
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentPengumuman;
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentTotalGaji;
 import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
+import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
 public class mainmenu_karyawan extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -103,10 +108,35 @@ public class mainmenu_karyawan extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        LinearLayout linear = navigationView.findViewById(R.id.datanav);
-        ImageView imageuser = linear.findViewById(R.id.imageView);
+        RelativeLayout linear = (RelativeLayout) navigationView.getHeaderView(0);
+
+        CircularImageView imageuser = linear.findViewById(R.id.imageView);
+
+        if(prefs.getString("profileimage","").equals(generator.profileurl)){
+
+        }
+        else {
+            Picasso.get().load(prefs.getString("profileimage","")).transform(new CircleTransform()).into(imageuser);
+        }
+        Log.e("picture", "ppicture: "+ prefs.getString("profileimage",""));
+
         TextView username = linear.findViewById(R.id.username);
+        TextView borndate = linear.findViewById(R.id.prof_tempat_lahir);
+
+
+
         username.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("username",""));
+
+        if(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("tempatlahir","").equals("")){
+
+            borndate.setText("Not Available");
+
+        }else{
+
+            borndate.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("tempatlahir",""));
+
+        }
+
 
         tabpager = findViewById(R.id.tab_layout);
         pager = findViewById(R.id.viewpager);
@@ -277,11 +307,13 @@ public class mainmenu_karyawan extends AppCompatActivity
 
             SharedPreferences.Editor edit = prefs.edit();
 
+            edit.putString("iduser","");
             edit.putString("username","");
-            edit.putString("password","");
-            edit.putString("level","");
-            edit.putString("Authorization","");
             edit.putString("jabatan","");
+            edit.putString("level","");
+            edit.putString("tempatlahir","");
+            edit.putString("profileimage","");
+            edit.putString("Authorization","");
 
             edit.commit();
 

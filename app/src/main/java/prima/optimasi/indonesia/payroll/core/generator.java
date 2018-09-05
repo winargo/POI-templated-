@@ -47,9 +47,12 @@ public class generator {
 
     public static String keepaliveurl="http://"+ generator.Server+":"+port+"/login";
     public static String imageurl="http://"+ generator.Server+"/poihrd/uploads/aktivitas/pengumuman/";
+    public static String profileurl="http://"+ generator.Server+"/poihrd/uploads/master/karyawan/orang/";
+    public static String ownerurl="http://"+ generator.Server+"/poihrd/uploads/pengguna/";
     public static String pengumumanurl="http://"+ generator.Server+":4000/pengumuman";
     public static String scanloginurl = "http://"+ generator.Server+":4000/loginScan";
     public static String sendtokenurl = "http://"+ generator.Server+":4000/postnotif";
+    public static String listemployeeurl = "http://"+ generator.Server+":4000/karyawan";
 
     public static JSONObject jsondatalogin = null ;
 
@@ -477,6 +480,7 @@ public class generator {
                 try {
                     if(result.getString("status").equals("true")){
                         prefs.edit().putInt("statustoken",0).commit();
+
                         Log.e(TAG, "onPostExecute: "+"Registered to server" );
                         ((Activity)cntx).finish();
                     }

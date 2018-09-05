@@ -119,8 +119,14 @@ public class FragmentPengumuman extends Fragment {
 
         items = new ArrayList<>();
 
-        retrivepengumuman peng = new retrivepengumuman(getActivity(),prefs.getString("Authorization",""));
-        peng.execute();
+        if(mAdapter!=null){
+
+        }
+        else {
+            retrivepengumuman peng = new retrivepengumuman(getActivity(),prefs.getString("Authorization",""));
+            peng.execute();
+        }
+
 
         //set data and list adapter
 
@@ -170,7 +176,7 @@ public class FragmentPengumuman extends Fragment {
 
     }
 
-    public class retrivepengumuman extends AsyncTask<Void, Integer, String>
+    private class retrivepengumuman extends AsyncTask<Void, Integer, String>
     {
         String response = "";
         String error = "";
@@ -184,6 +190,7 @@ public class FragmentPengumuman extends Fragment {
 
         public retrivepengumuman(Context context, String kodeauth)
         {
+            Log.e(TAG, "code: "+kodeauth );
             dialog = new ProgressDialog(context);
             passeddata = kodeauth;
             this.username = generator.username;

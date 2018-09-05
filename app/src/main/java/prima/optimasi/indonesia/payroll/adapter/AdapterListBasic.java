@@ -77,7 +77,7 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
                 @Override
                 public void onClick(View view1) {
                     if(view.name.getText().toString().equals("Cuti")){
-                        Intent cuti = new Intent(ctx,owner_)
+
                     }
                     else if(view.name.getText().toString().equals("Izin")){
 

@@ -80,6 +80,7 @@ public class AdapterListSectioned extends RecyclerView.Adapter<RecyclerView.View
             OriginalViewHolder view = (OriginalViewHolder) holder;
 
             view.name.setText(p.name);
+            view.image.setVisibility(View.VISIBLE);
             Tools.displayImageRound(ctx, view.image, p.image);
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override

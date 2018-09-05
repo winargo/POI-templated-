@@ -94,7 +94,7 @@ public class activity_login extends FragmentActivity {
                 startActivity(mainmenu);
                 finish();
             }
-            else if(declare.equals("kepala")){
+            else if(declare.equals("Kepala") || declare.toUpperCase().equals("KEPALA") || declare.toLowerCase().equals("kepala")){
                 Intent mainmenu = new Intent(activity_login.this,mainmenu_kabag.class);
                 startActivity(mainmenu);
                 finish();
@@ -308,10 +308,12 @@ public class activity_login extends FragmentActivity {
                         if(status.equals("true")){
                             if(object!=null && token!=null ){
                                 pref.edit().putString("level","owner").commit();
-                                pref.edit().putString("Authorization",token.getString("token")).commit();
+                                pref.edit().putString("Authorization",responseObject.getString("token")).commit();
                                 pref.edit().putString("jabatan","owner").commit();
                                 pref.edit().putString("iduser","").commit();
-                                pref.edit().putString("username",username).commit();
+                                pref.edit().putString("profileimage",generator.ownerurl+responseObject.getString("foto")).commit();
+                                pref.edit().putString("tempatlahir","").commit();
+                                pref.edit().putString("username",responseObject.getString("nama_pengguna")).commit();
                             }
 
                             Snackbar.make(parent_view, "Success , Loging in ...", Snackbar.LENGTH_SHORT).show();
@@ -349,55 +351,7 @@ public class activity_login extends FragmentActivity {
 
             }
             else {
-                try {
-                    if(object!=null){
-                        JSONObject responseObject = object;
-                        String status= responseObject.getString("status");
 
-                        Log.e( "onPostExecute: ", object.toString());
-
-
-                        if(status.equals("true")){
-                            if(object!=null && token!=null ){
-                                pref.edit().putString("level","owner").commit();
-                                pref.edit().putString("Authorization",retoken).commit();
-                                pref.edit().putString("jabatan","owner").commit();
-                                pref.edit().putString("iduser","").commit();
-                                pref.edit().putString("username",username).commit();
-                            }
-
-                            Snackbar.make(parent_view, "Success , Loging in ...", Snackbar.LENGTH_SHORT).show();
-                            Intent mainmenu = new Intent(activity_login.this,mainmenu_owner.class);
-                            startActivity(mainmenu);
-                            finish();
-                        }
-                        else if(status.equals("false")) {
-                            Snackbar.make(parent_view, "Username atau Password Salah", Snackbar.LENGTH_SHORT).show();
-                        }
-                        else {
-                            Snackbar.make(parent_view, status, Snackbar.LENGTH_SHORT).show();
-                        }
-
-                        progress_bar.setVisibility(View.GONE);
-                        fab.setAlpha(1f);
-                    }
-                    else {
-                        Snackbar.make(parent_view, response, Snackbar.LENGTH_SHORT).show();
-                        progress_bar.setVisibility(View.GONE);
-                        fab.setAlpha(1f);
-                    }
-
-
-
-                    //JSONArray bArray= responseObject.getJSONArray("B");
-                    //for(int i=0;i<bArray.length();i++){
-                    //    JSONObject innerObject=bArray.getJSONObject(i);
-                    //    String a= innerObject.getString("a");
-                    //    String b= innerObject.getString("b");
-                    //}
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
             }
 
 
@@ -617,9 +571,9 @@ public class activity_login extends FragmentActivity {
                 if(result.getString("status").equals("true")){
                     JSONArray data = result.getJSONArray("data");
                     JSONObject dataisi = data.getJSONObject(0);
-                    String declare = dataisi.getString("jabatan");
+                    String declare = dataisi.getString("otoritas");
                     String iduser = dataisi.getString("idfp");
-                    if(declare.contains("hrd")){
+                    if(declare.contains("3")){
 
                         Snackbar.make(parent_view, "Success , Loging in ...", Snackbar.LENGTH_SHORT).show();
 
@@ -629,6 +583,8 @@ public class activity_login extends FragmentActivity {
                         pref.edit().putString("Authorization",result.getString("token")).commit();
                         pref.edit().putString("jabatan",declare).commit();
                         pref.edit().putString("iduser",iduser).commit();
+                        pref.edit().putString("tempatlahir",dataisi.getString("tempat_lahir")).commit();
+                        pref.edit().putString("profileimage",generator.profileurl+dataisi.getString("foto")).commit();
                         pref.edit().putString("username",dataisi.getString("nama")).commit();
 
                         FirebaseMessaging.getInstance().subscribeToTopic("hrd");
@@ -636,7 +592,7 @@ public class activity_login extends FragmentActivity {
 
 
                     }
-                    else if(declare.contains("Kepala") || declare.toUpperCase().contains("KEPALA") || declare.toLowerCase().contains("kepala")){
+                    else if(declare.contains("2")){
 
                         Snackbar.make(parent_view, "Success , Loging in ...", Snackbar.LENGTH_SHORT).show();
 
@@ -646,6 +602,8 @@ public class activity_login extends FragmentActivity {
                         pref.edit().putString("Authorization",result.getString("token")).commit();
                         pref.edit().putString("jabatan",declare).commit();
                         pref.edit().putString("iduser",iduser).commit();
+                        pref.edit().putString("tempatlahir",dataisi.getString("tempat_lahir")).commit();
+                        pref.edit().putString("profileimage",generator.profileurl+dataisi.getString("foto")).commit();
                         pref.edit().putString("username",dataisi.getString("nama")).commit();
 
                         FirebaseMessaging.getInstance().subscribeToTopic("kabag");
@@ -661,6 +619,8 @@ public class activity_login extends FragmentActivity {
                         pref.edit().putString("Authorization",result.getString("token")).commit();
                         pref.edit().putString("jabatan",declare).commit();
                         pref.edit().putString("iduser",iduser).commit();
+                        pref.edit().putString("tempatlahir",dataisi.getString("tempat_lahir")).commit();
+                        pref.edit().putString("profileimage",generator.profileurl+dataisi.getString("foto")).commit();
                         pref.edit().putString("username",dataisi.getString("nama")).commit();
 
                         FirebaseMessaging.getInstance().subscribeToTopic("karyawan");

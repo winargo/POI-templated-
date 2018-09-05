@@ -11,8 +11,10 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -24,10 +26,13 @@ import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +43,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -48,6 +54,7 @@ import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.main_hrd.mainmenu_hrd;
+import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
 public class mainmenu_kabag extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -57,6 +64,8 @@ public class mainmenu_kabag extends AppCompatActivity
     Adaptermenujabatan listAdapter;
     ExpandableListView expListView;
     ProgressDialog loadingdata;
+    TabLayout tabpager;
+    ViewPager pager;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
 
@@ -95,13 +104,39 @@ public class mainmenu_kabag extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        tabpager = findViewById(R.id.tab_layout);
+        pager = findViewById(R.id.viewpager);
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        LinearLayout linear = navigationView.findViewById(R.id.datanav);
-        ImageView imageuser = linear.findViewById(R.id.imageView);
+        RelativeLayout linear = (RelativeLayout) navigationView.getHeaderView(0);
+        CircularImageView imageuser = linear.findViewById(R.id.imageView);
+
+        if(prefs.getString("profileimage","").equals(generator.profileurl)){
+
+        }
+        else {
+            Picasso.get().load(prefs.getString("profileimage","")).transform(new CircleTransform()).into(imageuser);
+        }
+        Log.e("picture", "ppicture: "+ prefs.getString("profileimage",""));
+
         TextView username = linear.findViewById(R.id.username);
+        TextView borndate = linear.findViewById(R.id.prof_tempat_lahir);
+
+
+
         username.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("username",""));
+
+        if(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("tempatlahir","").equals("")){
+
+            borndate.setText("Not Available");
+
+        }else{
+
+            borndate.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("tempatlahir",""));
+
+        }
 
 
 
@@ -172,41 +207,6 @@ public class mainmenu_kabag extends AppCompatActivity
             }
         });
 
-        JSONObject data = null;
-
-        generator.retrivedata async = new generator.retrivedata(mainmenu_kabag.this,loadingdata);
-        async.execute();
-
-        while(generator.jsondatalogin==null){
-            if(generator.jsondatalogin==null) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Log.e("json generator status", "empty" );
-            }
-            else {
-                Log.e("json generator status", "not empty" );
-                break;
-            }
-        }
-
-        data = generator.jsondatalogin;
-        generator.jsondatalogin=null;
-        Log.e("JSON data",data.toString() );
-
-        JSONObject second = null;
-
-
-        try {
-            second = data.getJSONObject("data");
-            username.setText(second.getString("username"));
-            Log.e("onCreate: ",second.getString("username") );
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
 
         if(loadingdata.isShowing()){
             loadingdata.dismiss();
@@ -255,11 +255,13 @@ public class mainmenu_kabag extends AppCompatActivity
 
             SharedPreferences.Editor edit = prefs.edit();
 
+            edit.putString("iduser","");
             edit.putString("username","");
-            edit.putString("password","");
-            edit.putString("level","");
-            edit.putString("Authorization","");
             edit.putString("jabatan","");
+            edit.putString("level","");
+            edit.putString("tempatlahir","");
+            edit.putString("profileimage","");
+            edit.putString("Authorization","");
 
             edit.commit();
 
@@ -303,13 +305,13 @@ public class mainmenu_kabag extends AppCompatActivity
         listDataHeader.add("Home");
         listDataHeader.add("Profil");
         listDataHeader.add("Pengumuman");
-        listDataHeader.add("Daftar Anggota");
-        listDataHeader.add("Cek gaji");
+        listDataHeader.add("Anggota");
+        listDataHeader.add("Cek Gaji");
         listDataHeader.add("Pengajuan");
 
         // Adding child data
         List<String> top250 = new ArrayList<String>();
-        top250.add("Seluruh Karyawan");
+        top250.add("Karyawan");
         top250.add("Sendiri");
 
         List<String> top2510 = new ArrayList<String>();

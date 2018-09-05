@@ -15,6 +15,8 @@ import java.util.List;
 
 import prima.optimasi.indonesia.payroll.R;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class Adaptermenujabatan extends BaseExpandableListAdapter {
 
     private Context _context;
@@ -105,6 +107,7 @@ public class Adaptermenujabatan extends BaseExpandableListAdapter {
 
 
         if(headerTitle.equals("Pengumuman")){
+            expadingarrowdown.setVisibility(View.GONE);
             icon.setBackgroundResource(R.drawable.baseline_announcement_black_24dp);
         }else if(headerTitle.equals("Approval")){
             expadingarrowdown.setVisibility(View.VISIBLE);
@@ -118,7 +121,7 @@ public class Adaptermenujabatan extends BaseExpandableListAdapter {
         }else if(headerTitle.equals("Total Gaji")){
             expadingarrowdown.setVisibility(View.GONE);
             icon.setBackgroundResource(R.drawable.baseline_monetization_on_black_24dp);
-        }else if(headerTitle.equals("Seluruh Karyawan")){
+        }else if(headerTitle.equals("Karyawan")){
             expadingarrowdown.setVisibility(View.GONE);
             icon.setBackgroundResource(R.drawable.baseline_person_black_24dp);
         }else if(headerTitle.equals("List Karyawan")){
@@ -128,7 +131,12 @@ public class Adaptermenujabatan extends BaseExpandableListAdapter {
             expadingarrowdown.setVisibility(View.GONE);
             icon.setBackgroundResource(R.drawable.baseline_home_black_18dp);
         }else if(headerTitle.equals("Cek Gaji")){
-            expadingarrowdown.setVisibility(View.VISIBLE);
+            if(_context.getSharedPreferences("poipayroll",MODE_PRIVATE).getString("level","").equals("karyawan")){
+                expadingarrowdown.setVisibility(View.GONE);
+            }
+            else {
+                expadingarrowdown.setVisibility(View.VISIBLE);
+            }
             icon.setBackgroundResource(R.drawable.baseline_monetization_on_black_24dp);
 
         }else if(headerTitle.equals("Profil")){

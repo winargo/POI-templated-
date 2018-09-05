@@ -31,11 +31,14 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.JsonObject;
+import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,6 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.zip.Inflater;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
@@ -54,6 +58,7 @@ import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentEmployee;
 import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentHome;
 import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentPengumuman;
 import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentProfil;
+import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
 public class mainmenu_hrd extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -101,44 +106,34 @@ public class mainmenu_hrd extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        LinearLayout linear = navigationView.findViewById(R.id.datanav);
-        ImageView imageuser = linear.findViewById(R.id.imageView);
+        RelativeLayout linear = (RelativeLayout) navigationView.getHeaderView(0);
+        CircularImageView imageuser = linear.findViewById(R.id.imageView);
+
+        if(prefs.getString("profileimage","").equals(generator.profileurl)){
+
+        }
+        else {
+            Picasso.get().load(prefs.getString("profileimage","")).transform(new CircleTransform()).into(imageuser);
+        }
+        Log.e("picture", "ppicture: "+ prefs.getString("profileimage",""));
+
         TextView username = linear.findViewById(R.id.username);
+        TextView borndate = linear.findViewById(R.id.prof_tempat_lahir);
+
+
+
         username.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("username",""));
 
-        JSONObject data = null;
+        if(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("tempatlahir","").equals("")){
 
-        generator.retrivedata async = new generator.retrivedata(mainmenu_hrd.this,loadingdata);
-        async.execute();
+            borndate.setText("Not Available");
 
-        while(generator.jsondatalogin==null){
-            if(generator.jsondatalogin==null) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Log.e("json generator status", "empty" );
-            }
-            else {
-                Log.e("json generator status", "not empty" );
-                break;
-            }
+        }else{
+
+            borndate.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("tempatlahir",""));
+
         }
 
-        data = generator.jsondatalogin;
-        generator.jsondatalogin=null;
-        Log.e("JSON data",data.toString() );
-
-        JSONObject second = null;
-
-        try {
-            second = data.getJSONObject("data");
-            username.setText(second.getString("username"));
-            Log.e("onCreate: ",second.getString("username") );
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
         tabpager = findViewById(R.id.tab_layout);
         pager = findViewById(R.id.viewpager);
@@ -283,11 +278,13 @@ public class mainmenu_hrd extends AppCompatActivity
 
             SharedPreferences.Editor edit = prefs.edit();
 
+            edit.putString("iduser","");
             edit.putString("username","");
-            edit.putString("password","");
-            edit.putString("level","");
-            edit.putString("Authorization","");
             edit.putString("jabatan","");
+            edit.putString("level","");
+            edit.putString("tempatlahir","");
+            edit.putString("profileimage","");
+            edit.putString("Authorization","");
 
             edit.commit();
 
@@ -323,7 +320,7 @@ public class mainmenu_hrd extends AppCompatActivity
         listDataHeader.add("Pengajuan");
 
         List<String> top2501 = new ArrayList<String>();
-        top2501.add("Seluruh Karyawan");
+        top2501.add("Karyawan");
         top2501.add("Sendiri");
 
         // Adding child data
