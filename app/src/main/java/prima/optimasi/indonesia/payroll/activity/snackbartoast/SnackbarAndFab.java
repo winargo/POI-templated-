@@ -60,7 +60,7 @@ public class SnackbarAndFab extends AppCompatActivity {
         }
 
         //set data and list adapter
-        AdapterListSectioned mAdapter = new AdapterListSectioned(this, items);
+        /*AdapterListSectioned mAdapter = new AdapterListSectioned(this, items);
         recyclerView.setAdapter(mAdapter);
 
         // on item list clicked
@@ -69,7 +69,7 @@ public class SnackbarAndFab extends AppCompatActivity {
             public void onItemClick(View view, People obj, int position) {
                 Snackbar.make(parent_view, "Item " + obj.name + " clicked", Snackbar.LENGTH_LONG).show();
             }
-        });
+        });*/
 
         ((FloatingActionButton) findViewById(R.id.fab_add)).setOnClickListener(new View.OnClickListener() {
             @Override

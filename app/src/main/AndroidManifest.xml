@@ -607,6 +607,10 @@
             android:name=".universal.viewpengumuman"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".universal.viewkaryawan"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait" />
 
         <service android:name=".notification.firebasenotif">
             <intent-filter>

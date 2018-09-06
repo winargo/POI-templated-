@@ -1,6 +1,7 @@
 package prima.optimasi.indonesia.payroll.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,8 +9,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.Picasso;
+
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentPengumuman;
 import prima.optimasi.indonesia.payroll.model.People;
+import prima.optimasi.indonesia.payroll.objects.listkaryawan;
+import prima.optimasi.indonesia.payroll.universal.viewkaryawan;
+import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 
 import java.util.ArrayList;
@@ -20,31 +28,33 @@ public class AdapterListSectioned extends RecyclerView.Adapter<RecyclerView.View
     private final int VIEW_ITEM = 1;
     private final int VIEW_SECTION = 0;
 
-    private List<People> items = new ArrayList<>();
+    private List<listkaryawan> items = new ArrayList<>();
     private Context ctx;
     private OnItemClickListener mOnItemClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(View view, People obj, int position);
+        void onItemClick(View view, listkaryawan obj, int position);
     }
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
         this.mOnItemClickListener = mItemClickListener;
     }
 
-    public AdapterListSectioned(Context context, List<People> items) {
+    public AdapterListSectioned(Context context, List<listkaryawan> items) {
         this.items = items;
         ctx = context;
     }
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
-        public ImageView image;
+        public CircularImageView image;
         public TextView name;
+        public TextView desc;
         public View lyt_parent;
 
         public OriginalViewHolder(View v) {
             super(v);
-            image = (ImageView) v.findViewById(R.id.image);
+            desc = v.findViewById(R.id.description);
+            image =  v.findViewById(R.id.image);
             name = (TextView) v.findViewById(R.id.name);
             lyt_parent = (View) v.findViewById(R.id.lyt_parent);
         }
@@ -75,24 +85,33 @@ public class AdapterListSectioned extends RecyclerView.Adapter<RecyclerView.View
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        People p = items.get(position);
+        final listkaryawan p = items.get(position);
         if (holder instanceof OriginalViewHolder) {
             OriginalViewHolder view = (OriginalViewHolder) holder;
 
-            view.name.setText(p.name);
+            view.name.setText(p.getNama());
+            view.desc.setText(p.getDesc());
             view.image.setVisibility(View.VISIBLE);
-            Tools.displayImageRound(ctx, view.image, p.image);
+
+            Picasso.get().load(p.getImagelink()).transform(new CircleTransform()).into(view.image);
+
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (mOnItemClickListener != null) {
-                        mOnItemClickListener.onItemClick(view, items.get(position), position);
+
+                        Intent viewkaryawans = new Intent(ctx,viewkaryawan.class);
+
+                        viewkaryawans.putExtra("idkaryawan",p.getIskar());
+
+                        ctx.startActivity(viewkaryawans);
+
                     }
                 }
             });
         } else {
             SectionViewHolder view = (SectionViewHolder) holder;
-            view.title_section.setText(p.name);
+            view.title_section.setText(p.getJabatan());
         }
     }
 
@@ -103,11 +122,11 @@ public class AdapterListSectioned extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemViewType(int position) {
-        return this.items.get(position).section ? VIEW_SECTION : VIEW_ITEM;
+        return this.items.get(position).isSection() ? VIEW_SECTION : VIEW_ITEM;
     }
 
-    public void insertItem(int index, People people){
-        items.add(index, people);
+    public void insertItem(int index, listkaryawan kar){
+        items.add(index, kar);
         notifyItemInserted(index);
     }
 

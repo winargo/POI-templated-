@@ -4,18 +4,56 @@ import java.util.List;
 
 public class listkaryawan {
     String jabatan;
-    List<karyawan> daftar;
+    String iskar;
+    boolean section = false;
+    String nama,desc;
+    String imagelink;
+
+    public void setIskar(String iskar) {
+        this.iskar = iskar;
+    }
+
+    public void setImagelink(String imagelink) {
+        this.imagelink = imagelink;
+    }
+
+    public listkaryawan(){}
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public void setNama(String nama) {
+        this.nama = nama;
+    }
+
+    public String getIskar() {
+        return iskar;
+    }
+
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public String getNama() {
+        return nama;
+    }
 
     public String getJabatan() {
         return jabatan;
     }
 
-    public List<karyawan> getDaftar() {
-        return daftar;
+    public String getImagelink() {
+        return imagelink;
     }
 
-    public void setDaftar(List<karyawan> daftar) {
-        this.daftar = daftar;
+    public boolean isSection() {
+        return section;
+    }
+
+    public void setSection(boolean section) {
+        this.section = section;
     }
 
     public void setJabatan(String jabatan) {

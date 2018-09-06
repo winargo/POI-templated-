@@ -115,7 +115,7 @@ public class FabMoreText extends AppCompatActivity {
         }
 
         //set data and list adapter
-        AdapterListSectioned mAdapter = new AdapterListSectioned(this, items);
+        /*AdapterListSectioned mAdapter = new AdapterListSectioned(this, items);
         recyclerView.setAdapter(mAdapter);
 
         // on item list clicked
@@ -124,7 +124,7 @@ public class FabMoreText extends AppCompatActivity {
             public void onItemClick(View view, People obj, int position) {
                 Toast.makeText(getApplicationContext(), "Item " + obj.name + " clicked", Toast.LENGTH_LONG).show();
             }
-        });
+        });*/
 
     }
 

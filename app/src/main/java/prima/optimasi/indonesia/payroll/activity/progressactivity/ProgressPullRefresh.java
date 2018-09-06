@@ -67,7 +67,7 @@ public class ProgressPullRefresh extends AppCompatActivity {
         }
 
         //set data and list adapter
-        mAdapter = new AdapterListSectioned(this, items);
+        /*mAdapter = new AdapterListSectioned(this, items);
         recyclerView.setAdapter(mAdapter);
 
         // on item list clicked
@@ -76,7 +76,7 @@ public class ProgressPullRefresh extends AppCompatActivity {
             public void onItemClick(View view, People obj, int position) {
                 Snackbar.make(parent_view, "Item " + obj.name + " clicked", Snackbar.LENGTH_SHORT).show();
             }
-        });
+        });*/
 
         // on swipe list
         swipe_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -111,8 +111,8 @@ public class ProgressPullRefresh extends AppCompatActivity {
             @Override
             public void run() {
                 List<People> items = DataGenerator.getPeopleData(getApplicationContext());
-                mAdapter.insertItem(1, items.get(0));
-                swipeProgress(false);
+                /*mAdapter.insertItem(1, items.get(0));
+                swipeProgress(false);*/
             }
         }, 3000);
     }

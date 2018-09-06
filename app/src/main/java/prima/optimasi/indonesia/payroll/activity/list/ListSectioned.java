@@ -64,7 +64,7 @@ public class ListSectioned extends AppCompatActivity {
         }
 
         //set data and list adapter
-        mAdapter = new AdapterListSectioned(this, items);
+        /*mAdapter = new AdapterListSectioned(this, items);
         recyclerView.setAdapter(mAdapter);
 
         // on item list clicked
@@ -73,7 +73,7 @@ public class ListSectioned extends AppCompatActivity {
             public void onItemClick(View view, People obj, int position) {
                 Snackbar.make(parent_view, "Item " + obj.name + " clicked", Snackbar.LENGTH_SHORT).show();
             }
-        });
+        });*/
 
     }
 
