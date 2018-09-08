@@ -114,8 +114,7 @@ public class FragmentPengumuman extends Fragment {
         );
 
         recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-        recyclerView.setHasFixedSize(true);
+
 
         items = new ArrayList<>();
 
@@ -293,8 +292,9 @@ public class FragmentPengumuman extends Fragment {
                         }
 
                         mAdapter = new AdapterGridTwoLineLight(getActivity(), items);
+                        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+                        recyclerView.setHasFixedSize(true);
                         recyclerView.setAdapter(mAdapter);
-
                         // on item list clicked
                         mAdapter.setOnItemClickListener(new AdapterGridTwoLineLight.OnItemClickListener() {
                             @Override

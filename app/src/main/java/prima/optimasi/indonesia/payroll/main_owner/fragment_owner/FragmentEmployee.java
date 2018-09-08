@@ -30,6 +30,7 @@ import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.adapter.AdapterListSectioned;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
+import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 
 public class FragmentEmployee extends Fragment {
 
@@ -278,7 +279,7 @@ public class FragmentEmployee extends Fragment {
 
                         }
 
-                        mAdapter = new AdapterListSectioned(getActivity(), items);
+                        mAdapter = new AdapterListSectioned(getActivity(), items, ItemAnimation.LEFT_RIGHT);
                         recyclerView.setAdapter(mAdapter);
 
                         // on item list clicked

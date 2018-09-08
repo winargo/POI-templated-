@@ -1,18 +1,23 @@
 package prima.optimasi.indonesia.payroll.main_karyawan;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v13.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -20,6 +25,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,6 +53,8 @@ import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
+import prima.optimasi.indonesia.payroll.main_hrd.mainmenu_hrd;
+import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentAbsensi;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentCekGaji;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentPengajuan;
@@ -57,6 +65,7 @@ import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentEmploy
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentPengumuman;
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentTotalGaji;
 import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
+import prima.optimasi.indonesia.payroll.universal.absence.facedetection;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
 public class mainmenu_karyawan extends AppCompatActivity
@@ -98,7 +107,7 @@ public class mainmenu_karyawan extends AppCompatActivity
 
         generator initializedata = new generator(mainmenu_karyawan.this);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         expListView = drawer.findViewById(R.id.lvExp);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -175,9 +184,39 @@ public class mainmenu_karyawan extends AppCompatActivity
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v,
                                         int groupPosition, long id) {
-                // Toast.makeText(getApplicationContext(),
-                // "Group Clicked " + listDataHeader.get(groupPosition),
-                // Toast.LENGTH_SHORT).show();
+                if(listDataHeader.get(groupPosition).equals("Pengumuman")){
+                    pager.setCurrentItem(1);
+                    drawer.closeDrawer(Gravity.START);
+                }else if(listDataHeader.get(groupPosition).equals("List Karyawan")){
+                    pager.setCurrentItem(2);
+                    drawer.closeDrawer(Gravity.START);
+                }else if(listDataHeader.get(groupPosition).equals("Home")){
+                    pager.setCurrentItem(0);
+                    drawer.closeDrawer(Gravity.START);
+                }else if(listDataHeader.get(groupPosition).equals("Profil")){
+                    pager.setCurrentItem(3);
+                    drawer.closeDrawer(Gravity.START);
+                }
+                else if(listDataHeader.get(groupPosition).equals("Absensi")){
+                    if (ContextCompat.checkSelfPermission(mainmenu_karyawan.this, Manifest.permission.CAMERA)
+                            == PackageManager.PERMISSION_DENIED){
+                        ActivityCompat.requestPermissions(mainmenu_karyawan.this, new String[]{Manifest.permission.CAMERA}, 202);
+                        if (ContextCompat.checkSelfPermission(mainmenu_karyawan.this, Manifest.permission.CAMERA)
+                                == PackageManager.PERMISSION_DENIED){
+                            AlertDialog dialog = new AlertDialog.Builder(mainmenu_karyawan.this).setTitle("Permission Required").setMessage("Camera Permission Required !!").show();
+                        }
+                        else {
+                            drawer.closeDrawer(Gravity.START);
+                            Intent a = new Intent(mainmenu_karyawan.this,facedetection.class);
+                            startActivity(a);
+                        }
+                    }
+                    else {
+                        drawer.closeDrawer(Gravity.START);
+                        Intent a = new Intent(mainmenu_karyawan.this,facedetection.class);
+                        startActivity(a);
+                    }
+                }
                 return false;
             }
         });
@@ -360,6 +399,7 @@ public class mainmenu_karyawan extends AppCompatActivity
         listDataHeader.add("Cek Gaji");
         listDataHeader.add("Log Absensi");
         listDataHeader.add("Pengajuan");
+        listDataHeader.add("Absensi");
 
         // Adding child data
         List<String> top250 = new ArrayList<String>();

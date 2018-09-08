@@ -94,7 +94,7 @@ public class activity_login extends FragmentActivity {
                 startActivity(mainmenu);
                 finish();
             }
-            else if(declare.equals("Kepala") || declare.toUpperCase().equals("KEPALA") || declare.toLowerCase().equals("kepala")){
+            else if(declare.equals("kabag")){
                 Intent mainmenu = new Intent(activity_login.this,mainmenu_kabag.class);
                 startActivity(mainmenu);
                 finish();

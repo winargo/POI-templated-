@@ -1,6 +1,10 @@
 package prima.optimasi.indonesia.payroll.main_hrd;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.support.v13.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -14,6 +18,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -58,6 +63,7 @@ import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentEmployee;
 import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentHome;
 import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentPengumuman;
 import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentProfil;
+import prima.optimasi.indonesia.payroll.universal.absence.facedetection;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
 public class mainmenu_hrd extends AppCompatActivity
@@ -189,6 +195,26 @@ public class mainmenu_hrd extends AppCompatActivity
                     pager.setCurrentItem(3);
                     drawer.closeDrawer(Gravity.START);
                 }
+                else if(listDataHeader.get(groupPosition).equals("Absensi")){
+                    if (ContextCompat.checkSelfPermission(mainmenu_hrd.this, Manifest.permission.CAMERA)
+                            == PackageManager.PERMISSION_DENIED){
+                        ActivityCompat.requestPermissions(mainmenu_hrd.this, new String[]{Manifest.permission.CAMERA}, 202);
+                        if (ContextCompat.checkSelfPermission(mainmenu_hrd.this, Manifest.permission.CAMERA)
+                                == PackageManager.PERMISSION_DENIED){
+                            AlertDialog dialog = new AlertDialog.Builder(mainmenu_hrd.this).setTitle("Permission Required").setMessage("Camera Permission Required !!").show();
+                        }
+                        else {
+                            drawer.closeDrawer(Gravity.START);
+                            Intent a = new Intent(mainmenu_hrd.this,facedetection.class);
+                            startActivity(a);
+                        }
+                    }
+                    else {
+                        drawer.closeDrawer(Gravity.START);
+                        Intent a = new Intent(mainmenu_hrd.this,facedetection.class);
+                        startActivity(a);
+                    }
+                }
                 return false;
             }
         });
@@ -318,6 +344,7 @@ public class mainmenu_hrd extends AppCompatActivity
         listDataHeader.add("Profil");
         listDataHeader.add("Cek Gaji");
         listDataHeader.add("Pengajuan");
+        listDataHeader.add("Absensi");
 
         List<String> top2501 = new ArrayList<String>();
         top2501.add("Karyawan");

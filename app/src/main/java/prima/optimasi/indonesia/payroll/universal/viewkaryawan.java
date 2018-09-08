@@ -1,8 +1,12 @@
 package prima.optimasi.indonesia.payroll.universal;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -28,6 +32,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -49,6 +54,8 @@ public class viewkaryawan extends AppCompatActivity {
     TextView scount,icount,acount;
     ImageButton message,phone;
     CircularImageView image;
+
+
 
     private RecyclerView recyclerView;
     private AdapterListSectioned mAdapter;
@@ -73,12 +80,67 @@ public class viewkaryawan extends AppCompatActivity {
         gaji = findViewById(R.id.kargaji);
         status = findViewById(R.id.karstatus);
 
+        message = findViewById(R.id.karmsg);
+        phone = findViewById(R.id.karphone);
+
         icount = findViewById(R.id.karizin);
         scount = findViewById(R.id.karsakit);
         acount = findViewById(R.id.karabsen);
 
         retrivekaryawan kar = new retrivekaryawan(this,getIntent().getStringExtra("idkaryawan"));
         kar.execute();
+
+        message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final String[] numbers= {telepon.getText().toString(), hp.getText().toString()};
+
+                AlertDialog.Builder dialog = new AlertDialog.Builder(viewkaryawan.this);
+                dialog.setTitle("Sms to");
+                dialog.setItems(numbers, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                        sendIntent.setData(Uri.parse("sms:"+numbers[which]));
+                        if (sendIntent.resolveActivity(getPackageManager()) != null) {
+                            startActivity(sendIntent);
+                        }
+                    }
+                });
+
+                dialog.show();
+
+
+
+            }
+        });
+
+        phone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final String[] numbers= {telepon.getText().toString(), hp.getText().toString()};
+
+                AlertDialog.Builder dialog = new AlertDialog.Builder(viewkaryawan.this);
+                dialog.setTitle("Call");
+                dialog.setItems(numbers, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Intent.ACTION_DIAL);
+                        intent.setData(Uri.parse("tel:"+numbers[which]));
+                        if (intent.resolveActivity(getPackageManager()) != null) {
+                            startActivity(intent);
+                        }
+                    }
+                });
+
+                dialog.show();
+
+
+
+            }
+        });
 
         initToolbar();
         initComponent();
@@ -222,7 +284,14 @@ public class viewkaryawan extends AppCompatActivity {
                         JSONArray pengsarray = result.getJSONArray("row");
                         JSONObject obj = pengsarray.getJSONObject(0);
                         templahir.setText(obj.getString("tempat_lahir"));
-                        tanggallahir.setText(obj.getString("tgl_lahir"));
+
+                        SimpleDateFormat parsed = new SimpleDateFormat("yyyy-MM-dd");
+
+                        Date temp = parsed.parse(obj.getString("tgl_lahir"));
+
+                        parsed = new SimpleDateFormat("dd MMMM yyyy");
+
+                        tanggallahir.setText(parsed.format(temp));
                         nama.setText(obj.getString("nama"));
                         jabatan.setText(obj.getString("jabatan"));
                         telepon.setText(obj.getString("telepon"));

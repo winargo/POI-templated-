@@ -18,6 +18,7 @@ import prima.optimasi.indonesia.payroll.model.People;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 import prima.optimasi.indonesia.payroll.universal.viewkaryawan;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
+import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class AdapterListSectioned extends RecyclerView.Adapter<RecyclerView.View
 
     private final int VIEW_ITEM = 1;
     private final int VIEW_SECTION = 0;
+    private int animation_type = 0;
 
     private List<listkaryawan> items = new ArrayList<>();
     private Context ctx;
@@ -40,9 +42,10 @@ public class AdapterListSectioned extends RecyclerView.Adapter<RecyclerView.View
         this.mOnItemClickListener = mItemClickListener;
     }
 
-    public AdapterListSectioned(Context context, List<listkaryawan> items) {
+    public AdapterListSectioned(Context context, List<listkaryawan> items,int animation_type) {
         this.items = items;
         ctx = context;
+        this.animation_type = animation_type;
     }
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
@@ -109,6 +112,7 @@ public class AdapterListSectioned extends RecyclerView.Adapter<RecyclerView.View
                     }
                 }
             });
+            setAnimation(view.itemView, position);
         } else {
             SectionViewHolder view = (SectionViewHolder) holder;
             view.title_section.setText(p.getJabatan());
@@ -128,6 +132,16 @@ public class AdapterListSectioned extends RecyclerView.Adapter<RecyclerView.View
     public void insertItem(int index, listkaryawan kar){
         items.add(index, kar);
         notifyItemInserted(index);
+    }
+
+    private int lastPosition = -1;
+    private boolean on_attach = true;
+
+    private void setAnimation(View view, int position) {
+        if (position > lastPosition) {
+            ItemAnimation.animate(view, on_attach ? position : -1, animation_type);
+            lastPosition = position;
+        }
     }
 
 }

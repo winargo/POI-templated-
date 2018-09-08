@@ -1,18 +1,26 @@
 package prima.optimasi.indonesia.payroll.main_kabag;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v13.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -20,6 +28,8 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,6 +64,14 @@ import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.main_hrd.mainmenu_hrd;
+import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentCekGaji;
+import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentEmployee;
+import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentHome;
+import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentPengajuan;
+import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentPengumuman;
+import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentProfil;
+import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
+import prima.optimasi.indonesia.payroll.universal.absence.facedetection;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
 public class mainmenu_kabag extends AppCompatActivity
@@ -68,6 +86,8 @@ public class mainmenu_kabag extends AppCompatActivity
     ViewPager pager;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
+
+    Menu tempmenu ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +117,7 @@ public class mainmenu_kabag extends AppCompatActivity
 
         generator initializedata = new generator(mainmenu_kabag.this);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         expListView = drawer.findViewById(R.id.lvExp);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -138,7 +158,51 @@ public class mainmenu_kabag extends AppCompatActivity
 
         }
 
+        tabpager = findViewById(R.id.tab_layout);
+        pager = findViewById(R.id.viewpager);
 
+        ExamplePagerAdapter adapter = new ExamplePagerAdapter(getSupportFragmentManager());
+
+        pager.setAdapter(adapter);
+
+        tabpager.setupWithViewPager(pager);
+
+        tabpager.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener(){
+            @Override
+            public void onTabSelected(TabLayout.Tab tab){
+                int position = tab.getPosition();
+                if(position==2){
+                    if(tempmenu!=null){
+                        tempmenu.findItem(R.id.action_search).setVisible(true);
+                        tempmenu.findItem(R.id.action_add).setVisible(true);
+                    }
+                }
+                else {
+                    if(tempmenu!=null){
+                        tempmenu.findItem(R.id.action_search).setVisible(false);
+                        tempmenu.findItem(R.id.action_add).setVisible(false);
+                    }
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
+        for (int i = 0; i < tabpager.getTabCount(); i++) {
+            //noinspection ConstantConditions
+            TextView tv=(TextView) LayoutInflater.from(this).inflate(R.layout.customtablayout,null);
+            tv.setTextColor(Color.WHITE);
+            tabpager.getTabAt(i).setCustomView(tv);
+
+        }
 
         preparekabag();
 
@@ -161,6 +225,39 @@ public class mainmenu_kabag extends AppCompatActivity
                 // Toast.makeText(getApplicationContext(),
                 // "Group Clicked " + listDataHeader.get(groupPosition),
                 // Toast.LENGTH_SHORT).show();
+                if(listDataHeader.get(groupPosition).equals("Pengumuman")){
+                    pager.setCurrentItem(1);
+                    drawer.closeDrawer(Gravity.START);
+                }else if(listDataHeader.get(groupPosition).equals("List Karyawan")){
+                    pager.setCurrentItem(2);
+                    drawer.closeDrawer(Gravity.START);
+                }else if(listDataHeader.get(groupPosition).equals("Home")){
+                    pager.setCurrentItem(0);
+                    drawer.closeDrawer(Gravity.START);
+                }else if(listDataHeader.get(groupPosition).equals("Profil")){
+                    pager.setCurrentItem(3);
+                    drawer.closeDrawer(Gravity.START);
+                }
+                else if(listDataHeader.get(groupPosition).equals("Absensi")){
+                    if (ContextCompat.checkSelfPermission(mainmenu_kabag.this, Manifest.permission.CAMERA)
+                            == PackageManager.PERMISSION_DENIED){
+                        ActivityCompat.requestPermissions(mainmenu_kabag.this, new String[]{Manifest.permission.CAMERA}, 202);
+                        if (ContextCompat.checkSelfPermission(mainmenu_kabag.this, Manifest.permission.CAMERA)
+                                == PackageManager.PERMISSION_DENIED){
+                            AlertDialog dialog = new AlertDialog.Builder(mainmenu_kabag.this).setTitle("Permission Required").setMessage("Camera Permission Required !!").show();
+                        }
+                        else {
+                            drawer.closeDrawer(Gravity.START);
+                            Intent a = new Intent(mainmenu_kabag.this,facedetection.class);
+                            startActivity(a);
+                        }
+                    }
+                    else {
+                        drawer.closeDrawer(Gravity.START);
+                        Intent a = new Intent(mainmenu_kabag.this,facedetection.class);
+                        startActivity(a);
+                    }
+                }
                 return false;
             }
         });
@@ -308,6 +405,8 @@ public class mainmenu_kabag extends AppCompatActivity
         listDataHeader.add("Anggota");
         listDataHeader.add("Cek Gaji");
         listDataHeader.add("Pengajuan");
+        listDataHeader.add("Absensi");
+
 
         // Adding child data
         List<String> top250 = new ArrayList<String>();
@@ -321,6 +420,47 @@ public class mainmenu_kabag extends AppCompatActivity
 
         listDataChild.put(listDataHeader.get(4), top250);
         listDataChild.put(listDataHeader.get(5), top2510);
+    }
+    public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
+
+        // tab titles
+        private String[] tabTitles = new String[]{"Home", "Profil", "Pengumuman","Anggota","Cek Gaji","Pengajuan"};
+
+        public ExamplePagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        // overriding getPageTitle()
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return tabTitles[position];
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            switch (position) {
+                case 0:
+                    return new FragmentHome();
+                case 1:
+                    return new FragmentProfil();
+                case 2:
+                    return new FragmentPengumuman();
+                case 3:
+                    return new FragmentEmployee();
+                case 4:
+                    return new FragmentCekGaji();
+                case 5:
+                    return new FragmentPengajuan();
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public int getCount() {
+            return tabTitles.length;
+        }
+        // ...
     }
 
 }

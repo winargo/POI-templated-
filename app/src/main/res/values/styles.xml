@@ -3,6 +3,7 @@
     <style name="AppTheme" parent="BaseTheme" >
         <item name="colorControlNormal">@color/white_transparency</item>
         <item name="android:textColorSecondary">@color/white_transparency</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">

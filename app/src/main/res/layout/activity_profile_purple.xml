@@ -514,23 +514,17 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/spacing_xxlarge" />
+                android:layout_height="@dimen/spacing_medium" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5sp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                android:text="Timeline"/>
+            <include layout="@layout/activity_timeline_path"></include>
 
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end|right"
-        android:layout_margin="@dimen/spacing_smlarge"
-        android:clickable="true"
-        android:tint="@android:color/white"
-        app:backgroundTint="@color/light_green_600"
-        app:fabSize="normal"
-        app:rippleColor="@android:color/white"
-        app:srcCompat="@drawable/ic_person_add" />
 
 </android.support.design.widget.CoordinatorLayout>

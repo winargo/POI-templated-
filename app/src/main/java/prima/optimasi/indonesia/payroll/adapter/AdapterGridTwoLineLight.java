@@ -77,7 +77,7 @@ public class AdapterGridTwoLineLight extends RecyclerView.Adapter<RecyclerView.V
             view.brief.setText(format.format(obj.getCreatedate())+" - Oleh "+obj.getCreated());
 
             Picasso.get().load(obj.getImagelink()).centerCrop()
-                .resize(450,450).into(view.image);
+                .resize(400,400).into(view.image);
 
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
