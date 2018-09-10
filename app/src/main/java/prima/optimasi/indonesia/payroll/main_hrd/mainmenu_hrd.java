@@ -2,6 +2,7 @@ package prima.optimasi.indonesia.payroll.main_hrd;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.support.v13.app.ActivityCompat;
@@ -40,6 +41,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blikoon.qrcodescanner.QrCodeActivity;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.JsonObject;
 import com.mikhaellopez.circularimageview.CircularImageView;
@@ -63,6 +65,7 @@ import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentEmployee;
 import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentHome;
 import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentPengumuman;
 import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentProfil;
+import prima.optimasi.indonesia.payroll.universal.absence.facecapture;
 import prima.optimasi.indonesia.payroll.universal.absence.facedetection;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
@@ -205,14 +208,51 @@ public class mainmenu_hrd extends AppCompatActivity
                         }
                         else {
                             drawer.closeDrawer(Gravity.START);
-                            Intent a = new Intent(mainmenu_hrd.this,facedetection.class);
-                            startActivity(a);
+                            String[] colors = {"Face Registration", "Face Recognition", "QR Code"};
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_hrd.this);
+                            builder.setTitle("Pilihan");
+                            builder.setItems(colors, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if(which==0){
+                                        Intent a = new Intent(mainmenu_hrd.this,facecapture.class);
+                                        startActivity(a);
+                                    }else if(which==1){
+                                        Intent a = new Intent(mainmenu_hrd.this,facedetection.class);
+                                        startActivity(a);
+                                    }else if(which==2){
+                                        Intent i = new Intent(mainmenu_hrd.this,QrCodeActivity.class);
+                                        startActivityForResult( i,104);
+                                    }
+                                }
+                            });
+                            builder.show();
                         }
                     }
                     else {
                         drawer.closeDrawer(Gravity.START);
-                        Intent a = new Intent(mainmenu_hrd.this,facedetection.class);
-                        startActivity(a);
+
+                        String[] colors = {"Face Registration", "Face Recognition", "QR Code"};
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_hrd.this);
+                        builder.setTitle("Pilihan");
+                        builder.setItems(colors, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if(which==0){
+                                    Intent a = new Intent(mainmenu_hrd.this,facecapture.class);
+                                    startActivity(a);
+                                }else if(which==1){
+                                    Intent a = new Intent(mainmenu_hrd.this,facedetection.class);
+                                    startActivity(a);
+                                }else if(which==2){
+                                    Intent i = new Intent(mainmenu_hrd.this,QrCodeActivity.class);
+                                    startActivityForResult( i,104);
+                                }
+                            }
+                        });
+                        builder.show();
                     }
                 }
                 return false;

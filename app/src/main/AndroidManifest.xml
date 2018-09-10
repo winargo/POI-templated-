@@ -609,6 +609,12 @@
         <activity
             android:name=".universal.absence.facedetection"
             android:label="Scan Wajah"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".universal.absence.facecapture"
+            android:label="Scan Wajah"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme"></activity>
         <activity
             android:name=".universal.viewpengumuman"
