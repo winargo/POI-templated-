@@ -133,6 +133,9 @@ public class Adaptermenujabatan extends BaseExpandableListAdapter {
         }else if(headerTitle.equals("Home")){
             expadingarrowdown.setVisibility(View.GONE);
             icon.setBackgroundResource(R.drawable.baseline_home_black_18dp);
+        }else if(headerTitle.equals("Absensi")){
+            expadingarrowdown.setVisibility(View.GONE);
+            icon.setBackgroundResource(R.drawable.ic_baseline_aspect_ratio_24px);
         }else if(headerTitle.equals("Cek Gaji")){
             if(_context.getSharedPreferences("poipayroll",MODE_PRIVATE).getString("level","").equals("karyawan")){
                 expadingarrowdown.setVisibility(View.GONE);

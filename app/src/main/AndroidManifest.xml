@@ -625,6 +625,10 @@
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name="qrcodescanner.QrCodeActivity"
+            android:screenOrientation="portrait" />
+
         <service android:name=".notification.firebasenotif">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />

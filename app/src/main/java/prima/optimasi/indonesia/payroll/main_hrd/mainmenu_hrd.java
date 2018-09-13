@@ -41,7 +41,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.blikoon.qrcodescanner.QrCodeActivity;
+import qrcodescanner.QrCodeActivity;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.JsonObject;
 import com.mikhaellopez.circularimageview.CircularImageView;

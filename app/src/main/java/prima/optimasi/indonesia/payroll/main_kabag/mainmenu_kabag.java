@@ -1,6 +1,7 @@
 package prima.optimasi.indonesia.payroll.main_kabag;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -40,6 +41,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import qrcodescanner.QrCodeActivity;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
@@ -70,7 +72,9 @@ import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentHome;
 import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentPengajuan;
 import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentPengumuman;
 import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentProfil;
+import prima.optimasi.indonesia.payroll.main_karyawan.mainmenu_karyawan;
 import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
+import prima.optimasi.indonesia.payroll.universal.absence.facecapture;
 import prima.optimasi.indonesia.payroll.universal.absence.facedetection;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
@@ -88,9 +92,12 @@ public class mainmenu_kabag extends AppCompatActivity
     HashMap<String, List<String>> listDataChild;
 
     Menu tempmenu ;
+    String TAG = "ABSENSI";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
 
         loadingdata = new ProgressDialog(this);
         loadingdata.setTitle("Please Wait");
@@ -239,7 +246,22 @@ public class mainmenu_kabag extends AppCompatActivity
                     drawer.closeDrawer(Gravity.START);
                 }
                 else if(listDataHeader.get(groupPosition).equals("Absensi")){
-                    if (ContextCompat.checkSelfPermission(mainmenu_kabag.this, Manifest.permission.CAMERA)
+                    drawer.closeDrawer(Gravity.START);
+                    String[] colors = {"Check IN", "Check OUT","Break OUT","Break IN","Extra IN","Extra OUT"};
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_kabag.this);
+                    builder.setTitle("Absensi");
+                    builder.setItems(colors, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent a = new Intent(mainmenu_kabag.this,QrCodeActivity.class);
+                            a.putExtra("absensi",which);
+                            a.putExtra("keepalive",1);
+                            startActivity(a);
+                        }
+                    });
+                    builder.show();
+                    /*if (ContextCompat.checkSelfPermission(mainmenu_kabag.this, Manifest.permission.CAMERA)
                             == PackageManager.PERMISSION_DENIED){
                         ActivityCompat.requestPermissions(mainmenu_kabag.this, new String[]{Manifest.permission.CAMERA}, 202);
                         if (ContextCompat.checkSelfPermission(mainmenu_kabag.this, Manifest.permission.CAMERA)
@@ -248,15 +270,51 @@ public class mainmenu_kabag extends AppCompatActivity
                         }
                         else {
                             drawer.closeDrawer(Gravity.START);
-                            Intent a = new Intent(mainmenu_kabag.this,facedetection.class);
-                            startActivity(a);
+                            String[] colors = {"Face Registration", "Face Recognition", "QR Code"};
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_kabag.this);
+                            builder.setTitle("Pilihan");
+                            builder.setItems(colors, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if(which==0){
+                                        Intent a = new Intent(mainmenu_kabag.this,facecapture.class);
+                                        startActivity(a);
+                                    }else if(which==1){
+                                        Intent a = new Intent(mainmenu_kabag.this,facedetection.class);
+                                        startActivity(a);
+                                    }else if(which==2){
+                                        Intent i = new Intent(mainmenu_kabag.this,QrCodeActivity.class);
+                                        startActivityForResult( i,104);
+                                    }
+                                }
+                            });
+                            builder.show();
                         }
                     }
                     else {
                         drawer.closeDrawer(Gravity.START);
-                        Intent a = new Intent(mainmenu_kabag.this,facedetection.class);
-                        startActivity(a);
-                    }
+                        String[] colors = {"Face Registration", "Face Recognition", "QR Code"};
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_kabag.this);
+                        builder.setTitle("Pilihan");
+                        builder.setItems(colors, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if(which==0){
+                                    Intent a = new Intent(mainmenu_kabag.this,facecapture.class);
+                                    startActivity(a);
+                                }else if(which==1){
+                                    Intent a = new Intent(mainmenu_kabag.this,facedetection.class);
+                                    startActivity(a);
+                                }else if(which==2){
+                                    Intent i = new Intent(mainmenu_kabag.this,QrCodeActivity.class);
+                                    startActivityForResult( i,104);
+                                }
+                            }
+                        });
+                        builder.show();
+                    }*/
                 }
                 return false;
             }
@@ -461,6 +519,165 @@ public class mainmenu_kabag extends AppCompatActivity
             return tabTitles.length;
         }
         // ...
+    }
+
+    public class loginselainowner extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result ;
+        ProgressDialog dialog ;
+        String urldata = generator.scanloginurl;
+        String passeddata = "" ;
+
+        public  loginselainowner(Context context,String passed)
+        {
+            dialog = new ProgressDialog(context);
+            passeddata = passed;
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            this.dialog.show();
+            super.onPreExecute();
+            this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            int data = 0;
+
+            while (data==0) {
+                try {
+                    this.dialog.setMessage("Loading Data...");
+
+                    JSONObject jsonObject;
+
+                    try {
+                        OkHttpClient client = new OkHttpClient();
+
+
+                        RequestBody body = new FormBody.Builder()
+                                .add("kode",passeddata)
+                                .build();
+
+                        Request request = new Request.Builder()
+                                .post(body)
+                                .url(urldata)
+                                .build();
+                        Response responses = null;
+
+                        try {
+                            responses = client.newCall(request).execute();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            jsonObject =  null;
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            jsonObject = null;
+                        }
+
+                        if (responses==null){
+                            jsonObject = null;
+                        }
+                        else {
+                            jsonObject = new JSONObject(responses.body().string());
+                        }
+                        result = jsonObject;
+                        data=1;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        return null;
+                    }
+
+
+                    break;
+                } catch (IOException e) {
+                    this.dialog.setMessage("Loading Data... IOError Occured,retrying...");
+                    this.dialog.dismiss();
+                    Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                    generator.jsondatalogin = null;
+                    response = "Error IOException";
+                } catch (NullPointerException e) {
+                    this.dialog.setMessage("Loading Data... Internet Error Occured,retrying...");
+                    this.dialog.dismiss();
+                    Log.e("doInBackground: ", "null data" + e.getMessage());
+                    generator.jsondatalogin = null;
+                    response = "Please check Connection and Server";
+                } catch (Exception e) {
+                    this.dialog.setMessage("Loading Data... Error Occured,retrying...");
+                    this.dialog.dismiss();
+                    Log.e("doInBackground: ", e.getMessage());
+                    generator.jsondatalogin = null;
+                    response = "Error Occured, PLease Contact Administrator/Support";
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+            super.onPostExecute(result1);
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }
+            try {
+                if(result.getString("status").equals("true")) {
+                    JSONArray data = result.getJSONArray("data");
+                    JSONObject dataisi = data.getJSONObject(0);
+                    String declare = dataisi.getString("otoritas");
+                    String iduser = dataisi.getString("idfp");
+                }
+
+                //JSONArray bArray= responseObject.getJSONArray("B");
+                //for(int i=0;i<bArray.length();i++){
+                //    JSONObject innerObject=bArray.getJSONObject(i);
+                //    String a= innerObject.getString("a");
+                //    String b= innerObject.getString("b");
+                //}
+            } catch (Exception e) {
+                Log.e(TAG, "onPostExecute: "+e.getMessage() );
+                e.printStackTrace();
+                if(result!=null){
+                    AlertDialog alertDialog = new AlertDialog.Builder(mainmenu_kabag.this).create();
+                    alertDialog.setTitle("Hasil");
+
+                    alertDialog.setMessage(e.getMessage().toString() + " "+ result.toString());
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+                else {
+
+                }
+            }
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
     }
 
 }

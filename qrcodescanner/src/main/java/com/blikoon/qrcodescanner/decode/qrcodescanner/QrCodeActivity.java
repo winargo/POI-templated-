@@ -1,4 +1,4 @@
-package com.blikoon.qrcodescanner;
+package com.blikoon.qrcodescanner.decode.qrcodescanner;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -31,14 +31,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blikoon.qrcodescanner.R;
+import com.blikoon.qrcodescanner.decode.qrcodescanner.camera.CameraManager;
+import com.blikoon.qrcodescanner.decode.qrcodescanner.decode.CaptureActivityHandler;
+import com.blikoon.qrcodescanner.decode.qrcodescanner.decode.DecodeImageCallback;
+import com.blikoon.qrcodescanner.decode.qrcodescanner.decode.DecodeImageThread;
+import com.blikoon.qrcodescanner.decode.qrcodescanner.decode.DecodeManager;
+import com.blikoon.qrcodescanner.decode.qrcodescanner.decode.InactivityTimer;
+import com.blikoon.qrcodescanner.decode.qrcodescanner.view.QrCodeFinderView;
 import com.google.zxing.Result;
-import com.blikoon.qrcodescanner.camera.CameraManager;
-import com.blikoon.qrcodescanner.decode.CaptureActivityHandler;
-import com.blikoon.qrcodescanner.decode.DecodeImageCallback;
-import com.blikoon.qrcodescanner.decode.DecodeImageThread;
-import com.blikoon.qrcodescanner.decode.DecodeManager;
-import com.blikoon.qrcodescanner.decode.InactivityTimer;
-import com.blikoon.qrcodescanner.view.QrCodeFinderView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -394,7 +395,7 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
         cursor.close();
 
         cursor = getContentResolver().query(
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 null, MediaStore.Images.Media._ID + " = ? ", new String[]{document_id}, null);
         cursor.moveToFirst();
         String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));

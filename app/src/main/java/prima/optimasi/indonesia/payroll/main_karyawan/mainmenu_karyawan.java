@@ -3,6 +3,7 @@ package prima.optimasi.indonesia.payroll.main_karyawan;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -37,6 +38,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import qrcodescanner.QrCodeActivity;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
@@ -53,7 +55,6 @@ import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.main_hrd.mainmenu_hrd;
 import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentAbsensi;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentCekGaji;
@@ -65,6 +66,7 @@ import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentEmploy
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentPengumuman;
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentTotalGaji;
 import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
+import prima.optimasi.indonesia.payroll.universal.absence.facecapture;
 import prima.optimasi.indonesia.payroll.universal.absence.facedetection;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
@@ -207,14 +209,50 @@ public class mainmenu_karyawan extends AppCompatActivity
                         }
                         else {
                             drawer.closeDrawer(Gravity.START);
-                            Intent a = new Intent(mainmenu_karyawan.this,facedetection.class);
-                            startActivity(a);
+                            String[] colors = {"Face Registration", "Face Recognition", "QR Code"};
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_karyawan.this);
+                            builder.setTitle("Pilihan");
+                            builder.setItems(colors, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if(which==0){
+                                        Intent a = new Intent(mainmenu_karyawan.this,facecapture.class);
+                                        startActivity(a);
+                                    }else if(which==1){
+                                        Intent a = new Intent(mainmenu_karyawan.this,facedetection.class);
+                                        startActivity(a);
+                                    }else if(which==2){
+                                        Intent i = new Intent(mainmenu_karyawan.this,QrCodeActivity.class);
+                                        startActivityForResult( i,104);
+                                    }
+                                }
+                            });
+                            builder.show();
                         }
                     }
                     else {
                         drawer.closeDrawer(Gravity.START);
-                        Intent a = new Intent(mainmenu_karyawan.this,facedetection.class);
-                        startActivity(a);
+                        String[] colors = {"Face Registration", "Face Recognition", "QR Code"};
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_karyawan.this);
+                        builder.setTitle("Pilihan");
+                        builder.setItems(colors, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if(which==0){
+                                    Intent a = new Intent(mainmenu_karyawan.this,facecapture.class);
+                                    startActivity(a);
+                                }else if(which==1){
+                                    Intent a = new Intent(mainmenu_karyawan.this,facedetection.class);
+                                    startActivity(a);
+                                }else if(which==2){
+                                    Intent i = new Intent(mainmenu_karyawan.this,QrCodeActivity.class);
+                                    startActivityForResult( i,104);
+                                }
+                            }
+                        });
+                        builder.show();
                     }
                 }
                 return false;

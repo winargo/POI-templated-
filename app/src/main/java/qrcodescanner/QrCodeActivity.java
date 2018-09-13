@@ -1,4 +1,4 @@
-package com.blikoon.qrcodescanner;
+package qrcodescanner;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -32,13 +32,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.Result;
-import com.blikoon.qrcodescanner.camera.CameraManager;
-import com.blikoon.qrcodescanner.decode.CaptureActivityHandler;
-import com.blikoon.qrcodescanner.decode.DecodeImageCallback;
-import com.blikoon.qrcodescanner.decode.DecodeImageThread;
-import com.blikoon.qrcodescanner.decode.DecodeManager;
-import com.blikoon.qrcodescanner.decode.InactivityTimer;
-import com.blikoon.qrcodescanner.view.QrCodeFinderView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,6 +41,21 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.core.generator;
+import qrcodescanner.camera.CameraManager;
+import qrcodescanner.decode.CaptureActivityHandler;
+import qrcodescanner.decode.DecodeImageCallback;
+import qrcodescanner.decode.DecodeImageThread;
+import qrcodescanner.decode.DecodeManager;
+import qrcodescanner.decode.InactivityTimer;
+import qrcodescanner.view.QrCodeFinderView;
 
 
 public class QrCodeActivity extends Activity implements Callback, OnClickListener {
@@ -78,8 +86,8 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
     private Executor mQrCodeExecutor;
     private Handler mHandler;
 
-    private final String GOT_RESULT = "com.blikoon.qrcodescanner.got_qr_scan_relult";
-    private final String ERROR_DECODING_IMAGE = "com.blikoon.qrcodescanner.error_decoding_image";
+    private final String GOT_RESULT = "got_qr_scan_relult";
+    private final String ERROR_DECODING_IMAGE = "error_decoding_image";
     private final String LOGTAG = "QRScannerQRCodeActivity";
     private Context mApplicationContext;
 
@@ -342,7 +350,7 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
 
     private void turnFlashLightOff() {
         mNeedFlashLightOpen = true;
-        mTvFlashLightText.setText(getString(R.string.qr_code_open_flash_light));
+        mTvFlashLightText.setText("Open Flashlight");
         mIvFlashLight.setBackgroundResource(R.drawable.flashlight_turn_on);
         CameraManager.get().setFlashLight(false);
     }
@@ -394,7 +402,7 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
         cursor.close();
 
         cursor = getContentResolver().query(
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 null, MediaStore.Images.Media._ID + " = ? ", new String[]{document_id}, null);
         cursor.moveToFirst();
         String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
@@ -486,7 +494,7 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
     }
 
 
-    /*public class absensi extends AsyncTask<Void, Integer, String>
+    public class absensi extends AsyncTask<Void, Integer, String>
     {
         String response = "";
         String error = "";
@@ -503,19 +511,18 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
             dialog = new ProgressDialog(context);
 
             if(type == 0){
-                urldata =
+                urldata = generator.checkinurl;
             }else if(type ==1){
-
+                urldata = generator.checkinurl;
             }else if(type ==2){
-
+                urldata = generator.checkinurl;
             }else if(type ==3){
-
+                urldata = generator.checkinurl;
             }else if(type ==4){
-
+                urldata = generator.checkinurl;
             }else if(type ==5){
-
+                urldata = generator.checkinurl;
             }
-
             this.error = error ;
         }
 
@@ -635,7 +642,7 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
                 Log.e(TAG, "onPostExecute: "+e.getMessage() );
                 e.printStackTrace();
                 if(result!=null){
-                    AlertDialog alertDialog = new AlertDialog.Builder(mainmenu_kabag.this).create();
+                    AlertDialog alertDialog = new AlertDialog.Builder(QrCodeActivity.this).create();
                     alertDialog.setTitle("Hasil");
 
                     alertDialog.setMessage(e.getMessage().toString() + " "+ result.toString());
@@ -655,5 +662,5 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
 
             Log.d(TAG + " onPostExecute", "" + result1);
         }
-    }*/
+    }
 }

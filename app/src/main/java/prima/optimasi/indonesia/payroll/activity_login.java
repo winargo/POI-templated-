@@ -25,7 +25,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.blikoon.qrcodescanner.QrCodeActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -42,6 +41,7 @@ import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
 import prima.optimasi.indonesia.payroll.main_karyawan.mainmenu_karyawan;
 import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
 import prima.optimasi.indonesia.payroll.utils.Tools;
+import qrcodescanner.QrCodeActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -376,7 +376,7 @@ public class activity_login extends FragmentActivity {
                 if(intent==null)
                     return;
                 //Getting the passed result
-                String result = intent.getStringExtra("com.blikoon.qrcodescanner.got_qr_scan_relult");
+                String result = intent.getStringExtra("qrcodescanner.got_qr_scan_relult");
                 Log.d(TAG,"Have scan result in your app activity :"+ result);
 
                 loginselainowner owner = new loginselainowner(activity_login.this,result);
@@ -407,7 +407,7 @@ public class activity_login extends FragmentActivity {
                 if(intent==null)
                     return;
                 //Getting the passed result
-                String result = intent.getStringExtra("com.blikoon.qrcodescanner.error_decoding_image");
+                String result = intent.getStringExtra("qrcodescanner.error_decoding_image");
                 if( result!=null)
                 {
                     AlertDialog alertDialog = new AlertDialog.Builder(activity_login.this).create();
@@ -436,7 +436,7 @@ public class activity_login extends FragmentActivity {
 
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                Intent i = new Intent(activity_login.this,QrCodeActivity.class);
+                Intent i = new Intent(activity_login.this, QrCodeActivity.class);
                 startActivityForResult( i,104);
 
             } else {

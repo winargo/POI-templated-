@@ -37,7 +37,7 @@ import okhttp3.Response;
 import static android.content.Context.MODE_PRIVATE;
 
 public class generator {
-    public static String Server="192.168.5.254";
+    public static String Server="192.168.1.254";
     public static String port = "4000";
     public static String username = "";
     public static String password = "";
@@ -53,6 +53,13 @@ public class generator {
     public static String scanloginurl = "http://"+ generator.Server+":4000/loginScan";
     public static String sendtokenurl = "http://"+ generator.Server+":4000/postnotif";
     public static String listemployeeurl = "http://"+ generator.Server+":4000/karyawan";
+    public static String checkinurl="http://"+ generator.Server+"/absensi/checkin";
+    public static String checkouturl="http://"+ generator.Server+"/absensi/checkout";
+    public static String breakinurl="http://"+ generator.Server+"/absensi/breakin";
+    public static String breakouturl="http://"+ generator.Server+"/absensi/breakout";
+    public static String extrainurl="http://"+ generator.Server+"/absensi/extrain";
+    public static String extraouturl="http://"+ generator.Server+"/absensi/extraout";
+
 
     public static JSONObject jsondatalogin = null ;
 
@@ -521,4 +528,5 @@ public class generator {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
+
 }
