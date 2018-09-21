@@ -132,6 +132,7 @@ public class activity_login extends FragmentActivity {
                     }
                     else {
                         Intent i = new Intent(activity_login.this,QrCodeActivity.class);
+                        i.putExtra("keepalive",0);
                         startActivityForResult( i,104);
                     }
 
@@ -375,8 +376,7 @@ public class activity_login extends FragmentActivity {
             {
                 if(intent==null)
                     return;
-                //Getting the passed result
-                String result = intent.getStringExtra("qrcodescanner.got_qr_scan_relult");
+                String result = intent.getStringExtra("com.blikoon.qrcodescanner.got_qr_scan_relult");
                 Log.d(TAG,"Have scan result in your app activity :"+ result);
 
                 loginselainowner owner = new loginselainowner(activity_login.this,result);
@@ -407,7 +407,7 @@ public class activity_login extends FragmentActivity {
                 if(intent==null)
                     return;
                 //Getting the passed result
-                String result = intent.getStringExtra("qrcodescanner.error_decoding_image");
+                String result = intent.getStringExtra("com.blikoon.qrcodescanner.error_decoding_image");
                 if( result!=null)
                 {
                     AlertDialog alertDialog = new AlertDialog.Builder(activity_login.this).create();
@@ -437,6 +437,7 @@ public class activity_login extends FragmentActivity {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                 Intent i = new Intent(activity_login.this, QrCodeActivity.class);
+                i.putExtra("keepalive",0);
                 startActivityForResult( i,104);
 
             } else {
@@ -462,6 +463,7 @@ public class activity_login extends FragmentActivity {
 
         public  loginselainowner(Context context,String passed)
         {
+            Log.e(TAG, "result"+passed );
             dialog = new ProgressDialog(context);
             passeddata = passed;
             this.username = generator.username;
@@ -472,10 +474,14 @@ public class activity_login extends FragmentActivity {
         String TAG = getClass().getSimpleName();
 
         protected void onPreExecute (){
-            this.dialog.show();
-            super.onPreExecute();
-            this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
+            try {
+                this.dialog.show();
+                super.onPreExecute();
+                this.dialog.setMessage("Getting Data...");
+            }catch (Exception e){
+                Log.d(TAG + " PreExceute","On pre Exceute......");
+            }
+
         }
 
         protected String doInBackground(Void...arg0) {

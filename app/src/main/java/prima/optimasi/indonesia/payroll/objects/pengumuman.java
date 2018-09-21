@@ -60,6 +60,7 @@ public class pengumuman {
         return createdate;
     }
 
+
     public String getImagelink() {
         return imagelink;
     }

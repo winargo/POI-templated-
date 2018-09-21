@@ -621,6 +621,26 @@
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".main_owner.report.owner_cuti"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".main_owner.report.owner_izin"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".main_owner.report.owner_sakit"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".main_owner.report.owner_pengajian"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".main_owner.report.owner_pinjaman"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".universal.viewkaryawan"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />

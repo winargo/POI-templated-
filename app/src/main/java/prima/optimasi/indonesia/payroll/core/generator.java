@@ -53,6 +53,13 @@ public class generator {
     public static String scanloginurl = "http://"+ generator.Server+":4000/loginScan";
     public static String sendtokenurl = "http://"+ generator.Server+":4000/postnotif";
     public static String listemployeeurl = "http://"+ generator.Server+":4000/karyawan";
+
+    public static String cutiurl="http://"+ generator.Server+":4000/laporan/cuti";
+    public static String sakiturl="http://"+ generator.Server+":4000/laporan/sakit";
+    public static String pinjamanurl = "http://"+ generator.Server+":4000/laporan/pinjaman";
+    public static String izinurl = "http://"+ generator.Server+":4000/laporan/izin";
+    public static String pengajianurl = "http://"+ generator.Server+":4000/laporan/pengajian";
+
     public static String checkinurl="http://"+ generator.Server+"/absensi/checkin";
     public static String checkouturl="http://"+ generator.Server+"/absensi/checkout";
     public static String breakinurl="http://"+ generator.Server+"/absensi/breakin";

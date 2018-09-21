@@ -12,6 +12,11 @@ import android.widget.TextClock;
 import android.widget.TextView;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.main_owner.report.owner_cuti;
+import prima.optimasi.indonesia.payroll.main_owner.report.owner_izin;
+import prima.optimasi.indonesia.payroll.main_owner.report.owner_pengajian;
+import prima.optimasi.indonesia.payroll.main_owner.report.owner_pinjaman;
+import prima.optimasi.indonesia.payroll.main_owner.report.owner_sakit;
 import prima.optimasi.indonesia.payroll.model.People;
 import prima.optimasi.indonesia.payroll.objects.listreport;
 import prima.optimasi.indonesia.payroll.utils.Tools;
@@ -77,16 +82,21 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
                 @Override
                 public void onClick(View view1) {
                     if(view.name.getText().toString().equals("Cuti")){
-
+                        Intent cuti = new Intent(ctx,owner_cuti.class);
+                        ctx.startActivity(cuti);
                     }
                     else if(view.name.getText().toString().equals("Izin")){
-
+                        Intent izin = new Intent(ctx,owner_izin.class);
+                        ctx.startActivity(izin);
                     }else if(view.name.getText().toString().equals("Sakit")){
-
+                        Intent sakit = new Intent(ctx,owner_sakit.class);
+                        ctx.startActivity(sakit);
                     }else if(view.name.getText().toString().equals("Pinjaman")){
-
+                        Intent pinjaman = new Intent(ctx,owner_pinjaman.class);
+                        ctx.startActivity(pinjaman);
                     }else if(view.name.getText().toString().equals("Pengajian")){
-
+                        Intent pengajian = new Intent(ctx,owner_pengajian.class);
+                        ctx.startActivity(pengajian);
                     }
                 }
             });
