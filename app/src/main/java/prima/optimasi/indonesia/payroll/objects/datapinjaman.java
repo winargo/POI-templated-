@@ -9,12 +9,24 @@ import java.util.Date;
 import java.util.Locale;
 
 public class datapinjaman implements Comparable<datapinjaman> {
-    String nama,jabatan,tglmulai,tglakhir,keterangan,hari,imageurl,datatgl;
+    String nama,jabatan,keterangan,imageurl,datatgl,pinjaman,bayar,sisa;
     Boolean issection;
     String status;
 
+    public String getSisa() {
+        return sisa;
+    }
+
     public String getDatatgl() {
         return datatgl;
+    }
+
+    public String getBayar() {
+        return bayar;
+    }
+
+    public String getPinjaman() {
+        return pinjaman;
     }
 
     public String getStatus() {
@@ -33,24 +45,18 @@ public class datapinjaman implements Comparable<datapinjaman> {
         return jabatan;
     }
 
-    public String getHari() {
-        return hari;
-    }
 
     public String getImageurl() {
         return imageurl;
     }
 
-    public String getTglakhir() {
-        return tglakhir;
-    }
 
     public String getKeterangan() {
         return keterangan;
     }
 
-    public String getTglmulai() {
-        return tglmulai;
+    public void setSisa(String sisa) {
+        this.sisa = sisa;
     }
 
     public void setIssection(Boolean issection) {
@@ -61,12 +67,16 @@ public class datapinjaman implements Comparable<datapinjaman> {
         this.nama = nama;
     }
 
-    public void setJabatan(String jabatan) {
-        this.jabatan = jabatan;
+    public void setBayar(String bayar) {
+        this.bayar = bayar;
     }
 
-    public void setHari(String hari) {
-        this.hari = hari;
+    public void setPinjaman(String pinjaman) {
+        this.pinjaman = pinjaman;
+    }
+
+    public void setJabatan(String jabatan) {
+        this.jabatan = jabatan;
     }
 
     public void setImageurl(String imageurl) {
@@ -75,14 +85,6 @@ public class datapinjaman implements Comparable<datapinjaman> {
 
     public void setKeterangan(String keterangan) {
         this.keterangan = keterangan;
-    }
-
-    public void setTglakhir(String tglakhir) {
-        this.tglakhir = tglakhir;
-    }
-
-    public void setTglmulai(String tglmulai) {
-        this.tglmulai = tglmulai;
     }
 
     public void setDatatgl(String datatgl) {

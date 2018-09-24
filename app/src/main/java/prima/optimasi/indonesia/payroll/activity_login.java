@@ -456,7 +456,7 @@ public class activity_login extends FragmentActivity {
         String username=  "" ;
         String password = "" ;
         SharedPreferences prefs ;
-        JSONObject result ;
+        JSONObject result =new JSONObject();
         ProgressDialog dialog ;
         String urldata = generator.scanloginurl;
         String passeddata = "" ;
@@ -489,77 +489,61 @@ public class activity_login extends FragmentActivity {
 
             int data = 0;
 
-            while (data==0) {
+
+
                 try {
                     this.dialog.setMessage("Loading Data...");
+                    OkHttpClient client = new OkHttpClient();
 
-                    JSONObject jsonObject;
+
+                    RequestBody body = new FormBody.Builder()
+                            .add("kode",passeddata)
+                            .build();
+
+                    Request request = new Request.Builder()
+                            .post(body)
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
 
                     try {
-                        OkHttpClient client = new OkHttpClient();
-
-
-                        RequestBody body = new FormBody.Builder()
-                                .add("kode",passeddata)
-                                .build();
-
-                        Request request = new Request.Builder()
-                                .post(body)
-                                .url(urldata)
-                                .build();
-                        Response responses = null;
-
-                        try {
-                            responses = client.newCall(request).execute();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            jsonObject =  null;
-                        }catch (Exception e){
-                            e.printStackTrace();
-                            jsonObject = null;
-                        }
-
-                        if (responses==null){
-                            jsonObject = null;
-                        }
-                        else {
-                            jsonObject = new JSONObject(responses.body().string());
-                        }
-                        result = jsonObject;
-                        data=1;
-                    } catch (JSONException e) {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
                         e.printStackTrace();
-                        return null;
+                    }catch (Exception e){
+                        e.printStackTrace();
                     }
+                    result = new JSONObject(responses.body().string());
+                    Log.e(TAG, "doInBackground: "+result +"" );
 
 
-                    break;
-                } catch (IOException e) {
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }catch (IOException e) {
                     this.dialog.setMessage("Loading Data... IOError Occured,retrying...");
                     this.dialog.dismiss();
                     Log.e("doInBackground: ", "IO Exception" + e.getMessage());
                     generator.jsondatalogin = null;
+                    e.printStackTrace();
                     response = "Error IOException";
                 } catch (NullPointerException e) {
                     this.dialog.setMessage("Loading Data... Internet Error Occured,retrying...");
                     this.dialog.dismiss();
+                    e.printStackTrace();
                     Log.e("doInBackground: ", "null data" + e.getMessage());
                     generator.jsondatalogin = null;
                     response = "Please check Connection and Server";
                 } catch (Exception e) {
                     this.dialog.setMessage("Loading Data... Error Occured,retrying...");
                     this.dialog.dismiss();
+                    e.printStackTrace();
                     Log.e("doInBackground: ", e.getMessage());
                     generator.jsondatalogin = null;
                     response = "Error Occured, PLease Contact Administrator/Support";
                 }
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
 
-            }
             return response;
         }
 
@@ -574,7 +558,10 @@ public class activity_login extends FragmentActivity {
                 dialog.dismiss();
             }
             try {
-                if(result.getString("status").equals("true")){
+                if(result==null){
+                    Snackbar.make(parent_view, "Kesalahan Koneksi", Snackbar.LENGTH_SHORT).show();
+                }
+                else if(result.getString("status").equals("true")){
                     JSONArray data = result.getJSONArray("data");
                     JSONObject dataisi = data.getJSONObject(0);
                     String declare = dataisi.getString("otoritas");
@@ -586,6 +573,7 @@ public class activity_login extends FragmentActivity {
                         Intent hrd = new Intent(activity_login.this,mainmenu_hrd.class);
                         startActivity(hrd);
                         pref.edit().putString("level","hrd").commit();
+                        pref.edit().putString("kodekaryawan",dataisi.getString("kode_karyawan")).commit();
                         pref.edit().putString("Authorization",result.getString("token")).commit();
                         pref.edit().putString("jabatan",declare).commit();
                         pref.edit().putString("iduser",iduser).commit();
@@ -605,6 +593,7 @@ public class activity_login extends FragmentActivity {
                         Intent hrd = new Intent(activity_login.this,mainmenu_kabag.class);
                         startActivity(hrd);
                         pref.edit().putString("level","kabag").commit();
+                        pref.edit().putString("kodekaryawan",dataisi.getString("kode_karyawan")).commit();
                         pref.edit().putString("Authorization",result.getString("token")).commit();
                         pref.edit().putString("jabatan",declare).commit();
                         pref.edit().putString("iduser",iduser).commit();
@@ -622,6 +611,7 @@ public class activity_login extends FragmentActivity {
                         Intent hrd = new Intent(activity_login.this,mainmenu_karyawan.class);
                         startActivity(hrd);
                         pref.edit().putString("level","karyawan").commit();
+                        pref.edit().putString("kodekaryawan",dataisi.getString("kode_karyawan")).commit();
                         pref.edit().putString("Authorization",result.getString("token")).commit();
                         pref.edit().putString("jabatan",declare).commit();
                         pref.edit().putString("iduser",iduser).commit();

@@ -350,6 +350,7 @@ public class mainmenu_hrd extends AppCompatActivity
             edit.putString("level","");
             edit.putString("tempatlahir","");
             edit.putString("profileimage","");
+            edit.putString("kodekaryawan","");
             edit.putString("Authorization","");
 
             edit.commit();

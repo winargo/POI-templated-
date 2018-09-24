@@ -358,12 +358,31 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
                 }
             });
         } else {
-            //Got result from scanning QR Code with users camera
-            Log.d(LOGTAG,"Got scan result from user loaded image :"+resultString);
-            Intent data = new Intent();
-            data.putExtra(GOT_RESULT,resultString);
-            setResult(Activity.RESULT_OK,data);
-            finish();
+
+            try {
+                if(getIntent().getIntExtra("keepalive",0)==1){
+                    Intent a = new Intent(QrCodeActivity.this,QrCodeActivity.class);
+                    startActivity(a);
+                    finish();
+                }
+                else {
+                    Log.d(LOGTAG,"Got scan result from user loaded image :"+resultString);
+                    Intent data = new Intent();
+                    data.putExtra(GOT_RESULT,resultString);
+                    setResult(Activity.RESULT_OK,data);
+
+                    finish();
+                }
+            }
+            catch (Exception e){
+                Log.d(LOGTAG,"Got scan result from user loaded image :"+resultString);
+                Intent data = new Intent();
+                data.putExtra(GOT_RESULT,resultString);
+                setResult(Activity.RESULT_OK,data);
+
+                finish();
+
+            }
 
         }
     }

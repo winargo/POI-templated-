@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.List;
 
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.objects.datacuti;
+import prima.optimasi.indonesia.payroll.objects.datapinjaman;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 
@@ -29,7 +31,7 @@ public class AdapterListSectionedpinjaman extends RecyclerView.Adapter<RecyclerV
     private final int VIEW_SECTION = 0;
     private int animation_type = 0;
 
-    private List<datacuti> items = new ArrayList<>();
+    private List<datapinjaman> items = new ArrayList<>();
     private Context ctx;
     private OnItemClickListener mOnItemClickListener;
 
@@ -41,7 +43,7 @@ public class AdapterListSectionedpinjaman extends RecyclerView.Adapter<RecyclerV
         this.mOnItemClickListener = mItemClickListener;
     }
 
-    public AdapterListSectionedpinjaman(Context context, List<datacuti> items, int animation_type) {
+    public AdapterListSectionedpinjaman(Context context, List<datapinjaman> items, int animation_type) {
         this.items = items;
         ctx = context;
         this.animation_type = animation_type;
@@ -49,23 +51,17 @@ public class AdapterListSectionedpinjaman extends RecyclerView.Adapter<RecyclerV
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
         public CircularImageView image;
-        public TextView name,jabatan,tglawal,tglakhir,tglawaldata,tglakhirdata,keterangandata,keterangan,hari,datahari;
+        public TextView name,jabatan,pinjaman,bayaran,sisa;
         public CardView card;
 
         public OriginalViewHolder(View v) {
             super(v);
-            tglawal = v.findViewById(R.id.repawal);
-            tglakhir = v.findViewById(R.id.repakhir);
-            tglawaldata = v.findViewById(R.id.repawaldata);
-            tglakhirdata = v.findViewById(R.id.repakhirdata);
-            keterangandata = v.findViewById(R.id.repketdata);
-            keterangan = v.findViewById(R.id.repket);
+            sisa = v.findViewById(R.id.repsisadata);
+            pinjaman = v.findViewById(R.id.repawaldata);
+            bayaran = v.findViewById(R.id.repakhirdata);
             jabatan = v.findViewById(R.id.repjab);
-            image =  v.findViewById(R.id.repfoto);
+            image =  v.findViewById(R.id.pinimage);
             name = v.findViewById(R.id.repnama);
-            hari = v.findViewById(R.id.replama);
-            datahari = v.findViewById(R.id.replamadata);
-            card = v.findViewById(R.id.repcard);
         }
     }
 
@@ -82,7 +78,7 @@ public class AdapterListSectionedpinjaman extends RecyclerView.Adapter<RecyclerV
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder vh;
         if (viewType == VIEW_ITEM) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_report_list, parent, false);
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_report_list_pinjaman, parent, false);
             vh = new OriginalViewHolder(v);
         } else {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_section, parent, false);
@@ -94,20 +90,18 @@ public class AdapterListSectionedpinjaman extends RecyclerView.Adapter<RecyclerV
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        final datacuti p = items.get(position);
+        final datapinjaman p = items.get(position);
         if (holder instanceof OriginalViewHolder) {
             OriginalViewHolder view = (OriginalViewHolder) holder;
 
             view.name.setText(p.getNama());
             view.jabatan.setText(p.getJabatan());
-            view.tglawal.setText("Tanggal Mulai Sakit");
-            view.tglakhir.setText("Tanggal Akhir Sakit");
-            view.tglakhirdata.setText(p.getTglakhir());
-            view.tglawaldata.setText(p.getTglmulai());
-            view.keterangan.setText("Keterangan Sakit");
-            view.keterangandata.setText(p.getKeterangan());
-            view.hari.setText("Waktu Sakit");
-            view.datahari.setText(p.getHari() +" Hari");
+
+            DecimalFormat formatter = new DecimalFormat("###,###,###");
+
+            view.pinjaman.setText("Rp"+formatter.format(Integer.parseInt(p.getPinjaman())));
+            view.bayaran.setText("Rp"+formatter.format(Integer.parseInt(p.getBayar())));
+            view.sisa.setText("Rp"+formatter.format(Integer.parseInt(p.getSisa())));
 
             Picasso.get().load(p.getImageurl()).transform(new CircleTransform()).into(view.image);
 
@@ -152,7 +146,7 @@ public class AdapterListSectionedpinjaman extends RecyclerView.Adapter<RecyclerV
         return this.items.get(position).getIssection() ? VIEW_SECTION : VIEW_ITEM;
     }
 
-    public void insertItem(int index, datacuti kar){
+    public void insertItem(int index, datapinjaman kar){
         items.add(index, kar);
         notifyItemInserted(index);
     }

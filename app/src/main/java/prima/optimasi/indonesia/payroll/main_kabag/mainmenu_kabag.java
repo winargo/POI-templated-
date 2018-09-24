@@ -417,6 +417,7 @@ public class mainmenu_kabag extends AppCompatActivity
             edit.putString("tempatlahir","");
             edit.putString("profileimage","");
             edit.putString("Authorization","");
+            edit.putString("kodekaryawan","");
 
             edit.commit();
 

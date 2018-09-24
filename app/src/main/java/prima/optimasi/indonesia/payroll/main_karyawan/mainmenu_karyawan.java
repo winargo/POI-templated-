@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -40,6 +41,11 @@ import android.widget.Toast;
 
 import qrcodescanner.QrCodeActivity;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
@@ -49,6 +55,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.zip.Inflater;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import prima.optimasi.indonesia.payroll.R;
@@ -200,60 +207,35 @@ public class mainmenu_karyawan extends AppCompatActivity
                     drawer.closeDrawer(Gravity.START);
                 }
                 else if(listDataHeader.get(groupPosition).equals("Absensi")){
-                    if (ContextCompat.checkSelfPermission(mainmenu_karyawan.this, Manifest.permission.CAMERA)
-                            == PackageManager.PERMISSION_DENIED){
-                        ActivityCompat.requestPermissions(mainmenu_karyawan.this, new String[]{Manifest.permission.CAMERA}, 202);
-                        if (ContextCompat.checkSelfPermission(mainmenu_karyawan.this, Manifest.permission.CAMERA)
-                                == PackageManager.PERMISSION_DENIED){
-                            AlertDialog dialog = new AlertDialog.Builder(mainmenu_karyawan.this).setTitle("Permission Required").setMessage("Camera Permission Required !!").show();
-                        }
-                        else {
-                            drawer.closeDrawer(Gravity.START);
-                            String[] colors = {"Face Registration", "Face Recognition", "QR Code"};
 
-                            AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_karyawan.this);
-                            builder.setTitle("Pilihan");
-                            builder.setItems(colors, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if(which==0){
-                                        Intent a = new Intent(mainmenu_karyawan.this,facecapture.class);
-                                        startActivity(a);
-                                    }else if(which==1){
-                                        Intent a = new Intent(mainmenu_karyawan.this,facedetection.class);
-                                        startActivity(a);
-                                    }else if(which==2){
-                                        Intent i = new Intent(mainmenu_karyawan.this,QrCodeActivity.class);
-                                        startActivityForResult( i,104);
-                                    }
-                                }
-                            });
-                            builder.show();
-                        }
-                    }
-                    else {
-                        drawer.closeDrawer(Gravity.START);
-                        String[] colors = {"Face Registration", "Face Recognition", "QR Code"};
+                    drawer.closeDrawer(Gravity.START);
 
-                        AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_karyawan.this);
-                        builder.setTitle("Pilihan");
-                        builder.setItems(colors, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if(which==0){
-                                    Intent a = new Intent(mainmenu_karyawan.this,facecapture.class);
-                                    startActivity(a);
-                                }else if(which==1){
-                                    Intent a = new Intent(mainmenu_karyawan.this,facedetection.class);
-                                    startActivity(a);
-                                }else if(which==2){
-                                    Intent i = new Intent(mainmenu_karyawan.this,QrCodeActivity.class);
-                                    startActivityForResult( i,104);
-                                }
-                            }
-                        });
-                        builder.show();
+                    LinearLayout l = (LinearLayout) LayoutInflater.from(mainmenu_karyawan.this).inflate(R.layout.layout_barcode,null);
+
+                    ImageView barcode = l.findViewById(R.id.barcodekaryawan);
+
+
+
+                    String text=prefs.getString("kodekaryawan","");
+                    Log.e("data json", "onClick: "+prefs.getString("kodekaryawan","") );
+                    MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+                    try {
+                        BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE,400,400);
+                        BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                        Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+                        barcode.setImageBitmap(bitmap);
+                    } catch (WriterException e) {
+                        e.printStackTrace();
                     }
+
+
+
+                    AlertDialog dialog1 = new AlertDialog.Builder(mainmenu_karyawan.this).setTitle("Absensi").setView(l).create();
+
+                    dialog1.show();
+
+
+
                 }
                 return false;
             }
@@ -301,40 +283,8 @@ public class mainmenu_karyawan extends AppCompatActivity
             }
         });
 
-        JSONObject data = null;
-
-        generator.retrivedata async = new generator.retrivedata(mainmenu_karyawan.this,loadingdata);
-        async.execute();
-
-        while(generator.jsondatalogin==null){
-            if(generator.jsondatalogin==null) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Log.e("json generator status", "empty" );
-            }
-            else {
-                Log.e("json generator status", "not empty" );
-                break;
-            }
-        }
-
-        data = generator.jsondatalogin;
-        generator.jsondatalogin=null;
-        Log.e("JSON data",data.toString() );
-
-        JSONObject second = null;
 
 
-        try {
-            second = data.getJSONObject("data");
-            username.setText(second.getString("username"));
-            Log.e("onCreate: ",second.getString("username") );
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
 
         if(loadingdata.isShowing()){
@@ -388,6 +338,7 @@ public class mainmenu_karyawan extends AppCompatActivity
             edit.putString("username","");
             edit.putString("jabatan","");
             edit.putString("level","");
+            edit.putString("kodekaryawan","");
             edit.putString("tempatlahir","");
             edit.putString("profileimage","");
             edit.putString("Authorization","");
