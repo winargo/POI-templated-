@@ -42,7 +42,13 @@ import java.lang.ref.WeakReference;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.core.generator;
 import qrcodescanner.camera.CameraManager;
 import qrcodescanner.decode.CaptureActivityHandler;
 import qrcodescanner.decode.DecodeImageCallback;
@@ -361,9 +367,9 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
 
             try {
                 if(getIntent().getIntExtra("keepalive",0)==1){
-                    Intent a = new Intent(QrCodeActivity.this,QrCodeActivity.class);
-                    startActivity(a);
-                    finish();
+                    SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
+                    absensi abs = new absensi(QrCodeActivity.this,prefs.getString("Authorization",""),getIntent().getIntExtra("absensi",0),resultString,prefs.getString("kodekaryawan",""));
+                    abs.execute();
                 }
                 else {
                     Log.d(LOGTAG,"Got scan result from user loaded image :"+resultString);
@@ -507,34 +513,39 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
     }
 
 
-    /*public class absensi extends AsyncTask<Void, Integer, String>
+    public class absensi extends AsyncTask<Void, Integer, String>
     {
+        Context ctx;
         String response = "";
         String error = "";
         String username=  "" ;
-        String password = "" ;
+        String kabag = "" ;
         SharedPreferences prefs ;
         JSONObject result ;
         ProgressDialog dialog ;
         String urldata = "";
-        String passeddata = "" ;
+        String kode = "" ;
 
-        public  absensi(Context context,String token,int type)
+        public  absensi(Context context,String token,int type,String kodek,String kodekaba)
         {
+            kode = kodek;
+            kabag = kodekaba;
+
+            ctx = context;
             dialog = new ProgressDialog(context);
 
             if(type == 0){
-                urldata =
+                urldata = generator.checkinurl;
             }else if(type ==1){
-
+                urldata = generator.breakinurl;
             }else if(type ==2){
-
+                urldata = generator.breakouturl;
             }else if(type ==3){
-
+                urldata = generator.checkouturl;
             }else if(type ==4){
-
+                urldata = generator.extrainurl;
             }else if(type ==5){
-
+                urldata = generator.extraouturl;
             }
 
             this.error = error ;
@@ -554,77 +565,64 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
 
             int data = 0;
 
-            while (data==0) {
+
+
+            try {
+                this.dialog.setMessage("Loading Data...");
+                OkHttpClient client = new OkHttpClient();
+
+                RequestBody body = new FormBody.Builder()
+                        .add("kode",kode)
+                        .add("kode_kabag",kabag)
+                        .build();
+
+                Log.e(TAG, "doInBackground: "+kode+kabag );
+
+                Request request = new Request.Builder()
+                        .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                        .post(body)
+                        .url(urldata)
+                        .build();
+                Response responses = null;
+
+
                 try {
-                    this.dialog.setMessage("Loading Data...");
-
-                    JSONObject jsonObject;
-
-                    try {
-                        OkHttpClient client = new OkHttpClient();
-
-
-                        RequestBody body = new FormBody.Builder()
-                                .add("kode",passeddata)
-                                .build();
-
-                        Request request = new Request.Builder()
-                                .post(body)
-                                .url(urldata)
-                                .build();
-                        Response responses = null;
-
-                        try {
-                            responses = client.newCall(request).execute();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            jsonObject =  null;
-                        }catch (Exception e){
-                            e.printStackTrace();
-                            jsonObject = null;
-                        }
-
-                        if (responses==null){
-                            jsonObject = null;
-                        }
-                        else {
-                            jsonObject = new JSONObject(responses.body().string());
-                        }
-                        result = jsonObject;
-                        data=1;
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        return null;
-                    }
-
-
-                    break;
+                    responses = client.newCall(request).execute();
                 } catch (IOException e) {
-                    this.dialog.setMessage("Loading Data... IOError Occured,retrying...");
-                    this.dialog.dismiss();
-                    Log.e("doInBackground: ", "IO Exception" + e.getMessage());
-                    generator.jsondatalogin = null;
-                    response = "Error IOException";
-                } catch (NullPointerException e) {
-                    this.dialog.setMessage("Loading Data... Internet Error Occured,retrying...");
-                    this.dialog.dismiss();
-                    Log.e("doInBackground: ", "null data" + e.getMessage());
-                    generator.jsondatalogin = null;
-                    response = "Please check Connection and Server";
-                } catch (Exception e) {
-                    this.dialog.setMessage("Loading Data... Error Occured,retrying...");
-                    this.dialog.dismiss();
-                    Log.e("doInBackground: ", e.getMessage());
-                    generator.jsondatalogin = null;
-                    response = "Error Occured, PLease Contact Administrator/Support";
-                }
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }catch (Exception e){
                     e.printStackTrace();
                 }
+                result = new JSONObject(responses.body().string());
 
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return null;
+            }catch (IOException e) {
+                this.dialog.setMessage("Loading Data... IOError Occured,retrying...");
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                e.printStackTrace();
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                this.dialog.setMessage("Loading Data... Internet Error Occured,retrying...");
+                this.dialog.dismiss();
+                e.printStackTrace();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                this.dialog.setMessage("Loading Data... Error Occured,retrying...");
+                this.dialog.dismiss();
+                e.printStackTrace();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
             }
+
             return response;
         }
 
@@ -639,12 +637,37 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
                 dialog.dismiss();
             }
             try {
-                if(result.getString("status").equals("true")) {
-                    JSONArray data = result.getJSONArray("data");
-                    JSONObject dataisi = data.getJSONObject(0);
-                    String declare = dataisi.getString("otoritas");
-                    String iduser = dataisi.getString("idfp");
+                Log.e(TAG, "onPostExecute: "+result);
+                //restartbarcode();
+
+
+                String title = "";
+                if(result.getString("status").equals("true")){
+                    title = "Berhasil";
                 }
+                else {
+                    title = "Gagal";
+                }
+
+                final AlertDialog alert = new AlertDialog.Builder(ctx).setTitle(title).setMessage(result.getString("message")).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).create();
+
+                alert.show();
+
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        alert.dismiss();
+                        mCaptureActivityHandler.restartPreviewAndDecode();
+                        //Do something after 100ms
+                    }
+                }, 2000);
+
 
                 //JSONArray bArray= responseObject.getJSONArray("B");
                 //for(int i=0;i<bArray.length();i++){
@@ -656,7 +679,7 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
                 Log.e(TAG, "onPostExecute: "+e.getMessage() );
                 e.printStackTrace();
                 if(result!=null){
-                    AlertDialog alertDialog = new AlertDialog.Builder(mainmenu_kabag.this).create();
+                    AlertDialog alertDialog = new AlertDialog.Builder(ctx).create();
                     alertDialog.setTitle("Hasil");
 
                     alertDialog.setMessage(e.getMessage().toString() + " "+ result.toString());
@@ -676,5 +699,13 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
 
             Log.d(TAG + " onPostExecute", "" + result1);
         }
-    }*/
+    }
+
+    public void restartbarcode(){
+        Intent a = new Intent(QrCodeActivity.this,QrCodeActivity.class);
+        a.putExtra("absensi",getIntent().getIntExtra("absensi",0));
+        a.putExtra("keepalive",1);
+        startActivity(a);
+        finish();
+    }
 }

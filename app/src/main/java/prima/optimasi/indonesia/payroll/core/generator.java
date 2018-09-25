@@ -60,12 +60,12 @@ public class generator {
     public static String izinurl = "http://"+ generator.Server+":4000/laporan/izin";
     public static String pengajianurl = "http://"+ generator.Server+":4000/laporan/pengajian";
 
-    public static String checkinurl="http://"+ generator.Server+"/absensi/checkin";
-    public static String checkouturl="http://"+ generator.Server+"/absensi/checkout";
-    public static String breakinurl="http://"+ generator.Server+"/absensi/breakin";
-    public static String breakouturl="http://"+ generator.Server+"/absensi/breakout";
-    public static String extrainurl="http://"+ generator.Server+"/absensi/extrain";
-    public static String extraouturl="http://"+ generator.Server+"/absensi/extraout";
+    public static String checkinurl="http://"+ generator.Server+":4000/absensi/checkin";
+    public static String checkouturl="http://"+ generator.Server+":4000/absensi/checkout";
+    public static String breakinurl="http://"+ generator.Server+":4000/absensi/breakin";
+    public static String breakouturl="http://"+ generator.Server+":4000/absensi/breakout";
+    public static String extrainurl="http://"+ generator.Server+":4000/absensi/extrain";
+    public static String extraouturl="http://"+ generator.Server+":4000/absensi/extraout";
 
 
     public static JSONObject jsondatalogin = null ;

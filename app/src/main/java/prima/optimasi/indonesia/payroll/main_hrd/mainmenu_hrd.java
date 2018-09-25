@@ -41,6 +41,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
 import qrcodescanner.QrCodeActivity;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.JsonObject;
@@ -199,61 +200,21 @@ public class mainmenu_hrd extends AppCompatActivity
                     drawer.closeDrawer(Gravity.START);
                 }
                 else if(listDataHeader.get(groupPosition).equals("Absensi")){
-                    if (ContextCompat.checkSelfPermission(mainmenu_hrd.this, Manifest.permission.CAMERA)
-                            == PackageManager.PERMISSION_DENIED){
-                        ActivityCompat.requestPermissions(mainmenu_hrd.this, new String[]{Manifest.permission.CAMERA}, 202);
-                        if (ContextCompat.checkSelfPermission(mainmenu_hrd.this, Manifest.permission.CAMERA)
-                                == PackageManager.PERMISSION_DENIED){
-                            AlertDialog dialog = new AlertDialog.Builder(mainmenu_hrd.this).setTitle("Permission Required").setMessage("Camera Permission Required !!").show();
+                    drawer.closeDrawer(Gravity.START);
+                    String[] colors = {"Check IN", "Check OUT","Break OUT","Break IN","Extra IN","Extra OUT"};
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_hrd.this);
+                    builder.setTitle("Absensi");
+                    builder.setItems(colors, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent a = new Intent(mainmenu_hrd.this,QrCodeActivity.class);
+                            a.putExtra("absensi",which);
+                            a.putExtra("keepalive",1);
+                            startActivity(a);
                         }
-                        else {
-                            drawer.closeDrawer(Gravity.START);
-                            String[] colors = {"Face Registration", "Face Recognition", "QR Code"};
-
-                            AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_hrd.this);
-                            builder.setTitle("Pilihan");
-                            builder.setItems(colors, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if(which==0){
-                                        Intent a = new Intent(mainmenu_hrd.this,facecapture.class);
-                                        startActivity(a);
-                                    }else if(which==1){
-                                        Intent a = new Intent(mainmenu_hrd.this,facedetection.class);
-                                        startActivity(a);
-                                    }else if(which==2){
-                                        Intent i = new Intent(mainmenu_hrd.this,QrCodeActivity.class);
-                                        startActivityForResult( i,104);
-                                    }
-                                }
-                            });
-                            builder.show();
-                        }
-                    }
-                    else {
-                        drawer.closeDrawer(Gravity.START);
-
-                        String[] colors = {"Face Registration", "Face Recognition", "QR Code"};
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_hrd.this);
-                        builder.setTitle("Pilihan");
-                        builder.setItems(colors, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if(which==0){
-                                    Intent a = new Intent(mainmenu_hrd.this,facecapture.class);
-                                    startActivity(a);
-                                }else if(which==1){
-                                    Intent a = new Intent(mainmenu_hrd.this,facedetection.class);
-                                    startActivity(a);
-                                }else if(which==2){
-                                    Intent i = new Intent(mainmenu_hrd.this,QrCodeActivity.class);
-                                    startActivityForResult( i,104);
-                                }
-                            }
-                        });
-                        builder.show();
-                    }
+                    });
+                    builder.show();
                 }
                 return false;
             }
