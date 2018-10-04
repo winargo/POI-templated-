@@ -37,7 +37,8 @@ import okhttp3.Response;
 import static android.content.Context.MODE_PRIVATE;
 
 public class generator {
-    public static String Server="192.168.1.254";
+    //public static String Server="153.92.4.147";
+    public static String Server="192.168.5.254";
     public static String port = "4000";
     public static String username = "";
     public static String password = "";
@@ -67,8 +68,17 @@ public class generator {
     public static String extrainurl="http://"+ generator.Server+":4000/absensi/extrain";
     public static String extraouturl="http://"+ generator.Server+":4000/absensi/extraout";
 
+    public static String scheckinurl="http://"+ generator.Server+":4000/absensiSecurity/checkin";
+    public static String scheckouturl="http://"+ generator.Server+":4000/absensiSecurity/checkout";
+    public static String sbreakinurl="http://"+ generator.Server+":4000/absensiSecurity/breakin";
+    public static String sbreakouturl="http://"+ generator.Server+":4000/absensiSecurity/breakout";
+    public static String scheckemployeeyurl="http://"+ generator.Server+":4000/absensiSecurity/checkkaryawan";
+
+    public static String jadwalurl="http://"+ generator.Server+":4000/karyawan/checkjadwal/";
+
 
     public static JSONObject jsondatalogin = null ;
+    public static JSONObject jsondatajadwal = null ;
 
     //tempdata
     public static List<pengumuman> temppengumumanpassdata = null;
@@ -530,10 +540,167 @@ public class generator {
                 e.printStackTrace();
                 error = e.getMessage();
             }
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
+    public static class getjadwal extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String authtoken="";
+        String username=  "" ;
+        String password = "" ;
+        Context cntx;
+        SharedPreferences prefs ;
+        JSONObject result ;
+        ProgressDialog dialog ;
+        String urldata = generator.jadwalurl;
+        String kodekaryawan = "" ;
+
+        public getjadwal(Context context, String passed,String authtoken)
+        {
+            this.authtoken=authtoken;
+            cntx = context;
+            generator.jsondatajadwal = null;
+            prefs = context.getSharedPreferences("poipayroll",MODE_PRIVATE);
+            dialog = new ProgressDialog(context);
+            kodekaryawan = passed;
+            this.error = error ;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            this.dialog.show();
+            super.onPreExecute();
+            this.dialog.setMessage("Registering Device...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            int data = 0;
+
+            try {
+                this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",authtoken)
+                            .url(urldata+kodekaryawan)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "sendRegistrationToServer: failed" + e.getMessage() );
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        Log.e(TAG, "sendRegistrationToServer: failed" + e.getMessage() );
+                    }
+
+                    if (responses==null){
+                        Log.e(TAG, "sendRegistrationToServer: failed" );
+
+                    }
+                    else {
+                        jsonObject = new JSONObject(responses.body().string());
+                        Log.e(TAG, "success" );
+                        result = jsonObject;
+                        data=1;
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "sendRegistrationToServer: failed" + e.getMessage() );
+                }
+            } catch (IOException e) {
+                this.dialog.setMessage("Loading Data... IOError Occured,retrying...");
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatajadwal = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                this.dialog.setMessage("Loading Data... Internet Error Occured,retrying...");
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatajadwal = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                this.dialog.setMessage("Loading Data... Error Occured,retrying...");
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatajadwal = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+            super.onPostExecute(result1);
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }
+            String res = "";
+
+            if(result!=null){
+                try {
+                    Log.e(TAG, "onPostExecute: "+result );
+                    generator.jsondatajadwal = result;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+
+            try {
+                AlertDialog alertDialog = new AlertDialog.Builder(cntx).create();
+                alertDialog.setTitle("Scan result");
+                alertDialog.setMessage(result.toString() + res);
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+
+                //JSONArray bArray= responseObject.getJSONArray("B");
+                //for(int i=0;i<bArray.length();i++){
+                //    JSONObject innerObject=bArray.getJSONObject(i);
+                //    String a= innerObject.getString("a");
+                //    String b= innerObject.getString("b");
+                //}
+            } catch (Exception e) {
+                e.printStackTrace();
+                error = e.getMessage();
+            }
 
 
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
+
 
 }

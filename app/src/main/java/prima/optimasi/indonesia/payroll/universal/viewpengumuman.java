@@ -5,12 +5,14 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,9 +29,9 @@ public class viewpengumuman extends AppCompatActivity {
 
     private FloatingActionButton fab;
 
-    TextView judul , brief ,isi;
+    TextView judul , brief ,isi,creator,createdate;
 
-    ImageView image ;
+    ImageView image ,imagecreator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,7 @@ public class viewpengumuman extends AppCompatActivity {
 
     private void iniComponent() {
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setVisibility(View.GONE);
         ((NestedScrollView) findViewById(R.id.nested_scroll_view)).setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
@@ -52,7 +55,7 @@ public class viewpengumuman extends AppCompatActivity {
                     hide = true;
                 } else {
                     if (!hide) return;
-                    prima.optimasi.indonesia.payroll.utils.ViewAnimation.showFab(fab);
+                    prima.optimasi.indonesia.payroll.utils.ViewAnimation.hideFab(fab);
                     hide = false;
                 }
             }
@@ -63,12 +66,30 @@ public class viewpengumuman extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(null);
+
+        imagecreator = findViewById(R.id.image);
+
+        imagecreator.setVisibility(View.GONE);
+
+        createdate = findViewById(R.id.pengtextdatecreator);
+        creator = findViewById(R.id.pengtextcreator);
+
+
+
+
+
         judul = findViewById(R.id.pengtitle);
         brief = findViewById(R.id.pengbrief);
         isi = findViewById(R.id.pengisi);
         image = findViewById(R.id.pengimage);
 
         pengumuman peng =  generator.temppengumumanpassdata.get(0);
+
+        creator.setText(peng.getCreated());
+
+        SimpleDateFormat formats = new SimpleDateFormat("dd MMMM yyyy");
+
+        createdate.setText(formats.format(peng.getCreatedate()));
 
         judul.setText(peng.getTitle());
 

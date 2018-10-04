@@ -247,7 +247,7 @@ public class mainmenu_kabag extends AppCompatActivity
                 }
                 else if(listDataHeader.get(groupPosition).equals("Absensi")){
                     drawer.closeDrawer(Gravity.START);
-                    String[] colors = {"Check IN", "Check OUT","Break OUT","Break IN","Extra IN","Extra OUT"};
+                    String[] colors = {"Check IN", "Break OUT","Break IN","Check OUT","Extra IN","Extra OUT"};
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_kabag.this);
                     builder.setTitle("Absensi");
@@ -256,6 +256,7 @@ public class mainmenu_kabag extends AppCompatActivity
                         public void onClick(DialogInterface dialog, int which) {
                             Intent a = new Intent(mainmenu_kabag.this,QrCodeActivity.class);
                             a.putExtra("absensi",which);
+                            a.putExtra("security",0);
                             a.putExtra("keepalive",1);
                             startActivity(a);
                         }
@@ -463,6 +464,7 @@ public class mainmenu_kabag extends AppCompatActivity
         listDataHeader.add("Pengumuman");
         listDataHeader.add("Anggota");
         listDataHeader.add("Cek Gaji");
+        listDataHeader.add("Cek Jadwal");
         listDataHeader.add("Pengajuan");
         listDataHeader.add("Absensi");
 
@@ -477,8 +479,8 @@ public class mainmenu_kabag extends AppCompatActivity
         top2510.add("Cuti");
         top2510.add("Pinjaman");
 
-        listDataChild.put(listDataHeader.get(4), top250);
-        listDataChild.put(listDataHeader.get(5), top2510);
+        listDataChild.put(listDataHeader.get(5), top250);
+        listDataChild.put(listDataHeader.get(6), top2510);
     }
     public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
 

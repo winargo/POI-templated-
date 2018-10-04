@@ -153,7 +153,13 @@ public class AdapterListSectionedizin extends RecyclerView.Adapter<RecyclerView.
                 view.card.setBackgroundTintList(myList);
             }
 
-            Picasso.get().load(p.getImageurl()).transform(new CircleTransform()).into(view.image);
+            if(p.getImageurl().contains(".jpg")) {
+                Picasso.get().load(p.getImageurl()).transform(new CircleTransform()).into(view.image);
+            }
+            else {
+                Picasso.get().load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvx08eMc0PDklJb6ZMibGD-xZVa-Ghbs5mzmRrzNB3nsXoJ9B3zA").transform(new CircleTransform()).into(view.image);
+
+            }
 
             /*view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override

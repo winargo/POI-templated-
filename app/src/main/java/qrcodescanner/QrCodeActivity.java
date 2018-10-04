@@ -368,7 +368,14 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
             try {
                 if(getIntent().getIntExtra("keepalive",0)==1){
                     SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
-                    absensi abs = new absensi(QrCodeActivity.this,prefs.getString("Authorization",""),getIntent().getIntExtra("absensi",0),resultString,prefs.getString("kodekaryawan",""));
+
+                    boolean security = false;
+
+                    if(getIntent().getIntExtra("security",0)==1){
+                        security = true;
+                    }
+
+                    absensi abs = new absensi(QrCodeActivity.this,prefs.getString("Authorization",""),getIntent().getIntExtra("absensi",0),resultString,prefs.getString("kodekaryawan",""),security);
                     abs.execute();
                 }
                 else {
@@ -518,35 +525,55 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
         Context ctx;
         String response = "";
         String error = "";
-        String username=  "" ;
         String kabag = "" ;
         SharedPreferences prefs ;
         JSONObject result ;
         ProgressDialog dialog ;
         String urldata = "";
         String kode = "" ;
+        int type=0;
+        boolean issecurity = false;
 
-        public  absensi(Context context,String token,int type,String kodek,String kodekaba)
+        public  absensi(Context context,String token,int type,String kodek,String kodekaba,boolean issecurity)
         {
             kode = kodek;
+            this.type = type;
             kabag = kodekaba;
+            this.issecurity = issecurity;
 
             ctx = context;
             dialog = new ProgressDialog(context);
 
-            if(type == 0){
-                urldata = generator.checkinurl;
-            }else if(type ==1){
-                urldata = generator.breakinurl;
-            }else if(type ==2){
-                urldata = generator.breakouturl;
-            }else if(type ==3){
-                urldata = generator.checkouturl;
-            }else if(type ==4){
-                urldata = generator.extrainurl;
-            }else if(type ==5){
-                urldata = generator.extraouturl;
+            if(issecurity){
+                if(type ==1){
+                    urldata = generator.scheckemployeeyurl;
+                }
+                else if(type == 2){
+                    urldata = generator.scheckinurl;
+                }else if(type ==3){
+                    urldata = generator.sbreakouturl;
+                }else if(type ==4){
+                    urldata = generator.sbreakinurl;
+                }else if(type ==5){
+                    urldata = generator.scheckouturl;
+                }
             }
+            else {
+                if(type == 0){
+                    urldata = generator.checkinurl;
+                }else if(type ==1){
+                    urldata = generator.breakouturl;
+                }else if(type ==2){
+                    urldata = generator.breakinurl;
+                }else if(type ==3){
+                    urldata = generator.checkouturl;
+                }else if(type ==4){
+                    urldata = generator.extrainurl;
+                }else if(type ==5){
+                    urldata = generator.extraouturl;
+                }
+            }
+
 
             this.error = error ;
         }
@@ -554,7 +581,10 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
         String TAG = getClass().getSimpleName();
 
         protected void onPreExecute (){
-            this.dialog.show();
+            try{this.dialog.show();}
+            catch (Exception e){
+                e.printStackTrace();
+            }
             super.onPreExecute();
             this.dialog.setMessage("Getting Data...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
@@ -578,11 +608,83 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
 
                 Log.e(TAG, "doInBackground: "+kode+kabag );
 
-                Request request = new Request.Builder()
-                        .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
-                        .post(body)
-                        .url(urldata)
-                        .build();
+                Request request=null;
+                if(issecurity){
+                    if(type ==1){
+                        request = new Request.Builder()
+                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                                .post(body)
+                                .url(urldata)
+                                .build();
+                    }
+                    else if(type == 2){
+                        request = new Request.Builder()
+                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                                .post(body)
+                                .url(urldata)
+                                .build();
+                    }else if(type ==3){
+                        request = new Request.Builder()
+                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                                .put(body)
+                                .url(urldata)
+                                .build();
+                    }else if(type ==4){
+                        request = new Request.Builder()
+                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                                .put(body)
+                                .url(urldata)
+                                .build();
+                    }else if(type ==5){
+                        request = new Request.Builder()
+                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                                .put(body)
+                                .url(urldata)
+                                .build();
+                    }
+
+
+                }
+                else {
+                    if(type == 0){
+                        request = new Request.Builder()
+                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                                .post(body)
+                                .url(urldata)
+                                .build();
+                    }else if(type ==1){
+                        request = new Request.Builder()
+                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                                .put(body)
+                                .url(urldata)
+                                .build();
+                    }else if(type ==2){
+                        request = new Request.Builder()
+                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                                .put(body)
+                                .url(urldata)
+                                .build();
+                    }else if(type ==3){
+                        request = new Request.Builder()
+                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                                .put(body)
+                                .url(urldata)
+                                .build();
+                    }else if(type ==4){
+                        request = new Request.Builder()
+                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                                .post(body)
+                                .url(urldata)
+                                .build();
+                    }else if(type ==5){
+                        request = new Request.Builder()
+                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                                .put(body)
+                                .url(urldata)
+                                .build();
+                    }
+                }
+
                 Response responses = null;
 
 
@@ -663,8 +765,12 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
                     @Override
                     public void run() {
                         alert.dismiss();
-                        mCaptureActivityHandler.restartPreviewAndDecode();
-                        //Do something after 100ms
+                        try {
+                            mCaptureActivityHandler.restartPreviewAndDecode();
+                        }
+                        catch (Exception e){
+                            e.printStackTrace();
+                        }//Do something after 100ms
                     }
                 }, 2000);
 

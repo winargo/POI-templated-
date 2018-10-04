@@ -57,6 +57,7 @@ import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentEmploy
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentPengumuman;
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentReport;
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentTotalGaji;
+import prima.optimasi.indonesia.payroll.main_owner.manage.pengumuman.addpengumuman;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
 public class mainmenu_owner extends AppCompatActivity
@@ -374,6 +375,15 @@ public class mainmenu_owner extends AppCompatActivity
 
             return true;
         }
+        else if(id == R.id.action_add){
+            Intent a = new Intent(mainmenu_owner.this,addpengumuman.class);
+            startActivity(a);
+
+        }
+        else if(id==R.id.action_search){
+
+        }
+
 
         return super.onOptionsItemSelected(item);
     }

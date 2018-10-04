@@ -210,31 +210,88 @@ public class mainmenu_karyawan extends AppCompatActivity
 
                     drawer.closeDrawer(Gravity.START);
 
-                    LinearLayout l = (LinearLayout) LayoutInflater.from(mainmenu_karyawan.this).inflate(R.layout.layout_barcode,null);
+                    if(prefs.getString("jabatan","1").equals("4")){
 
-                    ImageView barcode = l.findViewById(R.id.barcodekaryawan);
+                        String[] colors = {"Absensi","Scan Karyawan","Check IN","Break OUT","Break IN","Check OUT"};
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_karyawan.this);
+                        builder.setTitle("Absensi");
+                        builder.setItems(colors, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if(which==0){
+                                    LinearLayout l = (LinearLayout) LayoutInflater.from(mainmenu_karyawan.this).inflate(R.layout.layout_barcode,null);
+
+                                    ImageView barcode = l.findViewById(R.id.barcodekaryawan);
+
+
+                                    String text=prefs.getString("kodekaryawan","");
+                                    Log.e("data json", "onClick: "+prefs.getString("kodekaryawan","") );
+                                    MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+                                    try {
+                                        BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE,400,400);
+                                        BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                                        Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+                                        barcode.setImageBitmap(bitmap);
+                                    } catch (WriterException e) {
+                                        e.printStackTrace();
+                                    }
 
 
 
-                    String text=prefs.getString("kodekaryawan","");
-                    Log.e("data json", "onClick: "+prefs.getString("kodekaryawan","") );
-                    MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-                    try {
-                        BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE,400,400);
-                        BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-                        Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
-                        barcode.setImageBitmap(bitmap);
-                    } catch (WriterException e) {
-                        e.printStackTrace();
+                                    AlertDialog dialog1 = new AlertDialog.Builder(mainmenu_karyawan.this).setTitle("Absensi").setView(l).create();
+
+                                    dialog1.show();
+                                }
+                                else {
+                                    Intent a = new Intent(mainmenu_karyawan.this,QrCodeActivity.class);
+                                    a.putExtra("absensi",which);
+                                    a.putExtra("security",1);
+                                    a.putExtra("keepalive",1);
+                                    startActivity(a);
+                                }
+                            }
+                        });
+                        builder.show();
+                    }
+                    else{
+                        drawer.closeDrawer(Gravity.START);
+
+                        LinearLayout l = (LinearLayout) LayoutInflater.from(mainmenu_karyawan.this).inflate(R.layout.layout_barcode,null);
+
+                        ImageView barcode = l.findViewById(R.id.barcodekaryawan);
+
+
+
+                        String text=prefs.getString("kodekaryawan","");
+                        Log.e("data json", "onClick: "+prefs.getString("kodekaryawan","") );
+                        MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+                        try {
+                            BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE,400,400);
+                            BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                            Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+                            barcode.setImageBitmap(bitmap);
+                        } catch (WriterException e) {
+                            e.printStackTrace();
+                        }
+
+
+
+                        AlertDialog dialog1 = new AlertDialog.Builder(mainmenu_karyawan.this).setTitle("Absensi").setView(l).create();
+
+                        dialog1.show();
+
                     }
 
 
 
-                    AlertDialog dialog1 = new AlertDialog.Builder(mainmenu_karyawan.this).setTitle("Absensi").setView(l).create();
-
-                    dialog1.show();
 
 
+                }
+                else if(listDataHeader.get(groupPosition).equals("Cek Jadwal")){
+
+                    generator.getjadwal get = new generator.getjadwal(mainmenu_karyawan.this,prefs.getString("kodekaryawan",""),prefs.getString("Authorization",""));
+                    get.execute();
 
                 }
                 return false;
@@ -388,6 +445,7 @@ public class mainmenu_karyawan extends AppCompatActivity
         listDataHeader.add("Cek Gaji");
         listDataHeader.add("Log Absensi");
         listDataHeader.add("Pengajuan");
+        listDataHeader.add("Cek Jadwal");
         listDataHeader.add("Absensi");
 
         // Adding child data

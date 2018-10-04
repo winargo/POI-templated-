@@ -345,6 +345,7 @@ public class mainmenu_hrd extends AppCompatActivity
         listDataHeader.add("List Karyawan");
         listDataHeader.add("Profil");
         listDataHeader.add("Cek Gaji");
+        listDataHeader.add("Cek Jadwal");
         listDataHeader.add("Pengajuan");
         listDataHeader.add("Absensi");
 
@@ -359,9 +360,9 @@ public class mainmenu_hrd extends AppCompatActivity
         top250.add("Pinjaman");
         top250.add("Sakit");
 
-        listDataChild.put(listDataHeader.get(4), top2501);
+        listDataChild.put(listDataHeader.get(5), top2501);
 
-        listDataChild.put(listDataHeader.get(5), top250);
+        listDataChild.put(listDataHeader.get(6), top250);
     }
 
     public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
