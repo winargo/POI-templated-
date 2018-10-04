@@ -23,6 +23,7 @@ import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.internal.SnackbarContentLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -77,6 +78,7 @@ public class addpengumuman extends AppCompatActivity {
     private TextView mPreview;
 
     String templinkphoto;
+    String tempspinerdata;
 
     CoordinatorLayout laytopbar;
 
@@ -91,7 +93,9 @@ public class addpengumuman extends AppCompatActivity {
     LinearLayout linearpicture;
 
     ImageView imagedata;
-    TextView textdata;
+    TextView textdata,title;
+
+    MaterialSpinner spinner;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -101,8 +105,17 @@ public class addpengumuman extends AppCompatActivity {
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
 
-        MaterialSpinner spinner = (MaterialSpinner) findViewById(R.id.spinner);
+        spinner = (MaterialSpinner) findViewById(R.id.spinner);
         spinner.setItems("berita","pengumuman");
+
+        tempspinerdata = "berita";
+
+        spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+
+            @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                tempspinerdata = item;
+            }
+        });
 
         coordinator = findViewById(R.id.lineartop);
 
@@ -110,7 +123,7 @@ public class addpengumuman extends AppCompatActivity {
 
         laytopbar =  findViewById(R.id.lineartop);
 
-
+        title = findViewById(R.id.titlepengumuman);
 
         imagedata = findViewById(R.id.imagepengumuman);
         textdata = findViewById(R.id.textimagepengumuman);
@@ -410,6 +423,30 @@ public class addpengumuman extends AppCompatActivity {
         if (item.getItemId() == android.R.id.home) {
             finish();
         }
+        else if(item.getItemId()==R.id.action_save){
+            if(title.getText().toString().equals("")){
+                Snackbar.make(coordinator,"Judul Harus Diisi",Snackbar.LENGTH_SHORT).show();
+            }
+            else {
+                if(!textdata.getText().toString().contains(".jpg")){
+                    Snackbar.make(coordinator,"Gambar Kosong",Snackbar.LENGTH_SHORT).show();
+                }
+                else {
+                    if(mPreview.getText().toString().equals("")){
+                        Snackbar.make(coordinator,"Isi "+tempspinerdata+" Kosong",Snackbar.LENGTH_SHORT).show();
+                    }
+                    else {
+                        if(!mPreview.getText().toString().contains("<") && !mPreview.getText().toString().equals("")){
+                            Snackbar.make(coordinator,"Isi "+tempspinerdata+" terlalu singkat",Snackbar.LENGTH_SHORT).show();
+                        }
+                        else {
+                            sendpengumuman peng = new sendpengumuman(addpengumuman.this);
+                            peng.execute();
+                        }
+                    }
+                }
+            }
+        }
         return  true;
     }
 
@@ -465,7 +502,6 @@ public class addpengumuman extends AppCompatActivity {
             bitmap = android.provider.MediaStore.Images.Media.getBitmap(cr, mImageUri1);
 
 
-            if(!templinkphoto.equals("")){
                 ExifInterface ei = new ExifInterface(templinkphoto);
                 int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION,
                         ExifInterface.ORIENTATION_UNDEFINED);
@@ -491,10 +527,6 @@ public class addpengumuman extends AppCompatActivity {
                 }
 
                 imageView.setImageBitmap(rotatedBitmap);
-            }else{
-                imageView.setImageBitmap(bitmap);
-            }
-
         }
         catch (Exception e)
         {
@@ -519,16 +551,15 @@ public class addpengumuman extends AppCompatActivity {
         SharedPreferences prefs ;
         JSONObject result = null ;
         ProgressDialog dialog ;
-        String urldata = generator.listemployeeurl;
+        String urldata = generator.pengumumanurl;
         String passedid = "" ;
 
-        public sendpengumuman(Context context,String id)
+        public sendpengumuman(Context context)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
             dialog = new ProgressDialog(context);
             this.username = generator.username;
             this.password = generator.password;
-            passedid = id;
             this.error = error ;
         }
 
@@ -552,14 +583,21 @@ public class addpengumuman extends AppCompatActivity {
                 try {
                     OkHttpClient client = new OkHttpClient();
 
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
                     RequestBody body = new FormBody.Builder()
-                            .add("kode","")
-                            .add("kode_kabag","")
+                            .add("tanggal",formatter.format(new Date()))
+                            .add("tipe",tempspinerdata)
+                            .add("judul",title.getText().toString())
+                            .add("foto",textdata.getText().toString())
+                            .add("isi",mPreview.getText().toString())
+                            .add("penulis",prefs.getString("username",""))
                             .build();
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
-                            .url(urldata+"/"+passedid)
+                            .post(body)
+                            .url(urldata)
                             .build();
                     Response responses = null;
 
@@ -621,13 +659,18 @@ public class addpengumuman extends AppCompatActivity {
                         DecimalFormat formatter = new DecimalFormat("###,###,###.00");
 
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                        JSONArray pengsarray = result.getJSONArray("row");
-                        JSONObject obj = pengsarray.getJSONObject(0);
+                        if(result.getString("status").equals("true")){
+                            Toast.makeText(addpengumuman.this,"Sukses Tambah " +tempspinerdata+ " baru",Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                        else {
+                            Snackbar.make(coordinator,"Gagal Membuat pengumuman baru, cek koneksi",Snackbar.LENGTH_SHORT).show();
+                        }
+
 
 
                         //Picasso.get().load(generator.profileurl+"/"+obj.getString("foto")).transform(new CircleTransform()).into(image);
 
-                        Log.e(TAG, "onPostExecute: "+ generator.profileurl+"/"+obj.getString("foto") );
 
                     } catch (JSONException e) {
                         e.printStackTrace();

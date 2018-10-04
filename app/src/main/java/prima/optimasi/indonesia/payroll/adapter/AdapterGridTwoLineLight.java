@@ -1,9 +1,15 @@
 package prima.optimasi.indonesia.payroll.adapter;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.preference.DialogPreference;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -71,9 +77,9 @@ public class AdapterGridTwoLineLight extends RecyclerView.Adapter<RecyclerView.V
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final pengumuman obj = items.get(position);
-            AdapterGridTwoLineLight.OriginalViewHolder view = (AdapterGridTwoLineLight.OriginalViewHolder) holder;
+            final AdapterGridTwoLineLight.OriginalViewHolder view = (AdapterGridTwoLineLight.OriginalViewHolder) holder;
             view.name.setText(obj.getTitle());
-            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+            final SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
             view.brief.setText(format.format(obj.getCreatedate())+" - Oleh "+obj.getCreated());
 
             Picasso.get().load(obj.getImagelink()).centerCrop()
@@ -90,6 +96,49 @@ public class AdapterGridTwoLineLight extends RecyclerView.Adapter<RecyclerView.V
                     ctx.startActivity(a);
                 }
             });
+
+            if(ctx.getSharedPreferences("poipayroll",Context.MODE_PRIVATE).getString("level","").equals("owner")){
+                view.lyt_parent.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        PopupMenu popup = new PopupMenu(ctx, view.lyt_parent);
+                        //inflating menu from xml resource
+                        popup.inflate(R.menu.menu_delete);
+                        //adding click listener
+                        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                            @Override
+                            public boolean onMenuItemClick(MenuItem item) {
+                                switch (item.getItemId()) {
+                                    case R.id.action_delete:
+                                        AlertDialog dialog = new AlertDialog.Builder(ctx).setTitle("Pengumuman").setMessage("Apakah anda yakin ingin menghapus pengumuman dari "+obj.getCreated()+" pada tanggal "+format.format(obj.getCreatedate())+"").setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+
+                                            }
+                                        }).setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        }).show();
+
+                                        return true;
+                                    default:
+                                        return false;
+                                }
+                            }
+                        });
+                        //displaying the popup
+                        popup.show();
+                        return true;
+                    }
+                });
+            }
+            else
+            {
+
+            }
+
     }
 
     @Override

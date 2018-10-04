@@ -38,7 +38,23 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class generator {
     //public static String Server="153.92.4.147";
+    //public static String Server="192.168.5.254";
+    //public static String Server="153.92.4.147";
+    //public static String Server="192.168.5.254";
+    //public static String Server="153.92.4.147";
+    //public static String Server="192.168.5.254";
+    //public static String Server="153.92.4.147";
+    //public static String Server="192.168.5.254";
+    //public static String Server="153.92.4.147";
+    //public static String Server="192.168.5.254";
+    //public static String Server="153.92.4.147";
+    //public static String Server="192.168.5.254";
+    //public static String Server="153.92.4.147";
+    //public static String Server="192.168.5.254";
+    //public static String Server="153.92.4.147";
     public static String Server="192.168.5.254";
+
+
     public static String port = "4000";
     public static String username = "";
     public static String password = "";

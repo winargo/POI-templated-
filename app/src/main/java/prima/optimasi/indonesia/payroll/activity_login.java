@@ -62,6 +62,8 @@ public class activity_login extends FragmentActivity {
     TextView pass;
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
