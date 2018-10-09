@@ -7,9 +7,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -27,7 +30,11 @@ import prima.optimasi.indonesia.payroll.okhttpclass;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -51,8 +58,7 @@ public class generator {
     //public static String Server="192.168.5.254";
     //public static String Server="153.92.4.147";
     //public static String Server="192.168.5.254";
-    //public static String Server="153.92.4.147";
-    public static String Server="192.168.5.254";
+    public static String Server="153.92.4.147";
 
 
     public static String port = "4000";
@@ -65,8 +71,12 @@ public class generator {
     public static String keepaliveurl="http://"+ generator.Server+":"+port+"/login";
     public static String imageurl="http://"+ generator.Server+"/poihrd/uploads/aktivitas/pengumuman/";
     public static String profileurl="http://"+ generator.Server+"/poihrd/uploads/master/karyawan/orang/";
-    public static String ownerurl="http://"+ generator.Server+"/poihrd/uploads/pengguna/";
+
+    public static String uploadpengumumanurl="http://"+ generator.Server+":4000/pengumuman/upload";
     public static String pengumumanurl="http://"+ generator.Server+":4000/pengumuman";
+
+    public static String ownerurl="http://"+ generator.Server+"/poihrd/uploads/pengguna/";
+
     public static String scanloginurl = "http://"+ generator.Server+":4000/loginScan";
     public static String sendtokenurl = "http://"+ generator.Server+":4000/postnotif";
     public static String listemployeeurl = "http://"+ generator.Server+":4000/karyawan";
@@ -366,8 +376,8 @@ public class generator {
 
             try {
                 AlertDialog alertDialog = new AlertDialog.Builder(cntx).create();
-                alertDialog.setTitle("Scan result");
-                alertDialog.setMessage(result.toString() + res);
+                alertDialog.setTitle("Selamat Datang");
+                alertDialog.setMessage("Anda Berhasil Login PrimaHRD");
                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -692,8 +702,8 @@ public class generator {
 
             try {
                 AlertDialog alertDialog = new AlertDialog.Builder(cntx).create();
-                alertDialog.setTitle("Scan result");
-                alertDialog.setMessage(result.toString() + res);
+                alertDialog.setTitle("Selamat Datang");
+                alertDialog.setMessage("Anda Berhasil Login PrimaHRD");
                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -718,5 +728,17 @@ public class generator {
         }
     }
 
+    public static String encodeToBase64(Bitmap image, Bitmap.CompressFormat compressFormat, int quality)
+    {
+        ByteArrayOutputStream byteArrayOS = new ByteArrayOutputStream();
+        image.compress(compressFormat, quality, byteArrayOS);
+        return Base64.encodeToString(byteArrayOS.toByteArray(), Base64.DEFAULT);
+    }
+
+    public static Bitmap decodeBase64(String input)
+    {
+        byte[] decodedBytes = Base64.decode(input, 0);
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+    }
 
 }

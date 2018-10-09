@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,6 +26,7 @@ import android.widget.Toast;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,6 +48,7 @@ import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 import prima.optimasi.indonesia.payroll.utils.Tools;
+import prima.optimasi.indonesia.payroll.utils.previewimage;
 
 public class viewkaryawan extends AppCompatActivity {
 
@@ -282,7 +287,7 @@ public class viewkaryawan extends AppCompatActivity {
 
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         JSONArray pengsarray = result.getJSONArray("row");
-                        JSONObject obj = pengsarray.getJSONObject(0);
+                        final JSONObject obj = pengsarray.getJSONObject(0);
                         templahir.setText(obj.getString("tempat_lahir"));
 
                         SimpleDateFormat parsed = new SimpleDateFormat("yyyy-MM-dd");
@@ -308,16 +313,41 @@ public class viewkaryawan extends AppCompatActivity {
 
                         Picasso.get().load(generator.profileurl+"/"+obj.getString("foto")).transform(new CircleTransform()).into(image);
 
+                        final Bitmap[] bm = {null};
+
+                        Picasso.get().load(generator.profileurl+"/"+obj.getString("foto")).into(new Target() {
+                            @Override
+                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                bm[0] = bitmap;
+                                image.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent a = new Intent(viewkaryawan.this,previewimage.class);
+                                        Bitmap bm1= null;
+                                        bm1 = bm[0];
+                                        a.putExtra("bitmap",generator.encodeToBase64(bm1, Bitmap.CompressFormat.PNG,100));
+                                        startActivity(a);
+
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+                            }
+
+                            @Override
+                            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                            }
+                        });
+
+
+
                         Log.e(TAG, "onPostExecute: "+ generator.profileurl+"/"+obj.getString("foto") );
 
 
-                        // on item list clicked
-                        mAdapter.setOnItemClickListener(new AdapterListSectioned.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(View view, listkaryawan obj, int position) {
-                                Snackbar.make(parent_view, "Item " + obj.getNama() + " clicked", Snackbar.LENGTH_SHORT).show();
-                            }
-                        });
 
 
                     } catch (JSONException e) {

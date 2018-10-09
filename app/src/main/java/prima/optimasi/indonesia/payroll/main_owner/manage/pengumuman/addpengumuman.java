@@ -31,6 +31,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,6 +52,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -61,6 +63,9 @@ import java.util.Date;
 
 import jp.wasabeef.richeditor.RichEditor;
 import okhttp3.FormBody;
+import okhttp3.Headers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -80,7 +85,11 @@ public class addpengumuman extends AppCompatActivity {
     String templinkphoto;
     String tempspinerdata;
 
+    String encodedImage;
+
     CoordinatorLayout laytopbar;
+
+    Bitmap bmp=null;
 
     Uri mImageUri1;
 
@@ -436,11 +445,11 @@ public class addpengumuman extends AppCompatActivity {
                         Snackbar.make(coordinator,"Isi "+tempspinerdata+" Kosong",Snackbar.LENGTH_SHORT).show();
                     }
                     else {
-                        if(!mPreview.getText().toString().contains("<") && !mPreview.getText().toString().equals("")){
+                        if(!mPreview.getText().toString().equals("")){
                             Snackbar.make(coordinator,"Isi "+tempspinerdata+" terlalu singkat",Snackbar.LENGTH_SHORT).show();
                         }
                         else {
-                            sendpengumuman peng = new sendpengumuman(addpengumuman.this);
+                            sendgambar peng = new sendgambar(addpengumuman.this);
                             peng.execute();
                         }
                     }
@@ -462,6 +471,7 @@ public class addpengumuman extends AppCompatActivity {
         if (requestCode ==105 && resultCode == Activity.RESULT_OK) {
             //... some code to inflate/create/find appropriate ImageView to place grabbed image
             this.grabImage(imagedata);
+
             textdata.setText(Calendar.getInstance().getTimeInMillis()+".jpg");
 
         }else if (requestCode ==104 && resultCode == Activity.RESULT_OK){
@@ -470,10 +480,36 @@ public class addpengumuman extends AppCompatActivity {
             try {
                 bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(targetUri));
                 imagedata.setImageBitmap(bitmap);
+
+                bmp = bitmap;
+
+                /*imagedata.buildDrawingCache();
+                Bitmap bm = imagedata.getDrawingCache();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
+                byte[] b = baos.toByteArray();
+                encodedImage = Base64.encodeToString(b , Base64.DEFAULT);*/
+
+                //create a file to write bitmap data
+                /*File f = new File(addpengumuman.this.getCacheDir(), textdata.getText().toString());
+                f.createNewFile();
+
+//Convert bitmap to byte array
+                Bitmap bitmap1 = bm;
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                byte[] bitmapdata = bos.toByteArray();
+
+//write the bytes in file
+                FileOutputStream fos = new FileOutputStream(f);
+                fos.write(bitmapdata);
+                fos.flush();
+                fos.close();*/
+
+
+
                 textdata.setText(Calendar.getInstance().getTimeInMillis()+".jpg");
 
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -527,6 +563,17 @@ public class addpengumuman extends AppCompatActivity {
                 }
 
                 imageView.setImageBitmap(rotatedBitmap);
+                bmp = rotatedBitmap;
+
+
+
+
+                /*imageView.buildDrawingCache();
+                Bitmap bm = imageView.getDrawingCache();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
+                byte[] b = baos.toByteArray();
+                encodedImage = Base64.encodeToString(b , Base64.DEFAULT);*/
         }
         catch (Exception e)
         {
@@ -542,7 +589,7 @@ public class addpengumuman extends AppCompatActivity {
                 matrix, true);
     }
 
-    private class sendpengumuman extends AsyncTask<Void, Integer, String>
+    private class sendgambar extends AsyncTask<Void, Integer, String>
     {
         String response = "";
         String error = "";
@@ -551,11 +598,12 @@ public class addpengumuman extends AppCompatActivity {
         SharedPreferences prefs ;
         JSONObject result = null ;
         ProgressDialog dialog ;
-        String urldata = generator.pengumumanurl;
-        String passedid = "" ;
+        String urldata = generator.uploadpengumumanurl;
+        Context ctx;
 
-        public sendpengumuman(Context context)
+        public sendgambar(Context context)
         {
+            ctx = context;
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
             dialog = new ProgressDialog(context);
             this.username = generator.username;
@@ -568,15 +616,15 @@ public class addpengumuman extends AppCompatActivity {
         protected void onPreExecute (){
             this.dialog.show();
             super.onPreExecute();
-            this.dialog.setMessage("Getting Data...");
+            this.dialog.setMessage("Uploading Gambar...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
         }
 
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
+            this.dialog.setMessage("Uploading Gambar...");
 
             try {
-                this.dialog.setMessage("Loading Data...");
 
                 JSONObject jsonObject;
 
@@ -585,18 +633,243 @@ public class addpengumuman extends AppCompatActivity {
 
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-                    RequestBody body = new FormBody.Builder()
+                    File f = new File(addpengumuman.this.getCacheDir(), textdata.getText().toString());
+                    f.createNewFile();
+
+                    //Convert bitmap to byte array
+                    Bitmap bitmap1 = bmp ;
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    bitmap1.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+                    byte[] bitmapdata = bos.toByteArray();
+
+                    //write the bytes in file
+                    FileOutputStream fos = new FileOutputStream(f);
+                    fos.write(bitmapdata);
+                    fos.flush();
+                    fos.close();
+
+                    /*RequestBody bodydata=  new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("image", textdata.getText().toString(),
+                                    RequestBody.create(MediaType.get("image/jpeg"),f))
+                            .addFormDataPart("tanggal",formatter.format(new Date()))
+                            .addFormDataPart("tipe",tempspinerdata)
+                            .addFormDataPart("judul",title.getText().toString())
+                            .addFormDataPart("foto",textdata.getText().toString())
+                            .addFormDataPart("isi",mPreview.getText().toString())
+                            .addFormDataPart("penulis",prefs.getString("username",""))
+                            .build();*/
+
+                    RequestBody bodydata=  new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("image", textdata.getText().toString(),
+                                    RequestBody.create(MediaType.get("image/jpeg"),f))
+                            .build();
+
+                    /*RequestBody postdata= new FormBody.Builder()
                             .add("tanggal",formatter.format(new Date()))
                             .add("tipe",tempspinerdata)
                             .add("judul",title.getText().toString())
                             .add("foto",textdata.getText().toString())
                             .add("isi",mPreview.getText().toString())
                             .add("penulis",prefs.getString("username",""))
-                            .build();
+                            .build();*/
+
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
-                            .post(body)
+                            .post(bodydata)
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+                Log.e(TAG, "data json result" + result.toString());
+                if (result != null) {
+                    try {
+
+                        DecimalFormat formatter = new DecimalFormat("###,###,###.00");
+
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        if(result.getString("status").equals("true")){
+                            sendpengumuman sendpeng = new sendpengumuman(ctx,result.getString("fotoUrl"));
+                            sendpeng.execute();
+                        }
+                        else {
+                            Snackbar.make(coordinator,"Gagal Membuat pengumuman baru, cek koneksi "+result.getString("message"),Snackbar.LENGTH_SHORT).show();
+                        }
+
+
+
+                        //Picasso.get().load(generator.profileurl+"/"+obj.getString("foto")).transform(new CircleTransform()).into(image);
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(coordinator, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(coordinator,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+
+    }
+
+    private class sendpengumuman extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        ProgressDialog dialog ;
+        String urldata = generator.pengumumanurl;
+        String foto = "" ;
+
+        public sendpengumuman(Context context,String foto)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            dialog = new ProgressDialog(context);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+            this.foto = foto ;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            this.dialog.show();
+            super.onPreExecute();
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                this.dialog.setMessage("Posting Pengumuman...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+                    /*File f = new File(addpengumuman.this.getCacheDir(), textdata.getText().toString());
+                    f.createNewFile();
+
+                    //Convert bitmap to byte array
+                    Bitmap bitmap1 = bmp ;
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    byte[] bitmapdata = bos.toByteArray();
+
+                    //write the bytes in file
+                    FileOutputStream fos = new FileOutputStream(f);
+                    fos.write(bitmapdata);
+                    fos.flush();
+                    fos.close();*/
+
+                    /*RequestBody bodydata=  new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("image", textdata.getText().toString(),
+                                    RequestBody.create(MediaType.get("image/jpeg"),f))
+                            .addFormDataPart("tanggal",formatter.format(new Date()))
+                            .addFormDataPart("tipe",tempspinerdata)
+                            .addFormDataPart("judul",title.getText().toString())
+                            .addFormDataPart("foto",textdata.getText().toString())
+                            .addFormDataPart("isi",mPreview.getText().toString())
+                            .addFormDataPart("penulis",prefs.getString("username",""))
+                            .build();*/
+
+                    /*RequestBody bodydata=  new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("image", textdata.getText().toString(),
+                                    RequestBody.create(MediaType.get("image/jpeg"),f))
+                            .build();*/
+
+                    RequestBody postdata= new FormBody.Builder()
+                            .add("tanggal",formatter.format(new Date()))
+                            .add("tipe",tempspinerdata)
+                            .add("judul",title.getText().toString())
+                            .add("foto",foto)
+                            .add("isi",mPreview.getText().toString())
+                            .add("penulis",prefs.getString("username",""))
+                            .build();
+
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .post(postdata)
                             .url(urldata)
                             .build();
                     Response responses = null;

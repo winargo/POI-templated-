@@ -1,25 +1,18 @@
 package prima.optimasi.indonesia.payroll.main_karyawan;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v13.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -49,32 +42,19 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.zip.Inflater;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentAbsensi;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentCekGaji;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentPengajuan;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentProfil;
-import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentApproval;
-import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentChartKehadiran;
-import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentEmployee;
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentPengumuman;
-import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentTotalGaji;
-import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
-import prima.optimasi.indonesia.payroll.universal.absence.facecapture;
-import prima.optimasi.indonesia.payroll.universal.absence.facedetection;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
 public class mainmenu_karyawan extends AppCompatActivity

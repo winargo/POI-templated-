@@ -5,12 +5,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
@@ -25,11 +24,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,7 +33,6 @@ import android.widget.Toast;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -49,14 +44,11 @@ import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.main_hrd.mainmenu_hrd;
-import prima.optimasi.indonesia.payroll.main_karyawan.mainmenu_karyawan;
-import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentApproval;
-import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentChartKehadiran;
+import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentJob;
+import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentHome;
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentEmployee;
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentPengumuman;
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentReport;
-import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentTotalGaji;
 import prima.optimasi.indonesia.payroll.main_owner.manage.pengumuman.addpengumuman;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
@@ -71,6 +63,10 @@ public class mainmenu_owner extends AppCompatActivity
     ViewPager pager;
     TabLayout tabpager ;
     Menu tempmenu ;
+
+    int[] iconstyle = {R.drawable.baseline_home_black_18dp,R.drawable.ic_person_outline_white_24dp,R.drawable.baseline_assessment_black_24dp,R.drawable.baseline_announcement_black_24dp,R.drawable.ic_baseline_work_24px};
+
+    private String[] tabTitles = new String[]{"Home", "Karyawan", "Laporan","Informasi","Tugas"};
 
     int posi = 0;
 
@@ -93,6 +89,7 @@ public class mainmenu_owner extends AppCompatActivity
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
+
 
         prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
 
@@ -133,7 +130,7 @@ public class mainmenu_owner extends AppCompatActivity
         Log.e("picture", "ppicture: "+ prefs.getString("profileimage",""));
 
         TextView username = linear.findViewById(R.id.username);
-        TextView borndate = linear.findViewById(R.id.prof_tempat_lahir);
+        final TextView borndate = linear.findViewById(R.id.prof_tempat_lahir);
 
 
 
@@ -159,14 +156,22 @@ public class mainmenu_owner extends AppCompatActivity
 
         tabpager.setupWithViewPager(pager);
 
+        tabpager.setTabMode(TabLayout.MODE_SCROLLABLE);
+
         tabpager.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener(){
             @Override
             public void onTabSelected(TabLayout.Tab tab){
                 int position = tab.getPosition();
-                if(position==2){
+                if(position==3){
                     if(tempmenu!=null){
                         tempmenu.findItem(R.id.action_search).setVisible(true);
                         tempmenu.findItem(R.id.action_add).setVisible(true);
+                    }
+                }
+                else if(position ==1){
+                    if(tempmenu!=null){
+                        tempmenu.findItem(R.id.action_search).setVisible(false);
+                        tempmenu.findItem(R.id.action_add).setVisible(false);
                     }
                 }
                 else {
@@ -190,10 +195,14 @@ public class mainmenu_owner extends AppCompatActivity
 
         for (int i = 0; i < tabpager.getTabCount(); i++) {
             //noinspection ConstantConditions
-            TextView tv=(TextView) LayoutInflater.from(this).inflate(R.layout.customtablayout,null);
+            View v = LayoutInflater.from(this).inflate(R.layout.customtablayout,null);
+            TextView tv=v.findViewById(R.id.texttab);
             tv.setTextColor(Color.WHITE);
-            tabpager.getTabAt(i).setCustomView(tv);
+            tv.setText(tabTitles[i]);
 
+            ImageView img = v.findViewById(R.id.icontab);
+            img.setImageDrawable(getResources().getDrawable(iconstyle[i]));
+            tabpager.getTabAt(i).setCustomView(v);
         }
 
         preparehrd();
@@ -214,16 +223,16 @@ public class mainmenu_owner extends AppCompatActivity
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v,
                                         int groupPosition, long id) {
-                if(listDataHeader.get(groupPosition).equals("Chart Kehadiran")){
+                if(listDataHeader.get(groupPosition).equals("Home")){
                     pager.setCurrentItem(0);
                     drawer.closeDrawer(Gravity.START);
-                }else if(listDataHeader.get(groupPosition).equals("Total Gaji")){
+                }else if(listDataHeader.get(groupPosition).equals("Karyawan")){
                     pager.setCurrentItem(1);
                     drawer.closeDrawer(Gravity.START);
-                }else if(listDataHeader.get(groupPosition).equals("Karyawan")){
+                }else if(listDataHeader.get(groupPosition).equals("Informasi")){
                     pager.setCurrentItem(3);
                     drawer.closeDrawer(Gravity.START);
-                }else if(listDataHeader.get(groupPosition).equals("Pengumuman")){
+                }else if(listDataHeader.get(groupPosition).equals("Laporan")){
                     pager.setCurrentItem(2);
                     drawer.closeDrawer(Gravity.START);
                 }
@@ -245,11 +254,8 @@ public class mainmenu_owner extends AppCompatActivity
 
             @Override
             public void onGroupCollapse(int groupPosition) {
-                if(listDataHeader.get(groupPosition).equals("Approval")){
+                if(listDataHeader.get(groupPosition).equals("Tugas")){
                     pager.setCurrentItem(4);
-                    drawer.closeDrawer(Gravity.START);
-                }else if(listDataHeader.get(groupPosition).equals("Laporan")){
-                    pager.setCurrentItem(5);
                     drawer.closeDrawer(Gravity.START);
                 }
             }
@@ -448,7 +454,7 @@ public class mainmenu_owner extends AppCompatActivity
     public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
 
         // tab titles
-        private String[] tabTitles = new String[]{"Chart Kehadiran", "Total Gaji", "Pengumuman","Karyawan","Approval","Laporan"};
+
 
         public ExamplePagerAdapter(FragmentManager fm) {
             super(fm);
@@ -464,17 +470,15 @@ public class mainmenu_owner extends AppCompatActivity
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new FragmentChartKehadiran();
+                    return new FragmentHome();
                 case 1:
-                    return new FragmentTotalGaji();
-                case 2:
-                    return new FragmentPengumuman();
-                case 3:
                     return new FragmentEmployee();
-                case 4:
-                    return new FragmentApproval();
-                case 5:
+                case 2:
                     return new FragmentReport();
+                case 3:
+                    return new FragmentPengumuman();
+                case 4:
+                    return new FragmentJob();
                 default:
                     return null;
             }

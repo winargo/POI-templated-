@@ -295,14 +295,7 @@ public class FragmentPengumuman extends Fragment {
                         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
                         recyclerView.setHasFixedSize(true);
                         recyclerView.setAdapter(mAdapter);
-                        // on item list clicked
-                        mAdapter.setOnItemClickListener(new AdapterGridTwoLineLight.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(View view, Image obj, int position) {
-                                Snackbar.make(parent_view, obj.name + " clicked", Snackbar.LENGTH_SHORT).show();
-                                //showBottomSheetDialog(obj);
-                            }
-                        });
+
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -435,7 +428,7 @@ public class FragmentPengumuman extends Fragment {
                 Log.e(TAG, "data json result" + result.toString());
                 if (result != null) {
                     try {
-                        items = new ArrayList<>();
+                        items.clear();
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         JSONArray pengsarray = result.getJSONArray("rows");
 
@@ -480,4 +473,6 @@ public class FragmentPengumuman extends Fragment {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
+
+
 }
