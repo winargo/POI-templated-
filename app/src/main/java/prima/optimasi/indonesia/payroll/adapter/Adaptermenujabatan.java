@@ -129,7 +129,7 @@ public class Adaptermenujabatan extends BaseExpandableListAdapter {
             icon.setBackgroundResource(R.drawable.baseline_person_black_24dp);
         }else if(headerTitle.equals("List Karyawan")){
             expadingarrowdown.setVisibility(View.GONE);
-            icon.setBackgroundResource(R.drawable.baseline_person_black_24dp);
+            icon.setBackgroundResource(R.drawable.ic_baseline_people_24px);
         }else if(headerTitle.equals("Home")){
             expadingarrowdown.setVisibility(View.GONE);
             icon.setBackgroundResource(R.drawable.baseline_home_black_18dp);
@@ -145,6 +145,9 @@ public class Adaptermenujabatan extends BaseExpandableListAdapter {
             }
             icon.setBackgroundResource(R.drawable.baseline_monetization_on_black_24dp);
 
+        }else if(headerTitle.equals("Cek Jadwal")){
+            expadingarrowdown.setVisibility(View.GONE);
+            icon.setBackgroundResource(R.drawable.ic_baseline_today_24px);
         }else if(headerTitle.equals("Profil")){
             expadingarrowdown.setVisibility(View.GONE);
             icon.setBackgroundResource(R.drawable.baseline_account_circle_black_24dp);

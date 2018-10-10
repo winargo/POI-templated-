@@ -91,6 +91,10 @@ public class mainmenu_kabag extends AppCompatActivity
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
 
+    String[] tabTitles = new String []{" Home", "  Profil", "Pengumuman","Anggota","Cek Gaji","Pengajuan"};
+    int[] iconstyle = new int[]{R.drawable.baseline_home_black_18dp,R.drawable.baseline_account_circle_black_24dp,R.drawable.baseline_announcement_black_24dp,R.drawable.ic_baseline_people_24px,R.drawable.baseline_monetization_on_black_24dp,R.drawable.baseline_assignment_black_24dp};
+
+
     Menu tempmenu ;
     String TAG = "ABSENSI";
 
@@ -205,10 +209,14 @@ public class mainmenu_kabag extends AppCompatActivity
 
         for (int i = 0; i < tabpager.getTabCount(); i++) {
             //noinspection ConstantConditions
-            TextView tv=(TextView) LayoutInflater.from(this).inflate(R.layout.customtablayout,null);
+            View v = LayoutInflater.from(this).inflate(R.layout.customtablayout,null);
+            TextView tv=v.findViewById(R.id.texttab);
             tv.setTextColor(Color.WHITE);
-            tabpager.getTabAt(i).setCustomView(tv);
+            tv.setText(tabTitles[i]);
 
+            ImageView img = v.findViewById(R.id.icontab);
+            img.setImageDrawable(getResources().getDrawable(iconstyle[i]));
+            tabpager.getTabAt(i).setCustomView(v);
         }
 
         preparekabag();

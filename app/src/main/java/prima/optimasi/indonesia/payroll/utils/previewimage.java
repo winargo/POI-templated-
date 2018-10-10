@@ -41,16 +41,12 @@ public class previewimage extends AppCompatActivity {
 
         Tools.setSystemBarColor(this, R.color.colorPrimary);
 
-        if(getIntent().getStringExtra("bitmap").equals("")){
+        if(generator.tempbitmap==null){
             finish();
         }
         else {
-            Bitmap bit = generator.decodeBase64(getIntent().getStringExtra("bitmap"));
-
-
-
+            Bitmap bit = generator.tempbitmap;
             image.setImageBitmap(bit);
-
             image.setOnTouchListener(new ImageMatrixTouchHandler(view.getContext()));
         }
     }
@@ -62,6 +58,7 @@ public class previewimage extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if(id==android.R.id.home){
+            generator.tempbitmap = null;
             finish();
         }
         return true;

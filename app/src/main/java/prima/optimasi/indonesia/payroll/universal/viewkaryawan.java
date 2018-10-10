@@ -325,7 +325,7 @@ public class viewkaryawan extends AppCompatActivity {
                                         Intent a = new Intent(viewkaryawan.this,previewimage.class);
                                         Bitmap bm1= null;
                                         bm1 = bm[0];
-                                        a.putExtra("bitmap",generator.encodeToBase64(bm1, Bitmap.CompressFormat.PNG,100));
+                                        generator.tempbitmap = bm1;
                                         startActivity(a);
 
                                     }

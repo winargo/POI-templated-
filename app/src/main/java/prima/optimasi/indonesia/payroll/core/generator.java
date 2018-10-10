@@ -60,6 +60,7 @@ public class generator {
     //public static String Server="192.168.5.254";
     public static String Server="153.92.4.147";
 
+    public static Bitmap tempbitmap = null;
 
     public static String port = "4000";
     public static String username = "";
@@ -72,8 +73,12 @@ public class generator {
     public static String imageurl="http://"+ generator.Server+"/poihrd/uploads/aktivitas/pengumuman/";
     public static String profileurl="http://"+ generator.Server+"/poihrd/uploads/master/karyawan/orang/";
 
+    public static String getpicpengumumanurl="http://"+ generator.Server+"/poihrd/uploads/aktivitasowner/pengumuman/";
     public static String uploadpengumumanurl="http://"+ generator.Server+":4000/pengumuman/upload";
+    public static String deletepengumumanurl="http://"+ generator.Server+":4000/pengumuman/";
     public static String pengumumanurl="http://"+ generator.Server+":4000/pengumuman";
+
+    public static String getabsensiurl="http://"+ generator.Server+":4000/absensi";
 
     public static String ownerurl="http://"+ generator.Server+"/poihrd/uploads/pengguna/";
 

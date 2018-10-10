@@ -11,5 +11,9 @@
         android:icon="@drawable/ic_baseline_people_24px"
         android:title="Karyawan" />
 
+    <item
+        android:id="@+id/navigation_recents"
+        android:icon="@drawable/ic_baseline_recent_actors_24px"
+        android:title="Aktivitas" />
 
 </menu>

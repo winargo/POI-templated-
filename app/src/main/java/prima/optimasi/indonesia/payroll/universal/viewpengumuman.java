@@ -1,5 +1,7 @@
 package prima.optimasi.indonesia.payroll.universal;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -18,12 +20,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.text.SimpleDateFormat;
 
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.objects.pengumuman;
+import prima.optimasi.indonesia.payroll.utils.previewimage;
 
 public class viewpengumuman extends AppCompatActivity {
 
@@ -96,6 +100,36 @@ public class viewpengumuman extends AppCompatActivity {
         isi.setText(Html.fromHtml(peng.getContent()));
 
         Picasso.get().load(peng.getImagelink()).into(image);
+
+        final Bitmap[] bm = {null};
+
+        Picasso.get().load(peng.getImagelink()).into(new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                bm[0] = bitmap;
+                image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent a = new Intent(viewpengumuman.this,previewimage.class);
+                        Bitmap bm1= null;
+                        bm1 = bm[0];
+                        generator.tempbitmap = bm1;
+                        startActivity(a);
+
+                    }
+                });
+            }
+
+            @Override
+            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        });
 
         SimpleDateFormat date = new SimpleDateFormat("dd/MM/yyyy");
         brief.setText(date.format(peng.getCreatedate()) + " - Oleh " + peng.getCreated());

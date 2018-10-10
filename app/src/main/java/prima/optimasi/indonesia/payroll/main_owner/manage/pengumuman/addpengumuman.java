@@ -445,13 +445,8 @@ public class addpengumuman extends AppCompatActivity {
                         Snackbar.make(coordinator,"Isi "+tempspinerdata+" Kosong",Snackbar.LENGTH_SHORT).show();
                     }
                     else {
-                        if(!mPreview.getText().toString().equals("")){
-                            Snackbar.make(coordinator,"Isi "+tempspinerdata+" terlalu singkat",Snackbar.LENGTH_SHORT).show();
-                        }
-                        else {
-                            sendgambar peng = new sendgambar(addpengumuman.this);
-                            peng.execute();
-                        }
+                        sendgambar peng = new sendgambar(addpengumuman.this);
+                        peng.execute();
                     }
                 }
             }
@@ -637,9 +632,10 @@ public class addpengumuman extends AppCompatActivity {
                     f.createNewFile();
 
                     //Convert bitmap to byte array
+                    bmp = Bitmap.createScaledBitmap(bmp, bmp.getWidth()/2, bmp.getHeight()/2, true);
                     Bitmap bitmap1 = bmp ;
                     ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                    bitmap1.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
+                    bitmap1.compress(Bitmap.CompressFormat.PNG, 100 /*ignored for PNG*/, bos);
                     byte[] bitmapdata = bos.toByteArray();
 
                     //write the bytes in file
@@ -971,5 +967,21 @@ public class addpengumuman extends AppCompatActivity {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
 
+
+    }
+    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float) width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+
+        return Bitmap.createScaledBitmap(image, width, height, true);
     }
 }

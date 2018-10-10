@@ -286,12 +286,12 @@ public class FragmentPengumuman extends Fragment {
                         for (int i = 0; i < pengsarray.length(); i++) {
                             JSONObject obj = pengsarray.getJSONObject(i);
                             Log.e(TAG, " data peng " + obj.getString("penulis"));
-                            pengumuman peng = new pengumuman(obj.getString("judul"), obj.getString("penulis"), format.parse(obj.getString("tanggal").substring(0, 9)), generator.imageurl + obj.getString("foto"), obj.getString("isi"));
+                            pengumuman peng = new pengumuman(obj.getString("judul"), obj.getString("penulis"), format.parse(obj.getString("tanggal").substring(0, 9)), generator.getpicpengumumanurl+ obj.getString("foto"), obj.getString("isi"));
                             peng.setIdpengumuman(obj.getString("id_pengumuman"));
                             items.add(peng);
                         }
 
-                        mAdapter = new AdapterGridTwoLineLight(getActivity(), items);
+                        mAdapter = new AdapterGridTwoLineLight(getActivity(), items,parent_view);
                         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
                         recyclerView.setHasFixedSize(true);
                         recyclerView.setAdapter(mAdapter);
@@ -435,7 +435,7 @@ public class FragmentPengumuman extends Fragment {
                         for (int i = 0; i < pengsarray.length(); i++) {
                             JSONObject obj = pengsarray.getJSONObject(i);
                             Log.e(TAG, " data peng " + obj.getString("penulis"));
-                            pengumuman peng = new pengumuman(obj.getString("judul"), obj.getString("penulis"), format.parse(obj.getString("tanggal").substring(0, 9)), generator.imageurl + obj.getString("foto"), obj.getString("isi"));
+                            pengumuman peng = new pengumuman(obj.getString("judul"), obj.getString("penulis"), format.parse(obj.getString("tanggal").substring(0, 9)), generator.getpicpengumumanurl + obj.getString("foto"), obj.getString("isi"));
                             peng.setIdpengumuman(obj.getString("id_pengumuman"));
                             items.add(peng);
                         }
