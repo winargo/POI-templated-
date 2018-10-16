@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bgLayout"
+    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,24 +10,46 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pengswiperefresh"
         android:layout_width="match_parent"
+        android:layout_marginBottom="50sp"
         android:layout_height="match_parent">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
+        <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/grey_10"
-            android:scrollbars="vertical"
-            android:scrollingCache="true" />
 
+            android:layout_height="match_parent">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="vertical"
+                android:scrollingCache="true" />
+        </android.support.v4.widget.NestedScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
 
+        <com.applandeo.materialcalendarview.CalendarView
+            android:id="@+id/calendarView"
+            android:visibility="gone"
+            android:layout_marginBottom="50sp"
+            app:eventsEnabled="true"
+            app:headerColor="@color/purple_900"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
     <!--bottom sheet container-->
-    <FrameLayout
-        android:id="@+id/bottom_sheet"
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/navigation"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="@string/bottom_sheet_behavior" />
+        android:visibility="visible"
+        android:clipToPadding="false"
+        android:layout_height="50sp"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:background="@color/light_blue_A700"
+        app:itemIconTint="@drawable/color_state_white_2"
+        app:itemTextColor="@drawable/color_state_white_2"
+        app:menu="@menu/menu_bottom_navigation_shifting_pengumuman" />
+
+
 
 </android.support.design.widget.CoordinatorLayout>
 

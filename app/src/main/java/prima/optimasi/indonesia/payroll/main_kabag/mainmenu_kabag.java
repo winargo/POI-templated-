@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -43,6 +44,11 @@ import android.widget.Toast;
 
 import qrcodescanner.QrCodeActivity;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
@@ -255,18 +261,45 @@ public class mainmenu_kabag extends AppCompatActivity
                 }
                 else if(listDataHeader.get(groupPosition).equals("Absensi")){
                     drawer.closeDrawer(Gravity.START);
-                    String[] colors = {"Check IN", "Break OUT","Break IN","Check OUT","Extra IN","Extra OUT"};
+                    String[] colors = {"Check IN", "Break OUT","Break IN","Check OUT","Extra IN","Extra OUT","Absensi"};
+
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_kabag.this);
                     builder.setTitle("Absensi");
                     builder.setItems(colors, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Intent a = new Intent(mainmenu_kabag.this,QrCodeActivity.class);
-                            a.putExtra("absensi",which);
-                            a.putExtra("security",0);
-                            a.putExtra("keepalive",1);
-                            startActivity(a);
+                            if(which==6) {
+                                LinearLayout l = (LinearLayout) LayoutInflater.from(mainmenu_kabag.this).inflate(R.layout.layout_barcode,null);
+
+                                ImageView barcode = l.findViewById(R.id.barcodekaryawan);
+
+
+                                String text=prefs.getString("kodekaryawan","");
+                                Log.e("data json", "onClick: "+prefs.getString("kodekaryawan","") );
+                                MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+                                try {
+                                    BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE,400,400);
+                                    BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                                    Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+                                    barcode.setImageBitmap(bitmap);
+                                } catch (WriterException e) {
+                                    e.printStackTrace();
+                                }
+
+
+
+                                AlertDialog dialog1 = new AlertDialog.Builder(mainmenu_kabag.this).setTitle("Absensi").setView(l).create();
+
+                                dialog1.show();
+                            }
+                            else {
+                                Intent a = new Intent(mainmenu_kabag.this,QrCodeActivity.class);
+                                a.putExtra("absensi",which);
+                                a.putExtra("security",0);
+                                a.putExtra("keepalive",1);
+                                startActivity(a);
+                            }
                         }
                     });
                     builder.show();

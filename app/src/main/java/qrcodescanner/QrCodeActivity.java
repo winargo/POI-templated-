@@ -586,8 +586,6 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
                 e.printStackTrace();
             }
             super.onPreExecute();
-            this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
         }
 
         protected String doInBackground(Void...arg0) {

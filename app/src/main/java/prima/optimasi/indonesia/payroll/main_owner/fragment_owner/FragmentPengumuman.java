@@ -6,9 +6,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.Snackbar;
@@ -28,7 +31,8 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.messaging.FirebaseMessaging;
+import com.applandeo.materialcalendarview.CalendarView;
+import com.applandeo.materialcalendarview.EventDay;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +42,8 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.FormBody;
@@ -62,16 +68,21 @@ public class FragmentPengumuman extends Fragment {
 
     private View parent_view;
 
+    private SwipeRefreshLayout refreshpengumuman;
+
     private RecyclerView recyclerView;
     private AdapterGridTwoLineLight mAdapter;
 
     List<pengumuman> items;
 
+    BottomNavigationView bottomnac;
+
     private BottomSheetBehavior mBehavior;
     private BottomSheetDialog mBottomSheetDialog;
     private SharedPreferences prefs;
-    SwipeRefreshLayout refresh;
     private View bottom_sheet;
+
+    CalendarView calender;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -81,8 +92,42 @@ public class FragmentPengumuman extends Fragment {
 
         items = new ArrayList<>();
 
+
+        bottomnac = rootView.findViewById(R.id.navigation);
+
+        calender = rootView.findViewById(R.id.calendarView);
+
+
+
+
         parent_view = rootView.findViewById(R.id.bgLayout);
+
         prefs = getActivity().getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+
+        bottomnac.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.navigation_pengumuman:
+                        calender.setVisibility(View.GONE);
+                        refreshpengumuman.setVisibility(View.VISIBLE);
+                        //refreshkabag.setVisibility(View.VISIBLE);
+                        //refreshaktifitas.setVisibility(View.GONE);
+                        //refreshkaryawan.setVisibility(View.GONE);
+                        bottomnac.setBackgroundColor(getResources().getColor(R.color.light_blue_900));
+                        return true;
+                    case R.id.navigation_kalender:
+                        calender.setVisibility(View.VISIBLE);
+                        refreshpengumuman.setVisibility(View.GONE);
+                        //refreshkabag.setVisibility(View.GONE);
+                        //refreshaktifitas.setVisibility(View.GONE);
+                        //refreshkaryawan.setVisibility(View.VISIBLE);
+                        bottomnac.setBackgroundColor(getResources().getColor(R.color.deep_purple_900));
+                        return true;
+                }
+                return false;
+            }
+        });
 
         initComponent(rootView);
         //showBottomSheetDialog(mAdapter.getItem(0));
@@ -92,12 +137,13 @@ public class FragmentPengumuman extends Fragment {
 
 
 
-
     private void initComponent(View v) {
 
-        refresh = v.findViewById(R.id.pengswiperefresh);
+        recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
 
-        refresh.setOnRefreshListener(
+        refreshpengumuman = v.findViewById(R.id.pengswiperefresh);
+
+        refreshpengumuman.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
@@ -113,66 +159,19 @@ public class FragmentPengumuman extends Fragment {
                 }
         );
 
-        recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
 
 
         items = new ArrayList<>();
 
-        if(mAdapter!=null){
+        retrivepengumuman peng = new retrivepengumuman(getActivity(),prefs.getString("Authorization",""));
+        peng.execute();
 
-        }
-        else {
-            retrivepengumuman peng = new retrivepengumuman(getActivity(),prefs.getString("Authorization",""));
-            peng.execute();
-        }
 
 
         //set data and list adapter
 
         bottom_sheet = v.findViewById(R.id.bottom_sheet);
         //mBehavior = BottomSheetBehavior.from(bottom_sheet);
-    }
-
-    private void showBottomSheetDialog(final Image obj) {
-        if (mBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
-            mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        }
-
-        final View view = getLayoutInflater().inflate(R.layout.sheet_floating, null);
-        ((TextView) view.findViewById(R.id.name)).setText(obj.name);
-        ((TextView) view.findViewById(R.id.brief)).setText(obj.brief);
-        ((TextView) view.findViewById(R.id.description)).setText(R.string.middle_lorem_ipsum);
-        (view.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mBottomSheetDialog.hide();
-            }
-        });
-
-        (view.findViewById(R.id.submit_rating)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity().getApplicationContext(), "Submit Rating", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        mBottomSheetDialog = new BottomSheetDialog(getActivity());
-        mBottomSheetDialog.setContentView(view);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mBottomSheetDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
-
-        // set background transparent
-        ((View) view.getParent()).setBackgroundColor(getResources().getColor(android.R.color.transparent));
-
-        mBottomSheetDialog.show();
-        mBottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                mBottomSheetDialog = null;
-            }
-        });
-
     }
 
     private class retrivepengumuman extends AsyncTask<Void, Integer, String>
@@ -291,11 +290,15 @@ public class FragmentPengumuman extends Fragment {
                             items.add(peng);
                         }
 
+
+
                         mAdapter = new AdapterGridTwoLineLight(getActivity(), items,parent_view);
                         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
                         recyclerView.setHasFixedSize(true);
                         recyclerView.setAdapter(mAdapter);
 
+                        retriveliburan peng = new retriveliburan(getActivity(),prefs.getString("Authorization",""));
+                        peng.execute();
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -444,7 +447,158 @@ public class FragmentPengumuman extends Fragment {
                             mAdapter.notifyDataSetChanged();
                         }
 
-                        refresh.setRefreshing(false);
+                        refreshpengumuman.setRefreshing(false);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }
+
+
+            Log.d(TAG + " onPostExecute", "" + result);
+        }
+    }
+
+    private class retriveliburan extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        ProgressDialog dialog ;
+        String urldata = generator.calenderurl;
+        String passeddata = "" ;
+
+        public retriveliburan(Context context, String kodeauth)
+        {
+            Log.e(TAG, "code: "+kodeauth );
+            dialog = new ProgressDialog(context);
+            passeddata = kodeauth;
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            this.dialog.show();
+            super.onPreExecute();
+            this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",passeddata)
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+
+            try {
+                Log.e(TAG, "data json result" + result.toString());
+                if (result != null) {
+                    try {
+                        List<EventDay> events = new ArrayList<>();
+                        if(result.getString("status").equals("true")){
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                            JSONArray pengsarray = result.getJSONArray("row1");
+
+                            for (int i = 0; i < pengsarray.length(); i++) {
+                                JSONObject obj = pengsarray.getJSONObject(i);
+
+                                Date data = format.parse(obj.getString("tanggal"));
+                                Calendar calendars = Calendar.getInstance();
+                                calendars.setTime(data);
+                                events.add(new EventDay(calendars, R.drawable.dot));
+                            }
+                        }
+
+                        calender.setEvents(events);
+
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -473,6 +627,5 @@ public class FragmentPengumuman extends Fragment {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
-
 
 }

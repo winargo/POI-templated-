@@ -75,9 +75,10 @@ public class firebaseservice extends FirebaseMessagingService {
             mNotificationManager.createNotificationChannel(channel);
         }
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "default")
-                .setSmallIcon(R.drawable.logo) // notification icon
+                .setSmallIcon(R.drawable.logobolong) // notification icon
                 .setContentTitle(title) // title for notification
                 .setContentText(content)
+                .setColor(getResources().getColor(R.color.blue_500))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
                 // message for notification
                 //  .setSound(alarmSound) // set alarm sound for notification

@@ -116,47 +116,6 @@ public class FragmentPengumuman extends Fragment {
         //mBehavior = BottomSheetBehavior.from(bottom_sheet);
     }
 
-    private void showBottomSheetDialog(final Image obj) {
-        if (mBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
-            mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        }
-
-        final View view = getLayoutInflater().inflate(R.layout.sheet_floating, null);
-        ((TextView) view.findViewById(R.id.name)).setText(obj.name);
-        ((TextView) view.findViewById(R.id.brief)).setText(obj.brief);
-        ((TextView) view.findViewById(R.id.description)).setText(R.string.middle_lorem_ipsum);
-        (view.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mBottomSheetDialog.hide();
-            }
-        });
-
-        (view.findViewById(R.id.submit_rating)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity().getApplicationContext(), "Submit Rating", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        mBottomSheetDialog = new BottomSheetDialog(getActivity());
-        mBottomSheetDialog.setContentView(view);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mBottomSheetDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
-
-        // set background transparent
-        ((View) view.getParent()).setBackgroundColor(getResources().getColor(android.R.color.transparent));
-
-        mBottomSheetDialog.show();
-        mBottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                mBottomSheetDialog = null;
-            }
-        });
-
-    }
 
     private class retrivepengumuman extends AsyncTask<Void, Integer, String>
     {
@@ -279,13 +238,6 @@ public class FragmentPengumuman extends Fragment {
                         recyclerView.setHasFixedSize(true);
                         recyclerView.setAdapter(mAdapter);
                         // on item list clicked
-                        mAdapter.setOnItemClickListener(new AdapterGridTwoLineLight.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(View view, Image obj, int position) {
-                                Snackbar.make(parent_view, obj.name + " clicked", Snackbar.LENGTH_SHORT).show();
-                                //showBottomSheetDialog(obj);
-                            }
-                        });
 
                     } catch (JSONException e) {
                         e.printStackTrace();

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_pengumuman"
+        android:icon="@drawable/baseline_announcement_black_24dp"
+        android:title="Pengumuman" />
+
+    <item
+        android:id="@+id/navigation_kalender"
+        android:icon="@drawable/ic_event"
+        android:title="Kalender" />
+
+
+</menu>
