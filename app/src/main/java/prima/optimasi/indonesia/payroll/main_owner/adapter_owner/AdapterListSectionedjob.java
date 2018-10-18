@@ -77,6 +77,7 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
     public static class SectionViewHolder extends RecyclerView.ViewHolder {
         public TextView title_section;
         public RecyclerView recycler;
+        AdapterListBasicjob_extention adapter;
 
         public SectionViewHolder(View v) {
             super(v);
@@ -113,9 +114,9 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
             view.title_section.setTextColor(Color.BLACK);
             view.title_section.setTextSize(15f);
             view.title_section.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-
-
-
+            //view.adapter = new AdapterListBasicjob_extention(ctx,)
+            retrive ret = new retrive(ctx,p.getSectionname());
+            ret.execute();
 
             view.recycler.setAdapter(null);
             setAnimation(view.itemView, position);
@@ -158,12 +159,20 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
         ProgressDialog dialog ;
         String urldata = "";
         String passeddata = "" ;
+        String tipe = "";
+        //listjobextension =
 
-        public retrive(Context context,String url)
+        public retrive(Context context,String choice)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
             dialog = new ProgressDialog(context);
-            urldata = url;
+
+            for(int i=0;i<options.length;i++){
+                if(options[i]==choice){
+                    urldata = urloptions[i];
+                    tipe = choice;
+                }
+            }
 
         }
 
@@ -190,11 +199,16 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                     /*RequestBody body = new FormBody.Builder()
                             .add("","")
                             .build();*/
+                    Request request=null;
+                    /*String[] options = new String[]{"Approval Cuti","Approval Dinas","Approval Dirumahkan","Approval Izin",
+                            "Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment",
+                            "Approval Reward"};*/
 
-                    Request request = new Request.Builder()
+                    request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
                             .url(urldata)
                             .build();
+
                     Response responses = null;
 
                     try {
@@ -249,9 +263,17 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
         protected void onPostExecute(String result1) {
 
             try {
-                Log.e(TAG, "data absensi karyawan" + result.toString());
                 if (result != null) {
+                    if(tipe.equals("Approval Cuti") || tipe.equals("Approval Dinas") || tipe.equals("Approval Dirumahkan") || tipe.equals("Approval Izin")){
 
+                        Log.e(TAG, tipe+" "+result.toString() );
+                    }
+                    else if (tipe.equals("Approval Golongan") || tipe.equals("Approval Karyawan")){
+                        Log.e(TAG, tipe+" "+result.toString() );
+                    }
+                    else{
+                        Log.e(TAG, tipe+" "+result.toString() );
+                    }
                 } else {
                     Toast.makeText(ctx,"Gagal" + result,Toast.LENGTH_SHORT).show();
                 }
