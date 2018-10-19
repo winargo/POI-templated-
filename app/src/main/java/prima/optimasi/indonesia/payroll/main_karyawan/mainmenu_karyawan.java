@@ -32,6 +32,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import prima.optimasi.indonesia.payroll.activity.MainMenu;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentCekGaji;
 import qrcodescanner.QrCodeActivity;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -53,7 +54,6 @@ import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentAbsensi;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentPengajuan;
-import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentProfil;
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentPengumuman;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
@@ -69,7 +69,7 @@ public class mainmenu_karyawan extends AppCompatActivity
 
     SharedPreferences prefs;
 
-    String[] tabTitles = new String []{"Pengumuman", "  Profil", "Cek Gaji","Log Absensi","Pengajuan"};
+    String[] tabTitles = new String []{"Pengumuman", "Cek Gaji","Log Absensi","Pengajuan"};
     int[] iconstyle = new int[]{R.drawable.baseline_announcement_black_24dp,R.drawable.baseline_account_circle_black_24dp,R.drawable.baseline_monetization_on_black_24dp,R.drawable.baseline_pie_chart_black_24dp,R.drawable.baseline_assignment_black_24dp};
 
     ViewPager pager;
@@ -95,6 +95,7 @@ public class mainmenu_karyawan extends AppCompatActivity
         }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
 
         generator initializedata = new generator(mainmenu_karyawan.this);
@@ -124,6 +125,16 @@ public class mainmenu_karyawan extends AppCompatActivity
         TextView username = linear.findViewById(R.id.username);
         TextView borndate = linear.findViewById(R.id.prof_tempat_lahir);
 
+        LinearLayout setprofile = linear.findViewById(R.id.lyt_profile);
+
+        setprofile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent_profil=new Intent(mainmenu_karyawan.this,profil_karyawan.class);
+                startActivity(intent_profil);
+
+            }
+        });
 
 
         username.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("username",""));
@@ -429,7 +440,6 @@ public class mainmenu_karyawan extends AppCompatActivity
 
         // Adding child data
         listDataHeader.add("Pengumuman");
-        listDataHeader.add("Profil");
         listDataHeader.add("Cek Gaji");
         listDataHeader.add("Log Absensi");
         listDataHeader.add("Pengajuan");
@@ -448,7 +458,7 @@ public class mainmenu_karyawan extends AppCompatActivity
     public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
 
         // tab titles
-        private String[] tabTitles = new String[]{"Pengumuman", "Profil", "Cek Gaji","Log Absensi","Pengajuan"};
+        private String[] tabTitles = new String[]{"Pengumuman", "Cek Gaji","Log Absensi","Pengajuan"};
 
         public ExamplePagerAdapter(FragmentManager fm) {
             super(fm);
@@ -466,12 +476,10 @@ public class mainmenu_karyawan extends AppCompatActivity
                 case 0:
                     return new FragmentPengumuman();
                 case 1:
-                    return new FragmentProfil();
-                case 2:
                     return new FragmentCekGaji();
-                case 3:
+                case 2:
                     return new FragmentAbsensi();
-                case 4:
+                case 3:
                     return new FragmentPengajuan();
                 default:
                     return null;

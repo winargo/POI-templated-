@@ -671,6 +671,10 @@
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".main_karyawan.profil_karyawan"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".main_owner.manage.pengumuman.addpengumuman"
             android:screenOrientation="portrait" />
 
