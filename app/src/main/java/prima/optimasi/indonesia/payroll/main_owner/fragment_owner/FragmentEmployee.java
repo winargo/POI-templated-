@@ -87,9 +87,6 @@ public class FragmentEmployee extends Fragment {
         selectdate = rootView.findViewById(R.id.dateselection_karyawan);
         SimpleDateFormat fomat = new SimpleDateFormat("dd/MM/yyyy");
 
-        Date a = new Date();
-
-        selectdate.setText(fomat.format(a));
 
         selectdate.setOnClickListener(new View.OnClickListener() {
             @Override

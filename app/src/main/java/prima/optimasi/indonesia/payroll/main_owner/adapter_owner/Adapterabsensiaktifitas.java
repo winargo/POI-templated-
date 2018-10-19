@@ -316,7 +316,7 @@ public class Adapterabsensiaktifitas extends RecyclerView.Adapter<RecyclerView.V
                     int hours = (int) ((difference - (1000*60*60*24*days)) / (1000*60*60));
                     int min = (int) (difference - (1000*60*60*24*days) - (1000*60*60*hours)) / (1000*60);
                     hours = hours+(days*24);
-                    view.txt_totaljam.setText(view.txt_totaljam.getText().toString() + hours + " Jam " + min +" Menit");
+                    view.txt_totaljam.setText("Total Jam Kerja : " + hours + " Jam " + min +" Menit");
 
 
                 } catch (ParseException e) {
@@ -326,7 +326,7 @@ public class Adapterabsensiaktifitas extends RecyclerView.Adapter<RecyclerView.V
             }
             else
             {
-                view.txt_totaljam.setText(view.txt_totaljam.getText().toString() + " Total Jam Tidak Tersedia");
+                view.txt_totaljam.setText("Total Jam Kerja : " + " Total Jam Tidak Tersedia");
             }
 
            /* try{
