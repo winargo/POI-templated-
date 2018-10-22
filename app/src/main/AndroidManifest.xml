@@ -684,6 +684,11 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".main_owner.manage.approval"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name="qrcodescanner.QrCodeActivity"
             android:screenOrientation="portrait" />
 
