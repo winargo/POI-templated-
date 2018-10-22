@@ -3,6 +3,7 @@ package prima.optimasi.indonesia.payroll.main_kabag;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -42,6 +44,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import prima.optimasi.indonesia.payroll.main_karyawan.Activity_Pengumuman;
 import qrcodescanner.QrCodeActivity;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.zxing.BarcodeFormat;
@@ -89,6 +92,7 @@ public class mainmenu_kabag extends AppCompatActivity
 
     SharedPreferences prefs;
 
+    CoordinatorLayout parent_view;
     Adaptermenujabatan listAdapter;
     ExpandableListView expListView;
     ProgressDialog loadingdata;
@@ -124,7 +128,7 @@ public class mainmenu_kabag extends AppCompatActivity
             FirebaseMessaging.getInstance().subscribeToTopic("kabag");
         }
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mainmenu);
+        setContentView(R.layout.activity_menu_kabag);
 
         Log.e("sharence status", "onCreate: " + prefs.getInt("statustoken",0) );
 
@@ -134,6 +138,54 @@ public class mainmenu_kabag extends AppCompatActivity
 
         generator initializedata = new generator(mainmenu_kabag.this);
 
+        CircularImageView imageuser =findViewById(R.id.imageView);
+
+        if(prefs.getString("profileimage","").equals(generator.profileurl)){
+
+        }
+        else {
+            Picasso.get().load(prefs.getString("profileimage","")).transform(new CircleTransform()).into(imageuser);
+        }
+        Log.e("picture", "ppicture: "+ prefs.getString("profileimage",""));
+
+        parent_view=findViewById(R.id.parent_view);
+        TextView username = findViewById(R.id.username);
+        TextView borndate = findViewById(R.id.prof_tempat_lahir);
+        TextView pengumumanteks = findViewById(R.id.pengumumanteks);
+        TextView anggotateks = findViewById(R.id.anggotateks);
+        TextView cekgajiteks = findViewById(R.id.cekgajiteks);
+        TextView pengajuanteks = findViewById(R.id.pengajuanteks);
+
+        FloatingActionButton pengumuman=findViewById(R.id.pengumuman);
+        FloatingActionButton absensi=findViewById(R.id.absensi);
+        FloatingActionButton cekgaji=findViewById(R.id.cekgaji);
+        FloatingActionButton pengajuan=findViewById(R.id.pengajuan);
+
+        pengumumanteks.setText("Pengumuman");
+        anggotateks.setText("Anggota");
+        cekgajiteks.setText("Cek Gaji");
+        pengajuanteks.setText("Pengajuan");
+
+        pengumuman.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(mainmenu_kabag.this,Activity_Pengumuman.class);
+                startActivity(intent);
+            }
+        });
+
+        username.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("username",""));
+
+        if(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("tempatlahir","").equals("")){
+
+            borndate.setText("Not Available");
+
+        }else{
+
+            borndate.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("tempatlahir",""));
+
+        }
+        /*
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         expListView = drawer.findViewById(R.id.lvExp);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -356,7 +408,7 @@ public class mainmenu_kabag extends AppCompatActivity
                             }
                         });
                         builder.show();
-                    }*/
+                    }
                 }
                 return false;
             }
@@ -391,7 +443,7 @@ public class mainmenu_kabag extends AppCompatActivity
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {
-                // TODO Auto-generated method stub
+
                 Toast.makeText(
                         getApplicationContext(),
                         listDataHeader.get(groupPosition)
@@ -404,12 +456,13 @@ public class mainmenu_kabag extends AppCompatActivity
             }
         });
 
-
+        */
         if(loadingdata.isShowing()){
             loadingdata.dismiss();
         }
     }
 
+    /*
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -419,7 +472,7 @@ public class mainmenu_kabag extends AppCompatActivity
             super.onBackPressed();
         }
     }
-
+    */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -491,10 +544,12 @@ public class mainmenu_kabag extends AppCompatActivity
 
         }
 
+        /*
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        drawer.closeDrawer(GravityCompat.START);*/
         return true;
     }
+    /*
     private void preparekabag() {
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
@@ -523,6 +578,8 @@ public class mainmenu_kabag extends AppCompatActivity
         listDataChild.put(listDataHeader.get(5), top250);
         listDataChild.put(listDataHeader.get(6), top2510);
     }
+    */
+    /*
     public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
 
         // tab titles
@@ -723,5 +780,5 @@ public class mainmenu_kabag extends AppCompatActivity
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
-
+    */
 }

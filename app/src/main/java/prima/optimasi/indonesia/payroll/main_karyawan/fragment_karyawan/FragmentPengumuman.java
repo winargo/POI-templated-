@@ -281,6 +281,7 @@ public class FragmentPengumuman extends Fragment {
 
         public retrivepengumumanref(Context context, String kodeauth)
         {
+            prefs=context.getSharedPreferences("poipayroll", Context.MODE_PRIVATE);
             dialog = new ProgressDialog(context);
             passeddata = kodeauth;
             this.username = generator.username;
