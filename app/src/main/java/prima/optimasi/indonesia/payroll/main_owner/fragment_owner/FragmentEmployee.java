@@ -32,8 +32,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.adapter.AdapterListSectioned;
@@ -241,7 +243,6 @@ public class FragmentEmployee extends Fragment {
 
                 try {
                     OkHttpClient client = new OkHttpClient();
-
 
 
                     Request request = new Request.Builder()
@@ -485,8 +486,6 @@ public class FragmentEmployee extends Fragment {
 
                 try {
                     OkHttpClient client = new OkHttpClient();
-
-
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
@@ -1106,8 +1105,6 @@ public class FragmentEmployee extends Fragment {
 
                 try {
                     OkHttpClient client = new OkHttpClient();
-
-
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))

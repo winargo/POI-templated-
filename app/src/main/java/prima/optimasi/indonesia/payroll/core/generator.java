@@ -78,6 +78,8 @@ public class generator {
     public static String deletepengumumanurl="http://"+ generator.Server+":4000/pengumuman/";
     public static String pengumumanurl="http://"+ generator.Server+":4000/pengumuman";
 
+    public static String kabaggrupkaryawanurl="http://"+ generator.Server+":4000/groupkaryawan/list";
+
     public static String getabsensiurl="http://"+ generator.Server+":4000/absensi";
 
     public static String ownerurl="http://"+ generator.Server+"/poihrd/uploads/pengguna/";
@@ -129,11 +131,17 @@ public class generator {
     public static String getapprovalgolonganyurl="http://"+ generator.Server+":4000/approvalGolongan/proses";
     public static String getapprovalpdlyurl="http://"+ generator.Server+":4000/approvalpdm";
 
+    public static String getapprovalcutibulananyurl="http://"+ generator.Server+":4000/cuti/bulanan";
+    public static String getabsensikaryawanurl="http://"+ generator.Server+":4000/logabsensi";
 
     public static String jadwalurl="http://"+ generator.Server+":4000/karyawan/checkjadwal/";
 
+<<<<<<< HEAD
     public static String servertimeurl="http://"+ generator.Server+":4000/setting/waktu";
 
+=======
+    public static String getdataizinbulananyurl="http://"+ generator.Server+":4000/izin/bulanan";
+>>>>>>> 1befabcdcc3f22876d8ac6cd3981cfef4fc7ab27
 
 
     public static JSONObject jsondatalogin = null ;
