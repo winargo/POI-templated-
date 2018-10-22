@@ -46,6 +46,8 @@ public class FragmentJob extends Fragment {
     RecyclerView history;
     TextView dt1,dt2;
 
+    ProgressDialog dialog;
+
     String[] options = new String[]{"Approval Cuti","Approval Dinas","Approval Dirumahkan","Approval Izin","Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment","Approval Reward"};
 
     AdapterListSectionedjob adapter;
@@ -61,12 +63,23 @@ public class FragmentJob extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        generator.jobcount = 0;
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_job, container, false);
 
         recyclerall = rootView.findViewById(R.id.recycler_alljob);
 
         parent_view = rootView.findViewById(R.id.coordinator);
+
+        dialog = new ProgressDialog(getActivity());
+
+        dialog.setTitle("Loading Jobs");
+
+        dialog.setCancelable(false);
+
+        dialog.show();
+
+        dialog.setMessage("Loading Job (0/10)");
 
 
 
@@ -116,7 +129,7 @@ public class FragmentJob extends Fragment {
             titles.add(approval);
         }
 
-        adapter = new AdapterListSectionedjob(getActivity(),titles,ItemAnimation.FADE_IN);
+        adapter = new AdapterListSectionedjob(getActivity(),titles,ItemAnimation.FADE_IN,dialog);
 
         recyclerall.setLayoutManager(new GridLayoutManager(getActivity(), 1));
         recyclerall.setHasFixedSize(true);
@@ -144,30 +157,29 @@ public class FragmentJob extends Fragment {
     private class retrive extends AsyncTask<Void, Integer, String>
     {
         String response = "";
-        String error = "";
         String username=  "" ;
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
         ProgressDialog dialog ;
         String urldata = generator.getabsensiurl;
-        String passeddata = "" ;
 
-        public retrive(Context context,List<String> totalaproval)
+        public retrive(Context context,List<String> totalaproval,ProgressDialog dialog)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
-            dialog = new ProgressDialog(context);
-            this.username = generator.username;
-            this.password = generator.password;
-            this.error = error ;
+            this.dialog = dialog;
+
+
+
         }
 
         String TAG = getClass().getSimpleName();
 
         protected void onPreExecute (){
-            this.dialog.show();
             super.onPreExecute();
-            this.dialog.setMessage("Getting Data...");
+            if(dialog!=null && dialog.isShowing()){
+                dialog.setMessage("Getting job ("+generator.jobcount+"/10)");
+            }
             Log.d(TAG + " PreExceute","On pre Exceute......");
         }
 
@@ -257,9 +269,7 @@ public class FragmentJob extends Fragment {
                 Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
             }
 
-            if(this.dialog.isShowing()){
-                dialog.dismiss();
-            }
+
 
 
             Log.d(TAG + " onPostExecute", "" + result);

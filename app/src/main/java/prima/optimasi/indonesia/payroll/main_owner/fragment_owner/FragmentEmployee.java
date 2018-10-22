@@ -695,6 +695,7 @@ public class FragmentEmployee extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
+        JSONObject result1 = null ;
         ProgressDialog dialog ;
         String urldata = generator.getabsensiurl;
         String passeddata = "" ;
@@ -724,11 +725,10 @@ public class FragmentEmployee extends Fragment {
                 this.dialog.setMessage("Loading Data...");
 
                 JSONObject jsonObject;
+                JSONObject jsonObject1;
 
                 try {
                     OkHttpClient client = new OkHttpClient();
-
-
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
@@ -753,6 +753,37 @@ public class FragmentEmployee extends Fragment {
                     else {
 
                         result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .url(generator.servertimeurl)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result1 = new JSONObject(responses.body().string());
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -784,10 +815,13 @@ public class FragmentEmployee extends Fragment {
             Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
         }
 
-        protected void onPostExecute(String result1) {
+        protected void onPostExecute(String result2) {
 
             try {
                 Log.e(TAG, "data json result" + result.toString());
+                if (result1 != null) {
+                    generator.servertime = result1.getString("jam");
+                }
                 if (result != null) {
                     try {
                         itemaktifitas = new ArrayList<>();

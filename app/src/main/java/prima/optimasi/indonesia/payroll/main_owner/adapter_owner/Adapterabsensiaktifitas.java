@@ -326,6 +326,7 @@ public class Adapterabsensiaktifitas extends RecyclerView.Adapter<RecyclerView.V
             }
             else
             {
+                
                 view.txt_totaljam.setText("Total Jam Kerja : " + " Total Jam Tidak Tersedia");
             }
 

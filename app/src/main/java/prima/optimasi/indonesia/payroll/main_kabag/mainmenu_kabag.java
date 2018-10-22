@@ -261,7 +261,7 @@ public class mainmenu_kabag extends AppCompatActivity
                 }
                 else if(listDataHeader.get(groupPosition).equals("Absensi")){
                     drawer.closeDrawer(Gravity.START);
-                    String[] colors = {"Check IN", "Break OUT","Break IN","Check OUT","Extra IN","Extra OUT","Absensi"};
+                    String[] colors = {"Check IN", "Break OUT","Break IN","Check OUT","Extra IN","Extra OUT","Absensi","Absensi Wajah"};
 
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_kabag.this);
@@ -292,6 +292,10 @@ public class mainmenu_kabag extends AppCompatActivity
                                 AlertDialog dialog1 = new AlertDialog.Builder(mainmenu_kabag.this).setTitle("Absensi").setView(l).create();
 
                                 dialog1.show();
+                            }
+                            else if(which==7) {
+                                Intent face = new Intent(mainmenu_kabag.this,facedetection.class);
+                                startActivity(face);
                             }
                             else {
                                 Intent a = new Intent(mainmenu_kabag.this,QrCodeActivity.class);

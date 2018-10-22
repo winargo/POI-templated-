@@ -3,7 +3,11 @@ package prima.optimasi.indonesia.payroll.objects;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 public class listjobextension {
-    String namakaryawan,keterangan,profilepicture,tanggal1,tanggal2,jabatan,tipe;
+    String namakaryawan,keterangan,profilepicture,tanggal1,tanggal2,jabatan,tipe,tgldiajukan;
+
+    public String getTgldiajukan() {
+        return tgldiajukan;
+    }
 
     public String getTipe() {
         return tipe;
@@ -32,6 +36,10 @@ public class listjobextension {
 
     public String getTanggal2() {
         return tanggal2;
+    }
+
+    public void setTgldiajukan(String tgldiajukan) {
+        this.tgldiajukan = tgldiajukan;
     }
 
     public void setTipe(String tipe) {
