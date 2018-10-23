@@ -107,7 +107,17 @@ public class AdapterListBasicjob_extention extends RecyclerView.Adapter<Recycler
                     }
                 });
             }
-            else if(p.getTipe().equals(options[4])){
+            else if(p.getTipe().equals(options[5])){
+
+                Picasso.get().load(p.getProfilepicture()).transform(new CircleTransform()).into(view.image);
+
+                view.name.setText(p.getNamakaryawan());
+                try {
+                    view.desc.setText("Tanggal Pengajuan : "+format1.format(format.parse(p.getTgldiajukan()))+"\n"+p.getKeterangan());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
                 view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -116,6 +126,30 @@ public class AdapterListBasicjob_extention extends RecyclerView.Adapter<Recycler
                         ctx.startActivity(a);
                     }
                 });
+            }else if(p.getTipe().equals(options[6])){
+                Picasso.get().load(p.getProfilepicture()).transform(new CircleTransform()).into(view.image);
+
+                view.name.setText(p.getNamakaryawan());
+                try {
+                    view.desc.setText("Tanggal Pengajuan : "+format1.format(format.parse(p.getTgldiajukan()))+"\n"+p.getKeterangan());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                view.lyt_parent.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent a = new Intent(ctx,approval.class);
+                        a.putExtra("tipe",p.getTipe());
+                        ctx.startActivity(a);
+                    }
+                });
+            }else if(p.getTipe().equals(options[4])){
+
+            }else if(p.getTipe().equals(options[4])){
+
+            }else if(p.getTipe().equals(options[4])){
+
             }
             else {
                 view.lyt_parent.setOnClickListener(new View.OnClickListener() {
