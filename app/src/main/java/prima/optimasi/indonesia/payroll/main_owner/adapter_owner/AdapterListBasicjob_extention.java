@@ -92,11 +92,11 @@ public class AdapterListBasicjob_extention extends RecyclerView.Adapter<Recycler
             if(p.getTipe().equals(options[4])){
                 view.image.setImageDrawable(ctx.getResources().getDrawable(R.drawable.g));
                 view.name.setText(p.getNamakaryawan());
-                try {
-                    view.desc.setText("Tanggal Pengajuan : "+format1.format(format.parse(p.getTgldiajukan()))+"\n"+p.getKeterangan());
-                } catch (ParseException e) {
+                //try {
+                view.desc.setText(/*"Tanggal Pengajuan : "+format1.format(format.parse(p.getTgldiajukan()))+"\n"+*/p.getKeterangan());
+                /*} catch (ParseException e) {
                     e.printStackTrace();
-                }
+                }*/
 
                 view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -112,11 +112,11 @@ public class AdapterListBasicjob_extention extends RecyclerView.Adapter<Recycler
                 Picasso.get().load(p.getProfilepicture()).transform(new CircleTransform()).into(view.image);
 
                 view.name.setText(p.getNamakaryawan());
-                try {
-                    view.desc.setText("Tanggal Pengajuan : "+format1.format(format.parse(p.getTgldiajukan()))+"\n"+p.getKeterangan());
-                } catch (ParseException e) {
+                //try {
+                    view.desc.setText(/*"Tanggal Pengajuan : "+format1.format(format.parse(p.getTgldiajukan()))+"\n"+*/p.getKeterangan());
+                /*} catch (ParseException e) {
                     e.printStackTrace();
-                }
+                }*/
 
                 view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -190,11 +190,8 @@ public class AdapterListBasicjob_extention extends RecyclerView.Adapter<Recycler
 
     @Override
     public int getItemCount() {
-        if(items.size()>3)
-            return 3;
-        else {
-            return items.size();
-        }
+        return items.size();
+
     }
 
 }

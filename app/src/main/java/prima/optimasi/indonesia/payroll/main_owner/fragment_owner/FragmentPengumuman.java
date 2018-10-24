@@ -180,7 +180,6 @@ public class FragmentPengumuman extends Fragment {
         String error = "";
         String username=  "" ;
         String password = "" ;
-        SharedPreferences prefs ;
         JSONObject result = null ;
         ProgressDialog dialog ;
         String urldata = generator.pengumumanurl;

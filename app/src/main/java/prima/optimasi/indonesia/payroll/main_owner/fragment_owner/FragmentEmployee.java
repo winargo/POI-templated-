@@ -302,9 +302,10 @@ public class FragmentEmployee extends Fragment {
         protected void onPostExecute(String result1) {
 
             try {
-                Log.e(TAG, "data json result" + result.toString());
+
                 if (result != null) {
                     try {
+                        Log.e(TAG, "data json result" + result.toString());
                         itemskaryawan = new ArrayList<>();
                         itemskabag = new ArrayList<>();
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");

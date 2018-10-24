@@ -57,6 +57,26 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
 
     private ProgressDialog dialog ;
 
+    String[] real = new String[]{"id","kode_karyawan","idfp","nama","alamat","tempat_lahir","tgl_lahir","telepon","no_wali","email","tgl_masuk","kelamin",
+            "status_nikah","pendidikan","wn","agama","shift", "status_kerja","ibu_kandung","suami_istri","tanggungan","npwp", "gaji","rekening","id_bank",
+            "id_departemen","id_jabatan","id_grup", "id_golongan","atas_nama","foto","id_cabang",
+            "start_date","expired_date","jab_index","kontrak","file_kontrak", "otoritas","periode_gaji",
+            "qrcode_file"};
+
+    //0,1,2,39,37,36
+
+    String[] karyawan = new String[]{"id","kode_karyawan","idfp","nama", "alamat", "tempat_lahir", "tgl_lahir", "telepon", "no_wali", "email",
+            "tgl_masuk", "kelamin", "status_nikah", "pendidikan", "wn", "agama", "shift", "status_kerja", "ibu_kandung",
+            "suami_istri", "tanggungan", "npwp", "gaji", "rekening", "id_bank", "id_departemen", "id_jabatan", "id_grup",
+            "id_golongan", "atas_nama", "foto", "id_cabang", "start_date", "expired_date", "jab_index","kontrak","file_kontrak",
+            "otoritas", "periode_gaji"};
+
+    String[] karyawandetail = new String[]{"id","kode_karyawan","idfp","Nama", "Alamat", "Tempat Lahir", "Tanggal Lahir", "Telepon", "No Wali", "Email",
+            "Tanggal Masuk", "Kelamin", "Status Nikah", "Pendidikan", "Warga Negara", "Agama", "Shift", "Status Kerja", "Ibu Kandung",
+            "Suami Istri", "Tanggungan", "NPWP", "Gaji", "Rekening", "ID Bank", "ID Departemen", "ID Jabatan", "ID Grup",
+            "ID Golongan", "Atas Nama", "Foto", "ID Cabang", "Tanggal Mulai Kontrak", "Tanggal Akhir Kontrak","jab_index", "Kontrak","file_kontrak",
+            "Otoritas", "Periode Gajian"};
+
     String[] options = new String[]{"Approval Cuti","Approval Dinas","Approval Dirumahkan","Approval Izin","Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment","Approval Reward"};
     String[] urloptions = new String[]{generator.getapprovalcutiyurl,generator.getapprovaldinasyurl,generator.getapprovaldirumahkanyurl,generator.getapprovalizinyurl,generator.getapprovalgolonganyurl,generator.getapprovalkaryawanyurl,generator.getapprovalpinjamanyurl,generator.getapprovalpdlyurl,generator.getapprovalpunihsmentyurl,generator.getapprovalrewardyurl};
 
@@ -330,7 +350,13 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                                     data.setTgldiajukan(obj.getString("tanggal").substring(0,10));
                                     data.setNamakaryawan(obj.getString("nama"));
                                     data.setTipe(tipe);
-                                    data.setProfilepicture(generator.profileurl+obj.getString("foto"));
+
+                                    if(obj.getString("foto").equals("")){
+                                        data.setProfilepicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ");
+                                    }
+                                    else {
+                                        data.setProfilepicture(generator.profileurl+obj.getString("foto"));
+                                    }
 
                                     listdata.add(data);
                                 }
@@ -340,11 +366,6 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                             Log.e(tipe,result.toString() );
                             if(result.getString("status").equals("true")) {
                                 Log.e(TAG, tipe + " " + result.toString());
-                                //String[] options = new String[]{"Approval Cuti","Approval Dinas","Approval Dirumahkan","Approval Izin",
-                                // "Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment",
-                                // "Approval Reward"};
-                                //
-
 
                                 JSONArray arrays = result.getJSONArray("data");
                                 for (int i = 0; i < arrays.length(); i++) {
@@ -357,7 +378,13 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                                     data.setTgldiajukan(obj.getString("tanggal").substring(0,10));
                                     data.setNamakaryawan(obj.getString("nama"));
                                     data.setTipe(tipe);
-                                    data.setProfilepicture(generator.profileurl+obj.getString("foto"));
+
+                                    if(obj.getString("foto").equals("")){
+                                        data.setProfilepicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ");
+                                    }
+                                    else {
+                                        data.setProfilepicture(generator.profileurl+obj.getString("foto"));
+                                    }
 
                                     listdata.add(data);
                                 }
@@ -367,11 +394,6 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                             Log.e(tipe,result.toString() );
                             if(result.getString("status").equals("true")) {
                                 Log.e(TAG, tipe + " " + result.toString());
-                                //String[] options = new String[]{"Approval Cuti","Approval Dinas","Approval Dirumahkan","Approval Izin",
-                                // "Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment",
-                                // "Approval Reward"};
-                                //
-
 
                                 JSONArray arrays = result.getJSONArray("data");
                                 for (int i = 0; i < arrays.length(); i++) {
@@ -384,7 +406,13 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                                     data.setTgldiajukan(obj.getString("tanggal").substring(0,10));
                                     data.setNamakaryawan(obj.getString("nama"));
                                     data.setTipe(tipe);
-                                    data.setProfilepicture(generator.profileurl+obj.getString("foto"));
+
+                                    if(obj.getString("foto").equals("")){
+                                        data.setProfilepicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ");
+                                    }
+                                    else {
+                                        data.setProfilepicture(generator.profileurl+obj.getString("foto"));
+                                    }
 
                                     listdata.add(data);
                                 }
@@ -394,11 +422,6 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                             Log.e(tipe,result.toString() );
                             if(result.getString("status").equals("true")) {
                                 Log.e(TAG, tipe + " " + result.toString());
-                                //String[] options = new String[]{"Approval Cuti","Approval Dinas","Approval Dirumahkan","Approval Izin",
-                                // "Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment",
-                                // "Approval Reward"};
-                                //
-
 
                                 JSONArray arrays = result.getJSONArray("data");
                                 for (int i = 0; i < arrays.length(); i++) {
@@ -411,7 +434,13 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                                     data.setTgldiajukan(obj.getString("tanggal").substring(0,10));
                                     data.setNamakaryawan(obj.getString("nama"));
                                     data.setTipe(tipe);
-                                    data.setProfilepicture(generator.profileurl+obj.getString("foto"));
+
+                                    if(obj.getString("foto").equals("")){
+                                        data.setProfilepicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ");
+                                    }
+                                    else {
+                                        data.setProfilepicture(generator.profileurl+obj.getString("foto"));
+                                    }
 
                                     listdata.add(data);
                                 }
@@ -428,15 +457,31 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                             JSONArray arrays = result.getJSONArray("data");
                             JSONArray arrays1 = result.getJSONArray("data1");
                             for (int i = 0; i < arrays.length(); i++) {
-                                JSONObject obj1 = arrays1.getJSONObject(i);
                                 JSONObject obj = arrays.getJSONObject(i);
 
                                 listjobextension data = new listjobextension();
 
-                                String arrow = " ▶ ";
+                                String arrow = " ➡ ";
 
-                                if(!obj.getString("id_golongan").equals(obj1.getString("id_golongan"))){
-                                    data.setTgldiajukan(obj.getString("create_at").substring(0,10));
+                                int index = 0 ;
+
+                                Boolean isnotsame = false;
+
+                                for (int j = 0; j < arrays1.length(); j++) {
+                                    JSONObject obj1 = arrays1.getJSONObject(j);
+                                    if(obj.getString("id_golongan").equals(obj1.getString("id_golongan"))){
+                                        isnotsame = false;
+
+                                        break;
+                                    }
+                                    else{
+                                        isnotsame = true;
+                                        index++;
+                                    }
+
+                                }
+
+                                if(isnotsame){
                                     data.setNamakaryawan(obj.getString("golongan"));
                                     data.setTipe(tipe);
 
@@ -473,8 +518,8 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
 
                                     listdata.add(data);
                                 }else{
-                                    data.setTgldiajukan(obj.getString("create_at").substring(0,10));
 
+                                    JSONObject obj1 = arrays1.getJSONObject(index);
 
                                     data.setNamakaryawan(obj.getString("golongan"));
                                     data.setTipe(tipe);
@@ -499,74 +544,132 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                                         lembur1 = "Tetap";
                                     }
 
-                                    Double umk = Double.parseDouble(obj.getString("umk"));
+                                    Double umk1 = Double.parseDouble(obj.getString("umk"));
 
 
                                     String newline = "\n";
                                     String spacing = " : ";
 
-                                    if(obj.getString("golongan").equals(obj1.getString("golongan"))){
+                                    if(!obj.getString("golongan").equals(obj1.getString("golongan"))){
                                         data.setNamakaryawan(obj.getString("golongan")+arrow+obj1.getString("golongan"));
                                     }
                                     else {
-
+                                        data.setNamakaryawan(obj.getString("golongan"));
                                     }
 
                                     data.setTipe(tipe);
 
+                                    String texting = "Keterangan"+spacing;
 
+                                    if(!obj.getString("golongan").equals(obj1.getString("golongan"))){
+                                        texting = texting + obj.getString("keterangan")+arrow+obj1.getString("golongan")+newline;
+                                    }
+                                    else {
+                                        texting = texting + obj.getString("keterangan")+newline;
+                                    }
 
-                                    Double gaji2 = Double.parseDouble(obj.getString("gaji"));
-                                    Double makan2 = Double.parseDouble(obj.getString("makan"));
-                                    Double transport2 = Double.parseDouble(obj.getString("transport"));
-                                    Double thr2 = Double.parseDouble(obj.getString("thr"));
-                                    Double tundip2 = Double.parseDouble(obj.getString("tundip"));
-                                    Double tunjangan_lain2 = Double.parseDouble(obj.getString("tunjangan_lain"));
-                                    Double bpjs2 = Double.parseDouble(obj.getString("bpjs"));
-                                    Double potlain2 = Double.parseDouble(obj.getString("pot_lain"));
+                                    Double gaji2 = Double.parseDouble(obj1.getString("gaji"));
+                                    Double makan2 = Double.parseDouble(obj1.getString("makan"));
+                                    Double transport2 = Double.parseDouble(obj1.getString("transport"));
+                                    Double thr2 = Double.parseDouble(obj1.getString("thr"));
+                                    //Double tundip2 = Double.parseDouble(obj1.getString("tundip"));
+                                    Double tunjangan_lain2 = Double.parseDouble(obj1.getString("tunjangan_lain"));
+                                    Double bpjs2 = Double.parseDouble(obj1.getString("bpjs"));
+                                    Double potlain2 = Double.parseDouble(obj1.getString("pot_lain"));
                                     String lembur2 = "";
 
-                                    if(obj.getInt("lembur")==1){
+                                    if(obj1.getInt("lembur")==1){
                                         lembur2 = "Hidup";
                                     }
                                     else {
                                         lembur2 = "Tetap";
                                     }
 
-                                    Double umk2 = Double.parseDouble(obj.getString("umk"));
+                                    Double umk2 = Double.parseDouble(obj1.getString("umk"));
+
+                                    if(gaji1==gaji2){
+                                        texting = texting+"Gaji"+spacing+formatter.format(gaji1)+newline;
+                                    }
+                                    else {
+                                        texting = texting+"Gaji"+spacing+formatter.format(gaji1)+arrow+formatter.format(gaji2)+newline;
+                                    }
+
+                                    if(makan1==makan2){
+                                        texting = texting+"Makan"+spacing+formatter.format(makan1)+newline;
+                                    }
+                                    else {
+                                        texting = texting+"Makan"+spacing+formatter.format(makan1)+arrow+formatter.format(makan2)+newline;
+                                    }
+
+                                    if(transport1 == transport2){
+                                        texting = texting+"Transport"+spacing+formatter.format(transport1)+newline;
+                                    }
+                                    else {
+                                        texting = texting+"Transport"+spacing+formatter.format(transport1)+arrow+formatter.format(transport2)+newline;
+                                    }
+
+                                    if(thr1==thr2){
+                                        texting = texting+"THR"+spacing+formatter.format(thr1)+newline;
+                                    }
+                                    else {
+                                        texting = texting+"THR"+spacing+formatter.format(thr1)+arrow+formatter.format(thr2)+newline;
+                                    }
+
+                                    /*if(tundip1==tundip2){
+                                        texting = texting+"Tundip"+spacing+formatter.format(tundip1)+newline;
+                                    }
+                                    else {
+                                        texting = texting+"Tundip"+spacing+formatter.format(tundip1)+arrow+formatter.format(tundip2)+newline;
+                                    }*/
+
+                                    if(tunjangan_lain1==tunjangan_lain2){
+                                        texting = texting+"Tunjangan Lain"+spacing+formatter.format(tunjangan_lain1)+newline;
+                                    }
+                                    else {
+                                        texting = texting+"Tunjangan Lain"+spacing+formatter.format(tunjangan_lain1)+arrow+formatter.format(tunjangan_lain2)+newline;
+                                    }
+
+                                    if(bpjs1==bpjs2){
+                                        texting = texting+"BPJS"+spacing+formatter.format(bpjs1)+newline;
+                                    }
+                                    else {
+                                        texting = texting+"BPJS"+spacing+formatter.format(bpjs1)+arrow+formatter.format(bpjs2)+newline;
+                                    }
+
+                                    if(potlain1==potlain2){
+                                        texting = texting+"Potongan Lain"+spacing+formatter.format(potlain1)+newline;
+                                    }
+                                    else {
+                                        texting = texting + "Potongan Lain" + spacing + formatter.format(potlain1) + arrow + formatter.format(potlain2) + newline;
+                                    }
+
+                                    if(lembur1.equals(lembur2)){
+                                        texting = texting+"Lembur"+spacing+lembur1+newline;
+                                    }
+                                    else {
+                                        texting = texting + "Lembur" + spacing + lembur1 + arrow + lembur2 + newline;
+                                    }
+
+                                    if(umk1==umk2){
+                                        texting = texting+"UMK"+spacing+formatter.format(umk1)+newline;
+                                    }
+                                    else {
+                                        texting = texting + "UMK" + spacing + formatter.format(umk1) + arrow + formatter.format(umk2) + newline;
+                                    }
+
+
+
 
 
                                     String newline2 = "\n";
                                     String spacing2 = " : ";
 
-                                    if()
 
-
-                                    data.setKeterangan("Keterangan"+spacing+obj.getString("keterangan")+newline
-                                            +"Gaji"+spacing+formatter.format(gaji)+newline+"Makan"+spacing+formatter.format(makan)+newline+"Transport"
-                                            +spacing+formatter.format(transport)+newline+"thr"+spacing+formatter.format(thr)+newline+"Tundip"+spacing+formatter.format(tundip)+newline
-                                            +"Tunjangan Lain"+spacing+formatter.format(tunjangan_lain)+newline+"BPJS"+spacing+formatter.format(bpjs)+newline
-                                            +"Potongan Lain"+spacing+formatter.format(potlain)+newline+"Lembur"+spacing+lembur+newline+"UMK"+spacing+formatter.format(umk)+newline);
+                                    data.setKeterangan(texting);
 
                                     listdata.add(data);
                                 }
-
-
                             }
-
-                            /*JSONArray arrays = result.getJSONArray("res1");
-                            for (int i = 0; i < arrays.length(); i++) {
-                                JSONObject obj = arrays.getJSONObject(i);
-                                data.setJabatan(obj.getString("jabatan"));
-                                data.setKeterangan(obj.getString("keterangans"));
-                                data.setTanggal1(obj.getString("tgl_izin").substring(0,10));
-                                data.setTanggal2(obj.getString("akhir_izin").substring(0,10));
-                                data.setNamakaryawan(obj.getString("nama"));
-                                data.setTipe(tipe);
-                                data.setProfilepicture(generator.profileurl+obj.getString("foto"));
-
-                                listdata.add(data);
-                            }*/
                         }
                         else if (tipe.equals("Approval Karyawan") ){
                             Log.e(TAG, tipe+" "+result.toString() );
@@ -575,52 +678,190 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                             // "Approval Reward"};
                             //
 
+                            String newline = "\n";
+                            String spacing = " : ";
 
-                            JSONArray arrays = result.getJSONArray("res1");
+
+
+
+                            JSONArray arrays = result.getJSONArray("data");
+                            JSONArray arrays1 = result.getJSONArray("data1");
                             for (int i = 0; i < arrays.length(); i++) {
                                 JSONObject obj = arrays.getJSONObject(i);
 
                                 listjobextension data = new listjobextension();
 
-                                data.setTgldiajukan(obj.getString("created_at").substring(0,10));
+                                String texting = "";
 
-                                String penentuan = "";
+                                String arrow = " ➡ ";
 
-                                if(obj.getString("judul_approve").contains("Update")){
-                                    penentuan = "UPDATE";
+                                int index = 0 ;
+
+                                Boolean isnotsame = false;
+
+                                for (int j = 0; j < arrays1.length(); j++) {
+                                    JSONObject obj1 = arrays1.getJSONObject(j);
+                                    if(obj.getString("idfp").equals(obj1.getString("idfp"))){
+                                        isnotsame = false;
+
+                                        break;
+                                    }
+                                    else{
+                                        isnotsame = true;
+                                        index++;
+                                    }
+
                                 }
-                                else if(obj.getString("judul_approve").contains("Edit")) {
-                                    penentuan = "EDIT";
+
+                                if(isnotsame){
+                                    data.setNamakaryawan(obj.getString("nama"));
+                                    data.setTipe(tipe);
+
+                                    if(obj.getString("foto").equals("")){
+                                        data.setProfilepicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ");
+                                    }
+                                    else {
+                                        data.setProfilepicture(generator.profileurl+obj.getString("foto"));
+                                    }
+
+
+                                    DecimalFormat formatter = new DecimalFormat("###,###,###");
+
+                                    //0,1,2,39,37,36
+
+                                    for (int k = 0 ; k<obj.length();k++){
+                                        if(k==0){
+
+                                        }
+                                        else if(k==1){
+
+                                        }else if(k==2){
+
+                                        }
+                                        else if(k==39){
+
+                                        }
+                                        else if(k==37){
+
+                                        }
+                                        else if(k==36){
+
+                                        }
+                                        else {
+                                            if(k==3){
+                                                texting = texting + karyawandetail[k]+spacing+obj.getString(karyawan[k])+newline;
+
+                                            }
+                                            if(k==7){
+                                                texting = texting + karyawandetail[k]+spacing+obj.getString(karyawan[k])+newline;
+                                            }
+                                        }
+
+                                    }
+                                    data.setKeterangan(texting);
+
+                                    listdata.add(data);
+
+                                    /*Double gaji = Double.parseDouble(obj.getString("gaji"));
+                                    String kode_karyawan = obj.getString("kode_karyawan");
+                                    String idfp= obj.getString("kode_karyawan");
+                                    String alamat = obj.getString("");
+                                    String tempat_lahir = obj.getString("");
+                                    String tgl_lahir = obj.getString("");
+                                    String telepon = obj.getString("");
+                                    String no_wali = obj.getString("");
+                                    String email = obj.getString("");
+                                    String tglmasuk = obj.getString("");
+                                    String kelamin = obj.getString("");
+                                    String status_nikah = obj.getString("");
+                                    String pendidikan = obj.getString("");
+                                    String wn = obj.getString("");
+                                    String agama = obj.getString("");
+                                    String shift = obj.getString("");
+                                    String status_kerja = obj.getString("");
+                                    String foto = obj.getString("foto");
+                                    String kontrak = obj.getString("");
+                                    String periode = obj.getString("");
+                                    String  = obj.getString("");
+                                    String  = obj.getString("");
+                                    String lembur = "";*/
+                                }else{
+
+                                    JSONObject obj1 = arrays1.getJSONObject(index);
+
+                                    data.setNamakaryawan(obj1.getString("nama")+"("+obj1.getString("info_approve").toUpperCase()+")");
+                                    data.setTipe(tipe);
+
+                                    if(obj.getString("foto").equals("")){
+                                        data.setProfilepicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ");
+                                    }
+                                    else {
+                                        data.setProfilepicture(generator.profileurl+obj1.getString("foto"));
+                                    }
+
+
+                                    DecimalFormat formatter = new DecimalFormat("###,###,###");
+
+                                    //0,1,2,39,37,36
+
+                                    for (int k = 0 ; k<obj.length();k++){
+                                        if(k==0){
+
+                                        }
+                                        else if(k==1){
+
+                                        }else if(k==2){
+
+                                        }
+                                        else if(k==39){
+
+                                        }
+                                        else if(k==37){
+
+                                        }
+                                        else if(k==36){
+
+                                        }
+                                        else {
+                                            if(k==22){
+                                                if(obj.getString(karyawan[k]).equals(obj1.getString(karyawan[k]))){
+
+                                                }
+                                                else {
+                                                    texting = texting + karyawandetail[k]+spacing+formatter.format(Integer.parseInt(obj.getString(karyawan[k])))+arrow+formatter.format(Integer.parseInt(obj1.getString(karyawan[k])))+newline;
+                                                }
+                                            }
+                                            else {
+                                                if(obj.getString(karyawan[k]).equals(obj1.getString(karyawan[k]))){
+
+                                                }
+                                                else {
+                                                    texting = texting + karyawandetail[k]+spacing+obj.getString(karyawan[k])+arrow+obj1.getString(karyawan[k])+newline;
+                                                }
+
+                                            }
+                                            Log.e(TAG, "k index"+k+" "+obj.getString(karyawan[k])+" "+obj1.getString(karyawan[k]) );
+                                        }
+
+                                    }
+                                    if(texting.equals("")){
+                                        data.setKeterangan("Tidak Ada Perubahaan");
+                                    }
+                                    else {
+                                        data.setKeterangan(texting);
+                                    }
+
+
+                                    listdata.add(data);
+
+
+
+                                    //listdata.add(data);
                                 }
-                                else {
-                                    penentuan = "HAPUS";
-                                }
-                                data.setNamakaryawan(obj.getString("nama")+"("+penentuan+")");
-                                data.setTipe(tipe);
-
-                                DecimalFormat formatter = new DecimalFormat("###,###,###");
-
-                                String alamat = obj.getString("alamat");
-                                String tempatlahir = obj.getString("tempat_lahir");
-                                String tgllahir = obj.getString("tgl_lahir");
-                                String telepon = obj.getString("telepon");
-                                String nowali = obj.getString("no_wali");
-                                String email = obj.getString("email");
-                                String tglmasuk = obj.getString("tgl_masuk");
-                                String shift =  obj.getString("shift");
-                                String jeniskelamin= obj.getString("kelamin"),Status_kerja= obj.getString("status_kerja"),gaji= formatter.format(obj.getDouble("gaji")),kontrak= obj.getString("kontrak");
-
-                                String neline = "\n";
-                                String spacing = " : ";
-
-                                data.setProfilepicture(generator.profileurl+obj.getString("foto"));
-
-                                data.setKeterangan("Alamat"+spacing+alamat+neline +"Tempat Lahir"+spacing+tempatlahir+neline+"Tanggal Lahir"+spacing+tgllahir+neline+"Telepon"+spacing+telepon+neline
-                                        +"No Wali"+spacing+nowali+neline+"Email"+spacing+email+neline+"Tanggal Masuk"+spacing+tglmasuk+neline+"Shift"+spacing+shift+neline+"Jenis Kelamin"+spacing+jeniskelamin
-                                        +neline+"Status Kerja"+spacing+Status_kerja+neline+"Gaji"+spacing+gaji+neline+"Kontrak"+spacing+kontrak+neline);
-
-                                listdata.add(data);
                             }
+
+
+
 
                         }
                         else if (tipe.equals("Approval Pinjaman") ){
@@ -660,19 +901,6 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                         }
                         else if (tipe.equals("Approval Pdm") ){
                             Log.e(TAG, tipe+" "+result.toString() );
-                            //String[] options = new String[]{"Approval Cuti","Approval Dinas","Approval Dirumahkan","Approval Izin",
-                            // "Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment",
-                            // "Approval Reward"};
-                            //10-23 14:32:23.807 10754-10754/prima.optimasi.indonesia.payroll E/retrive:
-                            // 10-23 14:32:23.896 10754-10754/prima.optimasi.indonesia.payroll E/retrive: Approval Pdm
-                            // {"status":true,"message":"berhasil get data","res1":
-                            // [{"temp_id_promosi":146,"id_promosi":35,"id_karyawan":7,"id_cabang1":3,"id_departemen1":2,"id_jabatan1":4,
-                            // "id_golongan1":15,"id_grup1":6,"tanggal":"2018-09-01T00:00:00.000Z","judul":"Hapus Data",
-                            // "keterangans":"asdasdsa","status":"Proses","status_info":"Hapus","create_at":"2018-10-08T12:23:10.000Z",
-                            // "approve_at":"2018-09-21T10:44:42.000Z"},{"temp_id_promosi":147,"id_promosi":38,"id_karyawan":7,"id_cabang1":3,
-                            // "id_departemen1":2,"id_jabatan1":4,"id_golongan1":15,"id_grup1":6,"tanggal":"2018-09-01T00:00:00.000Z",
-                            // "judul":"Hapus Data","keterangans":"asdfasd1234333","status":"Proses","status_info":"Hapus",
-                            // "create_at":"2018-10-08T13:24:29.000Z","approve_at":"2018-09-21T10:44:38.000Z"},
 
 
                             JSONArray arrays = result.getJSONArray("res1");
@@ -689,7 +917,6 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
 
                                 }
 
-
                                 DecimalFormat formatter = new DecimalFormat("###,###,###");
                                 listjobextension data = new listjobextension();
 
@@ -703,13 +930,13 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                                 String neline = "\n";
                                 String spacing = " : ";
 
-                                String jumlah = formatter.format(obj.getDouble("jumlah"));
+                                //String jumlah = formatter.format(obj.getDouble("jumlah"));
 
-                                String cicilan = formatter.format(obj.getDouble("cicilan")),cara_pembayaran=obj.getString("cara_pembayaran"),keterangans=obj.getString("keterangans");
+                                //String cicilan = formatter.format(obj.getDouble("cicilan")),cara_pembayaran=obj.getString("cara_pembayaran"),keterangans=obj.getString("keterangans");
 
-                                data.setKeterangan("Jumlah Pinjaman"+spacing+jumlah+neline+"Cicilan / Bulan"+spacing+cicilan+neline+"Cara pembayaran"+spacing+cara_pembayaran+neline+"Keterangan"+spacing+keterangans);
+                                //data.setKeterangan("Jumlah Pinjaman"+spacing+jumlah+neline+"Cicilan / Bulan"+spacing+cicilan+neline+"Cara pembayaran"+spacing+cara_pembayaran+neline+"Keterangan"+spacing+keterangans);
 
-                                listdata.add(data);
+                                //listdata.add(data);
                             }
                         }
                         else if (tipe.equals("Approval Punishment") ){
@@ -718,6 +945,32 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                             // "Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment",
                             // "Approval Reward"};
                             //
+
+                            if(result.getString("status").equals("true")) {
+                                Log.e(TAG, tipe + " " + result.toString());
+
+
+
+                                JSONArray arrays = result.getJSONArray("data");
+                                for (int i = 0; i < arrays.length(); i++) {
+                                    JSONObject obj = arrays.getJSONObject(i);
+                                    listjobextension data = new listjobextension();
+                                    data.setJabatan(obj.getString("jabatan"));
+                                    data.setKeterangan(obj.getString("keterangan"));
+                                    data.setTgldiajukan(obj.getString("created_at").substring(0,10));
+                                    data.setNamakaryawan(obj.getString("nama"));
+                                    data.setTipe(tipe);
+
+                                    if(obj.getString("foto").equals("")){
+                                        data.setProfilepicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ");
+                                    }
+                                    else {
+                                        data.setProfilepicture(generator.profileurl+obj.getString("foto"));
+                                    }
+
+                                    listdata.add(data);
+                                }
+                            }
                         }
                         else if (tipe.equals("Approval Reward") ){
                             Log.e(TAG, tipe+" "+result.toString() );
@@ -725,6 +978,32 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                             // "Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment",
                             // "Approval Reward"};
                             //
+
+                            if(result.getString("status").equals("true")) {
+                                Log.e(TAG, tipe + " " + result.toString());
+
+                                JSONArray arrays = result.getJSONArray("data");
+                                for (int i = 0; i < arrays.length(); i++) {
+                                    JSONObject obj = arrays.getJSONObject(i);
+                                    listjobextension data = new listjobextension();
+                                    data.setJabatan(obj.getString("jabatan"));
+                                    data.setKeterangan(obj.getString("keterangans"));
+                                    data.setTanggal1(obj.getString("tgl_dirumahkan").substring(0,10));
+                                    data.setTanggal2(obj.getString("akhir_dirumahkan").substring(0,10));
+                                    data.setTgldiajukan(obj.getString("tanggal").substring(0,10));
+                                    data.setNamakaryawan(obj.getString("nama"));
+                                    data.setTipe(tipe);
+
+                                    if(obj.getString("foto").equals("")){
+                                        data.setProfilepicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ");
+                                    }
+                                    else {
+                                        data.setProfilepicture(generator.profileurl+obj.getString("foto"));
+                                    }
+
+                                    listdata.add(data);
+                                }
+                            }
 
                         }
 

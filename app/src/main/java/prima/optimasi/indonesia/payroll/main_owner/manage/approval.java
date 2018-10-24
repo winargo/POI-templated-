@@ -101,7 +101,6 @@ public class approval extends AppCompatActivity {
 
     private class retrive extends AsyncTask<Void, Integer, String>
     {
-        AdapterListBasicjob_extention adapter;
         String response = "";
         String error = "";
         String username=  "" ;
@@ -117,13 +116,11 @@ public class approval extends AppCompatActivity {
         RecyclerView recycler ;
         //listjobextension =
 
-        public retrive(Context context, String choice, View nothing, TextView txt_nothing, AdapterListBasicjob_extention adapter, RecyclerView recycler)
+        public retrive(Context context, String choice, View nothing,  RecyclerView recycler)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
 
             this.recycler = recycler;
-
-            this.adapter = adapter;
 
             this.txt_nothing = txt_nothing;
             this.nothing = nothing;
@@ -404,12 +401,12 @@ public class approval extends AppCompatActivity {
                         nothing.setVisibility(View.GONE);
                     }
 
-                    adapter = new AdapterListBasicjob_extention(approval.this,listdata);
-                    adapter.notifyDataSetChanged();
+                    //mAdapter = new AdapterListSwipe (approval.this,listdata);
+                    //mAdapter.notifyDataSetChanged();
 
                     recycler.setLayoutManager(new LinearLayoutManager(approval.this));
                     recycler.setHasFixedSize(true);
-                    recycler.setAdapter(adapter);
+                    recycler.setAdapter(mAdapter);
                 }
                 else {
                     Toast.makeText(approval.this,"Gagal" + result.getString("message"),Toast.LENGTH_LONG).show();
