@@ -620,8 +620,18 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"></activity>
         <activity
+            android:name=".main_karyawan.cekjadwal"
+            android:label="@string/title_activity_mainmenu_kabag"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
+        <activity
             android:name=".main_kabag.mainmenu_kabag"
             android:label="@string/title_activity_mainmenu_karyawan"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".main_kabag.cekjadwal"
+            android:label="@string/title_cek_jadwal"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"></activity>
         <activity
@@ -640,6 +650,10 @@
             android:theme="@style/AppTheme"></activity>
         <activity
             android:name=".universal.viewpengumuman"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".universal.viewjadwalkaryawan"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />
         <activity
@@ -690,6 +704,26 @@
 
         <activity
             android:name="qrcodescanner.QrCodeActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".universal.activity.ActivityPengumuman"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".universal.activity.ActivityPengajuan"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".universal.activity.ActivityLogAbsensi"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".main_kabag.Activity_Anggota"
+            android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />
 
         <service android:name=".notification.firebasenotif">

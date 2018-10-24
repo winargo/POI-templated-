@@ -7,8 +7,10 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -19,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,7 +68,10 @@ public class FragmentPengumuman extends Fragment {
         items = new ArrayList<>();
 
         parent_view = rootView.findViewById(R.id.bgLayout);
+        BottomNavigationView bnav=rootView.findViewById(R.id.navigation);
+        bnav.setVisibility(View.GONE);
         prefs = getActivity().getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+
 
         initComponent(rootView);
         //showBottomSheetDialog(mAdapter.getItem(0));
@@ -79,7 +85,24 @@ public class FragmentPengumuman extends Fragment {
     private void initComponent(View v) {
 
         refresh = v.findViewById(R.id.pengswiperefresh);
-
+        CoordinatorLayout.LayoutParams lp=(CoordinatorLayout.LayoutParams)refresh.getLayoutParams();
+        CoordinatorLayout.LayoutParams layoutParams=new CoordinatorLayout.LayoutParams(
+                CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.MATCH_PARENT
+        );
+        lp.bottomMargin=0;
+        lp.topMargin=110;
+        refresh.setLayoutParams(lp);
+        refresh.requestLayout();
+        /*
+        SwipeRefreshLayout.LayoutParams layoutParams=new SwipeRefreshLayout.LayoutParams(
+                SwipeRefreshLayout.LayoutParams.MATCH_PARENT,SwipeRefreshLayout.LayoutParams.MATCH_PARENT
+        );
+        layoutParams.setMargins()
+        */
+        /*
+        ViewGroup.MarginLayoutParams params=(ViewGroup.MarginLayoutParams)v.getLayoutParams();
+        params.bottomMargin=0;
+        */
         refresh.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override

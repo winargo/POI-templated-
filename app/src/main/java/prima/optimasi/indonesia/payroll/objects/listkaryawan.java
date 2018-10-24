@@ -5,9 +5,18 @@ import java.util.List;
 public class listkaryawan {
     String jabatan;
     String iskar;
+    String kode;
     boolean section = false;
     String nama,desc;
     String imagelink;
+
+    public String getKode() {
+        return kode;
+    }
+
+    public void setKode(String kode) {
+        this.kode = kode;
+    }
 
     public void setIskar(String iskar) {
         this.iskar = iskar;

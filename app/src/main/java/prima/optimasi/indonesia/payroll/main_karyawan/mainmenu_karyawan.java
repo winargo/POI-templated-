@@ -8,6 +8,9 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -15,6 +18,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -34,7 +38,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.activity.MainMenu;
+import prima.optimasi.indonesia.payroll.main_karyawan.cekjadwal;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentCekGaji;
+import prima.optimasi.indonesia.payroll.universal.activity.ActivityLogAbsensi;
+import prima.optimasi.indonesia.payroll.universal.activity.ActivityPengajuan;
+import prima.optimasi.indonesia.payroll.universal.activity.ActivityPengumuman;
 import qrcodescanner.QrCodeActivity;
 
 import com.bumptech.glide.load.engine.Resource;
@@ -57,7 +65,7 @@ import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentAbsensi;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentPengajuan;
-import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentPengumuman;
+import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentPengumuman;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
 public class mainmenu_karyawan extends AppCompatActivity
@@ -114,23 +122,91 @@ public class mainmenu_karyawan extends AppCompatActivity
         }
         Log.e("picture", "ppicture: "+ prefs.getString("profileimage",""));
 
+        CoordinatorLayout parent_view=findViewById(R.id.parent_view);
         TextView username = findViewById(R.id.username);
         TextView borndate = findViewById(R.id.prof_tempat_lahir);
         TextView pengumumanteks = findViewById(R.id.pengumumanteks);
-        TextView absensiteks = findViewById(R.id.absensiteks);
+        TextView log_absensiteks = findViewById(R.id.log_absensiteks);
         TextView cekgajiteks = findViewById(R.id.cekgajiteks);
         TextView pengajuanteks = findViewById(R.id.pengajuanteks);
+        TextView cekjadwalteks = findViewById(R.id.cekjadwalteks);
 
         FloatingActionButton pengumuman=findViewById(R.id.pengumuman);
-        FloatingActionButton absensi=findViewById(R.id.absensi);
+        FloatingActionButton log_absensi=findViewById(R.id.log_absensi);
         FloatingActionButton cekgaji=findViewById(R.id.cekgaji);
         FloatingActionButton pengajuan=findViewById(R.id.pengajuan);
+        FloatingActionButton cek_jadwal=findViewById(R.id.cekjadwal);
 
         pengumumanteks.setText("Pengumuman");
-        absensiteks.setText("Absensi");
+        log_absensiteks.setText("Log Absensi");
         cekgajiteks.setText("Cek Gaji");
         pengajuanteks.setText("Pengajuan");
+        cekjadwalteks.setText("Cek Jadwal");
 
+        pengumuman.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(mainmenu_karyawan.this, ActivityPengumuman.class);
+                startActivity(intent);
+                /*
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.parent_view,new FragmentPengumuman()).addToBackStack("Home").commit();*/
+            }
+        });
+        log_absensi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(mainmenu_karyawan.this,ActivityLogAbsensi.class);
+                startActivity(intent);
+                /*
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.parent_view,new FragmentAbsensi()).addToBackStack("Home").commit();*/
+            }
+        });
+        cekgaji.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Intent intent=new Intent(mainmenu_kabag.this,FragmentPengumuman.class);
+                //startActivity(intent);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.parent_view,new FragmentCekGaji()).addToBackStack("Home").commit();
+            }
+        });
+        pengajuan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(mainmenu_karyawan.this,ActivityPengajuan.class);
+                startActivity(intent);
+                /*
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.parent_view,new FragmentPengajuan()).addToBackStack("Home").commit();*/
+            }
+        });
+        cek_jadwal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent a = new Intent(mainmenu_karyawan.this, cekjadwal.class);
+                startActivity(a);
+            }
+        });
+        ImageView icon_born=findViewById(R.id.iconborn);
+        final CollapsingToolbarLayout collapsing_toolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        ((AppBarLayout) findViewById(R.id.app_bar_layout)).addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                int min_height = ViewCompat.getMinimumHeight(collapsing_toolbar) * 2;
+                float scale = (float) (min_height + verticalOffset) / min_height;
+                imageuser.setScaleX(scale >= 0 ? scale : 0);
+                imageuser.setScaleY(scale >= 0 ? scale : 0);
+                username.setScaleX(scale >= 0 ? scale : 0);
+                username.setScaleY(scale >= 0 ? scale : 0);
+                icon_born.setScaleX(scale >= 0 ? scale : 0);
+                icon_born.setScaleY(scale >= 0 ? scale : 0);
+                borndate.setScaleX(scale >= 0 ? scale : 0);
+                borndate.setScaleY(scale >= 0 ? scale : 0);
+            }
+
+        });
         /*
         pengumuman.setBackgroundResource(R.drawable.baseline_announcement_black_24dp);
         absensi.setBackgroundResource(R.drawable.baseline_monetization_on_black_24dp);
