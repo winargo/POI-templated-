@@ -1,22 +1,23 @@
-package prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan;
+package prima.optimasi.indonesia.payroll.universal.activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,7 +26,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import okhttp3.FormBody;
@@ -34,74 +34,37 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
-import prima.optimasi.indonesia.payroll.objects.logabsensi_karyawan;
+import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.main_karyawan.adapter.Adapter_absensi_karyawan;
-import prima.optimasi.indonesia.payroll.data.DataGenerator;
-import prima.optimasi.indonesia.payroll.model.Social;
-import prima.optimasi.indonesia.payroll.objects.listkaryawanaktivitas;
+import prima.optimasi.indonesia.payroll.objects.logabsensi_karyawan;
+import prima.optimasi.indonesia.payroll.universal.adapter.Adapter_Log_Absensi;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.widget.LineItemDecoration;
 
-public class FragmentAbsensi extends Fragment {
-
-    List<logabsensi_karyawan> itemabsensi;
-    RecyclerView recyclerView;
-    Adapter_absensi_karyawan mAdapter;
+public class ActivityLogAbsensi extends AppCompatActivity {
     CoordinatorLayout parent_view;
     logabsensi_karyawan absensi;
+    List<logabsensi_karyawan> itemabsensi;
+    RecyclerView recyclerView;
+    Adapter_Log_Absensi mAdapter;
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(
-                R.layout.fragment_log_absensi, container, false);
-
-        parent_view=rootView.findViewById(R.id.parent_view);
-        initComponent(rootView);
-        return rootView;
-    }
-    private void initComponent(View v) {
-
-
-
-        recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.addItemDecoration(new LineItemDecoration(getActivity(), LinearLayout.VERTICAL));
-        recyclerView.setHasFixedSize(true);
-
-        CoordinatorLayout.LayoutParams lp=(CoordinatorLayout.LayoutParams)parent_view.getLayoutParams();
-        CoordinatorLayout.LayoutParams layoutParams=new CoordinatorLayout.LayoutParams(
-                CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.MATCH_PARENT
-        );
-        lp.bottomMargin=0;
-        lp.topMargin=160;
-        parent_view.setLayoutParams(lp);
-        parent_view.requestLayout();
-
-        retrivelogabsensi absensi=new retrivelogabsensi(getActivity());
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_log_absensi);
+        parent_view=findViewById(R.id.parent_view);
+        recyclerView=findViewById(R.id.recyclerView);
+        initToolbar();
+        retrivelogabsensi absensi=new retrivelogabsensi(this);
         absensi.execute();
-
-        //List<Social> items = DataGenerator.getSocialData(getActivity());
-        /*
-        //set data and list adapter
-        mAdapter = new Adapter_absensi_karyawan(getActivity(), items);
-        recyclerView.setAdapter(mAdapter);
-
-        // on item list clicked
-        mAdapter.setOnItemClickListener(new Adapter_absensi_karyawan.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, Social obj, int position) {
-                Snackbar.make(v, "Item " + obj.name + " clicked", Snackbar.LENGTH_SHORT).show();
-            }
-        });
-        */
-
     }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
 
-        Toast.makeText(getContext(), item.getTitle(), Toast.LENGTH_SHORT).show();
-
-        return super.onOptionsItemSelected(item);
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this, R.color.colorPrimary);
     }
     private class retrivelogabsensi extends AsyncTask<Void, Integer, String>
     {
@@ -266,7 +229,9 @@ public class FragmentAbsensi extends Fragment {
 
                             itemabsensi.add(absensi);
                             //set data and list adapter
-                            mAdapter = new Adapter_absensi_karyawan(getActivity(), itemabsensi);
+                            mAdapter = new Adapter_Log_Absensi(ActivityLogAbsensi.this, itemabsensi);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(ActivityLogAbsensi.this));
+                            recyclerView.setHasFixedSize(true);
                             recyclerView.setAdapter(mAdapter);
 
                             /*
@@ -305,5 +270,58 @@ public class FragmentAbsensi extends Fragment {
 
             Log.d(TAG + " onPostExecute", "" + result1);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activity_mainmenu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == android.R.id.home) {
+            finish();
+        }
+        else if (id == R.id.action_logout) {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic("karyawan");
+
+
+            Intent logout = new Intent(this,activity_login.class);
+            SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
+
+            if(prefs.getInt("statustoken",0)==0){
+
+            }
+            else {
+                generator.unregistertokentoserver unregistertokentoserver = new generator.unregistertokentoserver(this,prefs.getString("tokennotif",""),prefs.getString("Authorization",""));
+                unregistertokentoserver.execute();
+            }
+
+            SharedPreferences.Editor edit = prefs.edit();
+
+            edit.putString("iduser","");
+            edit.putString("username","");
+            edit.putString("jabatan","");
+            edit.putString("level","");
+            edit.putString("kodekaryawan","");
+            edit.putString("tempatlahir","");
+            edit.putString("profileimage","");
+            edit.putString("Authorization","");
+
+            edit.commit();
+
+            startActivity(logout);
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

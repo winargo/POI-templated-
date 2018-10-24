@@ -5,13 +5,20 @@
     android:background="@android:color/white"
     android:fitsSystemWindows="true"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
+        <include layout="@layout/toolbar" />
+
+    </android.support.design.widget.AppBarLayout>
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
             android:nestedScrollingEnabled="false"
+            android:layout_marginTop="50dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -62,7 +69,7 @@
                     android:layout_width="0sp"
                     android:layout_weight="1"
                     android:layout_margin="5sp"
-                    android:text="11/11/1111"
+                    android:text="dd/mm/yyyy"
                     android:gravity="center"
                     android:textSize="8pt"
                     android:textColor="@color/overlay_light_90"
@@ -75,7 +82,7 @@
                     android:layout_width="0sp"
                     android:layout_weight="1"
                     android:layout_margin="5sp"
-                    android:text="11/11/1111"
+                    android:text="dd/mm/yyyy"
                     android:gravity="center"
                     android:textSize="8pt"
                     android:textColor="@color/overlay_light_90"

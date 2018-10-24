@@ -1,30 +1,23 @@
-package prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag;
+package prima.optimasi.indonesia.payroll.universal.activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.BottomSheetBehavior;
-import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,59 +33,31 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.AdapterGridTwoLineLight;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
-import prima.optimasi.indonesia.payroll.model.Image;
 import prima.optimasi.indonesia.payroll.objects.pengumuman;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 
-public class FragmentPengumuman extends Fragment {
+public class ActivityPengumuman extends AppCompatActivity {
 
-    private View parent_view;
-
-    private RecyclerView recyclerView;
     private AdapterGridTwoLineLight mAdapter;
-
+    ProgressDialog loadingdata;
+    RecyclerView recyclerView;
+    SharedPreferences prefs;
+    CoordinatorLayout parent_view;
     List<pengumuman> items;
-
-    private BottomSheetBehavior mBehavior;
-    private BottomSheetDialog mBottomSheetDialog;
-    private SharedPreferences prefs;
     SwipeRefreshLayout refresh;
-    private View bottom_sheet;
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(
-                R.layout.activity_bottom_sheet_floating, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_pengumuman_karyawan);
 
-        items = new ArrayList<>();
-
-        BottomNavigationView bnav=rootView.findViewById(R.id.navigation);
-        bnav.setVisibility(View.GONE);
-        parent_view = rootView.findViewById(R.id.bgLayout);
-        prefs = getActivity().getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
-
-
-        initComponent(rootView);
-        //showBottomSheetDialog(mAdapter.getItem(0));
-        return rootView;
-    }
-
-    private void initComponent(View v) {
-
-        refresh = v.findViewById(R.id.pengswiperefresh);
-
-        CoordinatorLayout.LayoutParams lp=(CoordinatorLayout.LayoutParams)refresh.getLayoutParams();
-        CoordinatorLayout.LayoutParams layoutParams=new CoordinatorLayout.LayoutParams(
-                CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.MATCH_PARENT
-        );
-        lp.bottomMargin=0;
-        lp.topMargin=110;
-        refresh.setLayoutParams(lp);
-        refresh.requestLayout();
+        parent_view=findViewById(R.id.bgLayout);
+        refresh = findViewById(R.id.pengswiperefresh);
+        recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+        prefs = ActivityPengumuman.this.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+        initToolbar();
 
         refresh.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
@@ -103,14 +68,12 @@ public class FragmentPengumuman extends Fragment {
                         // This method performs the actual data-refresh operation.
                         // The method calls setRefreshing(false) when it's finished.
                         if(mAdapter!=null){
-                            retrivepengumumanref peng = new retrivepengumumanref(getActivity(),prefs.getString("Authorization",""));
+                            retrivepengumumanref peng = new retrivepengumumanref(ActivityPengumuman.this,prefs.getString("Authorization",""));
                             peng.execute();
                         }
                     }
                 }
         );
-
-        recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
 
 
         items = new ArrayList<>();
@@ -119,60 +82,17 @@ public class FragmentPengumuman extends Fragment {
 
         }
         else {
-            retrivepengumuman peng = new retrivepengumuman(getActivity(),prefs.getString("Authorization",""));
+            retrivepengumuman peng = new retrivepengumuman(ActivityPengumuman.this,prefs.getString("Authorization",""));
             peng.execute();
         }
-
-
-        //set data and list adapter
-
-        bottom_sheet = v.findViewById(R.id.bottom_sheet);
-        //mBehavior = BottomSheetBehavior.from(bottom_sheet);
     }
-
-
-    private void showBottomSheetDialog(final Image obj) {
-        if (mBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
-            mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        }
-
-        final View view = getLayoutInflater().inflate(R.layout.sheet_floating, null);
-        ((TextView) view.findViewById(R.id.name)).setText(obj.name);
-        ((TextView) view.findViewById(R.id.brief)).setText(obj.brief);
-        ((TextView) view.findViewById(R.id.description)).setText(R.string.middle_lorem_ipsum);
-        (view.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mBottomSheetDialog.hide();
-            }
-        });
-
-        (view.findViewById(R.id.submit_rating)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity().getApplicationContext(), "Submit Rating", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        mBottomSheetDialog = new BottomSheetDialog(getActivity());
-        mBottomSheetDialog.setContentView(view);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mBottomSheetDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
-
-        // set background transparent
-        ((View) view.getParent()).setBackgroundColor(getResources().getColor(android.R.color.transparent));
-
-        mBottomSheetDialog.show();
-        mBottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                mBottomSheetDialog = null;
-            }
-        });
-
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this, R.color.colorPrimary);
     }
-
     private class retrivepengumuman extends AsyncTask<Void, Integer, String>
     {
         String response = "";
@@ -207,60 +127,60 @@ public class FragmentPengumuman extends Fragment {
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
 
-                try {
-                    this.dialog.setMessage("Loading Data...");
+            try {
+                this.dialog.setMessage("Loading Data...");
 
-                    JSONObject jsonObject;
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",passeddata)
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
 
                     try {
-                        OkHttpClient client = new OkHttpClient();
-
-
-
-                        Request request = new Request.Builder()
-                                .header("Authorization",passeddata)
-                                .url(urldata)
-                                .build();
-                        Response responses = null;
-
-                        try {
-                            responses = client.newCall(request).execute();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            jsonObject =  null;
-                        }catch (Exception e){
-                            e.printStackTrace();
-                            jsonObject = null;
-                        }
-
-                        if (responses==null){
-                            jsonObject = null;
-                            Log.e(TAG, "NULL");
-                        }
-                        else {
-
-                            result = new JSONObject(responses.body().string());
-                        }
-                    } catch (JSONException e) {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
                         e.printStackTrace();
-                        return null;
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
                     }
-                } catch (IOException e) {
-                    this.dialog.dismiss();
-                    Log.e("doInBackground: ", "IO Exception" + e.getMessage());
-                    generator.jsondatalogin = null;
-                    response = "Error IOException";
-                } catch (NullPointerException e) {
-                    this.dialog.dismiss();
-                    Log.e("doInBackground: ", "null data" + e.getMessage());
-                    generator.jsondatalogin = null;
-                    response = "Please check Connection and Server";
-                } catch (Exception e) {
-                    this.dialog.dismiss();
-                    Log.e("doInBackground: ", e.getMessage());
-                    generator.jsondatalogin = null;
-                    response = "Error Occured, PLease Contact Administrator/Support";
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
                 }
+            } catch (IOException e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
 
 
             return response;
@@ -289,18 +209,11 @@ public class FragmentPengumuman extends Fragment {
                             items.add(peng);
                         }
 
-                        mAdapter = new AdapterGridTwoLineLight(getActivity(), items,parent_view);
-                        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+                        mAdapter = new AdapterGridTwoLineLight(ActivityPengumuman.this, items,parent_view);
+                        recyclerView.setLayoutManager(new GridLayoutManager(ActivityPengumuman.this, 1));
                         recyclerView.setHasFixedSize(true);
                         recyclerView.setAdapter(mAdapter);
                         // on item list clicked
-                        mAdapter.setOnItemClickListener(new AdapterGridTwoLineLight.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(View view, Image obj, int position) {
-                                Snackbar.make(parent_view, obj.name + " clicked", Snackbar.LENGTH_SHORT).show();
-                                //showBottomSheetDialog(obj);
-                            }
-                        });
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -344,6 +257,7 @@ public class FragmentPengumuman extends Fragment {
 
         public retrivepengumumanref(Context context, String kodeauth)
         {
+            prefs=context.getSharedPreferences("poipayroll", Context.MODE_PRIVATE);
             dialog = new ProgressDialog(context);
             passeddata = kodeauth;
             this.username = generator.username;
@@ -478,4 +392,58 @@ public class FragmentPengumuman extends Fragment {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activity_mainmenu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == android.R.id.home) {
+            finish();
+        }
+        else if (id == R.id.action_logout) {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic("karyawan");
+
+
+            Intent logout = new Intent(this,activity_login.class);
+            SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
+
+            if(prefs.getInt("statustoken",0)==0){
+
+            }
+            else {
+                generator.unregistertokentoserver unregistertokentoserver = new generator.unregistertokentoserver(this,prefs.getString("tokennotif",""),prefs.getString("Authorization",""));
+                unregistertokentoserver.execute();
+            }
+
+            SharedPreferences.Editor edit = prefs.edit();
+
+            edit.putString("iduser","");
+            edit.putString("username","");
+            edit.putString("jabatan","");
+            edit.putString("level","");
+            edit.putString("kodekaryawan","");
+            edit.putString("tempatlahir","");
+            edit.putString("profileimage","");
+            edit.putString("Authorization","");
+
+            edit.commit();
+
+            startActivity(logout);
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }
+
+

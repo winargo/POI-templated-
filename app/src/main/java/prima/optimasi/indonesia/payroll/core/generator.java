@@ -54,6 +54,7 @@ public class generator {
     //public static String Server="192.168.5.254";
     //public static String Server="153.92.4.147";
     public static String Server="192.168.5.254";
+
     //public static String Server="153.92.4.147";
 
     public static Bitmap tempbitmap = null;
@@ -134,14 +135,14 @@ public class generator {
     public static String getapprovalcutibulananyurl="http://"+ generator.Server+":4000/cuti/bulanan";
     public static String getabsensikaryawanurl="http://"+ generator.Server+":4000/logabsensi";
 
-    public static String jadwalurl="http://"+ generator.Server+":4000/karyawan/checkjadwal/";
+    public static String jadwalurl="http://"+ generator.Server+":4000/karyawan/checkjadwal";
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
     public static String servertimeurl="http://"+ generator.Server+":4000/setting/waktu";
 
-=======
+
     public static String getdataizinbulananyurl="http://"+ generator.Server+":4000/izin/bulanan";
->>>>>>> 1befabcdcc3f22876d8ac6cd3981cfef4fc7ab27
+//1befabcdcc3f22876d8ac6cd3981cfef4fc7ab27
 
 
     public static JSONObject jsondatalogin = null ;

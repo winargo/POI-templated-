@@ -6,12 +6,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/toolbar" />
+
+    </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/pengswiperefresh"
         android:layout_width="match_parent"
-        android:layout_marginBottom="50sp"
+        android:layout_marginTop="50sp"
         android:layout_height="match_parent">
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -26,31 +33,14 @@
         </android.support.v4.widget.NestedScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
 
-        <com.applandeo.materialcalendarview.CalendarView
-            android:id="@+id/calendarView"
-            android:visibility="gone"
-            android:layout_marginBottom="50sp"
-            app:eventsEnabled="true"
-            app:headerColor="@color/purple_900"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-
-    <!--bottom sheet container-->
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/navigation"
+    <com.applandeo.materialcalendarview.CalendarView
+        android:id="@+id/calendarView"
+        android:visibility="gone"
+        android:layout_marginBottom="50sp"
+        app:eventsEnabled="true"
+        app:headerColor="@color/purple_900"
         android:layout_width="match_parent"
-        android:visibility="visible"
-        android:clipToPadding="false"
-        android:layout_height="50sp"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom"
-        android:background="@color/light_blue_A700"
-        app:itemIconTint="@drawable/color_state_white_2"
-        app:itemTextColor="@drawable/color_state_white_2"
-        app:menu="@menu/menu_bottom_navigation_shifting_pengumuman" />
-
-
+        android:layout_height="match_parent" />
 
 </android.support.design.widget.CoordinatorLayout>
 

@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:id="@+id/swipekabag"
         android:layout_marginBottom="50sp"
+        android:visibility="gone"
         android:layout_height="match_parent">
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -75,11 +76,18 @@
         </android.support.v4.widget.NestedScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
 
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/toolbar" />
+
+    </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
-        android:visibility="gone"
-        android:layout_marginBottom="50sp"
+
+        android:layout_marginTop="50sp"
         android:id="@+id/swipekaryawan"
         android:layout_height="match_parent">
         <android.support.v4.widget.NestedScrollView
@@ -241,17 +249,5 @@
         </android.support.v4.widget.NestedScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/navigation"
-        android:layout_width="match_parent"
-        android:visibility="visible"
-        android:clipToPadding="false"
-        android:layout_height="50sp"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom"
-        android:background="@color/light_blue_A700"
-        app:itemIconTint="@drawable/color_state_white_2"
-        app:itemTextColor="@drawable/color_state_white_2"
-        app:menu="@menu/menu_bottom_navigation_shifting_custom" />
 
 </android.support.design.widget.CoordinatorLayout>

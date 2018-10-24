@@ -1,4 +1,4 @@
-package prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan;
+package prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -25,7 +25,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import okhttp3.FormBody;
@@ -34,19 +33,16 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
-import prima.optimasi.indonesia.payroll.objects.logabsensi_karyawan;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.main_karyawan.adapter.Adapter_absensi_karyawan;
-import prima.optimasi.indonesia.payroll.data.DataGenerator;
-import prima.optimasi.indonesia.payroll.model.Social;
-import prima.optimasi.indonesia.payroll.objects.listkaryawanaktivitas;
+import prima.optimasi.indonesia.payroll.main_kabag.adapter.Adapter_absensi;
+import prima.optimasi.indonesia.payroll.objects.logabsensi_karyawan;
 import prima.optimasi.indonesia.payroll.widget.LineItemDecoration;
 
 public class FragmentAbsensi extends Fragment {
 
     List<logabsensi_karyawan> itemabsensi;
     RecyclerView recyclerView;
-    Adapter_absensi_karyawan mAdapter;
+    Adapter_absensi mAdapter;
     CoordinatorLayout parent_view;
     logabsensi_karyawan absensi;
     @Override
@@ -56,6 +52,7 @@ public class FragmentAbsensi extends Fragment {
                 R.layout.fragment_log_absensi, container, false);
 
         parent_view=rootView.findViewById(R.id.parent_view);
+
         initComponent(rootView);
         return rootView;
     }
@@ -266,7 +263,7 @@ public class FragmentAbsensi extends Fragment {
 
                             itemabsensi.add(absensi);
                             //set data and list adapter
-                            mAdapter = new Adapter_absensi_karyawan(getActivity(), itemabsensi);
+                            mAdapter = new Adapter_absensi(getActivity(), itemabsensi);
                             recyclerView.setAdapter(mAdapter);
 
                             /*

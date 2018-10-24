@@ -1,28 +1,27 @@
-package prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag;
+package prima.optimasi.indonesia.payroll.main_kabag;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +30,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import okhttp3.FormBody;
@@ -40,20 +38,18 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
-import prima.optimasi.indonesia.payroll.adapter.AdapterListSectioned;
+import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.helper.SwipeItemTouchHelper;
+import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentEmployee;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterGridCaller;
-import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.Adapterabsensiaktifitas;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
-import prima.optimasi.indonesia.payroll.objects.listkaryawanaktivitas;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
 
-public class FragmentEmployee extends Fragment {
+public class Activity_Anggota extends AppCompatActivity {
 
-    private View parent_view;
+    CoordinatorLayout parent_view;
 
     private SwipeRefreshLayout refreshkabag;
     private SwipeRefreshLayout refreshkaryawan;
@@ -68,106 +64,31 @@ public class FragmentEmployee extends Fragment {
     TextView selectdate;
 
     List<listkaryawan> itemskaryawan;
-    List<listkaryawan> itemskabag;
-    List<listkaryawanaktivitas> itemaktifitas;
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(
-                R.layout.fragment_employee, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_employee);
+        initToolbar();
+        initComponent();
 
-        parent_view = rootView.findViewById(R.id.employeecoordinator);
-
-        refreshkabag = rootView.findViewById(R.id.swipekabag);
-        refreshkaryawan = rootView.findViewById(R.id.swipekaryawan);
-        employeecoordinator= rootView.findViewById(R.id.employeecoordinator);
-
-        selectdate = rootView.findViewById(R.id.dateselection_karyawan);
-        SimpleDateFormat fomat = new SimpleDateFormat("dd/MM/yyyy");
-
-
-        selectdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity()).setPositiveButton("Select",null).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-
-                LayoutInflater inflate = LayoutInflater.from(getActivity());
-
-                View linear = inflate.inflate(R.layout.calenderview,null);
-
-                dialog.setView(linear);
-
-                dialog.show();
-            }
-        });
-
-        refreshkaryawan.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                retrivekaryawanrefersh ref = new retrivekaryawanrefersh(getActivity());
-                ref.execute();
-            }
-        });
-
-        bottomnac = rootView.findViewById(R.id.navigation);
-        bottomnac.setVisibility(View.GONE);
-        refreshkabag.setVisibility(View.GONE);
-        refreshkaryawan.setVisibility(View.VISIBLE);
-        /*
-        bottomnac.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.navigation_people:
-                        refreshkaryawan.setVisibility(View.VISIBLE);
-                        bottomnac.setBackgroundColor(getResources().getColor(R.color.green_900));
-                        return true;
-                }
-                return false;
-            }
-        });
-        */
-        initComponent(rootView);
-
-        return rootView;
     }
-
-
-    private void initComponent(View v) {
-        recyclerViewkaryawan = (RecyclerView) v.findViewById(R.id.recyclerView_karyawan);
-        recyclerViewkaryawan.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        recyclerViewkaryawan.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(getActivity(), 3), true));
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this, R.color.colorPrimary);
+    }
+    private void initComponent() {
+        recyclerViewkaryawan = (RecyclerView) findViewById(R.id.recyclerView_karyawan);
+        recyclerViewkaryawan.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerViewkaryawan.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(this, 3), true));
         recyclerViewkaryawan.setHasFixedSize(true);
         recyclerViewkaryawan.setNestedScrollingEnabled(false);
 
-        CoordinatorLayout.LayoutParams lp=(CoordinatorLayout.LayoutParams)parent_view.getLayoutParams();
-        CoordinatorLayout.LayoutParams layoutParams=new CoordinatorLayout.LayoutParams(
-                CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.MATCH_PARENT
-        );
-        lp.bottomMargin=0;
-        lp.topMargin=160;
-        parent_view.setLayoutParams(lp);
-        parent_view.requestLayout();
 
-        retrivekaryawan karyawan = new retrivekaryawan(getActivity());
+        retrivekaryawan karyawan = new retrivekaryawan(this);
         karyawan.execute();
-
-        /*int sect_count = 0;
-        int sect_idx = 0;
-        List<String> months = DataGenerator.getStringsMonth(getActivity());
-        for (int i = 0; i < items.size() / 6; i++) {
-            items.add(sect_count, new People(months.get(sect_idx), true));
-            sect_count = sect_count + 5;
-            sect_idx++;
-        }*/
-
-        //set data and list adapter
 
     }
 
@@ -278,11 +199,10 @@ public class FragmentEmployee extends Fragment {
                 if (result != null) {
                     try {
                         itemskaryawan = new ArrayList<>();
-                        itemskabag = new ArrayList<>();
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         boolean status=result.getBoolean("status");
                         if(!status){
-                            LayoutInflater inflater=(LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                            LayoutInflater inflater=(LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                             View SubFragment=inflater.inflate(R.layout.fragment_no_item_search,employeecoordinator,false);
                             employeecoordinator.addView(SubFragment);
                         }
@@ -393,7 +313,7 @@ public class FragmentEmployee extends Fragment {
                                 itemskaryawan.add(kar);
 
                                 //mAdapter = new AdapterListSectioned(getActivity(), items, ItemAnimation.LEFT_RIGHT);
-                                mAdapterkaryawan = new AdapterGridCaller(getActivity(), itemskaryawan, ItemAnimation.FADE_IN);
+                                mAdapterkaryawan = new AdapterGridCaller(Activity_Anggota.this, itemskaryawan, ItemAnimation.FADE_IN);
                                 recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
 
                             }
@@ -532,12 +452,11 @@ public class FragmentEmployee extends Fragment {
                 if (result != null) {
                     try {
                         itemskaryawan = new ArrayList<>();
-                        itemskabag = new ArrayList<>();
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
                         boolean status=result.getBoolean("status");
                         if(!status){
-                            LayoutInflater inflater=(LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                            LayoutInflater inflater=(LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                             View SubFragment=inflater.inflate(R.layout.fragment_no_item_search,employeecoordinator,false);
                             employeecoordinator.addView(SubFragment);
                         }
@@ -593,5 +512,56 @@ public class FragmentEmployee extends Fragment {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activity_mainmenu, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
+        //noinspection SimplifiableIfStatement
+        if (id == android.R.id.home) {
+            finish();
+        }
+        else if (id == R.id.action_logout) {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic("karyawan");
+
+
+            Intent logout = new Intent(this,activity_login.class);
+            SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
+
+            if(prefs.getInt("statustoken",0)==0){
+
+            }
+            else {
+                generator.unregistertokentoserver unregistertokentoserver = new generator.unregistertokentoserver(this,prefs.getString("tokennotif",""),prefs.getString("Authorization",""));
+                unregistertokentoserver.execute();
+            }
+
+            SharedPreferences.Editor edit = prefs.edit();
+
+            edit.putString("iduser","");
+            edit.putString("username","");
+            edit.putString("jabatan","");
+            edit.putString("level","");
+            edit.putString("kodekaryawan","");
+            edit.putString("tempatlahir","");
+            edit.putString("profileimage","");
+            edit.putString("Authorization","");
+
+            edit.commit();
+
+            startActivity(logout);
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }
