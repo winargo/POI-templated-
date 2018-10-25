@@ -18,6 +18,7 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
@@ -49,9 +50,69 @@ public class ActivityPengajuan extends AppCompatActivity {
 
         });
         tglmasuk=findViewById(R.id.tglmasuk);
+        tglmasuk.setText(getCurrentDate());
         tglkeluar=findViewById(R.id.tglkeluar);
+        tglkeluar.setText(getNextDate());
         initToolbar();
         initComponent();
+    }
+    public String getCurrentDate(){
+        final Calendar c=Calendar.getInstance();
+        int year, month, day;
+        year=c.get(Calendar.YEAR);
+        month=c.get(Calendar.MONTH);
+        day=c.get(Calendar.DATE);
+        return day+"/"+(month+1)+"/"+year;
+    }
+    public String getNextDate(){
+        final Calendar c=Calendar.getInstance();
+        int year, month, day, months;
+        year=c.get(Calendar.YEAR);
+        month=c.get(Calendar.MONTH);
+        months=month+1;
+        day=c.get(Calendar.DATE);
+        if(months==1 || months==3 || months==5 || months==7 || months==8 || months==10){
+            if(day<31){
+                day++;
+            }
+            else{
+                months++;
+            }
+        }
+        else if(months==2 && year%4==0){
+            if(day<29){
+                day++;
+            }
+            else{
+                months++;
+            }
+        }
+        else if(months==2 && year%4!=0){
+            if(day<28){
+                day++;
+            }
+            else{
+                months++;
+            }
+        }
+        else if(months==4 || months==6 ||months==9 || months==11){
+            if(day<30){
+                day++;
+            }
+            else{
+                months++;
+            }
+        }
+        else if(months==12){
+            if(day<31){
+                day++;
+            }
+            else{
+                year++;
+                months=1;
+            }
+        }
+        return day+"/"+months+"/"+year;
     }
     private void initComponent() {
         tglmasuk.setOnClickListener(new View.OnClickListener() {

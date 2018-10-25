@@ -241,7 +241,14 @@
                 </LinearLayout>
 
             </LinearLayout>
-
+            <Button
+                android:id="@+id/logout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="68dp"
+                android:background="@color/colorPrimary"
+                android:text="Logout"
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>

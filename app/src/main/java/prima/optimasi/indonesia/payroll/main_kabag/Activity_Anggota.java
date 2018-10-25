@@ -14,14 +14,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,8 +45,7 @@ import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentEmployee;
-import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterGridCaller;
+import prima.optimasi.indonesia.payroll.main_kabag.adapter.Adapterviewkaryawan;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
@@ -56,8 +60,9 @@ public class Activity_Anggota extends AppCompatActivity {
 
     private RecyclerView recyclerViewkaryawan;
 
-    private AdapterGridCaller mAdapterkaryawan;
+    private Adapterviewkaryawan mAdapterkaryawan;
 
+    MaterialSearchView searchView;
     CoordinatorLayout employeecoordinator;
     BottomNavigationView bottomnac;
 
@@ -68,6 +73,8 @@ public class Activity_Anggota extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_employee);
+        refreshkaryawan = findViewById(R.id.swipekaryawan);
+        parent_view= findViewById(R.id.employeecoordinator);
         initToolbar();
         initComponent();
 
@@ -85,7 +92,46 @@ public class Activity_Anggota extends AppCompatActivity {
         recyclerViewkaryawan.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(this, 3), true));
         recyclerViewkaryawan.setHasFixedSize(true);
         recyclerViewkaryawan.setNestedScrollingEnabled(false);
+        searchView = (MaterialSearchView) findViewById(R.id.search_view);
 
+        /*
+        EditText search=findViewById(R.id.search_text_karyawan);
+
+        TextWatcher filterTextWatcher = new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before,
+                                      int count) {
+                mAdapterkaryawan.getFilter().filter(s);
+            }
+        };
+        search.addTextChangedListener(filterTextWatcher);*/
+        /*
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+                //Do some magic
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                //Do some magic
+            }
+        });
+        */
+        refreshkaryawan.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                retrivekaryawanrefersh ref = new retrivekaryawanrefersh(Activity_Anggota.this);
+                ref.execute();
+            }
+        });
 
         retrivekaryawan karyawan = new retrivekaryawan(this);
         karyawan.execute();
@@ -296,25 +342,40 @@ public class Activity_Anggota extends AppCompatActivity {
                             for (int i = 0; i < pengsarray.length(); i++) {
                                 JSONObject obj = pengsarray.getJSONObject(i);
 
-                                listkaryawan kar = new listkaryawan();
-                                kar.setSection(false);
-                                kar.setJabatan("Karyawan");
-                                kar.setIskar(obj.getString("id"));
-                                if(!obj.getString("foto").equals("")){
-                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
-                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                if(!prefs.getString("kodekaryawan", "").equals(obj.getString("kode_karyawan"))) {
+                                    if (obj.getString("otoritas").equals("2")) {
+
+                                    }
+                                    else{
+                                        listkaryawan kar = new listkaryawan();
+                                        kar.setSection(false);
+                                        kar.setJabatan("Karyawan");
+                                        kar.setIskar(obj.getString("id"));
+                                        if (!obj.getString("foto").equals("")) {
+                                            kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                            Log.e(TAG, "image data" + kar.getImagelink());
+                                        }
+                                        else{
+                                            kar.setImagelink("");
+                                            Log.e(TAG, "image data" + kar.getImagelink());
+                                        }
+                                        /*
+                                        else{
+                                            kar.setImagelink("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qlAqV8WwUWaqr0SDbTj5Ht9lQ");
+                                            Log.e(TAG, "image data" + kar.getImagelink());
+                                        }*/
+
+
+                                        kar.setNama(obj.getString("nama"));
+                                        kar.setDesc("Karyawan");
+                                        itemskaryawan.add(kar);
+
+                                        //mAdapter = new AdapterListSectioned(getActivity(), items, ItemAnimation.LEFT_RIGHT);
+                                        mAdapterkaryawan = new Adapterviewkaryawan(Activity_Anggota.this, itemskaryawan, ItemAnimation.FADE_IN);
+                                        recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                                    }
+
                                 }
-
-
-
-
-                                kar.setNama(obj.getString("nama"));
-                                kar.setDesc("Karyawan");
-                                itemskaryawan.add(kar);
-
-                                //mAdapter = new AdapterListSectioned(getActivity(), items, ItemAnimation.LEFT_RIGHT);
-                                mAdapterkaryawan = new AdapterGridCaller(Activity_Anggota.this, itemskaryawan, ItemAnimation.FADE_IN);
-                                recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
 
                             }
                         }
@@ -468,20 +529,30 @@ public class Activity_Anggota extends AppCompatActivity {
                             for (int i = 0; i < pengsarray.length(); i++) {
                                 JSONObject obj = pengsarray.getJSONObject(i);
 
-                                listkaryawan kar = new listkaryawan();
-                                kar.setSection(false);
-                                kar.setJabatan("Karyawan");
-                                kar.setIskar(obj.getString("id"));
-                                if(!obj.getString("foto").equals("")){
-                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
-                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                if(!prefs.getString("kodekaryawan", "").equals(obj.getString("kode_karyawan"))) {
+                                    if (obj.getString("otoritas").equals("2") || obj.getString("otoritas").equals("3")) {
+                                    }
+                                    else{
+                                        listkaryawan kar = new listkaryawan();
+                                        kar.setSection(false);
+                                        kar.setJabatan("Karyawan");
+                                        kar.setIskar(obj.getString("id"));
+                                        if (!obj.getString("foto").equals("")) {
+                                            kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                            Log.e(TAG, "image data" + kar.getImagelink());
+                                        }
+                                        else{
+                                            kar.setImagelink("");
+                                            Log.e(TAG, "image data" + kar.getImagelink());
+                                        }
+
+
+                                        kar.setNama(obj.getString("nama"));
+                                        kar.setDesc("Karyawan");
+                                        itemskaryawan.add(kar);
+                                    }
+
                                 }
-
-
-
-                                kar.setNama(obj.getString("nama"));
-                                kar.setDesc("Karyawan");
-                                itemskaryawan.add(kar);
                             }
 
                             refreshkaryawan.setRefreshing(false);
@@ -515,7 +586,32 @@ public class Activity_Anggota extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_mainmenu, menu);
+        //getMenuInflater().inflate(R.menu.activity_mainmenu, menu);
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+
+        MenuItem item = menu.findItem(R.id.action_search);
+
+
+        searchView.setMenuItem(item);
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //Do some magic
+                mAdapterkaryawan.getFilter().filter(query);
+                recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                //Do some magic
+                Log.e("Text", "newText=" + query);
+                mAdapterkaryawan.getFilter().filter(query);
+                recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                return false;
+            }
+        });
+
         return true;
     }
     @Override
@@ -529,6 +625,10 @@ public class Activity_Anggota extends AppCompatActivity {
         if (id == android.R.id.home) {
             finish();
         }
+        else if (id == R.id.action_search) {
+            return true;
+        }
+        /*
         else if (id == R.id.action_logout) {
             FirebaseMessaging.getInstance().unsubscribeFromTopic("karyawan");
 
@@ -560,8 +660,9 @@ public class Activity_Anggota extends AppCompatActivity {
             startActivity(logout);
 
             return true;
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
+
 }

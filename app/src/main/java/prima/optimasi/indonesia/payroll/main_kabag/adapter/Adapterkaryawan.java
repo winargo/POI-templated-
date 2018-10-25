@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.model.Image;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
@@ -45,13 +47,14 @@ public class Adapterkaryawan extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
         public ImageView image;
-        public TextView name;
+        public TextView name, jabatan;
         public View lyt_parent;
 
         public OriginalViewHolder(View v) {
             super(v);
             image = (ImageView) v.findViewById(R.id.image);
             name = (TextView) v.findViewById(R.id.name);
+            jabatan = (TextView) v.findViewById(R.id.brief);
             lyt_parent = (View) v.findViewById(R.id.lyt_parent);
         }
     }
@@ -71,7 +74,15 @@ public class Adapterkaryawan extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if (holder instanceof OriginalViewHolder) {
             OriginalViewHolder view = (OriginalViewHolder) holder;
             view.name.setText(obj.getNama());
-            Tools.displayImageOriginal(ctx, view.image, obj.getImagelink());
+            view.jabatan.setText(obj.getJabatan());
+            if(obj.getImagelink().equals("")){
+                Picasso.get().load("http://www.racemph.com/wp-content/uploads/2016/09/profile-image-placeholder.png").into(view.image);
+                //Picasso.get().load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ").into(view.image);
+            }
+
+            else{
+                Tools.displayImageOriginal(ctx, view.image, obj.getImagelink());
+            }
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
