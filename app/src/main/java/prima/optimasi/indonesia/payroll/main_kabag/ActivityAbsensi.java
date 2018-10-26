@@ -27,16 +27,12 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
-import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import prima.optimasi.indonesia.payroll.R;
-import prima.optimasi.indonesia.payroll.main_kabag.adapter.AdapterGridAbsensi;
-import prima.optimasi.indonesia.payroll.main_kabag.adapter.Adapterviewkaryawan;
-import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 import prima.optimasi.indonesia.payroll.universal.absence.facedetection;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
@@ -45,15 +41,9 @@ import qrcodescanner.QrCodeActivity;
 
 public class ActivityAbsensi extends AppCompatActivity {
     CoordinatorLayout parent_view;
-    private RecyclerView recyclerView;
 
-    private AdapterGridAbsensi adapter;
     MaterialRippleLayout checkin, checkout, breakin, breakout, extrain, extraout, absensi, absensiwajah;
 
-
-    TextView selectdate;
-
-    List<listkaryawan> itemskaryawan;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -207,27 +197,6 @@ public class ActivityAbsensi extends AppCompatActivity {
             }
         });
 
-        //http://www.icym.edu.my/v13/images/checklist.jpg
-
-        /*
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        recyclerView.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(this, 3), true));
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setNestedScrollingEnabled(false);
-        //String [] absensi={"Check IN", "Break OUT","Break IN","Check OUT","Extra IN","Extra OUT","Absensi","Absensi Wajah"};;
-        List<String> absensi=new ArrayList<>();
-        //absensi.add("Check IN");
-        absensi.add("Check OUT");
-        absensi.add("Break OUT");
-        absensi.add("Break IN");
-
-        absensi.add("Extra IN");
-        absensi.add("Extra OUT");
-        absensi.add("Absensi");
-        absensi.add("Absensi Wajah");
-        adapter = new AdapterGridAbsensi(ActivityAbsensi.this, absensi, ItemAnimation.FADE_IN);
-        recyclerView.setAdapter(adapter);
-        */
     }
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
