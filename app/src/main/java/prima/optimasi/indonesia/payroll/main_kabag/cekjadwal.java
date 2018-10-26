@@ -115,7 +115,7 @@ public class cekjadwal extends AppCompatActivity {
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_search_setting, menu);
+        getMenuInflater().inflate(R.menu.activity_mainmenu, menu);
         return true;
     }
     @Override

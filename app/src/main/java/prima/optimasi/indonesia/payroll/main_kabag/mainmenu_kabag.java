@@ -197,6 +197,9 @@ public class mainmenu_kabag extends AppCompatActivity
         absensi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent=new Intent(mainmenu_kabag.this,ActivityAbsensi.class);
+                startActivity(intent);
+                /*
                 String[] colors = {"Check IN", "Break OUT","Break IN","Check OUT","Extra IN","Extra OUT","Absensi","Absensi Wajah"};
 
 
@@ -243,11 +246,13 @@ public class mainmenu_kabag extends AppCompatActivity
                     }
                 });
                 builder.show();
+                */
             }
         });
         cekjadwal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 String[] colors = {"Karyawan", "Sendiri"};
 
 
@@ -269,6 +274,7 @@ public class mainmenu_kabag extends AppCompatActivity
                     }
                 });
                 builder.show();
+
             }
         });
         ImageView icon_born=findViewById(R.id.iconborn);
