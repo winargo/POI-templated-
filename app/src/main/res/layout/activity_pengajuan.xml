@@ -102,6 +102,7 @@
                 android:minHeight="100sp"
                 android:layout_height="wrap_content" />
             <Button
+                android:id="@+id/send_pengajuan"
                 android:layout_marginRight="20sp"
                 android:layout_width="110sp"
                 android:gravity="center"

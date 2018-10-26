@@ -63,7 +63,6 @@ public class Activity_Anggota extends AppCompatActivity {
     private Adapterviewkaryawan mAdapterkaryawan;
 
     MaterialSearchView searchView;
-    CoordinatorLayout employeecoordinator;
     BottomNavigationView bottomnac;
 
     TextView selectdate;
@@ -249,8 +248,8 @@ public class Activity_Anggota extends AppCompatActivity {
                         boolean status=result.getBoolean("status");
                         if(!status){
                             LayoutInflater inflater=(LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                            View SubFragment=inflater.inflate(R.layout.fragment_no_item_search,employeecoordinator,false);
-                            employeecoordinator.addView(SubFragment);
+                            View SubFragment=inflater.inflate(R.layout.fragment_no_item_search,parent_view,false);
+                            parent_view.addView(SubFragment);
                         }
                         else {
                             /*
@@ -518,8 +517,8 @@ public class Activity_Anggota extends AppCompatActivity {
                         boolean status=result.getBoolean("status");
                         if(!status){
                             LayoutInflater inflater=(LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                            View SubFragment=inflater.inflate(R.layout.fragment_no_item_search,employeecoordinator,false);
-                            employeecoordinator.addView(SubFragment);
+                            View SubFragment=inflater.inflate(R.layout.fragment_no_item_search,parent_view,false);
+                            parent_view.addView(SubFragment);
                         }
                         else {
                             JSONArray pengsarray = result.getJSONArray("data");
