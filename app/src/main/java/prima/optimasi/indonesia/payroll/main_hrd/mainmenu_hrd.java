@@ -83,8 +83,9 @@ public class mainmenu_hrd extends AppCompatActivity
 
     SharedPreferences prefs;
 
-    String[] tabTitles = new String []{" Home", "Pengumuman","Karyawan", "  Profil","Cek Gaji","Pengajuan"};
-    int[] iconstyle = new int[]{R.drawable.baseline_home_black_18dp,R.drawable.baseline_announcement_black_24dp,R.drawable.ic_baseline_people_24px,R.drawable.baseline_account_circle_black_24dp,R.drawable.baseline_monetization_on_black_24dp,R.drawable.baseline_assignment_black_24dp};
+    String[] tabTitles = new String []{" Home", "Pengumuman","Karyawan", "Profil","Cek Gaji","Pengajuan"};
+    int[] iconstyle = new int[]{R.drawable.baseline_home_black_18dp,R.drawable.baseline_announcement_black_24dp,R.drawable.ic_baseline_people_24px,
+            R.drawable.baseline_account_circle_black_24dp,R.drawable.baseline_monetization_on_black_24dp,R.drawable.baseline_assignment_black_24dp};
 
 
     ViewPager pager;
@@ -402,6 +403,10 @@ public class mainmenu_hrd extends AppCompatActivity
                     return new FragmentEmployee();
                 case 3:
                     return new FragmentProfil();
+                case 4:
+                    return new FragmentHome();
+                case 5:
+                    return new FragmentHome();
                 default:
                     return null;
             }

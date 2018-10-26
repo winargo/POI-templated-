@@ -168,10 +168,11 @@ public class mainmenu_kabag extends AppCompatActivity
         anggota.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Intent intent=new Intent(mainmenu_kabag.this,FragmentPengumuman.class);
-                //startActivity(intent);
+                Intent intent=new Intent(mainmenu_kabag.this,Activity_Anggota.class);
+                startActivity(intent);
+                /*
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.parent_view,new FragmentEmployee()).addToBackStack("Home").commit();
+                        .replace(R.id.parent_view,new FragmentEmployee()).addToBackStack("Home").commit();*/
             }
         });
         cekgaji.setOnClickListener(new View.OnClickListener() {
@@ -597,7 +598,9 @@ public class mainmenu_kabag extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_mainmenu, menu);
+        getMenuInflater().inflate(R.menu.menu_activity_main, menu);
+        MenuItem item=menu.findItem(R.id.action_settings);
+        item.setTitle("About");
         return true;
     }
 

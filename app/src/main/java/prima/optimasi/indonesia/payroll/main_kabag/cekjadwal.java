@@ -503,28 +503,34 @@ public class cekjadwal extends AppCompatActivity {
                             for (int i = 0; i < pengsarray.length(); i++) {
                                 JSONObject obj = pengsarray.getJSONObject(i);
                                 if(!prefs.getString("kodekaryawan", "").equals(obj.getString("kode_karyawan"))) {
-                                    kar = new listkaryawan();
-                                    kar.setSection(false);
-                                    kar.setJabatan("Karyawan");
-                                    kar.setIskar(obj.getString("id"));
-                                    kar.setKode(obj.getString("kode_karyawan"));
-                                    if(!obj.getString("foto").equals("")){
-                                        kar.setImagelink(generator.profileurl + obj.getString("foto"));
-                                        Log.e(TAG, "image data" + kar.getImagelink());
+                                    if (obj.getString("otoritas").equals("2") || obj.getString("otoritas").equals("3")) {
                                     }
+                                    else {
+                                        kar = new listkaryawan();
+                                        kar.setSection(false);
+                                        kar.setJabatan("Karyawan");
+                                        kar.setIskar(obj.getString("id"));
+                                        kar.setKode(obj.getString("kode_karyawan"));
+                                        if (!obj.getString("foto").equals("")) {
+                                            kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                            Log.e(TAG, "image data" + kar.getImagelink());
+                                        }
+                                        else{
+                                            kar.setImagelink("");
+                                            Log.e(TAG, "image data" + kar.getImagelink());
+                                        }
 
 
+                                        kar.setNama(obj.getString("nama"));
+                                        //kar.setDesc("Karyawan");
+                                        itemskaryawan.add(kar);
 
-
-                                    kar.setNama(obj.getString("nama"));
-                                    //kar.setDesc("Karyawan");
-                                    itemskaryawan.add(kar);
-
-                                    //mAdapter = new AdapterListSectioned(getActivity(), items, ItemAnimation.LEFT_RIGHT);
-                                    mAdapterkaryawan = new Adapterkaryawan(ctx, itemskaryawan, ItemAnimation.FADE_IN);
-                                    recyclerView_karyawan.setLayoutManager(new GridLayoutManager(cekjadwal.this,2));
-                                    recyclerView_karyawan.setHasFixedSize(true);
-                                    recyclerView_karyawan.setAdapter(mAdapterkaryawan);
+                                        //mAdapter = new AdapterListSectioned(getActivity(), items, ItemAnimation.LEFT_RIGHT);
+                                        mAdapterkaryawan = new Adapterkaryawan(ctx, itemskaryawan, ItemAnimation.FADE_IN);
+                                        recyclerView_karyawan.setLayoutManager(new GridLayoutManager(cekjadwal.this, 2));
+                                        recyclerView_karyawan.setHasFixedSize(true);
+                                        recyclerView_karyawan.setAdapter(mAdapterkaryawan);
+                                    }
                                 }
 
 
@@ -681,22 +687,29 @@ public class cekjadwal extends AppCompatActivity {
                             for (int i = 0; i < pengsarray.length(); i++) {
                                 JSONObject obj = pengsarray.getJSONObject(i);
                                 if(!prefs.getString("kodekaryawan", "").equals(obj.getString("kode_karyawan"))){
-                                    listkaryawan kar = new listkaryawan();
-                                    kar.setSection(false);
-                                    kar.setJabatan("Karyawan");
-
-                                    kar.setIskar(obj.getString("id"));
-
-                                    if(!obj.getString("foto").equals("")){
-                                        kar.setImagelink(generator.profileurl + obj.getString("foto"));
-                                        Log.e(TAG, "image data" + kar.getImagelink());
+                                    if (obj.getString("otoritas").equals("2") || obj.getString("otoritas").equals("3")) {
                                     }
+                                    else {
+                                        listkaryawan kar = new listkaryawan();
+                                        kar.setSection(false);
+                                        kar.setJabatan("Karyawan");
+
+                                        kar.setIskar(obj.getString("id"));
+
+                                        if (!obj.getString("foto").equals("")) {
+                                            kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                            Log.e(TAG, "image data" + kar.getImagelink());
+                                        }
+                                        else{
+                                            kar.setImagelink("");
+                                            Log.e(TAG, "image data" + kar.getImagelink());
+                                        }
 
 
-
-                                    kar.setNama(obj.getString("nama"));
-                                    kar.setDesc("Karyawan");
-                                    itemskaryawan.add(kar);
+                                        kar.setNama(obj.getString("nama"));
+                                        kar.setDesc("Karyawan");
+                                        itemskaryawan.add(kar);
+                                    }
                                 }
 
                             }
