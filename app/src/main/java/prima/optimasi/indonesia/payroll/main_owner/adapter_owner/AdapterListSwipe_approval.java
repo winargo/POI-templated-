@@ -142,11 +142,7 @@ public class AdapterListSwipe_approval extends SwipeAdapter {
                         ctx.startActivity(a);
                     }
                 });
-            }else if(p.getTipe().equals(options[4])){
-
-            }else if(p.getTipe().equals(options[4])){
-
-            }else if(p.getTipe().equals(options[4])){
+            }else if(p.getTipe().equals(options[7])){
 
             }
             else {

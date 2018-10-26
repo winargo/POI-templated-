@@ -52,8 +52,8 @@ public class generator {
     //public static String Server="192.168.5.254";
     //public static String Server="153.92.4.147";
     //public static String Server="192.168.5.254";
-    //public static String Server="153.92.4.147";
-    public static String Server="192.168.5.254";
+    public static String Server="153.92.4.147";
+    // static String Server="192.168.5.254";
 
     //public static String Server="153.92.4.147";
 

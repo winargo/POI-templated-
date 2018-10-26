@@ -447,7 +447,7 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                             }
                         }
                         else if (tipe.equals("Approval Golongan") ){
-                            Log.e(TAG, tipe+" "+result.toString() );
+                            
                             //String[] options = new String[]{"Approval Cuti","Approval Dinas","Approval Dirumahkan","Approval Izin",
                             // "Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment",
                             // "Approval Reward"};
@@ -672,7 +672,7 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                             }
                         }
                         else if (tipe.equals("Approval Karyawan") ){
-                            Log.e(TAG, tipe+" "+result.toString() );
+                            
                             //String[] options = new String[]{"Approval Cuti","Approval Dinas","Approval Dirumahkan","Approval Izin",
                             // "Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment",
                             // "Approval Reward"};
@@ -840,7 +840,6 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                                                 }
 
                                             }
-                                            Log.e(TAG, "k index"+k+" "+obj.getString(karyawan[k])+" "+obj1.getString(karyawan[k]) );
                                         }
 
                                     }
@@ -865,7 +864,7 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
 
                         }
                         else if (tipe.equals("Approval Pinjaman") ){
-                            Log.e(TAG, tipe+" "+result.toString() );
+                            
                             //String[] options = new String[]{"Approval Cuti","Approval Dinas","Approval Dirumahkan","Approval Izin",
                             // "Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment",
                             // "Approval Reward"};
@@ -900,10 +899,20 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
 
                         }
                         else if (tipe.equals("Approval Pdm") ){
+
                             Log.e(TAG, tipe+" "+result.toString() );
 
+                            /*E/retrive: Approval Pdm {"status":true,"message":"berhasil get data","res1":[{"nama":"Sparno","foto":"17a490b3ab8e38e296e3b1b18a433eb9.jpg",
+                                    "temp_id_promosi":146,"id_promosi":35,"id_karyawan":7,"id_cabang1":3,"id_departemen1":2,"id_jabatan1":4,"id_golongan1":15,"id_grup1":6,
+                                    "tanggal":"2018-09-01T00:00:00.000Z","judul":"Hapus Data","keterangans":"asdasdsa","status":"Proses","status_info":"Hapus",
+                                    "create_at":"2018-10-08T12:23:10.000Z","approve_at":"2018-09-21T10:44:42.000Z"},{"nama":"Sparno","foto":"17a490b3ab8e38e296e3b1b18a433eb9.jpg",
+                                    "temp_id_promosi":147,"id_promosi":38,"id_karyawan":7,"id_cabang1":3,"id_departemen1":2,"id_jabatan1":4,"id_golongan1":15,"id_grup1":6,
+                                    "tanggal":"2018-09-01T00:00:00.000Z","judul":"Hapus Data","keterangans":"asdfasd1234333","status":"Proses","status_info":"Hapus",
+                                    "create_at":"2018-10-08T13:24:29.000Z","approve_at":"2018-09-21T10:44:38.000Z"}],"userData":{"username":"MANADI","password":"manadi",
+                                    "id_pengguna":2,"iat":1540435376}}*/
 
-                            JSONArray arrays = result.getJSONArray("res1");
+
+                            /*JSONArray arrays = result.getJSONArray("res1");
                             for (int i = 0; i < arrays.length(); i++) {
                                 JSONObject obj = arrays.getJSONObject(i);
 
@@ -937,26 +946,25 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                                 //data.setKeterangan("Jumlah Pinjaman"+spacing+jumlah+neline+"Cicilan / Bulan"+spacing+cicilan+neline+"Cara pembayaran"+spacing+cara_pembayaran+neline+"Keterangan"+spacing+keterangans);
 
                                 //listdata.add(data);
-                            }
+                            }*/
                         }
                         else if (tipe.equals("Approval Punishment") ){
-                            Log.e(TAG, tipe+" "+result.toString() );
+                            
                             //String[] options = new String[]{"Approval Cuti","Approval Dinas","Approval Dirumahkan","Approval Izin",
                             // "Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment",
                             // "Approval Reward"};
                             //
 
                             if(result.getString("status").equals("true")) {
-                                Log.e(TAG, tipe + " " + result.toString());
 
-
+                                DecimalFormat formatter = new DecimalFormat("###,###,###");
 
                                 JSONArray arrays = result.getJSONArray("data");
                                 for (int i = 0; i < arrays.length(); i++) {
                                     JSONObject obj = arrays.getJSONObject(i);
                                     listjobextension data = new listjobextension();
                                     data.setJabatan(obj.getString("jabatan"));
-                                    data.setKeterangan(obj.getString("keterangan"));
+                                    data.setKeterangan("Kasus : "+obj.getString("judul")+"\n"+"Nilai : "+formatter.format(obj.getInt("nilai"))+"\nKeterangan : "+obj.getString("keterangan"));
                                     data.setTgldiajukan(obj.getString("created_at").substring(0,10));
                                     data.setNamakaryawan(obj.getString("nama"));
                                     data.setTipe(tipe);
@@ -973,24 +981,23 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                             }
                         }
                         else if (tipe.equals("Approval Reward") ){
-                            Log.e(TAG, tipe+" "+result.toString() );
+                            
                             //String[] options = new String[]{"Approval Cuti","Approval Dinas","Approval Dirumahkan","Approval Izin",
                             // "Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment",
                             // "Approval Reward"};
                             //
 
                             if(result.getString("status").equals("true")) {
-                                Log.e(TAG, tipe + " " + result.toString());
+
+                                DecimalFormat formatter = new DecimalFormat("###,###,###");
 
                                 JSONArray arrays = result.getJSONArray("data");
                                 for (int i = 0; i < arrays.length(); i++) {
                                     JSONObject obj = arrays.getJSONObject(i);
                                     listjobextension data = new listjobextension();
                                     data.setJabatan(obj.getString("jabatan"));
-                                    data.setKeterangan(obj.getString("keterangans"));
-                                    data.setTanggal1(obj.getString("tgl_dirumahkan").substring(0,10));
-                                    data.setTanggal2(obj.getString("akhir_dirumahkan").substring(0,10));
-                                    data.setTgldiajukan(obj.getString("tanggal").substring(0,10));
+                                    data.setKeterangan("Nilai : "+formatter.format(obj.getInt("nilai"))+"\nKeterangan : "+obj.getString("keteranganr"));
+                                    data.setTgldiajukan(obj.getString("created_at").substring(0,10));
                                     data.setNamakaryawan(obj.getString("nama"));
                                     data.setTipe(tipe);
 
