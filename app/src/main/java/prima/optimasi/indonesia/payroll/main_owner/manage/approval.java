@@ -1,14 +1,19 @@
 package prima.optimasi.indonesia.payroll.main_owner.manage;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -38,13 +43,14 @@ import prima.optimasi.indonesia.payroll.adapter.AdapterListSwipe;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.data.DataGenerator;
 import prima.optimasi.indonesia.payroll.helper.SwipeItemTouchHelper;
+import prima.optimasi.indonesia.payroll.main_owner.adapter_helper.adapterapprovalhelper;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListBasicjob_extention;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListSwipe_approval;
 import prima.optimasi.indonesia.payroll.model.Social;
 import prima.optimasi.indonesia.payroll.objects.listjobextension;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 
-public class approval extends AppCompatActivity {
+public class approval extends AppCompatActivity implements adapterapprovalhelper.RecyclerItemTouchHelperListener {
 
 
     private CoordinatorLayout parent_view;
@@ -89,11 +95,21 @@ public class approval extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerView);
 
+        AlertDialog dialog = new AlertDialog.Builder(approval.this).setTitle("Instruction").setMessage("Slide Right to Accept and Slide Left To Deny / Ignore , to Multiple Select , Long Press Any Item").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        }).create();
+
+        dialog.show();
+
 
         for (int i = 0 ; i < options.length;i++){
             if(options[i].equals(getIntent().getStringExtra("tipe"))){
                 initToolbar(options[i]);
                 retrive adddata = new retrive(approval.this,options[i]);
+                adddata.execute();
             }
         }
 
@@ -127,6 +143,15 @@ public class approval extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+
+        if(adapter!=null){
+            adapter.removeItem(viewHolder.getAdapterPosition());
+        }
+
+    }
+
     private class retrive extends AsyncTask<Void, Integer, String>
     {
         String response = "";
@@ -155,7 +180,7 @@ public class approval extends AppCompatActivity {
                 if(options[i]==choice){
                     urldata = urloptions[i];
                     tipe = choice;
-                    this.txt_nothing.setText("Tidak Ada data "+options[i]);
+                    //this.txt_nothing.setText("Tidak Ada data "+options[i]);
                 }
             }
 
@@ -939,9 +964,16 @@ public class approval extends AppCompatActivity {
                     adapter = new AdapterListSwipe_approval(approval.this,listdata);
                     adapter.notifyDataSetChanged();
 
-                    recyclerView.setLayoutManager(new LinearLayoutManager(approval.this));
-                    recyclerView.setHasFixedSize(true);
+                    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                    recyclerView.setLayoutManager(mLayoutManager);
+                    recyclerView.setItemAnimator(new DefaultItemAnimator());
+
                     recyclerView.setAdapter(adapter);
+
+                    ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new adapterapprovalhelper(0, ItemTouchHelper.LEFT , approval.this);
+                    new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
+
+
                 }
                 else {
                     Snackbar.make(parent_view,"Gagal" + result.getString("message"),Toast.LENGTH_LONG).show();
