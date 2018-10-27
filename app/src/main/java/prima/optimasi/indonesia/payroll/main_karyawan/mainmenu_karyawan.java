@@ -8,12 +8,17 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -32,7 +37,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import prima.optimasi.indonesia.payroll.activity.MainMenu;
+import prima.optimasi.indonesia.payroll.main_karyawan.cekjadwal;
+import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentCekGaji;
+import prima.optimasi.indonesia.payroll.universal.activity.ActivityLogAbsensi;
+import prima.optimasi.indonesia.payroll.universal.activity.ActivityPengajuan;
+import prima.optimasi.indonesia.payroll.universal.activity.ActivityPengumuman;
 import qrcodescanner.QrCodeActivity;
+
+import com.bumptech.glide.load.engine.Resource;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
@@ -51,10 +64,8 @@ import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentAbsensi;
-import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentCekGaji;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentPengajuan;
-import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentProfil;
-import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentPengumuman;
+import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentPengumuman;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
 public class mainmenu_karyawan extends AppCompatActivity
@@ -69,8 +80,9 @@ public class mainmenu_karyawan extends AppCompatActivity
 
     SharedPreferences prefs;
 
-    String[] tabTitles = new String []{"Pengumuman", "  Profil", "Cek Gaji","Log Absensi","Pengajuan"};
-    int[] iconstyle = new int[]{R.drawable.baseline_announcement_black_24dp,R.drawable.baseline_account_circle_black_24dp,R.drawable.baseline_monetization_on_black_24dp,R.drawable.baseline_pie_chart_black_24dp,R.drawable.baseline_assignment_black_24dp};
+    String[] tabTitles = new String []{"Pengumuman", "Cek Gaji","Log Absensi","Pengajuan"};
+    //R.drawable.baseline_account_circle_black_24dp,
+    int[] iconstyle = new int[]{R.drawable.baseline_announcement_black_24dp,R.drawable.baseline_monetization_on_black_24dp,R.drawable.baseline_pie_chart_black_24dp,R.drawable.baseline_assignment_black_24dp};
 
     ViewPager pager;
     TabLayout tabpager;
@@ -83,7 +95,7 @@ public class mainmenu_karyawan extends AppCompatActivity
         loadingdata.show();
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mainmenu);
+        setContentView(R.layout.activity_menu_karyawan);
 
         prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
 
@@ -97,8 +109,122 @@ public class mainmenu_karyawan extends AppCompatActivity
         setSupportActionBar(toolbar);
 
 
+
         generator initializedata = new generator(mainmenu_karyawan.this);
 
+        CircularImageView imageuser =findViewById(R.id.imageView);
+
+        if(prefs.getString("profileimage","").equals(generator.profileurl)){
+
+        }
+        else {
+            Picasso.get().load(prefs.getString("profileimage","")).transform(new CircleTransform()).into(imageuser);
+        }
+        Log.e("picture", "ppicture: "+ prefs.getString("profileimage",""));
+
+        CoordinatorLayout parent_view=findViewById(R.id.parent_view);
+        TextView username = findViewById(R.id.username);
+        TextView borndate = findViewById(R.id.prof_tempat_lahir);
+        TextView pengumumanteks = findViewById(R.id.pengumumanteks);
+        TextView log_absensiteks = findViewById(R.id.log_absensiteks);
+        TextView cekgajiteks = findViewById(R.id.cekgajiteks);
+        TextView pengajuanteks = findViewById(R.id.pengajuanteks);
+        TextView cekjadwalteks = findViewById(R.id.cekjadwalteks);
+
+        FloatingActionButton pengumuman=findViewById(R.id.pengumuman);
+        FloatingActionButton log_absensi=findViewById(R.id.log_absensi);
+        FloatingActionButton cekgaji=findViewById(R.id.cekgaji);
+        FloatingActionButton pengajuan=findViewById(R.id.pengajuan);
+        FloatingActionButton cek_jadwal=findViewById(R.id.cekjadwal);
+
+        pengumumanteks.setText("Pengumuman");
+        log_absensiteks.setText("Log Absensi");
+        cekgajiteks.setText("Cek Gaji");
+        pengajuanteks.setText("Pengajuan");
+        cekjadwalteks.setText("Cek Jadwal");
+
+        pengumuman.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(mainmenu_karyawan.this, ActivityPengumuman.class);
+                startActivity(intent);
+                /*
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.parent_view,new FragmentPengumuman()).addToBackStack("Home").commit();*/
+            }
+        });
+        log_absensi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(mainmenu_karyawan.this,ActivityLogAbsensi.class);
+                startActivity(intent);
+                /*
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.parent_view,new FragmentAbsensi()).addToBackStack("Home").commit();*/
+            }
+        });
+        cekgaji.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Intent intent=new Intent(mainmenu_kabag.this,FragmentPengumuman.class);
+                //startActivity(intent);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.parent_view,new FragmentCekGaji()).addToBackStack("Home").commit();
+            }
+        });
+        pengajuan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(mainmenu_karyawan.this,ActivityPengajuan.class);
+                startActivity(intent);
+                /*
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.parent_view,new FragmentPengajuan()).addToBackStack("Home").commit();*/
+            }
+        });
+        cek_jadwal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent a = new Intent(mainmenu_karyawan.this, cekjadwal.class);
+                startActivity(a);
+            }
+        });
+        ImageView icon_born=findViewById(R.id.iconborn);
+        final CollapsingToolbarLayout collapsing_toolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        ((AppBarLayout) findViewById(R.id.app_bar_layout)).addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                int min_height = ViewCompat.getMinimumHeight(collapsing_toolbar) * 2;
+                float scale = (float) (min_height + verticalOffset) / min_height;
+                imageuser.setScaleX(scale >= 0 ? scale : 0);
+                imageuser.setScaleY(scale >= 0 ? scale : 0);
+                username.setScaleX(scale >= 0 ? scale : 0);
+                username.setScaleY(scale >= 0 ? scale : 0);
+                icon_born.setScaleX(scale >= 0 ? scale : 0);
+                icon_born.setScaleY(scale >= 0 ? scale : 0);
+                borndate.setScaleX(scale >= 0 ? scale : 0);
+                borndate.setScaleY(scale >= 0 ? scale : 0);
+            }
+
+        });
+        /*
+        pengumuman.setBackgroundResource(R.drawable.baseline_announcement_black_24dp);
+        absensi.setBackgroundResource(R.drawable.baseline_monetization_on_black_24dp);
+        cekgaji.setBackgroundResource(R.drawable.baseline_pie_chart_black_24dp);
+        pengajuan.setBackgroundResource(R.drawable.baseline_assignment_black_24dp);
+        */
+        username.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("username",""));
+
+        if(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("tempatlahir","").equals("")){
+
+            borndate.setText("Not Available");
+
+        }else{
+
+            borndate.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("tempatlahir",""));
+
+        }
+        /*
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         expListView = drawer.findViewById(R.id.lvExp);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -111,19 +237,21 @@ public class mainmenu_karyawan extends AppCompatActivity
 
         RelativeLayout linear = (RelativeLayout) navigationView.getHeaderView(0);
 
-        CircularImageView imageuser = linear.findViewById(R.id.imageView);
 
-        if(prefs.getString("profileimage","").equals(generator.profileurl)){
-
-        }
-        else {
-            Picasso.get().load(prefs.getString("profileimage","")).transform(new CircleTransform()).into(imageuser);
-        }
-        Log.e("picture", "ppicture: "+ prefs.getString("profileimage",""));
 
         TextView username = linear.findViewById(R.id.username);
         TextView borndate = linear.findViewById(R.id.prof_tempat_lahir);
 
+        LinearLayout setprofile = linear.findViewById(R.id.lyt_profile);
+
+        setprofile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent_profil=new Intent(mainmenu_karyawan.this,profil_karyawan.class);
+                startActivity(intent_profil);
+
+            }
+        });
 
 
         username.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("username",""));
@@ -315,7 +443,7 @@ public class mainmenu_karyawan extends AppCompatActivity
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {
-                // TODO Auto-generated method stub
+
                 Toast.makeText(
                         getApplicationContext(),
                         listDataHeader.get(groupPosition)
@@ -331,12 +459,13 @@ public class mainmenu_karyawan extends AppCompatActivity
 
 
 
-
+        */
         if(loadingdata.isShowing()){
             loadingdata.dismiss();
         }
     }
 
+    /*
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -345,7 +474,7 @@ public class mainmenu_karyawan extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-    }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -398,6 +527,7 @@ public class mainmenu_karyawan extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -418,18 +548,20 @@ public class mainmenu_karyawan extends AppCompatActivity
 
         }
 
+        /*
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+        */
         return true;
     }
 
+    /*
     private void preparekaryawan() {
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
 
         // Adding child data
         listDataHeader.add("Pengumuman");
-        listDataHeader.add("Profil");
         listDataHeader.add("Cek Gaji");
         listDataHeader.add("Log Absensi");
         listDataHeader.add("Pengajuan");
@@ -443,12 +575,13 @@ public class mainmenu_karyawan extends AppCompatActivity
         top250.add("Pinjaman");
 
         listDataChild.put(listDataHeader.get(4), top250);
-    }
+    }*/
 
+    /*
     public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
 
         // tab titles
-        private String[] tabTitles = new String[]{"Pengumuman", "Profil", "Cek Gaji","Log Absensi","Pengajuan"};
+        private String[] tabTitles = new String[]{"Pengumuman", "Cek Gaji","Log Absensi","Pengajuan"};
 
         public ExamplePagerAdapter(FragmentManager fm) {
             super(fm);
@@ -466,12 +599,10 @@ public class mainmenu_karyawan extends AppCompatActivity
                 case 0:
                     return new FragmentPengumuman();
                 case 1:
-                    return new FragmentProfil();
-                case 2:
                     return new FragmentCekGaji();
-                case 3:
+                case 2:
                     return new FragmentAbsensi();
-                case 4:
+                case 3:
                     return new FragmentPengajuan();
                 default:
                     return null;
@@ -484,4 +615,5 @@ public class mainmenu_karyawan extends AppCompatActivity
         }
         // ...
     }
+    */
 }

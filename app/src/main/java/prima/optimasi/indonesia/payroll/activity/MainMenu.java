@@ -32,7 +32,6 @@ import prima.optimasi.indonesia.payroll.activity.article.ArticleFoodReview;
 import prima.optimasi.indonesia.payroll.activity.article.ArticleMedium;
 import prima.optimasi.indonesia.payroll.activity.article.ArticleMediumDark;
 import prima.optimasi.indonesia.payroll.activity.article.ArticleSimple;
-import prima.optimasi.indonesia.payroll.activity.article.ArticleStepper;
 import prima.optimasi.indonesia.payroll.activity.bottomnavigation.BottomNavigationBasic;
 import prima.optimasi.indonesia.payroll.activity.bottomnavigation.BottomNavigationDark;
 import prima.optimasi.indonesia.payroll.activity.bottomnavigation.BottomNavigationIcon;
@@ -966,9 +965,6 @@ public class MainMenu extends AppCompatActivity {
                 break;
             case 30004:
                 startActivity(new Intent(this, ArticleBigHeader.class));
-                break;
-            case 30005:
-                startActivity(new Intent(this, ArticleStepper.class));
                 break;
             case 30006:
                 startActivity(new Intent(this, ArticleCard.class));

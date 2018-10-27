@@ -1,35 +1,23 @@
 package prima.optimasi.indonesia.payroll.main_kabag;
 
-import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.os.AsyncTask;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v13.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,52 +25,42 @@ import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import qrcodescanner.QrCodeActivity;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.main_hrd.mainmenu_hrd;
+import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentAbsensi;
 import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentCekGaji;
 import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentEmployee;
-import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentHome;
 import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentPengajuan;
 import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentPengumuman;
-import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentProfil;
-import prima.optimasi.indonesia.payroll.main_karyawan.mainmenu_karyawan;
-import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
-import prima.optimasi.indonesia.payroll.universal.absence.facecapture;
 import prima.optimasi.indonesia.payroll.universal.absence.facedetection;
+import prima.optimasi.indonesia.payroll.universal.activity.ActivityLogAbsensi;
+import prima.optimasi.indonesia.payroll.universal.activity.ActivityPengajuan;
+import prima.optimasi.indonesia.payroll.universal.activity.ActivityPengumuman;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
+import qrcodescanner.QrCodeActivity;
 
 public class mainmenu_kabag extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     SharedPreferences prefs;
 
+    CoordinatorLayout parent_view;
     Adaptermenujabatan listAdapter;
     ExpandableListView expListView;
     ProgressDialog loadingdata;
@@ -118,7 +96,7 @@ public class mainmenu_kabag extends AppCompatActivity
             FirebaseMessaging.getInstance().subscribeToTopic("kabag");
         }
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mainmenu);
+        setContentView(R.layout.activity_menu_kabag);
 
         Log.e("sharence status", "onCreate: " + prefs.getInt("statustoken",0) );
 
@@ -128,6 +106,210 @@ public class mainmenu_kabag extends AppCompatActivity
 
         generator initializedata = new generator(mainmenu_kabag.this);
 
+        CircularImageView imageuser =findViewById(R.id.imageView);
+
+        if(prefs.getString("profileimage","").equals(generator.profileurl)){
+
+        }
+        else {
+            Picasso.get().load(prefs.getString("profileimage","")).transform(new CircleTransform()).into(imageuser);
+        }
+        Log.e("picture", "ppicture: "+ prefs.getString("profileimage",""));
+
+        parent_view=findViewById(R.id.parent_view);
+        TextView username = findViewById(R.id.username);
+        TextView borndate = findViewById(R.id.prof_tempat_lahir);
+        TextView pengumumanteks = findViewById(R.id.pengumumanteks);
+        TextView log_absensiteks = findViewById(R.id.log_absensiteks);
+        TextView anggotateks = findViewById(R.id.anggotateks);
+        TextView cekgajiteks = findViewById(R.id.cekgajiteks);
+        TextView pengajuanteks = findViewById(R.id.pengajuanteks);
+        TextView absensiteks = findViewById(R.id.absensiteks);
+        TextView cekjadwalteks = findViewById(R.id.cekjadwalteks);
+
+        FloatingActionButton pengumuman=findViewById(R.id.pengumuman);
+        FloatingActionButton log_absensi=findViewById(R.id.log_absensi);
+        FloatingActionButton anggota=findViewById(R.id.anggota);
+        FloatingActionButton cekgaji=findViewById(R.id.cekgaji);
+        FloatingActionButton pengajuan=findViewById(R.id.pengajuan);
+        FloatingActionButton absensi=findViewById(R.id.absensi);
+        FloatingActionButton cekjadwal=findViewById(R.id.cekjadwal);
+
+        pengumumanteks.setText("Pengumuman");
+        log_absensiteks.setText("Log Absensi");
+        anggotateks.setText("Anggota");
+        cekgajiteks.setText("Cek Gaji");
+        pengajuanteks.setText("Pengajuan");
+        absensiteks.setText("Absensi");
+        cekjadwalteks.setText("Cek Jadwal");
+
+        LinearLayout linear_view=findViewById(R.id.linear_view);
+        pengumuman.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(mainmenu_kabag.this,ActivityPengumuman.class);
+                startActivity(intent);
+                /*
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.parent_view,new FragmentPengumuman()).addToBackStack("Home").commit();*/
+            }
+        });
+        log_absensi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(mainmenu_kabag.this,ActivityLogAbsensi.class);
+                startActivity(intent);
+
+                /*
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.parent_view,new FragmentAbsensi()).addToBackStack("Home").commit();*/
+            }
+        });
+        anggota.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(mainmenu_kabag.this,Activity_Anggota.class);
+                startActivity(intent);
+                /*
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.parent_view,new FragmentEmployee()).addToBackStack("Home").commit();*/
+            }
+        });
+        cekgaji.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Intent intent=new Intent(mainmenu_kabag.this,FragmentPengumuman.class);
+                //startActivity(intent);
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.parent_view,new FragmentCekGaji()).addToBackStack("Home").commit();
+            }
+        });
+        pengajuan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(mainmenu_kabag.this,ActivityPengajuan.class);
+                startActivity(intent);
+                /*
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.parent_view,new FragmentPengajuan()).addToBackStack("Home").commit();*/
+            }
+        });
+        absensi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(mainmenu_kabag.this,ActivityAbsensi.class);
+                startActivity(intent);
+                /*
+                String[] colors = {"Check IN", "Break OUT","Break IN","Check OUT","Extra IN","Extra OUT","Absensi","Absensi Wajah"};
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_kabag.this);
+                builder.setTitle("Absensi");
+                builder.setItems(colors, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(which==6) {
+                            LinearLayout l = (LinearLayout) LayoutInflater.from(mainmenu_kabag.this).inflate(R.layout.layout_barcode,null);
+
+                            ImageView barcode = l.findViewById(R.id.barcodekaryawan);
+
+
+                            String text=prefs.getString("kodekaryawan","");
+                            Log.e("data json", "onClick: "+prefs.getString("kodekaryawan","") );
+                            MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+                            try {
+                                BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE,400,400);
+                                BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                                Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+                                barcode.setImageBitmap(bitmap);
+                            } catch (WriterException e) {
+                                e.printStackTrace();
+                            }
+
+
+
+                            AlertDialog dialog1 = new AlertDialog.Builder(mainmenu_kabag.this).setTitle("Absensi").setView(l).create();
+
+                            dialog1.show();
+                        }
+                        else if(which==7) {
+                            Intent face = new Intent(mainmenu_kabag.this,facedetection.class);
+                            startActivity(face);
+                        }
+                        else {
+                            Intent a = new Intent(mainmenu_kabag.this, QrCodeActivity.class);
+                            a.putExtra("absensi",which);
+                            a.putExtra("security",0);
+                            a.putExtra("keepalive",1);
+                            startActivity(a);
+                        }
+                    }
+                });
+                builder.show();
+                */
+            }
+        });
+        cekjadwal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String[] colors = {"Karyawan", "Sendiri"};
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_kabag.this);
+                builder.setTitle("Cek Jadwal");
+                builder.setItems(colors, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(which==1) {
+                            Intent a = new Intent(mainmenu_kabag.this, cekjadwal.class);
+                            a.putExtra("cekjadwal",which);
+                            startActivity(a);
+                        }
+                        else {
+                            Intent a = new Intent(mainmenu_kabag.this, cekjadwal.class);
+                            a.putExtra("cekjadwal",which);
+                            startActivity(a);
+                        }
+                    }
+                });
+                builder.show();
+
+            }
+        });
+        ImageView icon_born=findViewById(R.id.iconborn);
+        final CollapsingToolbarLayout collapsing_toolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        ((AppBarLayout) findViewById(R.id.app_bar_layout)).addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                int min_height = ViewCompat.getMinimumHeight(collapsing_toolbar) * 2;
+                float scale = (float) (min_height + verticalOffset) / min_height;
+                imageuser.setScaleX(scale >= 0 ? scale : 0);
+                imageuser.setScaleY(scale >= 0 ? scale : 0);
+                username.setScaleX(scale >= 0 ? scale : 0);
+                username.setScaleY(scale >= 0 ? scale : 0);
+                icon_born.setScaleX(scale >= 0 ? scale : 0);
+                icon_born.setScaleY(scale >= 0 ? scale : 0);
+                borndate.setScaleX(scale >= 0 ? scale : 0);
+                borndate.setScaleY(scale >= 0 ? scale : 0);
+            }
+        });
+
+        username.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("username",""));
+
+        if(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("tempatlahir","").equals("")){
+
+            borndate.setText("Not Available");
+
+        }else{
+
+            borndate.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("tempatlahir",""));
+
+        }
+
+
+
+        /*
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         expListView = drawer.findViewById(R.id.lvExp);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -255,18 +437,49 @@ public class mainmenu_kabag extends AppCompatActivity
                 }
                 else if(listDataHeader.get(groupPosition).equals("Absensi")){
                     drawer.closeDrawer(Gravity.START);
-                    String[] colors = {"Check IN", "Break OUT","Break IN","Check OUT","Extra IN","Extra OUT"};
+                    String[] colors = {"Check IN", "Break OUT","Break IN","Check OUT","Extra IN","Extra OUT","Absensi","Absensi Wajah"};
+
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_kabag.this);
                     builder.setTitle("Absensi");
                     builder.setItems(colors, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            Intent a = new Intent(mainmenu_kabag.this,QrCodeActivity.class);
-                            a.putExtra("absensi",which);
-                            a.putExtra("security",0);
-                            a.putExtra("keepalive",1);
-                            startActivity(a);
+                            if(which==6) {
+                                LinearLayout l = (LinearLayout) LayoutInflater.from(mainmenu_kabag.this).inflate(R.layout.layout_barcode,null);
+
+                                ImageView barcode = l.findViewById(R.id.barcodekaryawan);
+
+
+                                String text=prefs.getString("kodekaryawan","");
+                                Log.e("data json", "onClick: "+prefs.getString("kodekaryawan","") );
+                                MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+                                try {
+                                    BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE,400,400);
+                                    BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                                    Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+                                    barcode.setImageBitmap(bitmap);
+                                } catch (WriterException e) {
+                                    e.printStackTrace();
+                                }
+
+
+
+                                AlertDialog dialog1 = new AlertDialog.Builder(mainmenu_kabag.this).setTitle("Absensi").setView(l).create();
+
+                                dialog1.show();
+                            }
+                            else if(which==7) {
+                                Intent face = new Intent(mainmenu_kabag.this,facedetection.class);
+                                startActivity(face);
+                            }
+                            else {
+                                Intent a = new Intent(mainmenu_kabag.this,QrCodeActivity.class);
+                                a.putExtra("absensi",which);
+                                a.putExtra("security",0);
+                                a.putExtra("keepalive",1);
+                                startActivity(a);
+                            }
                         }
                     });
                     builder.show();
@@ -323,7 +536,7 @@ public class mainmenu_kabag extends AppCompatActivity
                             }
                         });
                         builder.show();
-                    }*/
+                    }
                 }
                 return false;
             }
@@ -358,7 +571,7 @@ public class mainmenu_kabag extends AppCompatActivity
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {
-                // TODO Auto-generated method stub
+
                 Toast.makeText(
                         getApplicationContext(),
                         listDataHeader.get(groupPosition)
@@ -371,12 +584,13 @@ public class mainmenu_kabag extends AppCompatActivity
             }
         });
 
-
+        */
         if(loadingdata.isShowing()){
             loadingdata.dismiss();
         }
     }
 
+    /*
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -386,11 +600,13 @@ public class mainmenu_kabag extends AppCompatActivity
             super.onBackPressed();
         }
     }
-
+    */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_mainmenu, menu);
+        getMenuInflater().inflate(R.menu.menu_activity_main, menu);
+        MenuItem item=menu.findItem(R.id.action_settings);
+        item.setTitle("About");
         return true;
     }
 
@@ -458,10 +674,12 @@ public class mainmenu_kabag extends AppCompatActivity
 
         }
 
+        /*
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        drawer.closeDrawer(GravityCompat.START);*/
         return true;
     }
+    /*
     private void preparekabag() {
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
@@ -490,6 +708,8 @@ public class mainmenu_kabag extends AppCompatActivity
         listDataChild.put(listDataHeader.get(5), top250);
         listDataChild.put(listDataHeader.get(6), top2510);
     }
+    */
+    /*
     public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
 
         // tab titles
@@ -690,5 +910,5 @@ public class mainmenu_kabag extends AppCompatActivity
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
-
+    */
 }

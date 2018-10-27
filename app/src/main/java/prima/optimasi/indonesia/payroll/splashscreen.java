@@ -22,9 +22,6 @@ public class splashscreen extends Activity{
             Uri video = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.splash);
             videoHolder.setVideoURI(video);
 
-
-
-
             DisplayMetrics metrics = new DisplayMetrics();
             getWindowManager().getDefaultDisplay().getMetrics(metrics);
             android.widget.LinearLayout.LayoutParams params = (android.widget.LinearLayout.LayoutParams) videoHolder.getLayoutParams();

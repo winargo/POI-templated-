@@ -54,6 +54,14 @@
           }
         },
         {
+          "client_id": "148421898893-qgh63a6i9jmveeie2utc4gm8eo6gpgng.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "prima.optimasi.indonesia.payroll",
+            "certificate_hash": "b756ad9c2f30be4d46f0f63031ee54310c737bda"
+          }
+        },
+        {
           "client_id": "148421898893-pq9e4kq8qbpspsba29raasm5v95t4ufp.apps.googleusercontent.com",
           "client_type": 3
         }

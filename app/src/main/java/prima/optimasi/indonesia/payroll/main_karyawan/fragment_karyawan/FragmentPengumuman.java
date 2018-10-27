@@ -7,8 +7,10 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -19,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,7 +68,10 @@ public class FragmentPengumuman extends Fragment {
         items = new ArrayList<>();
 
         parent_view = rootView.findViewById(R.id.bgLayout);
+        BottomNavigationView bnav=rootView.findViewById(R.id.navigation);
+        bnav.setVisibility(View.GONE);
         prefs = getActivity().getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+
 
         initComponent(rootView);
         //showBottomSheetDialog(mAdapter.getItem(0));
@@ -79,7 +85,24 @@ public class FragmentPengumuman extends Fragment {
     private void initComponent(View v) {
 
         refresh = v.findViewById(R.id.pengswiperefresh);
-
+        CoordinatorLayout.LayoutParams lp=(CoordinatorLayout.LayoutParams)refresh.getLayoutParams();
+        CoordinatorLayout.LayoutParams layoutParams=new CoordinatorLayout.LayoutParams(
+                CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.MATCH_PARENT
+        );
+        lp.bottomMargin=0;
+        lp.topMargin=110;
+        refresh.setLayoutParams(lp);
+        refresh.requestLayout();
+        /*
+        SwipeRefreshLayout.LayoutParams layoutParams=new SwipeRefreshLayout.LayoutParams(
+                SwipeRefreshLayout.LayoutParams.MATCH_PARENT,SwipeRefreshLayout.LayoutParams.MATCH_PARENT
+        );
+        layoutParams.setMargins()
+        */
+        /*
+        ViewGroup.MarginLayoutParams params=(ViewGroup.MarginLayoutParams)v.getLayoutParams();
+        params.bottomMargin=0;
+        */
         refresh.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -116,47 +139,6 @@ public class FragmentPengumuman extends Fragment {
         //mBehavior = BottomSheetBehavior.from(bottom_sheet);
     }
 
-    private void showBottomSheetDialog(final Image obj) {
-        if (mBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
-            mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        }
-
-        final View view = getLayoutInflater().inflate(R.layout.sheet_floating, null);
-        ((TextView) view.findViewById(R.id.name)).setText(obj.name);
-        ((TextView) view.findViewById(R.id.brief)).setText(obj.brief);
-        ((TextView) view.findViewById(R.id.description)).setText(R.string.middle_lorem_ipsum);
-        (view.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mBottomSheetDialog.hide();
-            }
-        });
-
-        (view.findViewById(R.id.submit_rating)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity().getApplicationContext(), "Submit Rating", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        mBottomSheetDialog = new BottomSheetDialog(getActivity());
-        mBottomSheetDialog.setContentView(view);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mBottomSheetDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        }
-
-        // set background transparent
-        ((View) view.getParent()).setBackgroundColor(getResources().getColor(android.R.color.transparent));
-
-        mBottomSheetDialog.show();
-        mBottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                mBottomSheetDialog = null;
-            }
-        });
-
-    }
 
     private class retrivepengumuman extends AsyncTask<Void, Integer, String>
     {
@@ -279,13 +261,6 @@ public class FragmentPengumuman extends Fragment {
                         recyclerView.setHasFixedSize(true);
                         recyclerView.setAdapter(mAdapter);
                         // on item list clicked
-                        mAdapter.setOnItemClickListener(new AdapterGridTwoLineLight.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(View view, Image obj, int position) {
-                                Snackbar.make(parent_view, obj.name + " clicked", Snackbar.LENGTH_SHORT).show();
-                                //showBottomSheetDialog(obj);
-                            }
-                        });
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -329,6 +304,7 @@ public class FragmentPengumuman extends Fragment {
 
         public retrivepengumumanref(Context context, String kodeauth)
         {
+            prefs=context.getSharedPreferences("poipayroll", Context.MODE_PRIVATE);
             dialog = new ProgressDialog(context);
             passeddata = kodeauth;
             this.username = generator.username;

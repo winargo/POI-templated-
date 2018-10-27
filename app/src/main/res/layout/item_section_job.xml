@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_margin="5sp">
+
+    <TextView
+        android:id="@+id/title_section"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Section Title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="@color/grey_40"
+        android:textStyle="bold" />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_marginTop="10sp"
+        android:id="@+id/recyclerViewjob"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+    <LinearLayout
+        android:id="@+id/lyt_parent1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:textAlignment="center"
+            android:gravity="center"
+            android:id="@+id/txt_nothing"
+            android:textSize="8pt"
+            android:layout_width="match_parent"
+            android:text="No Job Available"
+            android:layout_height="80sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

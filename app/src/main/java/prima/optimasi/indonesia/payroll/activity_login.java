@@ -524,21 +524,21 @@ public class activity_login extends FragmentActivity {
                     e.printStackTrace();
                     return null;
                 }catch (IOException e) {
-                    this.dialog.setMessage("Loading Data... IOError Occured,retrying...");
+                    //this.dialog.setMessage("Loading Data... IOError Occured,retrying...");
                     this.dialog.dismiss();
                     Log.e("doInBackground: ", "IO Exception" + e.getMessage());
                     generator.jsondatalogin = null;
                     e.printStackTrace();
                     response = "Error IOException";
                 } catch (NullPointerException e) {
-                    this.dialog.setMessage("Loading Data... Internet Error Occured,retrying...");
+                    //this.dialog.setMessage("Loading Data... Internet Error Occured,retrying...");
                     this.dialog.dismiss();
                     e.printStackTrace();
                     Log.e("doInBackground: ", "null data" + e.getMessage());
                     generator.jsondatalogin = null;
                     response = "Please check Connection and Server";
                 } catch (Exception e) {
-                    this.dialog.setMessage("Loading Data... Error Occured,retrying...");
+                    //this.dialog.setMessage("Loading Data... Error Occured,retrying...");
                     this.dialog.dismiss();
                     e.printStackTrace();
                     Log.e("doInBackground: ", e.getMessage());
@@ -560,6 +560,7 @@ public class activity_login extends FragmentActivity {
                 dialog.dismiss();
             }
             try {
+                Log.e(TAG, "Json login data "+result );
                 if(result==null){
                     Snackbar.make(parent_view, "Kesalahan Koneksi", Snackbar.LENGTH_SHORT).show();
                 }

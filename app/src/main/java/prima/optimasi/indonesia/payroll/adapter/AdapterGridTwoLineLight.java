@@ -337,7 +337,6 @@ public class AdapterGridTwoLineLight extends RecyclerView.Adapter<RecyclerView.V
                     try {
                         if(result.getString("status").equals("true")){
                             Snackbar.make(snake,"Berhasil Menghapus pengumuman",Snackbar.LENGTH_SHORT).show();
-                            parent.setVisibility(View.GONE);
                             items.remove(index);
                             notift();
                         }

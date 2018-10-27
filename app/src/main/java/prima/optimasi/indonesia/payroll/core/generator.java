@@ -53,12 +53,9 @@ public class generator {
     //public static String Server="153.92.4.147";
     //public static String Server="192.168.5.254";
     //public static String Server="153.92.4.147";
-    //public static String Server="192.168.5.254";
+    public static String Server="192.168.5.254";
+
     //public static String Server="153.92.4.147";
-    //public static String Server="192.168.5.254";
-    //public static String Server="153.92.4.147";
-    //public static String Server="192.168.5.254";
-    public static String Server="153.92.4.147";
 
     public static Bitmap tempbitmap = null;
 
@@ -67,6 +64,10 @@ public class generator {
     public static String password = "";
     public static String token = "";
     public static String jabatan = "";
+
+    public static String servertime = "";
+
+    public static int jobcount = 0 ;
 
 
     public static String keepaliveurl="http://"+ generator.Server+":"+port+"/login";
@@ -78,6 +79,8 @@ public class generator {
     public static String deletepengumumanurl="http://"+ generator.Server+":4000/pengumuman/";
     public static String pengumumanurl="http://"+ generator.Server+":4000/pengumuman";
 
+    public static String kabaggrupkaryawanurl="http://"+ generator.Server+":4000/groupkaryawan/list";
+
     public static String getabsensiurl="http://"+ generator.Server+":4000/absensi";
 
     public static String ownerurl="http://"+ generator.Server+"/poihrd/uploads/pengguna/";
@@ -85,6 +88,8 @@ public class generator {
     public static String scanloginurl = "http://"+ generator.Server+":4000/loginScan";
     public static String sendtokenurl = "http://"+ generator.Server+":4000/postnotif";
     public static String listemployeeurl = "http://"+ generator.Server+":4000/karyawan";
+
+    public static String calenderurl = "http://"+ generator.Server+":4000/calendar";
 
     public static String cutiurl="http://"+ generator.Server+":4000/laporan/cuti";
     public static String sakiturl="http://"+ generator.Server+":4000/laporan/sakit";
@@ -105,7 +110,37 @@ public class generator {
     public static String sbreakouturl="http://"+ generator.Server+":4000/absensiSecurity/breakout";
     public static String scheckemployeeyurl="http://"+ generator.Server+":4000/absensiSecurity/checkkaryawan";
 
-    public static String jadwalurl="http://"+ generator.Server+":4000/karyawan/checkjadwal/";
+    public static String approvaldinasyurl="http://"+ generator.Server+":4000/approvalDinas";
+    public static String approvalcutiyurl="http://"+ generator.Server+":4000/approvalCuti";
+    public static String approvalizinyurl="http://"+ generator.Server+":4000/approvalIzin";
+    public static String approvaldirumahkanyurl="http://"+ generator.Server+":4000/approvalDirumahkan";
+    public static String approvalkaryawanyurl="http://"+ generator.Server+":4000/approvalKaryawan";
+    public static String approvalrewardyurl="http://"+ generator.Server+":4000/approvalReward";
+    public static String approvalpunihsmentyurl="http://"+ generator.Server+":4000/approvalPunishment";
+    public static String approvalpinjamanyurl="http://"+ generator.Server+":4000/approvalPinjaman";
+    public static String approvalgolonganyurl="http://"+ generator.Server+":4000/approvalGolongan";
+    public static String approvalpdlyurl="http://"+ generator.Server+":4000/approvalPdl";
+
+    public static String getapprovaldinasyurl="http://"+ generator.Server+":4000/approvaldinas";
+    public static String getapprovalcutiyurl="http://"+ generator.Server+":4000/approvalcuti";
+    public static String getapprovalizinyurl="http://"+ generator.Server+":4000/approvalizin";
+    public static String getapprovaldirumahkanyurl="http://"+ generator.Server+":4000/approvaldirumahkan";
+    public static String getapprovalkaryawanyurl="http://"+ generator.Server+":4000/karyawan/approval/proses";
+    public static String getapprovalrewardyurl="http://"+ generator.Server+":4000/approvalreward";
+    public static String getapprovalpunihsmentyurl="http://"+ generator.Server+":4000/approvalpunishment";
+    public static String getapprovalpinjamanyurl="http://"+ generator.Server+":4000/pinjaman/approval/proses";
+    public static String getapprovalgolonganyurl="http://"+ generator.Server+":4000/approvalGolongan/proses";
+    public static String getapprovalpdlyurl="http://"+ generator.Server+":4000/approvalpdm/proses";
+
+    public static String getapprovalcutibulananyurl="http://"+ generator.Server+":4000/cuti/bulanan";
+    public static String getabsensikaryawanurl="http://"+ generator.Server+":4000/logabsensi";
+
+    public static String jadwalurl="http://"+ generator.Server+":4000/karyawan/checkjadwal";
+
+    public static String servertimeurl="http://"+ generator.Server+":4000/setting/waktu";
+
+
+    public static String getdataizinbulananyurl="http://"+ generator.Server+":4000/izin/bulanan";
 
 
     public static JSONObject jsondatalogin = null ;

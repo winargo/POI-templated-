@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout android:id="@+id/employeecoordinator"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:id="@+id/swipekabag"
+        android:layout_marginBottom="50sp"
+        android:visibility="gone"
+        android:layout_height="match_parent">
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/nested_scroll_view">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <android.support.v7.widget.CardView
+                    android:id="@+id/search_bar"
+                    android:layout_width="match_parent"
+                    android:layout_margin="5sp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:clipToPadding="false"
+                    app:cardBackgroundColor="@android:color/white"
+                    app:cardCornerRadius="3dp"
+                    app:cardElevation="3dp"
+                    app:cardUseCompatPadding="false">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+                        <EditText
+                            android:paddingLeft="15sp"
+                            android:background="@color/overlay_light_90"
+                            android:id="@+id/search_text"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:hint="Search Kepala Bagian"
+                            android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
+                            android:textColor="@color/overlay_dark_90" />
+
+                        <ImageButton
+                            android:id="@+id/bt_menu"
+                            android:layout_width="?attr/actionBarSize"
+                            android:layout_height="40sp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:tint="@color/grey_60"
+                            app:srcCompat="@drawable/ic_search" />
+
+
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:focusableInTouchMode="true"
+                    android:scrollbars="vertical"
+                    android:scrollingCache="true">
+
+                </android.support.v7.widget.RecyclerView>
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <FrameLayout
+            android:id="@+id/toolbar_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+            <com.miguelcatalan.materialsearchview.MaterialSearchView
+                android:id="@+id/search_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible" />
+        </FrameLayout>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+
+        android:layout_marginTop="50sp"
+        android:id="@+id/swipekaryawan"
+        android:layout_height="match_parent">
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <android.support.v7.widget.CardView
+                    android:id="@+id/search_bar_karyawan"
+                    android:layout_width="match_parent"
+                    android:layout_margin="5sp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:clipToPadding="false"
+                    app:cardBackgroundColor="@android:color/white"
+                    app:cardCornerRadius="3dp"
+                    app:cardElevation="3dp"
+                    app:cardUseCompatPadding="false">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
+
+
+
+                        <EditText
+                            android:paddingLeft="15sp"
+                            android:background="@color/overlay_light_90"
+                            android:id="@+id/search_text_karyawan"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:hint="Search Karyawan"
+                            android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
+                            android:textColor="@color/overlay_dark_90" />
+
+                        <ImageButton
+                            android:id="@+id/bt_menu_karyawan"
+                            android:layout_width="?attr/actionBarSize"
+                            android:layout_height="40sp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:tint="@color/grey_60"
+                            app:srcCompat="@drawable/ic_search" />
+
+
+                    </LinearLayout>
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerView_karyawan"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:focusableInTouchMode="true"
+                    android:scrollbars="vertical"
+                    android:scrollingCache="true">
+
+                </android.support.v7.widget.RecyclerView>
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_marginBottom="50sp"
+        android:visibility="gone"
+        android:id="@+id/swipeaktifitas"
+        android:layout_height="match_parent">
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <android.support.v7.widget.CardView
+                        android:layout_weight="1"
+                        android:id="@+id/search_bar_aktifitas"
+                        android:layout_width="match_parent"
+                        android:layout_margin="5sp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:clipToPadding="false"
+                        app:cardBackgroundColor="@android:color/white"
+                        app:cardCornerRadius="3dp"
+                        app:cardElevation="3dp"
+                        app:cardUseCompatPadding="false">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+
+
+                            <EditText
+                                android:paddingLeft="15sp"
+                                android:background="@color/overlay_light_90"
+                                android:id="@+id/search_text_aktifitas"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:gravity="center_vertical"
+                                android:hint="Search Karyawan"
+                                android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
+                                android:textColor="@color/overlay_dark_90" />
+
+                            <ImageButton
+                                android:id="@+id/bt_menu_aktifitas"
+                                android:layout_width="?attr/actionBarSize"
+                                android:layout_height="40sp"
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:tint="@color/grey_60"
+                                app:srcCompat="@drawable/ic_search" />
+
+
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
+                    <TextView
+                        android:id="@+id/dateselection_karyawan"
+                        android:layout_width="wrap_content"
+                        android:padding="8sp"
+                        android:drawableTint="@color/overlay_dark_90"
+                        android:drawableRight="@drawable/ic_event"
+                        android:textAlignment="center"
+                        android:layout_gravity="end"
+                        android:textColor="@color/overlay_dark_90"
+                        android:layout_marginBottom="0sp"
+                        android:textSize="7pt"
+                        android:gravity="center"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
+
+
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerView_aktifitas"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:focusableInTouchMode="true"
+                    android:scrollbars="vertical"
+                    android:scrollingCache="true">
+
+                </android.support.v7.widget.RecyclerView>
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+</android.support.design.widget.CoordinatorLayout>

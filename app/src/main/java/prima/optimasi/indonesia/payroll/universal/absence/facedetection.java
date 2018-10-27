@@ -52,17 +52,8 @@ import prima.optimasi.indonesia.payroll.universal.fragment.facedetectionfragment
 
 public class facedetection extends AppCompatActivity{
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fr_container);
-        if (null == savedInstanceState) {
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.container, facedetectionfragment.newInstance())
-                    .commit();
-        }
-    }
-    /*AutoFitTextureView textureView;
+
+    AutoFitTextureView textureView;
     SurfaceHolder mSurfaceHolder;
 
     Size previewSize;
@@ -390,6 +381,6 @@ public class facedetection extends AppCompatActivity{
                     (long) rhs.getWidth() * rhs.getHeight());
         }
 
-    }*/
+    }
 
 }

@@ -7,15 +7,19 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -38,8 +42,10 @@ import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.adapter.AdapterGridTwoLineLight;
 import prima.optimasi.indonesia.payroll.core.generator;
+import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
 import prima.optimasi.indonesia.payroll.model.Image;
 import prima.optimasi.indonesia.payroll.objects.pengumuman;
+import prima.optimasi.indonesia.payroll.utils.Tools;
 
 public class FragmentPengumuman extends Fragment {
 
@@ -64,21 +70,29 @@ public class FragmentPengumuman extends Fragment {
 
         items = new ArrayList<>();
 
+        BottomNavigationView bnav=rootView.findViewById(R.id.navigation);
+        bnav.setVisibility(View.GONE);
         parent_view = rootView.findViewById(R.id.bgLayout);
         prefs = getActivity().getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
 
+
         initComponent(rootView);
         //showBottomSheetDialog(mAdapter.getItem(0));
-
         return rootView;
     }
-
-
-
 
     private void initComponent(View v) {
 
         refresh = v.findViewById(R.id.pengswiperefresh);
+
+        CoordinatorLayout.LayoutParams lp=(CoordinatorLayout.LayoutParams)refresh.getLayoutParams();
+        CoordinatorLayout.LayoutParams layoutParams=new CoordinatorLayout.LayoutParams(
+                CoordinatorLayout.LayoutParams.MATCH_PARENT,CoordinatorLayout.LayoutParams.MATCH_PARENT
+        );
+        lp.bottomMargin=0;
+        lp.topMargin=110;
+        refresh.setLayoutParams(lp);
+        refresh.requestLayout();
 
         refresh.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
@@ -115,6 +129,7 @@ public class FragmentPengumuman extends Fragment {
         bottom_sheet = v.findViewById(R.id.bottom_sheet);
         //mBehavior = BottomSheetBehavior.from(bottom_sheet);
     }
+
 
     private void showBottomSheetDialog(final Image obj) {
         if (mBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {

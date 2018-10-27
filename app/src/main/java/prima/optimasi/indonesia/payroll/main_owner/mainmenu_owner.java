@@ -233,8 +233,15 @@ public class mainmenu_owner extends AppCompatActivity
                     pager.setCurrentItem(3);
                     drawer.closeDrawer(Gravity.START);
                 }else if(listDataHeader.get(groupPosition).equals("Laporan")){
-                    pager.setCurrentItem(2);
-                    drawer.closeDrawer(Gravity.START);
+                    posi = posi +1;
+                    if(posi==2){
+                        pager.setCurrentItem(2);
+                        drawer.closeDrawer(Gravity.START);
+                    }else {
+
+                    }
+
+
                 }
                 return false;
             }
@@ -446,8 +453,6 @@ public class mainmenu_owner extends AppCompatActivity
         lapor.add("Pinjaman");
         lapor.add("Pengajian");
 
-
-        listDataChild.put(listDataHeader.get(4), top2510);
         listDataChild.put(listDataHeader.get(5), lapor);
     }
 
