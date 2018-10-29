@@ -53,7 +53,7 @@ import prima.optimasi.indonesia.payroll.model.Social;
 import prima.optimasi.indonesia.payroll.objects.listjobextension;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 
-public class approval extends AppCompatActivity implements adapterapprovalhelper.RecyclerItemTouchHelperListener,ActionMode.Callback {
+public class approval extends AppCompatActivity implements adapterapprovalhelper.RecyclerItemTouchHelperListener {
 
 
     private CoordinatorLayout parent_view;
@@ -102,7 +102,7 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
 
         recyclerView = findViewById(R.id.recyclerView);
 
-        AlertDialog dialog = new AlertDialog.Builder(approval.this).setTitle("Instruction").setMessage("Slide Left To Deny / Ignore , to Multiple Select , Long Press Any Item").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        AlertDialog dialog = new AlertDialog.Builder(approval.this).setTitle("Instruction").setMessage("Slide Left To Deny / Ignore press the Tick button to Accept").setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -158,36 +158,6 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
         if(adapter!=null){
             adapter.removeItem(viewHolder.getAdapterPosition());
         }
-
-    }
-
-    @Override
-    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        MenuInflater inflater = mode.getMenuInflater();
-        inflater.inflate(R.menu.menu_multiple_select, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-        return false;
-    }
-
-    @Override
-    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.action_remove:
-                //just to show selected items.
-                return true;
-            case R.id.action_approve:
-                //just to show selected items.
-                return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void onDestroyActionMode(ActionMode mode) {
 
     }
 
@@ -1006,26 +976,10 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
                     recyclerView.setLayoutManager(mLayoutManager);
                     recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-                    recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(approval.this, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            if (isMultiSelect) {
-                                //if multiple selection is enabled then select item on single click else perform normal click on item.
-                                adapter.setselection(position);
-                            }
-                        }
-
-                        @Override
-                        public void onItemLongClick(View view, int position) {
-
-                        }
-                    }));
-
                     recyclerView.setAdapter(adapter);
 
-                    ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new adapterapprovalhelper(0, ItemTouchHelper.LEFT , approval.this);
-                    new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
+                    //ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new adapterapprovalhelper(0, ItemTouchHelper.LEFT , approval.this);
+                    //new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
 
 
 
@@ -1047,5 +1001,7 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
             Log.d(TAG + " onPostExecute", "" + result);
         }
     }
+
+
 
 }

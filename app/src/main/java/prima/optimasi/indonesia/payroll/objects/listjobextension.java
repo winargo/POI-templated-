@@ -5,7 +5,7 @@ import com.mikhaellopez.circularimageview.CircularImageView;
 public class listjobextension {
     String namakaryawan,keterangan,profilepicture,tanggal1,tanggal2,jabatan,tipe,tgldiajukan;
 
-    Boolean isselected;
+    Boolean isselected = false;
 
     public String getTgldiajukan() {
         return tgldiajukan;

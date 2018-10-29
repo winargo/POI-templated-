@@ -1,8 +1,13 @@
 package prima.optimasi.indonesia.payroll.main_owner.adapter_owner;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.balysv.materialripple.MaterialRippleLayout;
 import com.bignerdranch.android.multiselector.SwappingHolder;
@@ -22,11 +28,18 @@ import com.squareup.picasso.Picasso;
 import com.varunest.sparkbutton.SparkButton;
 import com.varunest.sparkbutton.SparkButtonBuilder;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.helper.SwipeItemTouchHelper;
@@ -63,6 +76,7 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
     String[] urloptions = new String[]{generator.getapprovalcutiyurl,generator.getapprovaldinasyurl,generator.getapprovaldirumahkanyurl,generator.getapprovalizinyurl,generator.getapprovalgolonganyurl,generator.getapprovalkaryawanyurl,generator.getapprovalpinjamanyurl,generator.getapprovalpdlyurl,generator.getapprovalpunihsmentyurl,generator.getapprovalrewardyurl};
 
 
+
     private Context ctx;
     private AdapterListBasicjob_extention.OnItemClickListener mOnItemClickListener;
 
@@ -83,10 +97,12 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
         public ImageView image;
         public TextView name;
         public TextView desc;
-        public RelativeLayout green;
-        public RelativeLayout red;
         public RelativeLayout main;
         public SparkButton spark;
+        public SparkButton sparktrue;
+
+        public Boolean spark1=false;
+        public Boolean spark2=true;
 
         public FrameLayout view_parent;
 
@@ -94,10 +110,9 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
             super(v);
 
             view_parent = v.findViewById(R.id.view_parent);
-            spark = v.findViewById(R.id.spark_button);
+            spark = v.findViewById(R.id.spark_button_false);
+            sparktrue = v.findViewById(R.id.spark_button_true);
             main = v.findViewById(R.id.mainlayout);
-            green = v.findViewById(R.id.greeny);
-            red = v.findViewById(R.id.reddy);
             image = (ImageView) v.findViewById(R.id.image);
             name = (TextView) v.findViewById(R.id.name);
             desc = v.findViewById(R.id.description);
@@ -130,9 +145,47 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
             view.spark.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    removeItem(position);
+                    view.spark.playAnimation();
+                    if(view.spark.isChecked()){
+                       //execute data
+                    }
+                    else {
+                        view.spark.setChecked(true);
+                        view.sparktrue.setChecked(false);
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                view.spark.setChecked(false);
+                                //Do something after 100ms
+                            }
+                        }, 3000);
+                    }
                 }
             });
+
+            view.sparktrue.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    view.sparktrue.playAnimation();
+                    if(view.sparktrue.isChecked()){
+                        //execute data
+                    }
+                    else {
+                        view.sparktrue.setChecked(true);
+                        view.spark.setChecked(false);
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                view.sparktrue.setChecked(false);
+                                //Do something after 100ms
+                            }
+                        }, 3000);
+                    }
+                }
+            });
+
 
             listjobextension p = items.get(position);
 
@@ -255,13 +308,240 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
         notifyDataSetChanged();
     }
 
-    public void setselection(int position){
-        if(items.get(position).getIsselected())
+
+    private class acceptordeny extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        ProgressDialog dialog ;
+        String urldata = "";
+        String passeddata = "" ;
+        String tipe = "";
+        View nothing ;
+        TextView txt_nothing;
+        int accordeny;
+        //listjobextension =
+
+        public acceptordeny(Context context,String choice,int acceptordenydata)
         {
-            items.get(position).setIsselected(false);
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+
+            accordeny = acceptordenydata;
+
+            this.txt_nothing = txt_nothing;
+            this.nothing = nothing;
+
+            for(int i=0;i<options.length;i++){
+                if(options[i]==choice){
+                    urldata = urloptions[i];
+                    tipe = choice;
+                    //this.txt_nothing.setText("Tidak Ada data "+options[i]);
+                }
+            }
+
         }
-        else {
-            items.get(position).setIsselected(true);
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            super.onPreExecute();
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    /*RequestBody body = new FormBody.Builder()
+                            .add("","")
+                            .build();*/
+                    Request request=null;
+                    /*String[] options = new String[]{"Approval Cuti","Approval Dinas","Approval Dirumahkan","Approval Izin",
+                            "Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment",
+                            "Approval Reward"};*/
+
+                    if(tipe.equals("Approval Cuti")){
+                        request = new Request.Builder()
+                                .header("Authorization",prefs.getString("Authorization",""))
+                                .url(urldata)
+                                .build();
+
+                    }
+                    else if (tipe.equals("Approval Dinas") ){
+                        request = new Request.Builder()
+                                .header("Authorization",prefs.getString("Authorization",""))
+                                .url(urldata)
+                                .build();
+
+                    }
+                    else if (tipe.equals("Approval Dirumahkan") ){
+                        request = new Request.Builder()
+                                .header("Authorization",prefs.getString("Authorization",""))
+                                .url(urldata)
+                                .build();
+
+                    }
+                    else if (tipe.equals("Approval Izin") ){
+                        request = new Request.Builder()
+                                .header("Authorization",prefs.getString("Authorization",""))
+                                .url(urldata)
+                                .build();
+
+                    }
+                    else if (tipe.equals("Approval Golongan") ){
+                        request = new Request.Builder()
+                                .header("Authorization",prefs.getString("Authorization",""))
+                                .url(urldata)
+                                .build();
+
+                    }
+                    else if (tipe.equals("Approval Karyawan") ){
+                        request = new Request.Builder()
+                                .header("Authorization",prefs.getString("Authorization",""))
+                                .url(urldata)
+                                .build();
+
+                    }
+                    else if (tipe.equals("Approval Pinjaman") ){
+                        request = new Request.Builder()
+                                .header("Authorization",prefs.getString("Authorization",""))
+                                .url(urldata)
+                                .build();
+
+                    }
+                    else if (tipe.equals("Approval Pdm") ){
+                        request = new Request.Builder()
+                                .header("Authorization",prefs.getString("Authorization",""))
+                                .url(urldata)
+                                .build();
+
+                    }
+                    else if (tipe.equals("Approval Punishment") ){
+                        request = new Request.Builder()
+                                .header("Authorization",prefs.getString("Authorization",""))
+                                .url(urldata)
+                                .build();
+
+                    }
+                    else if (tipe.equals("Approval Reward") ){
+                        request = new Request.Builder()
+                                .header("Authorization",prefs.getString("Authorization",""))
+                                .url(urldata)
+                                .build();
+
+                    }
+
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+                List<listjobextension> listdata = new ArrayList<>();
+
+                if (result != null) {
+
+                    if(tipe.equals("Approval Cuti")){
+
+                    }
+                    else if (tipe.equals("Approval Dinas") ){
+
+                    }
+                    else if (tipe.equals("Approval Dirumahkan") ){
+
+                    }
+                    else if (tipe.equals("Approval Izin") ){
+
+                    }
+                    else if (tipe.equals("Approval Golongan") ){
+
+                    }
+                    else if (tipe.equals("Approval Karyawan") ){
+
+                    }
+                    else if (tipe.equals("Approval Pinjaman") ){
+
+                    }
+                    else if (tipe.equals("Approval Pdm") ){
+
+                    }
+                    else if (tipe.equals("Approval Punishment") ){
+
+                    }
+                    else if (tipe.equals("Approval Reward") ){
+
+                    }
+
+
+
+                }
+                else {
+                    //Snackbar.make(parent_view,"Gagal" + result.getString("message"),Toast.LENGTH_LONG).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                //Snackbar.make(parent_view,"Gagal" + E.getMessage(),Toast.LENGTH_LONG).show();
+            }
+
+
+
+            Log.d(TAG + " onPostExecute", "" + result);
         }
     }
 
