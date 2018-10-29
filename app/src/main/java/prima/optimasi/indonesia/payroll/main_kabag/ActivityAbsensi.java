@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.balysv.materialripple.MaterialRippleLayout;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -33,6 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.activity_login;
+import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.universal.absence.facedetection;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
@@ -214,6 +217,38 @@ public class ActivityAbsensi extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
+        }
+        else if (item.getItemId() == R.id.action_logout) {
+            FirebaseMessaging.getInstance().unsubscribeFromTopic("kabag");
+
+            Intent logout = new Intent(ActivityAbsensi.this,activity_login.class);
+            SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
+
+            if(prefs.getInt("statustoken",0)==0){
+
+            }
+            else {
+                generator.unregistertokentoserver unregistertokentoserver = new generator.unregistertokentoserver(ActivityAbsensi.this,prefs.getString("tokennotif",""),prefs.getString("Authorization",""));
+                unregistertokentoserver.execute();
+            }
+
+
+            SharedPreferences.Editor edit = prefs.edit();
+
+            edit.putString("iduser","");
+            edit.putString("username","");
+            edit.putString("jabatan","");
+            edit.putString("level","");
+            edit.putString("tempatlahir","");
+            edit.putString("profileimage","");
+            edit.putString("Authorization","");
+            edit.putString("kodekaryawan","");
+
+            edit.commit();
+
+            startActivity(logout);
+
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

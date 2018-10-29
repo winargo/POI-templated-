@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -292,6 +293,41 @@ public class mainmenu_kabag extends AppCompatActivity
                 icon_born.setScaleY(scale >= 0 ? scale : 0);
                 borndate.setScaleX(scale >= 0 ? scale : 0);
                 borndate.setScaleY(scale >= 0 ? scale : 0);
+            }
+        });
+
+        Button logout=findViewById(R.id.logout);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseMessaging.getInstance().unsubscribeFromTopic("kabag");
+
+                Intent logout = new Intent(mainmenu_kabag.this,activity_login.class);
+                SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
+
+                if(prefs.getInt("statustoken",0)==0){
+
+                }
+                else {
+                    generator.unregistertokentoserver unregistertokentoserver = new generator.unregistertokentoserver(mainmenu_kabag.this,prefs.getString("tokennotif",""),prefs.getString("Authorization",""));
+                    unregistertokentoserver.execute();
+                }
+
+
+                SharedPreferences.Editor edit = prefs.edit();
+
+                edit.putString("iduser","");
+                edit.putString("username","");
+                edit.putString("jabatan","");
+                edit.putString("level","");
+                edit.putString("tempatlahir","");
+                edit.putString("profileimage","");
+                edit.putString("Authorization","");
+                edit.putString("kodekaryawan","");
+
+                edit.commit();
+
+                startActivity(logout);
             }
         });
 

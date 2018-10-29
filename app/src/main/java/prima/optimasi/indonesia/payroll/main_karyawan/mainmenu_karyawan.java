@@ -30,6 +30,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -38,6 +39,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.activity.MainMenu;
+import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
 import prima.optimasi.indonesia.payroll.main_karyawan.cekjadwal;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentCekGaji;
 import prima.optimasi.indonesia.payroll.universal.activity.ActivityLogAbsensi;
@@ -206,6 +208,41 @@ public class mainmenu_karyawan extends AppCompatActivity
                 borndate.setScaleY(scale >= 0 ? scale : 0);
             }
 
+        });
+
+        Button logout=findViewById(R.id.logout);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseMessaging.getInstance().unsubscribeFromTopic("kabag");
+
+                Intent logout = new Intent(mainmenu_karyawan.this,activity_login.class);
+                SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
+
+                if(prefs.getInt("statustoken",0)==0){
+
+                }
+                else {
+                    generator.unregistertokentoserver unregistertokentoserver = new generator.unregistertokentoserver(mainmenu_karyawan.this,prefs.getString("tokennotif",""),prefs.getString("Authorization",""));
+                    unregistertokentoserver.execute();
+                }
+
+
+                SharedPreferences.Editor edit = prefs.edit();
+
+                edit.putString("iduser","");
+                edit.putString("username","");
+                edit.putString("jabatan","");
+                edit.putString("level","");
+                edit.putString("tempatlahir","");
+                edit.putString("profileimage","");
+                edit.putString("Authorization","");
+                edit.putString("kodekaryawan","");
+
+                edit.commit();
+
+                startActivity(logout);
+            }
         });
         /*
         pengumuman.setBackgroundResource(R.drawable.baseline_announcement_black_24dp);

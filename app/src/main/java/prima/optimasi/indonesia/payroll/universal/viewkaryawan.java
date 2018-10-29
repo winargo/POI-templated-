@@ -70,9 +70,13 @@ import prima.optimasi.indonesia.payroll.main_karyawan.mainmenu_karyawan;
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentPengumuman;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 
+import prima.optimasi.indonesia.payroll.objects.listkaryawan_izincutisakit;
+import prima.optimasi.indonesia.payroll.objects.listkaryawankontrakkerja;
+import prima.optimasi.indonesia.payroll.universal.adapter.Adapterviewkaryawan;
 import prima.optimasi.indonesia.payroll.universal.adapter.ViewPagerAdapter;
 import prima.optimasi.indonesia.payroll.universal.fragment.viewketerangankaryawan;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
+import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.utils.previewimage;
 
@@ -93,11 +97,14 @@ public class viewkaryawan extends AppCompatActivity {
     TabLayout indicator;
     //ViewPagerAdapter adapter;
 
+    listkaryawan_izincutisakit kar;
+    List<listkaryawan_izincutisakit> items;
     List<Integer> color;
     List<String> colorName;
     private TextView[] dots;
     private RecyclerView recyclerView;
-    private AdapterListSectioned mAdapter;
+    //private AdapterListSectioned mAdapter;
+    private Adapterviewkaryawan adapter;
     private ArrayList<Integer> ImagesArray = new ArrayList<Integer>();
 
     @Override
@@ -129,8 +136,9 @@ public class viewkaryawan extends AppCompatActivity {
         scount = findViewById(R.id.karsakit);
         acount = findViewById(R.id.karabsen);
 
-        pager = findViewById(R.id.view_pager);
-        dotsLayout=findViewById(R.id.layout_dots);
+        //pager = findViewById(R.id.view_pager);
+        //dotsLayout=findViewById(R.id.layout_dots);
+        recyclerView=findViewById(R.id.recyclerView);
         /*
         tabpager = findViewById(R.id.tab_layout);
         pager = findViewById(R.id.view_pager);
@@ -578,9 +586,149 @@ public class viewkaryawan extends AppCompatActivity {
 
                 if (result != null) {
                     try {
+                        items=new ArrayList<>();
                         Log.e(TAG, "data json result" + result);
+                        kar=new listkaryawan_izincutisakit();
                         JSONArray pengsarray = result.getJSONArray("rows");
                         Log.e(TAG, "data json result" + pengsarray.length());
+                        String tempcall="",temp="";
+                        String tempbulan="";
+                        int banyakizin=0;
+                        for (int i = 0; i < pengsarray.length(); i++) {
+
+                            JSONObject obj = pengsarray.getJSONObject(i);
+                            String thn_izin=obj.getString("tgl_izin").substring(0,4);
+                            String bln_izin=obj.getString("tgl_izin").substring(5,7);
+                            String tgl_izin=obj.getString("tgl_izin").substring(8,10);
+                            String totalizin=""+pengsarray.length();
+                            Log.e(TAG, "data json result" + "Berhasil1");
+                            //kar.setIzin(""+pengsarray.length());
+                            //items.add(kar);
+
+                            if(!tempcall.equals(obj.getString("tgl_izin").substring(5,7))){
+                                if(tempcall.equals("")){
+                                    kar = new listkaryawan_izincutisakit();
+                                    kar.setBulan(obj.getString("tgl_izin").substring(5,7));
+                                    kar.setSection(true);
+                                    tempcall = obj.getString("tgl_izin").substring(5,7);
+                                    items.add(kar);
+                                    banyakizin=0;
+                                    Log.e(TAG, "data json result" + "Berhasil2");
+                                }
+                                else{
+                                    kar = new listkaryawan_izincutisakit();
+                                    kar.setBulan(obj.getString("tgl_izin").substring(5,7));
+                                    kar.setSection(true);
+                                    tempcall = obj.getString("tgl_izin").substring(5,7);
+                                    items.add(kar);
+                                    banyakizin=0;
+                                    Log.e(TAG, "data json result" + "Berhasil3");
+                                }
+                            }
+                            else if(tempcall.equals(obj.getString("tgl_izin").substring(5,7)) && i+1<pengsarray.length()){
+                                banyakizin++;
+                                Log.e(TAG, "data json result" + "Berhasil4");
+                            }
+                            else if(tempcall.equals(obj.getString("tgl_izin").substring(5,7)) && i+1==pengsarray.length()){
+                                banyakizin++;
+                                kar=new listkaryawan_izincutisakit();
+                                kar.setSection(false);
+                                //kar.setIskar(obj.getString("id"));
+                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
+
+                                Log.e(TAG, "image data" + kar.getImagelink() );
+
+                                kar.setIskar(obj.getString("kode_karyawan"));
+                                kar.setNama(obj.getString("nama"));
+                                kar.setJabatan(obj.getString("jabatan"));
+                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
+                                kar.setIzin(""+banyakizin);
+                                items.add(kar);
+                                banyakizin=0;
+                                Log.e(TAG, "data json result" + "Berhasil6");
+                            }
+                            else if(!tempcall.equals(obj.getString("tgl_izin").substring(5,7)) && banyakizin>0){
+                                kar=new listkaryawan_izincutisakit();
+                                kar.setSection(false);
+                                //kar.setIskar(obj.getString("id"));
+                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
+
+                                Log.e(TAG, "image data" + kar.getImagelink() );
+
+                                kar.setIskar(obj.getString("kode_karyawan"));
+                                kar.setNama(obj.getString("nama"));
+                                kar.setJabatan(obj.getString("jabatan"));
+                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
+                                kar.setIzin(""+banyakizin);
+                                items.add(kar);
+                                banyakizin=0;
+                                Log.e(TAG, "data json result" + "Berhasil5");
+                                i--;
+                            }
+                            /*
+                            if(!tempcall.equals(obj.getString("tgl_izin").substring(5,7)) && banyakizin==0){
+                                if(tempcall.equals("")){
+                                    kar = new listkaryawan_izincutisakit();
+                                    kar.setBulan(obj.getString("tgl_izin").substring(5,7));
+                                    kar.setSection(true);
+                                    tempcall = obj.getString("tgl_izin").substring(5,7);
+                                    items.add(kar);
+                                    banyakizin=0;
+                                    Log.e(TAG, "data json result" + "Berhasil2");
+                                }
+                                else{
+                                    kar = new listkaryawan_izincutisakit();
+                                    kar.setBulan(obj.getString("tgl_izin").substring(5,7));
+                                    kar.setSection(true);
+                                    tempcall = obj.getString("tgl_izin").substring(5,7);
+                                    items.add(kar);
+                                    banyakizin=0;
+                                    Log.e(TAG, "data json result" + "Berhasil3");
+                                }
+                            }
+                            else if(tempcall.equals(obj.getString("tgl_izin").substring(5,7))){
+                                banyakizin++;
+                                Log.e(TAG, "data json result" + "Berhasil4");
+                            }
+                            else if(!tempcall.equals(obj.getString("tgl_izin").substring(5,7)) && banyakizin>0){
+                                kar=new listkaryawan_izincutisakit();
+                                kar.setSection(false);
+                                //kar.setIskar(obj.getString("id"));
+                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
+
+                                Log.e(TAG, "image data" + kar.getImagelink() );
+
+                                kar.setIskar(obj.getString("kode_karyawan"));
+                                kar.setNama(obj.getString("nama"));
+                                kar.setJabatan(obj.getString("jabatan"));
+                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
+                                kar.setIzin(""+banyakizin);
+                                banyakizin=0;
+                                Log.e(TAG, "data json result" + "Berhasil5");
+                                i--;
+                            }
+                            */
+
+                            /*
+                            if(temp.equals("")){
+                                kar.setBulan(bln_izin);
+                                kar.setIzin(""+i+1);
+                            }
+                            else if(!temp.equals(bln_izin)){
+                                kar.setBulan(tempbulan);
+                                kar.setIzin(""+banyak);
+                                banyak=0;
+                            }
+                            else if(temp.equals(bln_izin)){
+                                tempbulan=bln_izin;
+                                banyak++;
+                            }
+                            */
+                            //kar.setIzin();
+
+                        }
+                        adapter = new Adapterviewkaryawan(viewkaryawan.this, items, ItemAnimation.LEFT_RIGHT);
+                        recyclerView.setAdapter(adapter);
                         /*
                         boolean status=result.getBoolean("status");
                         if(!status){
@@ -604,11 +752,12 @@ public class viewkaryawan extends AppCompatActivity {
 
                         modelObject.setLayoutresid(layoutresid);
                         */
+                        /*
                         pager.setAdapter(new ViewPagerAdapter(ctx,pengsarray));
                         //if(pengsarray.length()==0){
                             scount.setText("-");
                             icount.setText("-");
-                            acount.setText("-");
+                            acount.setText("-");*/
                         //}
                         /*
                         else{

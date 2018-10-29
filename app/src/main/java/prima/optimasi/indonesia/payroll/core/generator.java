@@ -140,8 +140,13 @@ public class generator {
     public static String servertimeurl="http://"+ generator.Server+":4000/setting/waktu";
 
 
+    public static String pengajuancutiurl="http://"+ generator.Server+":4000/cuti";
+    public static String pengajuandinasurl="http://"+ generator.Server+":4000/dinas";
     public static String getdataizinbulananyurl="http://"+ generator.Server+":4000/izin/bulanan";
 
+    public static String kontrakkerja1bulanurl="http://"+ generator.Server+":4000/kontrak/1bulan";
+    public static String kontrakkerja2bulanurl="http://"+ generator.Server+":4000/kontrak/2bulan";
+    public static String kontrakkerja3bulanurl="http://"+ generator.Server+":4000/kontrak/3bulan";
 
     public static JSONObject jsondatalogin = null ;
     public static JSONObject jsondatajadwal = null ;

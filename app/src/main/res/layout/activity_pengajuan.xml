@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
+    android:id="@+id/parent_view"
     android:fitsSystemWindows="true"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <android.support.design.widget.AppBarLayout
@@ -93,6 +94,7 @@
             </LinearLayout>
 
             <EditText
+                android:id="@+id/keterangan"
                 android:layout_margin="8sp"
                 android:gravity="start"
                 android:padding="4sp"
@@ -129,6 +131,7 @@
                 android:textSize="8pt"
                 android:text="History"/>
             <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
                 android:layout_margin="6sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
