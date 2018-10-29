@@ -902,51 +902,83 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
 
                             Log.e(TAG, tipe+" "+result.toString() );
 
-                            /*E/retrive: Approval Pdm {"status":true,"message":"berhasil get data","res1":[{"nama":"Sparno","foto":"17a490b3ab8e38e296e3b1b18a433eb9.jpg",
-                                    "temp_id_promosi":146,"id_promosi":35,"id_karyawan":7,"id_cabang1":3,"id_departemen1":2,"id_jabatan1":4,"id_golongan1":15,"id_grup1":6,
-                                    "tanggal":"2018-09-01T00:00:00.000Z","judul":"Hapus Data","keterangans":"asdasdsa","status":"Proses","status_info":"Hapus",
-                                    "create_at":"2018-10-08T12:23:10.000Z","approve_at":"2018-09-21T10:44:42.000Z"},{"nama":"Sparno","foto":"17a490b3ab8e38e296e3b1b18a433eb9.jpg",
-                                    "temp_id_promosi":147,"id_promosi":38,"id_karyawan":7,"id_cabang1":3,"id_departemen1":2,"id_jabatan1":4,"id_golongan1":15,"id_grup1":6,
-                                    "tanggal":"2018-09-01T00:00:00.000Z","judul":"Hapus Data","keterangans":"asdfasd1234333","status":"Proses","status_info":"Hapus",
-                                    "create_at":"2018-10-08T13:24:29.000Z","approve_at":"2018-09-21T10:44:38.000Z"}],"userData":{"username":"MANADI","password":"manadi",
-                                    "id_pengguna":2,"iat":1540435376}}*/
+                            /*E/retrive: Approval Pdm {"status":true,"message":"berhasil get data","data":[{"nama":"Tes1","foto":"8c674d66f16b0ee916f030b2c9b40921.jpg",
+                            "jabatan":"Admin Kantor","grup":"group 4","departemen":"Accounting","cabang":"Denya Surabaya","golongan":"GOL-06"},{"nama":"Tes12",
+                            "foto":"cba9fab615b35fbf35839e6f2ca6fef3.jpg","jabatan":"Office Boy","grup":"group 12","departemen":"HRD","cabang":"Denya Surabaya",
+                            "golongan":"GOl-40"},{"nama":"Sutrina Sudjipto1","foto":"cf0092a461ec586d8aebcf6c34a2e1c6.jpg","jabatan":"hrd","grup":"group 3",
+                            "departemen":"HRD","cabang":"Denya Tamora","golongan":"GOL-20"},{"nama":"Sparno","foto":"17a490b3ab8e38e296e3b1b18a433eb9.jpg",
+                            "jabatan":"Kepala Grup A","grup":"Group Lain","departemen":"IT","cabang":"Denya Surabaya","golongan":"GOL-07"},{"nama":"Aston",
+                            "foto":"abe6ae2097f676a4e7d7869a75139fb9.jpg","jabatan":"Kepala Aksesoris","grup":"Group Lain","departemen":"Accounting",
+                            "cabang":"Denya Tamora","golongan":"GOL-01"},{"nama":"Sulastri Ningsih","foto":"35b234cd6919cd1dabc2c97f0af16436.jpg",
+                            "jabatan":"Kepala Aksesoris","grup":"Group Lain","departemen":"Accounting","cabang":"Denya Surabaya","golongan":"GOL-07"},
+                            {"nama":"Sutarno","foto":"847df28a6e8e42bc5aa7f5ad47a5cfc6.jpg","jabatan":"hrd","grup":"Group D","departemen":"Purchasing",
+                            "cabang":"Denya Tamora","golongan":"GOl-40"},{"nama":"Astros","foto":"","jabatan":"Admin Kantor","grup":"group 3","departemen":"Accounting",
+                            "cabang":"Denya Surabaya","golongan":null},{"nama":"Oishi","foto":"08adcb482d9cf229b3562505989bd981.jpg","jabatan":"Security","grup":"Group B",
+                            "departemen":"Kebersihan Lingkungan","cabang":"Denya Tamora","golongan":"GOl-40"},{"nama":"Queen","foto":"","jabatan":"Kepala Bengkel",
+                            "grup":"Group Lain","departemen":"Gudang bahan baku","cabang":"Denya Tamora","golongan":"GOL-SS"},{"nama":"Monchol","foto":"",
+                            "jabatan":"Anggota","grup":"Group D","departemen":"Produksi","cabang":"Denya Tamora","golongan":null}],"data1":[{"id_promosi":35,
+                            "id_karyawan":7,"nama":"Sparno","foto":"17a490b3ab8e38e296e3b1b18a433eb9.jpg","temp_id_promosi":146,"id_cabang1":3,"id_departemen1":2,
+                            "id_jabatan1":4,"id_golongan1":15,"id_grup1":6,"tanggal":"2018-09-01T00:00:00.000Z","judul":"Hapus Data","keterangans":"asdasdsa",
+                            "status":"Proses","status_info":"Hapus","create_at":"2018-10-08T12:23:10.000Z","approve_at":"2018-09-21T10:44:42.000Z","jabatan":"Salesman",
+                            "grup":"Group Lain","departemen":"Kebersihan Lingkungan","cabang":null,"golongan":"GOL-06"},{"id_promosi":38,"id_karyawan":7,"nama":"Sparno",
+                            "foto":"17a490b3ab8e38e296e3b1b18a433eb9.jpg","temp_id_promosi":147,"id_cabang1":3,"id_departemen1":2,"id_jabatan1":4,"id_golongan1":15,"id_grup1":6,
+                            "tanggal":"2018-09-01T00:00:00.000Z","judul":"Hapus Data","keterangans":"asdfasd1234333","status":"Proses","status_info":"Hapus",
+                            "create_at":"2018-10-08T13:24:29.000Z","approve_at":"2018-09-21T10:44:38.000Z","jabatan":"Salesman","grup":"Group Lain",
+                            "departemen":"Kebersihan Lingkungan","cabang":null,"golongan":"GOL-06"},{"id_promosi":41,"id_karyawan":2,"nama":null,
+                            "foto":null,"temp_id_promosi":148,"id_cabang1":4,"id_departemen1":2,"id_jabatan1":3,"id_golongan1":15,"id_grup1":6,
+                            "tanggal":"2018-09-01T00:00:00.000Z","judul":"Hapus Data","keterangans":"2662","status":"Proses","status_info":"Hapus",
+                            "create_at":"2018-10-08T12:28:45.000Z","approve_at":"2018-09-21T10:44:31.000Z","jabatan":"Programmer","grup":"Group Lain",
+                            "departemen":"Kebersihan Lingkungan","cabang":null,"golongan":"GOL-06"},{"id_promosi":44,"id_karyawan":2,"nama":null,
+                            "foto":null,"temp_id_promosi":151,"id_cabang1":3,"id_departemen1":18,"id_jabatan1":30,"id_golongan1":26,"id_grup1":7,
+                            "tanggal":"2018-09-03T00:00:00.000Z","judul":"Demosi","keterangans":"asdasdsa","status":"Proses","status_info":"Edit",
+                            "create_at":"2018-10-08T13:24:43.000Z","approve_at":"2018-10-05T16:33:31.000Z","jabatan":"hrd","grup":null,
+                            "departemen":"Kebersihan","cabang":null,"golongan":null},{"id_promosi":null,"id_karyawan":12,"nama":null,"foto":null,
+                            "temp_id_promosi":161,"id_cabang1":2,"id_departemen1":4,"id_jabatan1":19,"id_golongan1":15,"id_grup1":7,"tanggal":"2018-10-08T00:00:00.000Z","jud*/
+
+                            if(result.getString("status").equals("true"))
+                            {
+                                JSONArray arrays = result.getJSONArray("data");
+                                JSONArray arrays1 = result.getJSONArray("data1");
+                                for (int i = 0; i < arrays.length(); i++) {
+                                    JSONObject obj = arrays.getJSONObject(i);
+
+                                    listjobextension data = new listjobextension();
+
+                                    String arrow = " ➡ ";
+
+                                    int index = 0 ;
+
+                                    Boolean isnotsame = false;
+
+                                    for (int j = 0; j < arrays1.length(); j++) {
+                                        JSONObject obj1 = arrays1.getJSONObject(j);
+                                        if(obj.getString("id_golongan").equals(obj1.getString("id_golongan"))){
+                                            isnotsame = false;
+
+                                            break;
+                                        }
+                                        else{
+                                            isnotsame = true;
+                                            index++;
+                                        }
+
+                                    }
+
+                                    if(isnotsame){
 
 
-                            /*JSONArray arrays = result.getJSONArray("res1");
-                            for (int i = 0; i < arrays.length(); i++) {
-                                JSONObject obj = arrays.getJSONObject(i);
+                                        listdata.add(data);
+                                    }else{
 
-                                if(obj.getString("status_info").equals("Hapus")){
 
+
+                                        listdata.add(data);
+                                    }
                                 }
-                                else if(obj.getString("status_info").equals("Edit")){
+                            }
+                            else {
 
-                                }
-                                else {
-
-                                }
-
-                                DecimalFormat formatter = new DecimalFormat("###,###,###");
-                                listjobextension data = new listjobextension();
-
-                                data.setTgldiajukan(obj.getString("tanggal").substring(0,10));
-
-                                data.setNamakaryawan(obj.getString("nama")+obj.getString("judul"));
-                                data.setTipe(tipe);
-
-                                data.setProfilepicture(generator.profileurl+obj.getString("foto"));
-
-                                String neline = "\n";
-                                String spacing = " : ";
-
-                                //String jumlah = formatter.format(obj.getDouble("jumlah"));
-
-                                //String cicilan = formatter.format(obj.getDouble("cicilan")),cara_pembayaran=obj.getString("cara_pembayaran"),keterangans=obj.getString("keterangans");
-
-                                //data.setKeterangan("Jumlah Pinjaman"+spacing+jumlah+neline+"Cicilan / Bulan"+spacing+cicilan+neline+"Cara pembayaran"+spacing+cara_pembayaran+neline+"Keterangan"+spacing+keterangans);
-
-                                //listdata.add(data);
-                            }*/
+                            }
                         }
                         else if (tipe.equals("Approval Punishment") ){
                             

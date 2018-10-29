@@ -74,7 +74,7 @@ dependencies {
     implementation 'com.github.cdflynn:checkview:v1.1'
     implementation 'com.google.zxing:core:3.3.0'
 
-    implementation 'com.davidecirillo.multichoicerecyclerview:multichoicerecyclerview:2.3.0'
+    implementation 'com.bignerdranch.android:recyclerview-multiselect:0.2'
 
     implementation 'jp.wasabeef:richeditor-android:1.2.2'
 

@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -43,6 +45,7 @@ import prima.optimasi.indonesia.payroll.adapter.AdapterListSwipe;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.data.DataGenerator;
 import prima.optimasi.indonesia.payroll.helper.SwipeItemTouchHelper;
+import prima.optimasi.indonesia.payroll.main_owner.adapter_helper.RecyclerItemClickListener;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_helper.adapterapprovalhelper;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListBasicjob_extention;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListSwipe_approval;
@@ -59,6 +62,10 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
 
     private RecyclerView recyclerView;
 
+    Toolbar toolbar;
+
+    private ActionMode actionMode;
+    private boolean isMultiSelect = false;
 
 
     String tipe="";
@@ -95,7 +102,7 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
 
         recyclerView = findViewById(R.id.recyclerView);
 
-        AlertDialog dialog = new AlertDialog.Builder(approval.this).setTitle("Instruction").setMessage("Slide Right to Accept and Slide Left To Deny / Ignore , to Multiple Select , Long Press Any Item").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        AlertDialog dialog = new AlertDialog.Builder(approval.this).setTitle("Instruction").setMessage("Slide Left To Deny / Ignore press the Tick button to Accept").setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -119,12 +126,14 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
     }
 
     private void initToolbar(String Title) {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(Title);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Tools.setSystemBarColor(this, R.color.colorPrimary);
+
+
     }
 
     private void initComponent() {
@@ -967,11 +976,12 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
                     recyclerView.setLayoutManager(mLayoutManager);
                     recyclerView.setItemAnimator(new DefaultItemAnimator());
-
                     recyclerView.setAdapter(adapter);
 
-                    ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new adapterapprovalhelper(0, ItemTouchHelper.LEFT , approval.this);
-                    new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
+                    //ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new adapterapprovalhelper(0, ItemTouchHelper.LEFT , approval.this);
+                    //new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
+
+
 
 
                 }
@@ -991,5 +1001,7 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
             Log.d(TAG + " onPostExecute", "" + result);
         }
     }
+
+
 
 }
