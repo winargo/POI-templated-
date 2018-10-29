@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/view_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -70,14 +71,10 @@
             android:layout_marginTop="6sp"
             android:layout_marginBottom="6sp">
 
-            <com.balysv.materialripple.MaterialRippleLayout
-                style="@style/RippleStyleBlack"
-                android:id="@+id/lyt_parent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="40sp"
                     android:orientation="vertical">
                     <LinearLayout
 
@@ -147,14 +144,10 @@
 
                 </LinearLayout>
 
-
-
-
-            </com.balysv.materialripple.MaterialRippleLayout>
-
             <com.varunest.sparkbutton.SparkButton
                 android:id="@+id/spark_button"
                 android:layout_width="40dp"
+                android:layout_gravity="end"
                 android:layout_height="match_parent"
                 app:sparkbutton_activeImage="@drawable/ic_baseline_done_24px"
                 app:sparkbutton_iconSize="40dp"

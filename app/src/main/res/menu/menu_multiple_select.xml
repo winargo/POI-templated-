@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_approve"
+        android:icon="@drawable/baseline_done_all_white_36dp"
+        android:orderInCategory="100"
+        android:title="Approve"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_remove"
+        android:icon="@drawable/ic_delete_white_24dp"
+        android:orderInCategory="100"
+        android:title="Deny"
+        app:showAsAction="always" />
+
+</menu>

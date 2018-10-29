@@ -2,18 +2,22 @@ package prima.optimasi.indonesia.payroll.main_owner.adapter_owner;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.balysv.materialripple.MaterialRippleLayout;
+import com.bignerdranch.android.multiselector.SwappingHolder;
 import com.squareup.picasso.Picasso;
 import com.varunest.sparkbutton.SparkButton;
 import com.varunest.sparkbutton.SparkButtonBuilder;
@@ -31,7 +35,7 @@ import prima.optimasi.indonesia.payroll.model.People;
 import prima.optimasi.indonesia.payroll.objects.listjobextension;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
-public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView.ViewHolder>  {
+public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<listjobextension> items = new ArrayList<>();
 
@@ -84,8 +88,12 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
         public RelativeLayout main;
         public SparkButton spark;
 
+        public FrameLayout view_parent;
+
         public OriginalViewHolder(View v) {
             super(v);
+
+            view_parent = v.findViewById(R.id.view_parent);
             spark = v.findViewById(R.id.spark_button);
             main = v.findViewById(R.id.mainlayout);
             green = v.findViewById(R.id.greeny);
@@ -111,10 +119,13 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
 
 
 
+
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
 
             final OriginalViewHolder view = (OriginalViewHolder) holder;
+
+
 
             view.spark.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -124,6 +135,16 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
             });
 
             listjobextension p = items.get(position);
+
+            if (p.getIsselected()){
+                //if item is selected then,set foreground color of FrameLayout.
+                view.view_parent.setForeground(new ColorDrawable(ContextCompat.getColor(ctx,R.color.colorPrimary)));
+            }
+            else {
+                //else remove selected item color.
+                view.view_parent.setForeground(new ColorDrawable(ContextCompat.getColor(ctx,android.R.color.transparent)));
+            }
+
 
             if(p.getTipe().equals(options[4])){
                 view.image.setImageDrawable(ctx.getResources().getDrawable(R.drawable.g));
@@ -223,11 +244,25 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
         // to perform recycler view delete animations
         // NOTE: don't call notifyDataSetChanged()
         notifyItemRemoved(position);
+        notifyItemRangeChanged(position, items.size());
+
     }
 
     public void restoreItem(listjobextension item, int position) {
         items.add(position, item);
         // notify item added by position
         notifyItemInserted(position);
+        notifyDataSetChanged();
     }
+
+    public void setselection(int position){
+        if(items.get(position).getIsselected())
+        {
+            items.get(position).setIsselected(false);
+        }
+        else {
+            items.get(position).setIsselected(true);
+        }
+    }
+
 }

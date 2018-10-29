@@ -5,6 +5,8 @@ import com.mikhaellopez.circularimageview.CircularImageView;
 public class listjobextension {
     String namakaryawan,keterangan,profilepicture,tanggal1,tanggal2,jabatan,tipe,tgldiajukan;
 
+    Boolean isselected;
+
     public String getTgldiajukan() {
         return tgldiajukan;
     }
@@ -38,6 +40,10 @@ public class listjobextension {
         return tanggal2;
     }
 
+    public Boolean getIsselected() {
+        return isselected;
+    }
+
     public void setTgldiajukan(String tgldiajukan) {
         this.tgldiajukan = tgldiajukan;
     }
@@ -68,5 +74,9 @@ public class listjobextension {
 
     public void setTanggal2(String tanggal2) {
         this.tanggal2 = tanggal2;
+    }
+
+    public void setIsselected(Boolean isselected) {
+        this.isselected = isselected;
     }
 }
