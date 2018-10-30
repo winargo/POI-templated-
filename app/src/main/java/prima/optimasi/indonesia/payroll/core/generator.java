@@ -17,6 +17,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import prima.optimasi.indonesia.payroll.activity_login;
@@ -141,12 +143,20 @@ public class generator {
 
 
     public static String pengajuancutiurl="http://"+ generator.Server+":4000/cuti";
+    public static String pengajuanizinurl="http://"+ generator.Server+":4000/izin";
+    public static String pengajuansakiturl="http://"+ generator.Server+":4000/sakit";
     public static String pengajuandinasurl="http://"+ generator.Server+":4000/dinas";
+    public static String pengajuanizinkodeurl="http://"+ generator.Server+":4000/izin/kode";
+    public static String pengajuansakitkodeurl="http://"+ generator.Server+":4000/sakit/kode";
+    public static String pengajuandinaskodeurl="http://"+ generator.Server+":4000/dinas/kode";
+
     public static String getdataizinbulananyurl="http://"+ generator.Server+":4000/izin/bulanan";
 
+    public static String kontrakkerjahabisurl="http://"+ generator.Server+":4000/kontrak/habis";
     public static String kontrakkerja1bulanurl="http://"+ generator.Server+":4000/kontrak/1bulan";
     public static String kontrakkerja2bulanurl="http://"+ generator.Server+":4000/kontrak/2bulan";
     public static String kontrakkerja3bulanurl="http://"+ generator.Server+":4000/kontrak/3bulan";
+
 
     public static JSONObject jsondatalogin = null ;
     public static JSONObject jsondatajadwal = null ;
@@ -784,6 +794,37 @@ public class generator {
     {
         byte[] decodedBytes = Base64.decode(input, 0);
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+    }
+
+    public static void logout(Context ctx, String jabatan){
+        FirebaseMessaging.getInstance().unsubscribeFromTopic(jabatan);
+
+        Intent logout = new Intent(ctx,activity_login.class);
+        SharedPreferences prefs = ctx.getSharedPreferences("poipayroll",MODE_PRIVATE);
+
+        if(prefs.getInt("statustoken",0)==0){
+
+        }
+        else {
+            generator.unregistertokentoserver unregistertokentoserver = new generator.unregistertokentoserver(ctx,prefs.getString("tokennotif",""),prefs.getString("Authorization",""));
+            unregistertokentoserver.execute();
+        }
+
+
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putString("id","");
+        edit.putString("idfp","");
+        edit.putString("username","");
+        edit.putString("jabatan","");
+        edit.putString("level","");
+        edit.putString("tempatlahir","");
+        edit.putString("profileimage","");
+        edit.putString("Authorization","");
+        edit.putString("kodekaryawan","");
+
+        edit.commit();
+
+        ctx.startActivity(logout);
     }
 
 }

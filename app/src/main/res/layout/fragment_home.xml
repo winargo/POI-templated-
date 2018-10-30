@@ -18,9 +18,18 @@
             android:descendantFocusability="blocksDescendants"
             android:orientation="vertical">
 
+            <TextView
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_horizontal_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Status Kontrak Kerja"
+                android:textStyle="bold"/>
+
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/lyt_parent"
+                android:padding="@dimen/cardview_default_elevation"
+                android:id="@+id/lyt_parenthabiskontrak"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
@@ -28,7 +37,8 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
+                    android:layout_height="@dimen/lyt_dropdown"
+
                     android:background="@android:color/white"
                     android:gravity="center_vertical"
                     android:minHeight="?attr/actionBarSize"
@@ -39,51 +49,144 @@
                         android:layout_height="wrap_content" />
 
                     <ImageView
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:background="@android:color/transparent"
-                        android:src="@drawable/img_social_envato" />
+                        android:src="@drawable/ic_expired_contract" />
 
                     <View
                         android:layout_width="@dimen/spacing_large"
                         android:layout_height="wrap_content" />
 
                     <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="horizontal">
                         <TextView
                             android:layout_width="match_parent"
-                            android:layout_height="0dp"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:text="Sisa Kontrak (1 bulan)"
+                            android:text="Habis Kontrak"
+                            android:textSize="14sp"
+                            android:gravity="center|left"
                             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/grey_80" />
                         <TextView
-                            android:id="@+id/sisakontrakkerja"
+                            android:id="@+id/sisakontrakkerjahabiskontrak"
                             android:layout_width="match_parent"
-                            android:layout_height="0dp"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Keterangan"
-                            android:textSize="16sp"
+                            android:gravity="right"
+                            android:layout_marginTop="8dp"
+                            android:textSize="12sp"
                             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/grey_80" />
+                        <View
+                            android:layout_width="@dimen/spacing_large"
+                            android:layout_height="wrap_content" />
+
+                        <ImageButton
+                            android:id="@+id/bt_expandhabiskontrak"
+                            android:layout_width="@dimen/dropdown"
+                            android:layout_height="@dimen/dropdown"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:layout_marginTop="8dp"
+                            android:tint="@color/grey_60"
+                            app:srcCompat="@drawable/ic_expand_arrow" />
                     </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lyt_expandhabiskontrak"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/grey_3"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recyclerViewhabiskontrak"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </android.support.v7.widget.RecyclerView>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:padding="@dimen/cardview_default_elevation"
+                android:id="@+id/lyt_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/lyt_dropdown"
+
+                    android:background="@android:color/white"
+                    android:gravity="center_vertical"
+                    android:minHeight="?attr/actionBarSize"
+                    android:orientation="horizontal">
 
                     <View
                         android:layout_width="@dimen/spacing_large"
                         android:layout_height="wrap_content" />
 
-                    <ImageButton
-                        android:id="@+id/bt_expand"
-                        android:layout_width="?attr/actionBarSize"
-                        android:layout_height="?attr/actionBarSize"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:tint="@color/grey_60"
-                        app:srcCompat="@drawable/ic_expand_arrow" />
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/ic_expired" />
 
+                    <View
+                        android:layout_width="@dimen/spacing_large"
+                        android:layout_height="wrap_content" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:text="Sisa Kontrak 1 bulan"
+                            android:textSize="14sp"
+                            android:gravity="center|left"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="@color/grey_80" />
+                        <TextView
+                            android:id="@+id/sisakontrakkerja"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Keterangan"
+                            android:layout_marginTop="8dp"
+                            android:gravity="right"
+                            android:textSize="12sp"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                            android:textColor="@color/grey_80" />
+                        <View
+                            android:layout_width="@dimen/spacing_large"
+                            android:layout_height="wrap_content" />
+
+                        <ImageButton
+                            android:id="@+id/bt_expand"
+                            android:layout_width="@dimen/dropdown"
+                            android:layout_height="@dimen/dropdown"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:layout_marginTop="8dp"
+                            android:tint="@color/grey_60"
+                            app:srcCompat="@drawable/ic_expand_arrow" />
+                    </LinearLayout>
                 </LinearLayout>
+
 
                 <LinearLayout
                     android:id="@+id/lyt_expand"
@@ -106,6 +209,7 @@
 
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:padding="@dimen/cardview_default_elevation"
                 android:id="@+id/lyt_parent2bulan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -114,7 +218,8 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
+                    android:layout_height="@dimen/lyt_dropdown"
+
                     android:background="@android:color/white"
                     android:gravity="center_vertical"
                     android:minHeight="?attr/actionBarSize"
@@ -125,50 +230,52 @@
                         android:layout_height="wrap_content" />
 
                     <ImageView
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:background="@android:color/transparent"
-                        android:src="@drawable/img_social_envato" />
+                        android:src="@drawable/ic_warning_triangle" />
 
                     <View
                         android:layout_width="@dimen/spacing_large"
                         android:layout_height="wrap_content" />
 
                     <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="horizontal">
                         <TextView
                             android:layout_width="match_parent"
-                            android:layout_height="0dp"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:text="Sisa Kontrak (2 bulan)"
+                            android:text="Sisa Kontrak 2 bulan"
+                            android:textSize="14sp"
+                            android:gravity="center|left"
                             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/grey_80" />
                         <TextView
                             android:id="@+id/sisakontrakkerja2bulan"
                             android:layout_width="match_parent"
-                            android:layout_height="0dp"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Keterangan"
-                            android:textSize="16sp"
+                            android:gravity="right"
+                            android:textSize="12sp"
+                            android:layout_marginTop="8dp"
                             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/grey_80" />
+                        <View
+                            android:layout_width="@dimen/spacing_large"
+                            android:layout_height="wrap_content" />
+
+                        <ImageButton
+                            android:id="@+id/bt_expand2bulan"
+                            android:layout_width="@dimen/dropdown"
+                            android:layout_height="@dimen/dropdown"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:layout_marginTop="8dp"
+                            android:tint="@color/grey_60"
+                            app:srcCompat="@drawable/ic_expand_arrow" />
                     </LinearLayout>
-
-                    <View
-                        android:layout_width="@dimen/spacing_large"
-                        android:layout_height="wrap_content" />
-
-                    <ImageButton
-                        android:id="@+id/bt_expand2bulan"
-                        android:layout_width="?attr/actionBarSize"
-                        android:layout_height="?attr/actionBarSize"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:tint="@color/grey_60"
-                        app:srcCompat="@drawable/ic_expand_arrow" />
-
                 </LinearLayout>
 
                 <LinearLayout
@@ -191,6 +298,7 @@
             </LinearLayout>
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:padding="@dimen/cardview_default_elevation"
                 android:id="@+id/lyt_parent3bulan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -199,7 +307,8 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
+                    android:layout_height="@dimen/lyt_dropdown"
+
                     android:background="@android:color/white"
                     android:gravity="center_vertical"
                     android:minHeight="?attr/actionBarSize"
@@ -210,50 +319,53 @@
                         android:layout_height="wrap_content" />
 
                     <ImageView
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
                         android:background="@android:color/transparent"
-                        android:src="@drawable/img_social_envato" />
+                        android:tint="@color/yellow_800"
+                        android:src="@drawable/ic_warning_triangle" />
 
                     <View
                         android:layout_width="@dimen/spacing_large"
                         android:layout_height="wrap_content" />
 
                     <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="horizontal">
                         <TextView
                             android:layout_width="match_parent"
-                            android:layout_height="0dp"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:text="Sisa Kontrak (3 bulan)"
+                            android:text="Sisa Kontrak 3 bulan"
+                            android:textSize="14sp"
+                            android:gravity="center|left"
                             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/grey_80" />
                         <TextView
                             android:id="@+id/sisakontrakkerja3bulan"
                             android:layout_width="match_parent"
-                            android:layout_height="0dp"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Keterangan"
-                            android:textSize="16sp"
+                            android:gravity="right"
+                            android:layout_marginTop="8dp"
+                            android:textSize="12sp"
                             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                             android:textColor="@color/grey_80" />
+                        <View
+                            android:layout_width="@dimen/spacing_large"
+                            android:layout_height="wrap_content" />
+
+                        <ImageButton
+                            android:id="@+id/bt_expand3bulan"
+                            android:layout_width="@dimen/dropdown"
+                            android:layout_height="@dimen/dropdown"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:layout_marginTop="8dp"
+                            android:tint="@color/grey_60"
+                            app:srcCompat="@drawable/ic_expand_arrow" />
                     </LinearLayout>
-
-                    <View
-                        android:layout_width="@dimen/spacing_large"
-                        android:layout_height="wrap_content" />
-
-                    <ImageButton
-                        android:id="@+id/bt_expand3bulan"
-                        android:layout_width="?attr/actionBarSize"
-                        android:layout_height="?attr/actionBarSize"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:tint="@color/grey_60"
-                        app:srcCompat="@drawable/ic_expand_arrow" />
-
                 </LinearLayout>
 
                 <LinearLayout
@@ -280,7 +392,8 @@
                 android:layout_marginTop="@dimen/activity_horizontal_margin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Absensi Karyawan"/>
+                android:textStyle="bold"
+                android:text="Daftar Kehadiran Karyawan"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

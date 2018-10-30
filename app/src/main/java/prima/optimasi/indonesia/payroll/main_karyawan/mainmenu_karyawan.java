@@ -210,10 +210,12 @@ public class mainmenu_karyawan extends AppCompatActivity
 
         });
 
-        Button logout=findViewById(R.id.logout);
+        FloatingActionButton logout=findViewById(R.id.logout);
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                generator.logout(mainmenu_karyawan.this,"karyawan");
+                /*
                 FirebaseMessaging.getInstance().unsubscribeFromTopic("kabag");
 
                 Intent logout = new Intent(mainmenu_karyawan.this,activity_login.class);
@@ -241,7 +243,7 @@ public class mainmenu_karyawan extends AppCompatActivity
 
                 edit.commit();
 
-                startActivity(logout);
+                startActivity(logout);*/
             }
         });
         /*
@@ -516,7 +518,9 @@ public class mainmenu_karyawan extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_mainmenu, menu);
+        getMenuInflater().inflate(R.menu.menu_activity_main, menu);
+        MenuItem item=menu.findItem(R.id.action_settings);
+        item.setTitle("About");
         return true;
     }
 
@@ -526,40 +530,6 @@ public class mainmenu_karyawan extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic("karyawan");
-
-
-            Intent logout = new Intent(mainmenu_karyawan.this,activity_login.class);
-            SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
-
-            if(prefs.getInt("statustoken",0)==0){
-
-            }
-            else {
-                generator.unregistertokentoserver unregistertokentoserver = new generator.unregistertokentoserver(mainmenu_karyawan.this,prefs.getString("tokennotif",""),prefs.getString("Authorization",""));
-                unregistertokentoserver.execute();
-            }
-
-            SharedPreferences.Editor edit = prefs.edit();
-
-            edit.putString("iduser","");
-            edit.putString("username","");
-            edit.putString("jabatan","");
-            edit.putString("level","");
-            edit.putString("kodekaryawan","");
-            edit.putString("tempatlahir","");
-            edit.putString("profileimage","");
-            edit.putString("Authorization","");
-
-            edit.commit();
-
-            startActivity(logout);
-
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }

@@ -627,39 +627,6 @@ public class Activity_Anggota extends AppCompatActivity {
         else if (id == R.id.action_search) {
             return true;
         }
-        /*
-        else if (id == R.id.action_logout) {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic("karyawan");
-
-
-            Intent logout = new Intent(this,activity_login.class);
-            SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
-
-            if(prefs.getInt("statustoken",0)==0){
-
-            }
-            else {
-                generator.unregistertokentoserver unregistertokentoserver = new generator.unregistertokentoserver(this,prefs.getString("tokennotif",""),prefs.getString("Authorization",""));
-                unregistertokentoserver.execute();
-            }
-
-            SharedPreferences.Editor edit = prefs.edit();
-
-            edit.putString("iduser","");
-            edit.putString("username","");
-            edit.putString("jabatan","");
-            edit.putString("level","");
-            edit.putString("kodekaryawan","");
-            edit.putString("tempatlahir","");
-            edit.putString("profileimage","");
-            edit.putString("Authorization","");
-
-            edit.commit();
-
-            startActivity(logout);
-
-            return true;
-        }*/
 
         return super.onOptionsItemSelected(item);
     }

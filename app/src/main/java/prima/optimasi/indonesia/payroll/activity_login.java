@@ -314,6 +314,7 @@ public class activity_login extends FragmentActivity {
                                 pref.edit().putString("Authorization",responseObject.getString("token")).commit();
                                 pref.edit().putString("jabatan","owner").commit();
                                 pref.edit().putString("iduser","").commit();
+
                                 pref.edit().putString("profileimage",generator.ownerurl+responseObject.getString("foto")).commit();
                                 pref.edit().putString("tempatlahir","").commit();
                                 pref.edit().putString("username",responseObject.getString("nama_pengguna")).commit();
@@ -568,7 +569,8 @@ public class activity_login extends FragmentActivity {
                     JSONArray data = result.getJSONArray("data");
                     JSONObject dataisi = data.getJSONObject(0);
                     String declare = dataisi.getString("otoritas");
-                    String iduser = dataisi.getString("idfp");
+                    String idfp = dataisi.getString("idfp");
+                    String id = dataisi.getString("id");
                     if(declare.contains("3")){
 
                         Snackbar.make(parent_view, "Success , Loging in ...", Snackbar.LENGTH_SHORT).show();
@@ -579,7 +581,8 @@ public class activity_login extends FragmentActivity {
                         pref.edit().putString("kodekaryawan",dataisi.getString("kode_karyawan")).commit();
                         pref.edit().putString("Authorization",result.getString("token")).commit();
                         pref.edit().putString("jabatan",declare).commit();
-                        pref.edit().putString("iduser",iduser).commit();
+                        pref.edit().putString("idfp",idfp).commit();
+                        pref.edit().putString("id",id).commit();
                         pref.edit().putString("tempatlahir",dataisi.getString("tempat_lahir")).commit();
                         pref.edit().putString("profileimage",generator.profileurl+dataisi.getString("foto")).commit();
                         pref.edit().putString("username",dataisi.getString("nama")).commit();
@@ -599,7 +602,8 @@ public class activity_login extends FragmentActivity {
                         pref.edit().putString("kodekaryawan",dataisi.getString("kode_karyawan")).commit();
                         pref.edit().putString("Authorization",result.getString("token")).commit();
                         pref.edit().putString("jabatan",declare).commit();
-                        pref.edit().putString("iduser",iduser).commit();
+                        pref.edit().putString("idfp",idfp).commit();
+                        pref.edit().putString("id",id).commit();
                         pref.edit().putString("tempatlahir",dataisi.getString("tempat_lahir")).commit();
                         pref.edit().putString("profileimage",generator.profileurl+dataisi.getString("foto")).commit();
                         pref.edit().putString("username",dataisi.getString("nama")).commit();
@@ -617,7 +621,8 @@ public class activity_login extends FragmentActivity {
                         pref.edit().putString("kodekaryawan",dataisi.getString("kode_karyawan")).commit();
                         pref.edit().putString("Authorization",result.getString("token")).commit();
                         pref.edit().putString("jabatan",declare).commit();
-                        pref.edit().putString("iduser",iduser).commit();
+                        pref.edit().putString("idfp",idfp).commit();
+                        pref.edit().putString("id",id).commit();
                         pref.edit().putString("tempatlahir",dataisi.getString("tempat_lahir")).commit();
                         pref.edit().putString("profileimage",generator.profileurl+dataisi.getString("foto")).commit();
                         pref.edit().putString("username",dataisi.getString("nama")).commit();
