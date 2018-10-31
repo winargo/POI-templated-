@@ -55,6 +55,9 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
     private final int VIEW_SECTION = 0;
     private int animation_type = 0;
 
+    View nothing;
+    RecyclerView recycler;
+
     private ProgressDialog dialog ;
 
     String[] real = new String[]{"id","kode_karyawan","idfp","nama","alamat","tempat_lahir","tgl_lahir","telepon","no_wali","email","tgl_masuk","kelamin",
@@ -93,8 +96,10 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
         this.mOnItemClickListener = mItemClickListener;
     }
 
-    public AdapterListSectionedjob(Context context, List<listjob> items, int animation_type,ProgressDialog dialog) {
+    public AdapterListSectionedjob(Context context, List<listjob> items, int animation_type, ProgressDialog dialog, View nothing, RecyclerView showup) {
         this.dialog = dialog;
+        recycler = showup ;
+        this.nothing = nothing;
         this.items = items;
         ctx = context;
         this.animation_type = animation_type;
@@ -175,7 +180,7 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
 
 
             //view.adapter = new AdapterListBasicjob_extention(ctx,)
-            retrive ret = new retrive(ctx,p.getSectionname(),view.nothing,view.txt_type,view.adapter,view.recycler);
+            retrive ret = new retrive(ctx,p.getSectionname(),view.nothing,view.txt_type,view.adapter,view.recycler,position);
             ret.execute();
 
 
@@ -224,10 +229,13 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
         View nothing ;
         TextView txt_nothing;
         RecyclerView recycler ;
+        int positions;
         //listjobextension =
 
-        public retrive(Context context,String choice,View nothing,TextView txt_nothing,AdapterListBasicjob_extention adapter,RecyclerView recycler)
+        public retrive(Context context,String choice,View nothing,TextView txt_nothing,AdapterListBasicjob_extention adapter,RecyclerView recycler,int position)
         {
+            this.positions = position;
+
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
 
             this.recycler = recycler;
@@ -336,8 +344,8 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                             Log.e(tipe,result.toString() );
                             if(result.getString("status").equals("true")) {
 
-                                Log.e(TAG, tipe + " " + result.toString());
-                                Log.e("urldata",urldata);
+                                //Log.e(TAG, tipe + " " + result.toString());
+                                //Log.e("urldata",urldata);
 
                                 JSONArray arrays = result.getJSONArray("data");
                                 for (int i = 0; i < arrays.length(); i++) {
@@ -363,9 +371,9 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                             }
                         }
                         else if (tipe.equals("Approval Dinas") ){
-                            Log.e(tipe,result.toString() );
+                            //Log.e(tipe,result.toString() );
                             if(result.getString("status").equals("true")) {
-                                Log.e(TAG, tipe + " " + result.toString());
+                                //Log.e(TAG, tipe + " " + result.toString());
 
                                 JSONArray arrays = result.getJSONArray("data");
                                 for (int i = 0; i < arrays.length(); i++) {
@@ -391,9 +399,9 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                             }
                         }
                         else if (tipe.equals("Approval Dirumahkan") ){
-                            Log.e(tipe,result.toString() );
+                            //Log.e(tipe,result.toString() );
                             if(result.getString("status").equals("true")) {
-                                Log.e(TAG, tipe + " " + result.toString());
+                                //Log.e(TAG, tipe + " " + result.toString());
 
                                 JSONArray arrays = result.getJSONArray("data");
                                 for (int i = 0; i < arrays.length(); i++) {
@@ -419,9 +427,9 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                             }
                         }
                         else if (tipe.equals("Approval Izin") ){
-                            Log.e(tipe,result.toString() );
+                            //Log.e(tipe,result.toString() );
                             if(result.getString("status").equals("true")) {
-                                Log.e(TAG, tipe + " " + result.toString());
+                                //Log.e(TAG, tipe + " " + result.toString());
 
                                 JSONArray arrays = result.getJSONArray("data");
                                 for (int i = 0; i < arrays.length(); i++) {
@@ -672,11 +680,43 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                             }
                         }
                         else if (tipe.equals("Approval Karyawan") ){
-                            
+
+                            Log.e( "karyawan data",result.toString() );
+
                             //String[] options = new String[]{"Approval Cuti","Approval Dinas","Approval Dirumahkan","Approval Izin",
                             // "Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment",
                             // "Approval Reward"};
                             //
+                            /*10-30 16:35:04.115 15730-15730/prima.optimasi.indonesia.payroll E/karyawan data:
+                             {"status":true,"message":"berhasil get data","data":[{"id":1,"kode_karyawan":"EMP-1",
+                             "idfp":"KRY0001","nama":"Tes1","alamat":"1","tempat_lahir":"1","tgl_lahir":"2018-08-23T00:00:00.000Z",
+                             "telepon":"12313","no_wali":"12321321321","email":"12312@sad.asd","tgl_masuk":"0000-00-00",
+                             "kelamin":"laki-laki","status_nikah":"Menikah","pendidikan":"SMA Sederajat","wn":"Asing","agama":"Katholik","shift":"tidak","status_kerja":"aktif",
+                             "ibu_kandung":"12312321","suami_istri":"12312321","tanggungan":123213,"npwp":"1318","gaji":32640000,"rekening":"12321312312133","id_bank":6,
+                             "id_departemen":1,"id_jabatan":1,"id_grup":10,"id_golongan":15,"atas_nama":"tes1","foto":"8c674d66f16b0ee916f030b2c9b40921.jpg","id_cabang":2,
+                             "start_date":"2018-09-01T00:00:00.000Z","expired_date":"2018-10-26T00:00:00.000Z","jab_index":0,"kontrak":"ya","file_kontrak":"","otoritas":1,
+                             "periode_gaji":"2-Mingguan","qrcode_file":"d756a9b60a078d4746e15bb89f7acd5c.png"},{"id":3,"kode_karyawan":"EMP-2","idfp":"KRY0002","nama":"Tes12",
+                             "alamat":"asdasddasd","tempat_lahir":"tetetettettetetete","tgl_lahir":"0000-00-00","telepon":"1231321321321","no_wali":"123213123","email":"12312@sad.asd",
+                             "tgl_masuk":"2018-08-29T00:00:00.000Z","kelamin":"perempuan","status_nikah":"Menikah","pendidikan":"SMP","wn":"Indonesia","agama":"Protestan","shift":"ya",
+                             "status_kerja":"aktif","ibu_kandung":"asdsad","suami_istri":"assdaadsd","tanggungan":0,"npwp":"1232132131","gaji":111,
+                             "rekening":"1231223112313213","id_bank":6,"id_departemen":15,"id_jabatan":9,"id_grup":8,"id_golongan":62,"atas_nama":"tes12","foto":"cba9fab615b35fbf35839e6f2ca6fef3.jpg",
+                             "id_cabang":2,"start_date":"2018-10-01T00:00:00.000Z","expired_date":"2018-11-28T00:00:00.000Z","jab_index":0,"kontrak":"ya","file_kontrak":"","otoritas":3,
+                             "periode_gaji":"Bulanan","qrcode_file":""},{"id":4,"kode_karyawan":"EMP-04","idfp":"KYR0003","nama":"Sutrina Sudjipto1","alamat":"Jln.Melati No.77","tempat_lahir":"Medan",
+                             "tgl_lahir":"1992-08-01T00:00:00.000Z","telepon":"000000000","no_wali":"000000000000","email":"gagaga@gmail.com","tgl_masuk":"2018-08-01T00:00:00.000Z","kelamin":"perempuan",
+                             "status_nikah":"Menikah","pendidikan":"Diploma 3","wn":"Indonesia","agama":"Katholik","shift":"ya","status_kerja":"aktif","ibu_kandung":"adssdasa","suami_istri":"daasda",
+                             "tanggungan":123132133,"npwp":"1232132113","gaji":60000,"rekening":"213131321","id_bank":1,"id_departemen":15,"id_jabatan":30,"id_grup":9,"id_golongan":28,
+                             "atas_nama":"Sutrina Sudjipto1","foto":"cf0092a461ec586d8aebcf6c34a2e1c6.jpg","id_cabang":1,"start_date":"2018-09-01T00:00:00.000Z","expired_date":"2018-12-28T00:00:00.000Z",
+                             "jab_index":0,"kontrak":"ya","file_kontrak":"","otoritas":3,"periode_gaji":"Bulanan","qrcode_file":""},{"id":7,"kode_karyawan":"EMP-07","idfp":"KRY0007","nama":"Sparno",
+                             "alamat":"Jln.Surabaya","tempat_lahir":"Bogor","tgl_lahir":"1994-07-02T00:00:00.000Z","telepon":"000000000","no_wali":"0000000000","email":"modomodo@gmail.com",
+                             "tgl_masuk":"2018-08-04T00:00:00.000Z","kelamin":"laki-laki","status_nikah":"Menikah","pendidikan":"Sarjana S1","wn":"Indonesia","agama":"Islam","shift":"ya",
+                             "status_kerja":"aktif","ibu_kandung":"Meiling","suami_istri":"Lastri","tanggungan":3,"npwp":"001011101010","gaji":0,"rekening":"00010000","id_bank":1,"id_departemen":16,
+                             "id_jabatan":10,"id_grup":6,"id_golongan":25,"atas_nama":"Sparno","foto":"17a490b3ab8e38e296e3b1b18a433eb9.jpg","id_cabang":2,"start_date":"2018-10-08T00:00:00.000Z",
+                             "expired_date":"2019-01-27T00:00:00.000Z","jab_index":0,"kontrak":"ya","file_kontrak":"","otoritas":2,"periode_gaji":"2-Mingguan",
+                             "qrcode_file":"4b267aa6e56888580342445702d212f3.png"},{"id":8,"kode_karyawan":"EMP-08","idfp":"KRY0008","nama":"Aston","alamat":"Jln.Melati1",
+                             "tempat_lahir":"Medan","tgl_lahir":"1992-07-02T00:00:00.000Z","telepon":"000000000","no_wali":"090909090909","email":"gagaga@gmail.com",
+                             "tgl_masuk":"2018-07-09T00:00:00.000Z","kelamin":"perempuan","status_nikah":"Menikah","pendidikan":"Sarjana S3","wn":"Indonesia",
+                             "agama":"Islam","shift":"ya","status_kerja":"aktif","ibu_kandung":"Lisa","suami_istri":"sadaa","tanggungan"
+                             */
 
                             String newline = "\n";
                             String spacing = " : ";
@@ -725,7 +765,7 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                                     }
 
 
-                                    DecimalFormat formatter = new DecimalFormat("###,###,###");
+
 
                                     //0,1,2,39,37,36
 
@@ -762,29 +802,6 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
 
                                     listdata.add(data);
 
-                                    /*Double gaji = Double.parseDouble(obj.getString("gaji"));
-                                    String kode_karyawan = obj.getString("kode_karyawan");
-                                    String idfp= obj.getString("kode_karyawan");
-                                    String alamat = obj.getString("");
-                                    String tempat_lahir = obj.getString("");
-                                    String tgl_lahir = obj.getString("");
-                                    String telepon = obj.getString("");
-                                    String no_wali = obj.getString("");
-                                    String email = obj.getString("");
-                                    String tglmasuk = obj.getString("");
-                                    String kelamin = obj.getString("");
-                                    String status_nikah = obj.getString("");
-                                    String pendidikan = obj.getString("");
-                                    String wn = obj.getString("");
-                                    String agama = obj.getString("");
-                                    String shift = obj.getString("");
-                                    String status_kerja = obj.getString("");
-                                    String foto = obj.getString("foto");
-                                    String kontrak = obj.getString("");
-                                    String periode = obj.getString("");
-                                    String  = obj.getString("");
-                                    String  = obj.getString("");
-                                    String lembur = "";*/
                                 }else{
 
                                     JSONObject obj1 = arrays1.getJSONObject(index);
@@ -836,7 +853,28 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
 
                                                 }
                                                 else {
-                                                    texting = texting + karyawandetail[k]+spacing+obj.getString(karyawan[k])+arrow+obj1.getString(karyawan[k])+newline;
+                                                    if(obj.getString(karyawan[k]).contains("T00:00:00.000Z")){
+                                                        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                                                        SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
+                                                        if(obj1.getString(karyawan[k]).equals("null")){
+                                                            texting = texting + karyawandetail[k]+spacing+format2.format(format1.parse(obj.getString(karyawan[k]).substring(0,10)))+arrow+obj1.getString(karyawan[k])+newline;
+                                                        }else {
+                                                            texting = texting + karyawandetail[k]+spacing+format2.format(format1.parse(obj.getString(karyawan[k]).substring(0,10)))+arrow+format2.format(format1.parse(obj1.getString(karyawan[k]).substring(0,10)))+newline;
+                                                        }
+
+                                                    }
+                                                    else {
+
+
+                                                        if(obj1.getString(karyawan[k]).contains("T00:00:00.000Z")) {
+                                                            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                                                            SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
+                                                            texting = texting + karyawandetail[k]+spacing+obj.getString(karyawan[k])+arrow+format2.format(format1.parse(obj1.getString(karyawan[k]).substring(0,10)))+newline;
+                                                        }
+                                                        else {
+                                                            texting = texting + karyawandetail[k] + spacing + obj.getString(karyawan[k]) + arrow + obj1.getString(karyawan[k]) + newline;
+                                                        }
+                                                    }
                                                 }
 
                                             }
@@ -900,40 +938,8 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                         }
                         else if (tipe.equals("Approval Pdm") ){
 
-                            Log.e(TAG, tipe+" "+result.toString() );
-
-                            /*E/retrive: Approval Pdm {"status":true,"message":"berhasil get data","data":[{"nama":"Tes1","foto":"8c674d66f16b0ee916f030b2c9b40921.jpg",
-                            "jabatan":"Admin Kantor","grup":"group 4","departemen":"Accounting","cabang":"Denya Surabaya","golongan":"GOL-06"},{"nama":"Tes12",
-                            "foto":"cba9fab615b35fbf35839e6f2ca6fef3.jpg","jabatan":"Office Boy","grup":"group 12","departemen":"HRD","cabang":"Denya Surabaya",
-                            "golongan":"GOl-40"},{"nama":"Sutrina Sudjipto1","foto":"cf0092a461ec586d8aebcf6c34a2e1c6.jpg","jabatan":"hrd","grup":"group 3",
-                            "departemen":"HRD","cabang":"Denya Tamora","golongan":"GOL-20"},{"nama":"Sparno","foto":"17a490b3ab8e38e296e3b1b18a433eb9.jpg",
-                            "jabatan":"Kepala Grup A","grup":"Group Lain","departemen":"IT","cabang":"Denya Surabaya","golongan":"GOL-07"},{"nama":"Aston",
-                            "foto":"abe6ae2097f676a4e7d7869a75139fb9.jpg","jabatan":"Kepala Aksesoris","grup":"Group Lain","departemen":"Accounting",
-                            "cabang":"Denya Tamora","golongan":"GOL-01"},{"nama":"Sulastri Ningsih","foto":"35b234cd6919cd1dabc2c97f0af16436.jpg",
-                            "jabatan":"Kepala Aksesoris","grup":"Group Lain","departemen":"Accounting","cabang":"Denya Surabaya","golongan":"GOL-07"},
-                            {"nama":"Sutarno","foto":"847df28a6e8e42bc5aa7f5ad47a5cfc6.jpg","jabatan":"hrd","grup":"Group D","departemen":"Purchasing",
-                            "cabang":"Denya Tamora","golongan":"GOl-40"},{"nama":"Astros","foto":"","jabatan":"Admin Kantor","grup":"group 3","departemen":"Accounting",
-                            "cabang":"Denya Surabaya","golongan":null},{"nama":"Oishi","foto":"08adcb482d9cf229b3562505989bd981.jpg","jabatan":"Security","grup":"Group B",
-                            "departemen":"Kebersihan Lingkungan","cabang":"Denya Tamora","golongan":"GOl-40"},{"nama":"Queen","foto":"","jabatan":"Kepala Bengkel",
-                            "grup":"Group Lain","departemen":"Gudang bahan baku","cabang":"Denya Tamora","golongan":"GOL-SS"},{"nama":"Monchol","foto":"",
-                            "jabatan":"Anggota","grup":"Group D","departemen":"Produksi","cabang":"Denya Tamora","golongan":null}],"data1":[{"id_promosi":35,
-                            "id_karyawan":7,"nama":"Sparno","foto":"17a490b3ab8e38e296e3b1b18a433eb9.jpg","temp_id_promosi":146,"id_cabang1":3,"id_departemen1":2,
-                            "id_jabatan1":4,"id_golongan1":15,"id_grup1":6,"tanggal":"2018-09-01T00:00:00.000Z","judul":"Hapus Data","keterangans":"asdasdsa",
-                            "status":"Proses","status_info":"Hapus","create_at":"2018-10-08T12:23:10.000Z","approve_at":"2018-09-21T10:44:42.000Z","jabatan":"Salesman",
-                            "grup":"Group Lain","departemen":"Kebersihan Lingkungan","cabang":null,"golongan":"GOL-06"},{"id_promosi":38,"id_karyawan":7,"nama":"Sparno",
-                            "foto":"17a490b3ab8e38e296e3b1b18a433eb9.jpg","temp_id_promosi":147,"id_cabang1":3,"id_departemen1":2,"id_jabatan1":4,"id_golongan1":15,"id_grup1":6,
-                            "tanggal":"2018-09-01T00:00:00.000Z","judul":"Hapus Data","keterangans":"asdfasd1234333","status":"Proses","status_info":"Hapus",
-                            "create_at":"2018-10-08T13:24:29.000Z","approve_at":"2018-09-21T10:44:38.000Z","jabatan":"Salesman","grup":"Group Lain",
-                            "departemen":"Kebersihan Lingkungan","cabang":null,"golongan":"GOL-06"},{"id_promosi":41,"id_karyawan":2,"nama":null,
-                            "foto":null,"temp_id_promosi":148,"id_cabang1":4,"id_departemen1":2,"id_jabatan1":3,"id_golongan1":15,"id_grup1":6,
-                            "tanggal":"2018-09-01T00:00:00.000Z","judul":"Hapus Data","keterangans":"2662","status":"Proses","status_info":"Hapus",
-                            "create_at":"2018-10-08T12:28:45.000Z","approve_at":"2018-09-21T10:44:31.000Z","jabatan":"Programmer","grup":"Group Lain",
-                            "departemen":"Kebersihan Lingkungan","cabang":null,"golongan":"GOL-06"},{"id_promosi":44,"id_karyawan":2,"nama":null,
-                            "foto":null,"temp_id_promosi":151,"id_cabang1":3,"id_departemen1":18,"id_jabatan1":30,"id_golongan1":26,"id_grup1":7,
-                            "tanggal":"2018-09-03T00:00:00.000Z","judul":"Demosi","keterangans":"asdasdsa","status":"Proses","status_info":"Edit",
-                            "create_at":"2018-10-08T13:24:43.000Z","approve_at":"2018-10-05T16:33:31.000Z","jabatan":"hrd","grup":null,
-                            "departemen":"Kebersihan","cabang":null,"golongan":null},{"id_promosi":null,"id_karyawan":12,"nama":null,"foto":null,
-                            "temp_id_promosi":161,"id_cabang1":2,"id_departemen1":4,"id_jabatan1":19,"id_golongan1":15,"id_grup1":7,"tanggal":"2018-10-08T00:00:00.000Z","jud*/
+                            String newline = "\n";
+                            String spacing = " : ";
 
                             if(result.getString("status").equals("true"))
                             {
@@ -942,42 +948,84 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                                 for (int i = 0; i < arrays.length(); i++) {
                                     JSONObject obj = arrays.getJSONObject(i);
 
-                                    listjobextension data = new listjobextension();
+
 
                                     String arrow = " ➡ ";
 
-                                    int index = 0 ;
-
-                                    Boolean isnotsame = false;
 
                                     for (int j = 0; j < arrays1.length(); j++) {
                                         JSONObject obj1 = arrays1.getJSONObject(j);
-                                        if(obj.getString("id_golongan").equals(obj1.getString("id_golongan"))){
-                                            isnotsame = false;
+                                        if(obj.getString("id_promosi").equals(obj1.getString("id_promosi"))){
 
-                                            break;
+                                            listjobextension data = new listjobextension();
+
+                                            data.setTipe(tipe);
+
+                                            if(obj.getString("foto").equals("")){
+                                                data.setProfilepicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ");
+                                            }
+                                            else {
+                                                data.setProfilepicture(generator.profileurl+obj.getString("foto"));
+                                            }
+
+
+                                            /*"nama": "Aston",
+                                            "foto": "abe6ae2097f676a4e7d7869a75139fb9.jpg",
+                                            "jabatan": "Kepala Aksesoris",
+                                            "grup": "Group Lain",
+                                            "departemen": "Accounting",
+                                            "cabang": "Denya Tamora",
+                                            "golongan": "GOL-01"*/
+                                            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                                            SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
+                                            data.setNamakaryawan(obj1.getString("judul"));
+                                            data.setKeterangan("Tanggal Pengajuan"+spacing+format2.format(format1.parse(obj1.getString("create_at").substring(0,10)))+newline);
+
+                                            if(obj.getString("nama").equals(obj1.getString("nama"))){
+                                                data.setKeterangan(data.getKeterangan()+"Nama"+spacing+obj.getString("nama")+newline);
+                                            }
+                                            else {
+                                                data.setNamakaryawan(data.getKeterangan()+"Nama"+spacing+obj.getString("nama")+arrow+obj1.getString("nama")+newline);
+                                            }
+                                            if(obj.getString("jabatan").equals(obj1.getString("jabatan"))){
+                                                //data.setKeterangan(data.getKeterangan()+"Jabatan"+spacing+obj.getString("jabatan")+newline);
+                                            }
+                                            else {
+                                                data.setKeterangan(data.getKeterangan()+"Jabatan"+spacing+obj.getString("jabatan")+arrow+obj1.getString("jabatan")+newline);
+                                            }
+                                            if(obj.getString("grup").equals(obj1.getString("grup"))){
+                                                //data.setKeterangan(data.getKeterangan()+"Group"+spacing+obj.getString("grup")+newline);
+                                            }
+                                            else {
+                                                data.setKeterangan(data.getKeterangan()+"Group"+spacing+obj.getString("grup")+arrow+obj1.getString("grup")+newline);
+                                            }
+                                            if(obj.getString("departemen").equals(obj1.getString("departemen"))){
+                                                //data.setKeterangan(data.getKeterangan()+"Departemen"+spacing+obj.getString("departemen")+newline);
+                                            }
+                                            else {
+                                                data.setKeterangan(data.getKeterangan()+"Departemen"+spacing+obj.getString("departemen")+arrow+obj1.getString("departemen")+newline);
+                                            }
+                                            if(obj.getString("cabang").equals(obj1.getString("cabang"))){
+                                                //data.setKeterangan(data.getKeterangan()+"Cabang"+spacing+obj.getString("cabang")+newline);
+                                            }
+                                            else {
+                                                data.setKeterangan(data.getKeterangan()+"Cabang"+spacing+obj.getString("cabang")+arrow+obj1.getString("cabang")+newline);
+                                            }
+                                            if(obj.getString("golongan").equals(obj1.getString("golongan"))){
+                                                //data.setKeterangan(data.getKeterangan()+"Golongan"+spacing+obj.getString("golongan")+newline);
+                                            }
+                                            else {
+                                                data.setKeterangan(data.getKeterangan()+"Golongan"+spacing+obj.getString("golongan")+arrow+obj1.getString("golongan")+newline);
+                                            }
+                                            listdata.add(data);
                                         }
                                         else{
-                                            isnotsame = true;
-                                            index++;
+
                                         }
 
                                     }
 
-                                    if(isnotsame){
-
-
-                                        listdata.add(data);
-                                    }else{
-
-
-
-                                        listdata.add(data);
-                                    }
                                 }
-                            }
-                            else {
-
                             }
                         }
                         else if (tipe.equals("Approval Punishment") ){
@@ -1047,19 +1095,19 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                         }
 
                         if(listdata.size()==0){
-                        nothing.setVisibility(View.VISIBLE);
+                            nothing.setVisibility(View.VISIBLE);
+                            removeItem(positions);
                         }
                         else
                         {
                             nothing.setVisibility(View.GONE);
+                            adapter = new AdapterListBasicjob_extention(ctx,listdata);
+                            adapter.notifyDataSetChanged();
+
+                            recycler.setLayoutManager(new LinearLayoutManager(ctx));
+                            recycler.setHasFixedSize(true);
+                            recycler.setAdapter(adapter);
                         }
-
-                        adapter = new AdapterListBasicjob_extention(ctx,listdata);
-                        adapter.notifyDataSetChanged();
-
-                        recycler.setLayoutManager(new LinearLayoutManager(ctx));
-                        recycler.setHasFixedSize(true);
-                        recycler.setAdapter(adapter);
                     }
                     else {
                         Toast.makeText(ctx,"Gagal" + result.getString("message"),Toast.LENGTH_LONG).show();
@@ -1077,5 +1125,16 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
             Log.d(TAG + " onPostExecute", "" + result);
         }
     }
+
+    public void removeItem(int position) {
+        items.remove(position);
+        // notify the item removed by position
+        // to perform recycler view delete animations
+        // NOTE: don't call notifyDataSetChanged()
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, items.size());
+
+    }
+
 
 }

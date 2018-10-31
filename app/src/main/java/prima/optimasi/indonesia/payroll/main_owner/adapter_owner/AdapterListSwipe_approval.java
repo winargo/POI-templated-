@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -50,6 +51,8 @@ import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
 public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private CoordinatorLayout snake;
+
     private List<listjobextension> items = new ArrayList<>();
 
     String[] real = new String[]{"id","kode_karyawan","idfp","nama","alamat","tempat_lahir","tgl_lahir","telepon","no_wali","email","tgl_masuk","kelamin",
@@ -88,7 +91,8 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
         this.mOnItemClickListener = mItemClickListener;
     }
 
-    public AdapterListSwipe_approval(Context context, List<listjobextension> items) {
+    public AdapterListSwipe_approval(Context context, List<listjobextension> items,CoordinatorLayout snakebar) {
+        snake = snakebar;
         this.items = items;
         ctx = context;
     }
@@ -148,8 +152,10 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                     view.spark.playAnimation();
                     if(view.spark.isChecked()){
                        //execute data
+                        removeItem(position);
                     }
                     else {
+                        Snackbar.make(snake,"Press again to Confirm",Snackbar.LENGTH_SHORT).show();
                         view.spark.setChecked(true);
                         view.sparktrue.setChecked(false);
                         final Handler handler = new Handler();
@@ -169,9 +175,10 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                 public void onClick(View v) {
                     view.sparktrue.playAnimation();
                     if(view.sparktrue.isChecked()){
-                        //execute data
+                        removeItem(position);
                     }
                     else {
+                        Snackbar.make(snake,"Press again to Confirm",Snackbar.LENGTH_SHORT).show();
                         view.sparktrue.setChecked(true);
                         view.spark.setChecked(false);
                         final Handler handler = new Handler();
@@ -211,6 +218,19 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
 
             }
             else if(p.getTipe().equals(options[5])){
+
+                Picasso.get().load(p.getProfilepicture()).transform(new CircleTransform()).into(view.image);
+
+                view.name.setText(p.getNamakaryawan());
+                //try {
+                view.desc.setText(/*"Tanggal Pengajuan : "+format1.format(format.parse(p.getTgldiajukan()))+"\n"+*/p.getKeterangan());
+                /*} catch (ParseException e) {
+                    e.printStackTrace();
+                }*/
+
+
+            }
+            else if(p.getTipe().equals(options[7])){
 
                 Picasso.get().load(p.getProfilepicture()).transform(new CircleTransform()).into(view.image);
 
@@ -262,8 +282,6 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                     e.printStackTrace();
                 }*/
 
-
-            }else if(p.getTipe().equals(options[4])){
 
             }
             else {

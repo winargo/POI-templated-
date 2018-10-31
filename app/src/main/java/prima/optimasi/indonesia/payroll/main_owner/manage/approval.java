@@ -33,6 +33,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,20 +103,11 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
 
         recyclerView = findViewById(R.id.recyclerView);
 
-        AlertDialog dialog = new AlertDialog.Builder(approval.this).setTitle("Instruction").setMessage("Slide Left To Deny / Ignore press the Tick button to Accept").setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        }).create();
-
-        dialog.show();
-
 
         for (int i = 0 ; i < options.length;i++){
             if(options[i].equals(getIntent().getStringExtra("tipe"))){
                 initToolbar(options[i]);
-                retrive adddata = new retrive(approval.this,options[i]);
+                retrive adddata = new retrive(approval.this,options[i],parent_view);
                 adddata.execute();
             }
         }
@@ -175,12 +167,14 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
         String tipe = "";
         View nothing ;
         TextView txt_nothing;
+        CoordinatorLayout tempcoor;
         //listjobextension =
 
-        public retrive(Context context,String choice)
+        public retrive(Context context,String choice,CoordinatorLayout coor)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
 
+            tempcoor = coor;
 
             this.txt_nothing = txt_nothing;
             this.nothing = nothing;
@@ -848,53 +842,96 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                     }
                     else if (tipe.equals("Approval Pdm") ){
 
-                        Log.e(TAG, tipe+" "+result.toString() );
+                        String newline = "\n";
+                        String spacing = " : ";
 
-                            /*E/retrive: Approval Pdm {"status":true,"message":"berhasil get data","res1":[{"nama":"Sparno","foto":"17a490b3ab8e38e296e3b1b18a433eb9.jpg",
-                                    "temp_id_promosi":146,"id_promosi":35,"id_karyawan":7,"id_cabang1":3,"id_departemen1":2,"id_jabatan1":4,"id_golongan1":15,"id_grup1":6,
-                                    "tanggal":"2018-09-01T00:00:00.000Z","judul":"Hapus Data","keterangans":"asdasdsa","status":"Proses","status_info":"Hapus",
-                                    "create_at":"2018-10-08T12:23:10.000Z","approve_at":"2018-09-21T10:44:42.000Z"},{"nama":"Sparno","foto":"17a490b3ab8e38e296e3b1b18a433eb9.jpg",
-                                    "temp_id_promosi":147,"id_promosi":38,"id_karyawan":7,"id_cabang1":3,"id_departemen1":2,"id_jabatan1":4,"id_golongan1":15,"id_grup1":6,
-                                    "tanggal":"2018-09-01T00:00:00.000Z","judul":"Hapus Data","keterangans":"asdfasd1234333","status":"Proses","status_info":"Hapus",
-                                    "create_at":"2018-10-08T13:24:29.000Z","approve_at":"2018-09-21T10:44:38.000Z"}],"userData":{"username":"MANADI","password":"manadi",
-                                    "id_pengguna":2,"iat":1540435376}}*/
-
-
-                            /*JSONArray arrays = result.getJSONArray("res1");
+                        if(result.getString("status").equals("true"))
+                        {
+                            JSONArray arrays = result.getJSONArray("data");
+                            JSONArray arrays1 = result.getJSONArray("data1");
                             for (int i = 0; i < arrays.length(); i++) {
                                 JSONObject obj = arrays.getJSONObject(i);
 
-                                if(obj.getString("status_info").equals("Hapus")){
+
+
+                                String arrow = " ➡ ";
+
+
+                                for (int j = 0; j < arrays1.length(); j++) {
+                                    JSONObject obj1 = arrays1.getJSONObject(j);
+                                    if(obj.getString("id_promosi").equals(obj1.getString("id_promosi"))){
+
+                                        listjobextension data = new listjobextension();
+
+                                        data.setTipe(tipe);
+
+                                        if(obj.getString("foto").equals("")){
+                                            data.setProfilepicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ");
+                                        }
+                                        else {
+                                            data.setProfilepicture(generator.profileurl+obj.getString("foto"));
+                                        }
+
+
+                                            /*"nama": "Aston",
+                                            "foto": "abe6ae2097f676a4e7d7869a75139fb9.jpg",
+                                            "jabatan": "Kepala Aksesoris",
+                                            "grup": "Group Lain",
+                                            "departemen": "Accounting",
+                                            "cabang": "Denya Tamora",
+                                            "golongan": "GOL-01"*/
+                                        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                                        SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
+                                        data.setNamakaryawan(obj1.getString("judul"));
+                                        data.setKeterangan("Tanggal Pengajuan"+spacing+format2.format(format1.parse(obj1.getString("create_at").substring(0,10)))+newline);
+
+                                        if(obj.getString("nama").equals(obj1.getString("nama"))){
+                                            data.setKeterangan(data.getKeterangan()+"Nama"+spacing+obj.getString("nama")+newline);
+                                        }
+                                        else {
+                                            data.setNamakaryawan(data.getKeterangan()+"Nama"+spacing+obj.getString("nama")+arrow+obj1.getString("nama")+newline);
+                                        }
+                                        if(obj.getString("jabatan").equals(obj1.getString("jabatan"))){
+                                            //data.setKeterangan(data.getKeterangan()+"Jabatan"+spacing+obj.getString("jabatan")+newline);
+                                        }
+                                        else {
+                                            data.setKeterangan(data.getKeterangan()+"Jabatan"+spacing+obj.getString("jabatan")+arrow+obj1.getString("jabatan")+newline);
+                                        }
+                                        if(obj.getString("grup").equals(obj1.getString("grup"))){
+                                            //data.setKeterangan(data.getKeterangan()+"Group"+spacing+obj.getString("grup")+newline);
+                                        }
+                                        else {
+                                            data.setKeterangan(data.getKeterangan()+"Group"+spacing+obj.getString("grup")+arrow+obj1.getString("grup")+newline);
+                                        }
+                                        if(obj.getString("departemen").equals(obj1.getString("departemen"))){
+                                            //data.setKeterangan(data.getKeterangan()+"Departemen"+spacing+obj.getString("departemen")+newline);
+                                        }
+                                        else {
+                                            data.setKeterangan(data.getKeterangan()+"Departemen"+spacing+obj.getString("departemen")+arrow+obj1.getString("departemen")+newline);
+                                        }
+                                        if(obj.getString("cabang").equals(obj1.getString("cabang"))){
+                                            //data.setKeterangan(data.getKeterangan()+"Cabang"+spacing+obj.getString("cabang")+newline);
+                                        }
+                                        else {
+                                            data.setKeterangan(data.getKeterangan()+"Cabang"+spacing+obj.getString("cabang")+arrow+obj1.getString("cabang")+newline);
+                                        }
+                                        if(obj.getString("golongan").equals(obj1.getString("golongan"))){
+                                            //data.setKeterangan(data.getKeterangan()+"Golongan"+spacing+obj.getString("golongan")+newline);
+                                        }
+                                        else {
+                                            data.setKeterangan(data.getKeterangan()+"Golongan"+spacing+obj.getString("golongan")+arrow+obj1.getString("golongan")+newline);
+                                        }
+                                        listdata.add(data);
+                                    }
+                                    else{
+
+                                    }
 
                                 }
-                                else if(obj.getString("status_info").equals("Edit")){
 
-                                }
-                                else {
+                            }
+                        }
 
-                                }
-
-                                DecimalFormat formatter = new DecimalFormat("###,###,###");
-                                listjobextension data = new listjobextension();
-
-                                data.setTgldiajukan(obj.getString("tanggal").substring(0,10));
-
-                                data.setNamakaryawan(obj.getString("nama")+obj.getString("judul"));
-                                data.setTipe(tipe);
-
-                                data.setProfilepicture(generator.profileurl+obj.getString("foto"));
-
-                                String neline = "\n";
-                                String spacing = " : ";
-
-                                //String jumlah = formatter.format(obj.getDouble("jumlah"));
-
-                                //String cicilan = formatter.format(obj.getDouble("cicilan")),cara_pembayaran=obj.getString("cara_pembayaran"),keterangans=obj.getString("keterangans");
-
-                                //data.setKeterangan("Jumlah Pinjaman"+spacing+jumlah+neline+"Cicilan / Bulan"+spacing+cicilan+neline+"Cara pembayaran"+spacing+cara_pembayaran+neline+"Keterangan"+spacing+keterangans);
-
-                                //listdata.add(data);
-                            }*/
                     }
                     else if (tipe.equals("Approval Punishment") ){
 
@@ -970,7 +1007,7 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                         nothing.setVisibility(View.GONE);
                     }*/
 
-                    adapter = new AdapterListSwipe_approval(approval.this,listdata);
+                    adapter = new AdapterListSwipe_approval(approval.this,listdata,tempcoor);
                     adapter.notifyDataSetChanged();
 
                     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());

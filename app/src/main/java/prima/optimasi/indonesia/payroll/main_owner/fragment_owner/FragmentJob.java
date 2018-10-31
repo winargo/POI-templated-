@@ -129,7 +129,7 @@ public class FragmentJob extends Fragment {
             titles.add(approval);
         }
 
-        adapter = new AdapterListSectionedjob(getActivity(),titles,ItemAnimation.FADE_IN,dialog);
+        adapter = new AdapterListSectionedjob(getActivity(),titles,ItemAnimation.FADE_IN,dialog,null,null);
 
         recyclerall.setLayoutManager(new GridLayoutManager(getActivity(), 1));
         recyclerall.setHasFixedSize(true);
