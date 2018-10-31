@@ -34,10 +34,12 @@ import okhttp3.Request;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
+import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListDaftarAbsensi;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListSectionedKontrakKerja;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListSectionedsakit;
 import prima.optimasi.indonesia.payroll.main_owner.report.owner_sakit;
 import prima.optimasi.indonesia.payroll.objects.datacuti;
+import prima.optimasi.indonesia.payroll.objects.listkaryawandaftarabsensi;
 import prima.optimasi.indonesia.payroll.objects.listkaryawankontrakkerja;
 import prima.optimasi.indonesia.payroll.universal.viewkaryawan;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
@@ -51,10 +53,14 @@ public class FragmentHome extends Fragment {
     LinearLayout lyt_expand, lyt_expand2, lyt_expand3, lyt_expandhabis;
     TextView sisakontrakkerja, sisakontrakkerja2, sisakontrakkerja3, sisakontrakkerjahabis;
     List<listkaryawankontrakkerja> items;
+    List<listkaryawandaftarabsensi> daftaritems;
+
     CoordinatorLayout parent_view;
     listkaryawankontrakkerja kontrakkerja;
+    listkaryawandaftarabsensi daftarabsensi;
     AdapterListSectionedKontrakKerja adapter;
-    RecyclerView recyclerView, recyclerView2, recyclerView3, recyclerViewhabis;
+    AdapterListDaftarAbsensi adapterabsensi;
+    RecyclerView recyclerView, recyclerView2, recyclerView3, recyclerViewhabis, recyclerViewdaftar;
     boolean expansi=false, expansi2=false, expansi3=false, expansihabis=false;
     int banyak1bulan=0, banyak2bulan=0,banyak3bulan=0, banyakhabis=0;
     @Override
@@ -66,6 +72,7 @@ public class FragmentHome extends Fragment {
         recyclerView2=rootView.findViewById(R.id.recyclerView2bulan);
         recyclerView3=rootView.findViewById(R.id.recyclerView3bulan);
         recyclerViewhabis=rootView.findViewById(R.id.recyclerViewhabiskontrak);
+        recyclerViewdaftar=rootView.findViewById(R.id.recyclerViewdaftarabsensi);
 
         parent_view=rootView.findViewById(R.id.parent_view);
         lyt_parent=rootView.findViewById(R.id.lyt_parent);
@@ -1405,6 +1412,148 @@ public class FragmentHome extends Fragment {
 
                         recyclerViewhabis.setHasFixedSize(true);
                         recyclerViewhabis.setAdapter(adapter);
+                        retrivedaftarabsensi kar = new retrivedaftarabsensi(getActivity());
+                        kar.execute();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+
+            /*
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }*/
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+    private class retrivedaftarabsensi extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        ProgressDialog dialog ;
+        String urldata = generator.kontrakkerjahabisurl;
+        String passeddata = "" ;
+
+        public retrivedaftarabsensi(Context context)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            super.onPreExecute();
+            //this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                //this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+                Log.e(TAG, "data json result" + result.toString());
+                if (result != null) {
+                    try {
+                        items = new ArrayList<>();
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        JSONArray pengsarray = result.getJSONArray("data");
+                        Log.e(TAG, "onPostExecute: " + pengsarray);
+                        String status="";
+                        //String tempcall="";
+
+
+                        for (int i = 0; i < pengsarray.length(); i++) {
+
+                        }
 
                     } catch (JSONException e) {
                         e.printStackTrace();

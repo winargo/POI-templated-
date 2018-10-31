@@ -54,8 +54,8 @@ public class generator {
     //public static String Server="192.168.5.254";
     //public static String Server="153.92.4.147";
     //public static String Server="192.168.5.254";
-    //public static String Server="153.92.4.147";
-    public static String Server="192.168.5.254";
+    public static String Server="153.92.4.147";
+    //public static String Server="192.168.5.254";
 
     //public static String Server="153.92.4.147";
 
@@ -146,6 +146,8 @@ public class generator {
     public static String pengajuanizinurl="http://"+ generator.Server+":4000/izin";
     public static String pengajuansakiturl="http://"+ generator.Server+":4000/sakit";
     public static String pengajuandinasurl="http://"+ generator.Server+":4000/dinas";
+
+    public static String pengajuancutikodeurl="http://"+ generator.Server+":4000/izin/kode";
     public static String pengajuanizinkodeurl="http://"+ generator.Server+":4000/izin/kode";
     public static String pengajuansakitkodeurl="http://"+ generator.Server+":4000/sakit/kode";
     public static String pengajuandinaskodeurl="http://"+ generator.Server+":4000/dinas/kode";

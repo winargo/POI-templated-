@@ -39,6 +39,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.activity.MainMenu;
+import prima.optimasi.indonesia.payroll.main_kabag.ActivityAbsensi;
 import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
 import prima.optimasi.indonesia.payroll.main_karyawan.cekjadwal;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentCekGaji;
@@ -132,18 +133,21 @@ public class mainmenu_karyawan extends AppCompatActivity
         TextView cekgajiteks = findViewById(R.id.cekgajiteks);
         TextView pengajuanteks = findViewById(R.id.pengajuanteks);
         TextView cekjadwalteks = findViewById(R.id.cekjadwalteks);
+        TextView absensiteks = findViewById(R.id.absensiteks);
 
         FloatingActionButton pengumuman=findViewById(R.id.pengumuman);
         FloatingActionButton log_absensi=findViewById(R.id.log_absensi);
         FloatingActionButton cekgaji=findViewById(R.id.cekgaji);
         FloatingActionButton pengajuan=findViewById(R.id.pengajuan);
         FloatingActionButton cek_jadwal=findViewById(R.id.cekjadwal);
+        FloatingActionButton absensi=findViewById(R.id.absensi);
 
         pengumumanteks.setText("Pengumuman");
         log_absensiteks.setText("Log Absensi");
         cekgajiteks.setText("Cek Gaji");
         pengajuanteks.setText("Pengajuan");
         cekjadwalteks.setText("Cek Jadwal");
+        absensiteks.setText("Absensi");
 
         pengumuman.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,7 +195,86 @@ public class mainmenu_karyawan extends AppCompatActivity
                 startActivity(a);
             }
         });
+
+        absensi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("Jabatan : ", prefs.getString("jabatan",""));
+                if(prefs.getString("jabatan","1").equals("4")){
+                    Intent intent=new Intent(mainmenu_karyawan.this,ActivityAbsensi.class);
+                    intent.putExtra("jabatan", "security");
+                    startActivity(intent);
+                }
+                else{
+                    LinearLayout l = (LinearLayout) LayoutInflater.from(mainmenu_karyawan.this).inflate(R.layout.layout_barcode,null);
+
+                    ImageView barcode = l.findViewById(R.id.barcodekaryawan);
+
+
+                    String text=prefs.getString("kodekaryawan","");
+                    Log.e("data json", "onClick: "+prefs.getString("kodekaryawan","") );
+                    MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+                    try {
+                        BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE,400,400);
+                        BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                        Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+                        barcode.setImageBitmap(bitmap);
+                    } catch (WriterException e) {
+                        e.printStackTrace();
+                    }
+
+                    AlertDialog dialog1 = new AlertDialog.Builder(mainmenu_karyawan.this).setTitle("Absensi").setView(l).create();
+
+                    dialog1.show();
+                }
+
+                //https://mbtskoudsalg.com/image/schedule-icon-png/699309.html#gal_post_3922_schedule-icon-png-4.png
+                /*
+                String[] colors = {"Absensi","Scan Karyawan","Check IN","Break OUT","Break IN","Check OUT"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_karyawan.this);
+                builder.setTitle("Absensi");
+                builder.setItems(colors, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if(which==1) {
+                            LinearLayout l = (LinearLayout) LayoutInflater.from(mainmenu_karyawan.this).inflate(R.layout.layout_barcode,null);
+
+                            ImageView barcode = l.findViewById(R.id.barcodekaryawan);
+
+
+                            String text=prefs.getString("kodekaryawan","");
+                            Log.e("data json", "onClick: "+prefs.getString("kodekaryawan","") );
+                            MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+                            try {
+                                BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE,400,400);
+                                BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                                Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+                                barcode.setImageBitmap(bitmap);
+                            } catch (WriterException e) {
+                                e.printStackTrace();
+                            }
+
+                            AlertDialog dialog1 = new AlertDialog.Builder(mainmenu_karyawan.this).setTitle("Absensi").setView(l).create();
+
+                            dialog1.show();
+                        }
+                        else {
+                            Intent a = new Intent(mainmenu_karyawan.this, QrCodeActivity.class);
+                            a.putExtra("absensi",which);
+                            a.putExtra("security",0);
+                            a.putExtra("keepalive",1);
+                            startActivity(a);
+                        }
+                    }
+                });
+                builder.show();*/
+            }
+        });
+
         ImageView icon_born=findViewById(R.id.iconborn);
+        LinearLayout show=findViewById(R.id.showbutton);
+        FloatingActionButton logout=findViewById(R.id.logout);
         final CollapsingToolbarLayout collapsing_toolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         ((AppBarLayout) findViewById(R.id.app_bar_layout)).addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
@@ -206,11 +289,12 @@ public class mainmenu_karyawan extends AppCompatActivity
                 icon_born.setScaleY(scale >= 0 ? scale : 0);
                 borndate.setScaleX(scale >= 0 ? scale : 0);
                 borndate.setScaleY(scale >= 0 ? scale : 0);
+                show.setScaleX(scale >= 0 ? 0 : scale*4);
+                show.setScaleY(scale >= 0 ? 0 : scale*4);
             }
 
         });
 
-        FloatingActionButton logout=findViewById(R.id.logout);
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -623,4 +707,5 @@ public class mainmenu_karyawan extends AppCompatActivity
         // ...
     }
     */
+
 }

@@ -46,15 +46,35 @@ public class ActivityAbsensi extends AppCompatActivity {
     CoordinatorLayout parent_view;
 
     public static String jabatan="JABATAN";
-    MaterialRippleLayout checkin, checkout, breakin, breakout, extrain, extraout, absensi, absensiwajah;
-
+    MaterialRippleLayout checkin, checkout, breakin, breakout, extrain, extraout, absensi, absensiwajah, scan;
+    SharedPreferences prefs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_absensi);
+        //prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
+        Log.e("Jabatan : ", getIntent().getStringExtra("jabatan"));
+
+        if(getIntent().getStringExtra("jabatan").equals("kabag")) {
+            setContentView(R.layout.activity_absensi);
+            initComponent1();
+        }
+        else {
+            setContentView(R.layout.activity_absensi_security);
+            initComponent2();
+        }
         //recyclerView = findViewById(R.id.recyclerView);
         parent_view= findViewById(R.id.parent_view);
         initToolbar();
+    }
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this, R.color.colorPrimary);
+    }
+
+    private void initComponent1() {
         checkin=findViewById(R.id.lyt_parent);
         checkout=findViewById(R.id.lyt_parent_checkout);
         breakin=findViewById(R.id.lyt_parent_breakin);
@@ -82,14 +102,14 @@ public class ActivityAbsensi extends AppCompatActivity {
         absensiteks.setText("Absensi");
         absensiwajahteks.setText("Absensi Wajah");
 
-        ImageView image=findViewById(R.id.image);
-        ImageView image_checkout=findViewById(R.id.image_checkout);
-        ImageView image_breakin=findViewById(R.id.image_breakin);
-        ImageView image_breakout=findViewById(R.id.image_breakout);
-        ImageView image_extrain=findViewById(R.id.image_extrain);
-        ImageView image_extraout=findViewById(R.id.image_extraout);
-        ImageView image_absensi=findViewById(R.id.image_absensi);
-        ImageView image_absensiwajah=findViewById(R.id.image_absensiwajah);
+        ImageView image = findViewById(R.id.image);
+        ImageView image_checkout = findViewById(R.id.image_checkout);
+        ImageView image_breakin = findViewById(R.id.image_breakin);
+        ImageView image_breakout = findViewById(R.id.image_breakout);
+        ImageView image_extrain = findViewById(R.id.image_extrain);
+        ImageView image_extraout = findViewById(R.id.image_extraout);
+        ImageView image_absensi = findViewById(R.id.image_absensi);
+        ImageView image_absensiwajah = findViewById(R.id.image_absensiwajah);
         Picasso.get().load("http://www.icym.edu.my/v13/images/checklist.jpg").into(image);
         Picasso.get().load("http://sainte-catherine.fr/wordpress/wp-content/uploads/2018/05/sondage-padel-620x330.jpg").into(image_checkout);
         Picasso.get().load("http://www.metrochemgroup.com/wp-content/uploads/2018/04/meal-break.jpg").into(image_breakin);
@@ -103,9 +123,9 @@ public class ActivityAbsensi extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent a = new Intent(ActivityAbsensi.this, QrCodeActivity.class);
-                a.putExtra("absensi",0);
-                a.putExtra("security",0);
-                a.putExtra("keepalive",1);
+                a.putExtra("absensi", 0);
+                a.putExtra("security", 0);
+                a.putExtra("keepalive", 1);
                 startActivity(a);
             }
         });
@@ -114,19 +134,20 @@ public class ActivityAbsensi extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent a = new Intent(ActivityAbsensi.this, QrCodeActivity.class);
-                a.putExtra("absensi",3);
-                a.putExtra("security",0);
-                a.putExtra("keepalive",1);
+                a.putExtra("absensi", 3);
+                a.putExtra("security", 0);
+                a.putExtra("keepalive", 1);
                 startActivity(a);
             }
         });
+
         breakin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent a = new Intent(ActivityAbsensi.this, QrCodeActivity.class);
-                a.putExtra("absensi",2);
-                a.putExtra("security",0);
-                a.putExtra("keepalive",1);
+                a.putExtra("absensi", 2);
+                a.putExtra("security", 0);
+                a.putExtra("keepalive", 1);
                 startActivity(a);
             }
         });
@@ -135,9 +156,9 @@ public class ActivityAbsensi extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent a = new Intent(ActivityAbsensi.this, QrCodeActivity.class);
-                a.putExtra("absensi",1);
-                a.putExtra("security",0);
-                a.putExtra("keepalive",1);
+                a.putExtra("absensi", 1);
+                a.putExtra("security", 0);
+                a.putExtra("keepalive", 1);
                 startActivity(a);
             }
         });
@@ -146,9 +167,9 @@ public class ActivityAbsensi extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent a = new Intent(ActivityAbsensi.this, QrCodeActivity.class);
-                a.putExtra("absensi",4);
-                a.putExtra("security",0);
-                a.putExtra("keepalive",1);
+                a.putExtra("absensi", 4);
+                a.putExtra("security", 0);
+                a.putExtra("keepalive", 1);
                 startActivity(a);
             }
         });
@@ -157,30 +178,136 @@ public class ActivityAbsensi extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent a = new Intent(ActivityAbsensi.this, QrCodeActivity.class);
-                a.putExtra("absensi",5);
-                a.putExtra("security",0);
-                a.putExtra("keepalive",1);
+                a.putExtra("absensi", 5);
+                a.putExtra("security", 0);
+                a.putExtra("keepalive", 1);
                 startActivity(a);
             }
         });
 
+        absensiwajah.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent face = new Intent(ActivityAbsensi.this, facedetection.class);
+                startActivity(face);
+            }
+        });
+
+        absensi();
+    }
+
+    private void initComponent2() {
+        scan=findViewById(R.id.lyt_parent);
+        checkin=findViewById(R.id.lyt_parent_checkin);
+        checkout=findViewById(R.id.lyt_parent_checkout);
+        breakin=findViewById(R.id.lyt_parent_breakin);
+        breakout=findViewById(R.id.lyt_parent_breakout);
+        absensi=findViewById(R.id.lyt_parent_absensi);
+
+        TextView scanteks=findViewById(R.id.name);
+        TextView checkinteks=findViewById(R.id.namecheckin);
+        TextView checkoutteks=findViewById(R.id.namecheckout);
+        TextView breakinteks=findViewById(R.id.namebreakin);
+        TextView breakoutteks=findViewById(R.id.namebreakout);
+        TextView absensiteks=findViewById(R.id.nameabsensi);
+
+        scanteks.setText("Scan Karyawan");
+        checkinteks.setText("Check IN");
+        checkoutteks.setText("Check OUT");
+        breakinteks.setText("Break IN");
+        breakoutteks.setText("Break OUT");
+        absensiteks.setText("Absensi");
+
+        ImageView imagescan = findViewById(R.id.image);
+        ImageView image_checkin = findViewById(R.id.image_checkin);
+        ImageView image_checkout = findViewById(R.id.image_checkout);
+        ImageView image_breakin = findViewById(R.id.image_breakin);
+        ImageView image_breakout = findViewById(R.id.image_breakout);
+        ImageView image_absensi = findViewById(R.id.image_absensi);
+
+        Picasso.get().load("https://cmkt-image-prd.global.ssl.fastly.net/0.1.0/ps/1526884/910/607/m1/fpnw/wm0/calendar-icon-on-white-background-01-.jpg?1470399461&s=0993250c9c0f1dcc4aeaaf5caccb6222").into(imagescan);
+        Picasso.get().load("http://www.icym.edu.my/v13/images/checklist.jpg").into(image_checkin);
+        Picasso.get().load("http://sainte-catherine.fr/wordpress/wp-content/uploads/2018/05/sondage-padel-620x330.jpg").into(image_checkout);
+        Picasso.get().load("http://www.metrochemgroup.com/wp-content/uploads/2018/04/meal-break.jpg").into(image_breakin);
+        Picasso.get().load("https://www.kidcheck.com/wp-content/uploads/2016/06/time-limit-1-300x217.jpg").into(image_breakout);
+        Picasso.get().load("https://d35kskn2b3gqvv.cloudfront.net/wp-content/uploads/2016/10/qrcodes.png").into(image_absensi);
+
+        scan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent a = new Intent(ActivityAbsensi.this, QrCodeActivity.class);
+                a.putExtra("absensi", 1);
+                a.putExtra("security", 1);
+                a.putExtra("keepalive", 1);
+                startActivity(a);
+            }
+        });
+
+        checkin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent a = new Intent(ActivityAbsensi.this, QrCodeActivity.class);
+                a.putExtra("absensi", 2);
+                a.putExtra("security", 1);
+                a.putExtra("keepalive", 1);
+                startActivity(a);
+            }
+        });
+
+        checkout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent a = new Intent(ActivityAbsensi.this, QrCodeActivity.class);
+                a.putExtra("absensi", 5);
+                a.putExtra("security", 1);
+                a.putExtra("keepalive", 1);
+                startActivity(a);
+            }
+        });
+
+        breakin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent a = new Intent(ActivityAbsensi.this, QrCodeActivity.class);
+                a.putExtra("absensi", 4);
+                a.putExtra("security", 1);
+                a.putExtra("keepalive", 1);
+                startActivity(a);
+            }
+        });
+
+        breakout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent a = new Intent(ActivityAbsensi.this, QrCodeActivity.class);
+                a.putExtra("absensi", 3);
+                a.putExtra("security", 1);
+                a.putExtra("keepalive", 1);
+                startActivity(a);
+            }
+        });
+
+        absensi();
+    }
+
+    public void absensi() {
         absensi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AlertDialog dialog = new AlertDialog.Builder(ActivityAbsensi.this).create();
-                LinearLayout l = (LinearLayout) LayoutInflater.from(ActivityAbsensi.this).inflate(R.layout.layout_barcode,null);
+                LinearLayout l = (LinearLayout) LayoutInflater.from(ActivityAbsensi.this).inflate(R.layout.layout_barcode, null);
 
                 dialog.setTitle("Absensi");
 
 
                 ImageView barcode = l.findViewById(R.id.barcodekaryawan);
 
-                SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
-                String text=prefs.getString("kodekaryawan","");
-                Log.e("data json", "onClick: "+prefs.getString("kodekaryawan","") );
+                SharedPreferences prefs = getSharedPreferences("poipayroll", MODE_PRIVATE);
+                String text = prefs.getString("kodekaryawan", "");
+                Log.e("data json", "onClick: " + prefs.getString("kodekaryawan", ""));
                 MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
                 try {
-                    BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE,400,400);
+                    BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE, 400, 400);
                     BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
                     Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
                     barcode.setImageBitmap(bitmap);
@@ -192,22 +319,6 @@ public class ActivityAbsensi extends AppCompatActivity {
                 dialog.show();
             }
         });
-
-        absensiwajah.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent face = new Intent(ActivityAbsensi.this,facedetection.class);
-                startActivity(face);
-            }
-        });
-
-    }
-    private void initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        Tools.setSystemBarColor(this, R.color.colorPrimary);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

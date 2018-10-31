@@ -199,6 +199,7 @@ public class mainmenu_kabag extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Intent intent=new Intent(mainmenu_kabag.this,ActivityAbsensi.class);
+                intent.putExtra("jabatan","kabag");
                 startActivity(intent);
                 /*
                 String[] colors = {"Check IN", "Break OUT","Break IN","Check OUT","Extra IN","Extra OUT","Absensi","Absensi Wajah"};
@@ -279,6 +280,9 @@ public class mainmenu_kabag extends AppCompatActivity
             }
         });
         ImageView icon_born=findViewById(R.id.iconborn);
+        LinearLayout show=findViewById(R.id.showbutton);
+        FloatingActionButton logout=findViewById(R.id.logout);
+
         final CollapsingToolbarLayout collapsing_toolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         ((AppBarLayout) findViewById(R.id.app_bar_layout)).addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
@@ -293,10 +297,13 @@ public class mainmenu_kabag extends AppCompatActivity
                 icon_born.setScaleY(scale >= 0 ? scale : 0);
                 borndate.setScaleX(scale >= 0 ? scale : 0);
                 borndate.setScaleY(scale >= 0 ? scale : 0);
+                show.setScaleX(scale >= 0 ? 0 : scale*4);
+                show.setScaleY(scale >= 0 ? 0 : scale*4);
+
+
             }
         });
 
-        FloatingActionButton logout=findViewById(R.id.logout);
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

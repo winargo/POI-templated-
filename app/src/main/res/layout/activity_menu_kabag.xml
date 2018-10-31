@@ -362,6 +362,7 @@
 
     </android.support.v4.widget.NestedScrollView>
     <LinearLayout
+        android:id="@+id/showbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end|right"
@@ -372,7 +373,6 @@
             android:id="@+id/logout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:layout_marginBottom="@dimen/spacing_smlarge"
             android:layout_marginLeft="@dimen/spacing_smlarge"
             android:layout_marginRight="@dimen/spacing_smlarge"
@@ -382,7 +382,7 @@
             app:fabSize="normal"
             app:backgroundTint="@color/colorPrimary"
             app:rippleColor="@color/blue_500"
-            app:srcCompat="@drawable/logout" />
+            app:srcCompat="@drawable/logout_terbalik" />
 
 
     </LinearLayout>
