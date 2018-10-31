@@ -45,6 +45,7 @@ import qrcodescanner.QrCodeActivity;
 public class ActivityAbsensi extends AppCompatActivity {
     CoordinatorLayout parent_view;
 
+    public static String jabatan="JABATAN";
     MaterialRippleLayout checkin, checkout, breakin, breakout, extrain, extraout, absensi, absensiwajah;
 
     @Override
@@ -210,45 +211,15 @@ public class ActivityAbsensi extends AppCompatActivity {
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_mainmenu, menu);
+        getMenuInflater().inflate(R.menu.menu_activity_main, menu);
+        MenuItem item=menu.findItem(R.id.action_settings);
+        item.setTitle("About");
         return true;
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
-        }
-        else if (item.getItemId() == R.id.action_logout) {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic("kabag");
-
-            Intent logout = new Intent(ActivityAbsensi.this,activity_login.class);
-            SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
-
-            if(prefs.getInt("statustoken",0)==0){
-
-            }
-            else {
-                generator.unregistertokentoserver unregistertokentoserver = new generator.unregistertokentoserver(ActivityAbsensi.this,prefs.getString("tokennotif",""),prefs.getString("Authorization",""));
-                unregistertokentoserver.execute();
-            }
-
-
-            SharedPreferences.Editor edit = prefs.edit();
-
-            edit.putString("iduser","");
-            edit.putString("username","");
-            edit.putString("jabatan","");
-            edit.putString("level","");
-            edit.putString("tempatlahir","");
-            edit.putString("profileimage","");
-            edit.putString("Authorization","");
-            edit.putString("kodekaryawan","");
-
-            edit.commit();
-
-            startActivity(logout);
-
-            return true;
         }
         return super.onOptionsItemSelected(item);
     }

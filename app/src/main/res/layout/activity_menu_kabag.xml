@@ -15,7 +15,7 @@
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Title"
@@ -43,31 +43,79 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <com.mikhaellopez.circularimageview.CircularImageView
+        android:id="@+id/imageView"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/photo_female_6"
+        app:civ_border="true"
+        app:civ_border_width="2dp"
+        app:civ_shadow="true"
+        app:civ_shadow_radius="0"
+        app:layout_anchor="@id/app_bar_layout"
+        app:layout_anchorGravity="bottom|center" />
+
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="40dp"
+        android:text="John Anderson"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
+        android:textColor="@color/grey_90"
+        app:layout_anchor="@id/imageView"
+        app:layout_anchorGravity="bottom|center"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_anchor="@id/username"
+        app:layout_anchorGravity="bottom|center">
+
+        <ImageView
+            android:id="@+id/iconborn"
+            android:layout_width="@dimen/spacing_large"
+            android:layout_height="@dimen/spacing_large"
+            android:layout_marginEnd="@dimen/spacing_medium"
+            android:layout_marginRight="@dimen/spacing_medium"
+            android:tint="@color/grey_40"
+            app:srcCompat="@drawable/ic_location"
+            />
+
+        <TextView
+            android:id="@+id/prof_tempat_lahir"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Far Rockaway, NY"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textColor="@color/grey_40" />
+
+    </LinearLayout>
+
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/nested_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
+        android:layout_height="wrap_content"
         android:scrollbars="none"
-        android:scrollingCache="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
+            android:orientation="vertical"
+            android:nestedScrollingEnabled="false"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="100dp"
             android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-
-
-
-
+            >
             <View
                 android:layout_width="0dp"
                 android:layout_height="@dimen/spacing_large" />
 
             <LinearLayout
+                android:id="@+id/linear1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
@@ -75,6 +123,7 @@
                 android:padding="@dimen/spacing_large">
 
                 <LinearLayout
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -104,6 +153,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -164,6 +214,8 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/linear2"
+                android:layout_below="@+id/linear1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
@@ -259,6 +311,8 @@
 
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/linear3"
+                android:layout_below="@+id/linear2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
@@ -300,69 +354,39 @@
 
             </LinearLayout>
 
-            <Button
-                android:id="@+id/logout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="68dp"
-                android:background="@color/colorPrimary"
-                android:text="Logout"
-                android:textColor="@android:color/white" />
+
+
+
         </LinearLayout>
 
 
     </android.support.v4.widget.NestedScrollView>
-
-    <com.mikhaellopez.circularimageview.CircularImageView
-        android:id="@+id/imageView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/photo_female_6"
-        app:civ_border="true"
-        app:civ_border_width="2dp"
-        app:civ_shadow="true"
-        app:civ_shadow_radius="0"
-        app:layout_anchor="@id/app_bar_layout"
-        app:layout_anchorGravity="bottom|center" />
-
-    <TextView
-        android:id="@+id/username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="40dp"
-        android:text="John Anderson"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
-        android:textColor="@color/grey_90"
-        app:layout_anchor="@id/imageView"
-        app:layout_anchorGravity="bottom|center"/>
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_anchor="@id/username"
-        app:layout_anchorGravity="bottom|center">
+        android:layout_gravity="bottom|end|right"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/iconborn"
-            android:layout_width="@dimen/spacing_large"
-            android:layout_height="@dimen/spacing_large"
-            android:layout_marginEnd="@dimen/spacing_medium"
-            android:layout_marginRight="@dimen/spacing_medium"
-            android:tint="@color/grey_40"
-            app:srcCompat="@drawable/ic_location"
-            />
-
-        <TextView
-            android:id="@+id/prof_tempat_lahir"
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/logout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Far Rockaway, NY"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="@color/grey_40" />
+
+            android:layout_marginBottom="@dimen/spacing_smlarge"
+            android:layout_marginLeft="@dimen/spacing_smlarge"
+            android:layout_marginRight="@dimen/spacing_smlarge"
+            android:layout_marginTop="@dimen/spacing_middle"
+            android:clickable="true"
+            android:tint="@android:color/white"
+            app:fabSize="normal"
+            app:backgroundTint="@color/colorPrimary"
+            app:rippleColor="@color/blue_500"
+            app:srcCompat="@drawable/logout" />
+
 
     </LinearLayout>
+
+
 
 </android.support.design.widget.CoordinatorLayout>

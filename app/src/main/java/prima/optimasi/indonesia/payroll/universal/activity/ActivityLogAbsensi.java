@@ -275,7 +275,9 @@ public class ActivityLogAbsensi extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_mainmenu, menu);
+        getMenuInflater().inflate(R.menu.menu_activity_main, menu);
+        MenuItem item=menu.findItem(R.id.action_settings);
+        item.setTitle("About");
         return true;
     }
     @Override
@@ -288,38 +290,6 @@ public class ActivityLogAbsensi extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
             finish();
-        }
-        else if (id == R.id.action_logout) {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic("karyawan");
-
-
-            Intent logout = new Intent(this,activity_login.class);
-            SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
-
-            if(prefs.getInt("statustoken",0)==0){
-
-            }
-            else {
-                generator.unregistertokentoserver unregistertokentoserver = new generator.unregistertokentoserver(this,prefs.getString("tokennotif",""),prefs.getString("Authorization",""));
-                unregistertokentoserver.execute();
-            }
-
-            SharedPreferences.Editor edit = prefs.edit();
-
-            edit.putString("iduser","");
-            edit.putString("username","");
-            edit.putString("jabatan","");
-            edit.putString("level","");
-            edit.putString("kodekaryawan","");
-            edit.putString("tempatlahir","");
-            edit.putString("profileimage","");
-            edit.putString("Authorization","");
-
-            edit.commit();
-
-            startActivity(logout);
-
-            return true;
         }
 
         return super.onOptionsItemSelected(item);

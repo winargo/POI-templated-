@@ -296,10 +296,12 @@ public class mainmenu_kabag extends AppCompatActivity
             }
         });
 
-        Button logout=findViewById(R.id.logout);
+        FloatingActionButton logout=findViewById(R.id.logout);
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                generator.logout(mainmenu_kabag.this,"kabag");
+                /*
                 FirebaseMessaging.getInstance().unsubscribeFromTopic("kabag");
 
                 Intent logout = new Intent(mainmenu_kabag.this,activity_login.class);
@@ -327,7 +329,7 @@ public class mainmenu_kabag extends AppCompatActivity
 
                 edit.commit();
 
-                startActivity(logout);
+                startActivity(logout);*/
             }
         });
 
@@ -652,40 +654,6 @@ public class mainmenu_kabag extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic("kabag");
-
-            Intent logout = new Intent(mainmenu_kabag.this,activity_login.class);
-            SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
-
-            if(prefs.getInt("statustoken",0)==0){
-
-            }
-            else {
-                generator.unregistertokentoserver unregistertokentoserver = new generator.unregistertokentoserver(mainmenu_kabag.this,prefs.getString("tokennotif",""),prefs.getString("Authorization",""));
-                unregistertokentoserver.execute();
-            }
-
-
-            SharedPreferences.Editor edit = prefs.edit();
-
-            edit.putString("iduser","");
-            edit.putString("username","");
-            edit.putString("jabatan","");
-            edit.putString("level","");
-            edit.putString("tempatlahir","");
-            edit.putString("profileimage","");
-            edit.putString("Authorization","");
-            edit.putString("kodekaryawan","");
-
-            edit.commit();
-
-            startActivity(logout);
-
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
