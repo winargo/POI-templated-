@@ -2,12 +2,14 @@ package prima.optimasi.indonesia.payroll.main_owner.fragment_owner;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -41,6 +43,8 @@ import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
 
+import static android.app.Activity.RESULT_OK;
+
 public class FragmentJob extends Fragment {
 
     RecyclerView history;
@@ -56,6 +60,8 @@ public class FragmentJob extends Fragment {
 
     RecyclerView recyclerall;
 
+    SwipeRefreshLayout refresh;
+
     CoordinatorLayout parent_view;
 
     MaterialSpinner pilihan;
@@ -67,7 +73,10 @@ public class FragmentJob extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_job, container, false);
 
+
         recyclerall = rootView.findViewById(R.id.recycler_alljob);
+
+        refresh = rootView.findViewById(R.id.pulljob);
 
         parent_view = rootView.findViewById(R.id.coordinator);
 
@@ -135,7 +144,160 @@ public class FragmentJob extends Fragment {
         recyclerall.setHasFixedSize(true);
         recyclerall.setNestedScrollingEnabled(false);
         recyclerall.setAdapter(adapter);
+
+
+
+        refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                adapter = null;
+                titles.clear();
+
+                dialog = new ProgressDialog(getActivity());
+
+                dialog.setTitle("Loading Jobs");
+
+                dialog.setCancelable(false);
+
+                dialog.show();
+
+                dialog.setMessage("Loading Job (0/10)");
+
+
+
+                for (int i =0 ; i < 10;i++){
+                    listjob approval = new listjob();
+
+                    if(i==0){
+                        approval.setSection(true);
+                        approval.setSectionname(options[i]);
+                    }
+                    else if(i==1){
+                        approval.setSection(true);
+                        approval.setSectionname(options[i]);
+                    }
+                    else if(i==2){
+                        approval.setSection(true);
+                        approval.setSectionname(options[i]);
+                    }
+                    else if(i==3){
+                        approval.setSection(true);
+                        approval.setSectionname(options[i]);
+                    }
+                    else if(i==4){
+                        approval.setSection(true);
+                        approval.setSectionname(options[i]);
+                    }
+                    else if(i==5){
+                        approval.setSection(true);
+                        approval.setSectionname(options[i]);
+                    }
+                    else if(i==6){
+                        approval.setSection(true);
+                        approval.setSectionname(options[i]);
+                    }
+                    else if(i==7){
+                        approval.setSection(true);
+                        approval.setSectionname(options[i]);
+                    }
+                    else if(i==8){
+                        approval.setSection(true);
+                        approval.setSectionname(options[i]);
+                    }
+                    else if(i==9){
+                        approval.setSection(true);
+                        approval.setSectionname(options[i]);
+                    }
+                    titles.add(approval);
+                }
+
+                adapter = new AdapterListSectionedjob(getActivity(),titles,ItemAnimation.FADE_IN,dialog,null,null);
+                adapter.notifyDataSetChanged();
+                recyclerall.setAdapter(adapter);
+
+                refresh.setRefreshing(false);
+            }
+        });
+
         return rootView;
+    }
+
+    public void refresh(){
+        adapter = null;
+        titles.clear();
+
+        dialog = new ProgressDialog(getActivity());
+
+        dialog.setTitle("Loading Jobs");
+
+        dialog.setCancelable(false);
+
+        dialog.show();
+
+        dialog.setMessage("Loading Job (0/10)");
+
+
+
+        for (int i =0 ; i < 10;i++){
+            listjob approval = new listjob();
+
+            if(i==0){
+                approval.setSection(true);
+                approval.setSectionname(options[i]);
+            }
+            else if(i==1){
+                approval.setSection(true);
+                approval.setSectionname(options[i]);
+            }
+            else if(i==2){
+                approval.setSection(true);
+                approval.setSectionname(options[i]);
+            }
+            else if(i==3){
+                approval.setSection(true);
+                approval.setSectionname(options[i]);
+            }
+            else if(i==4){
+                approval.setSection(true);
+                approval.setSectionname(options[i]);
+            }
+            else if(i==5){
+                approval.setSection(true);
+                approval.setSectionname(options[i]);
+            }
+            else if(i==6){
+                approval.setSection(true);
+                approval.setSectionname(options[i]);
+            }
+            else if(i==7){
+                approval.setSection(true);
+                approval.setSectionname(options[i]);
+            }
+            else if(i==8){
+                approval.setSection(true);
+                approval.setSectionname(options[i]);
+            }
+            else if(i==9){
+                approval.setSection(true);
+                approval.setSectionname(options[i]);
+            }
+            titles.add(approval);
+        }
+
+        adapter = new AdapterListSectionedjob(getActivity(),titles,ItemAnimation.FADE_IN,dialog,null,null);
+        adapter.notifyDataSetChanged();
+        recyclerall.setAdapter(adapter);
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==1006){
+            if(resultCode==RESULT_OK){
+                refresh();
+            }
+        }
     }
 
     /*
@@ -154,125 +316,5 @@ public class FragmentJob extends Fragment {
 
             */
 
-    private class retrive extends AsyncTask<Void, Integer, String>
-    {
-        String response = "";
-        String username=  "" ;
-        String password = "" ;
-        SharedPreferences prefs ;
-        JSONObject result = null ;
-        ProgressDialog dialog ;
-        String urldata = generator.getabsensiurl;
 
-        public retrive(Context context,List<String> totalaproval,ProgressDialog dialog)
-        {
-            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
-            this.dialog = dialog;
-
-
-
-        }
-
-        String TAG = getClass().getSimpleName();
-
-        protected void onPreExecute (){
-            super.onPreExecute();
-            if(dialog!=null && dialog.isShowing()){
-                dialog.setMessage("Getting job ("+generator.jobcount+"/10)");
-            }
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
-
-        protected String doInBackground(Void...arg0) {
-            Log.d(TAG + " DoINBackGround","On doInBackground...");
-
-            try {
-                this.dialog.setMessage("Loading Data...");
-
-                JSONObject jsonObject;
-
-                try {
-                    OkHttpClient client = new OkHttpClient();
-
-                    RequestBody body = new FormBody.Builder()
-                            .add("","")
-                            .build();
-
-                    Request request = new Request.Builder()
-                            .header("Authorization",prefs.getString("Authorization",""))
-                            .post(body)
-                            .url(urldata)
-                            .build();
-                    Response responses = null;
-
-                    try {
-                        responses = client.newCall(request).execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        jsonObject =  null;
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        jsonObject = null;
-                    }
-
-                    if (responses==null){
-                        jsonObject = null;
-                        Log.e(TAG, "NULL");
-                    }
-                    else {
-
-                        result = new JSONObject(responses.body().string());
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            } catch (IOException e) {
-                this.dialog.dismiss();
-                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
-                generator.jsondatalogin = null;
-                response = "Error IOException";
-            } catch (NullPointerException e) {
-                this.dialog.dismiss();
-                Log.e("doInBackground: ", "null data" + e.getMessage());
-                generator.jsondatalogin = null;
-                response = "Please check Connection and Server";
-            } catch (Exception e) {
-                this.dialog.dismiss();
-                e.printStackTrace();
-                Log.e("doInBackground: ", e.getMessage());
-                generator.jsondatalogin = null;
-                response = "Error Occured, PLease Contact Administrator/Support";
-            }
-
-
-            return response;
-        }
-
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
-        }
-
-        protected void onPostExecute(String result1) {
-
-            try {
-                Log.e(TAG, "data absensi karyawan" + result.toString());
-                if (result != null) {
-
-                } else {
-                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
-                }
-            }catch (Exception E){
-                E.printStackTrace();
-                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
-                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
-            }
-
-
-
-
-            Log.d(TAG + " onPostExecute", "" + result);
-        }
-    }
 }

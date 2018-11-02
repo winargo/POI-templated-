@@ -1,5 +1,7 @@
 package prima.optimasi.indonesia.payroll.main_owner.adapter_owner;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -38,8 +40,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
@@ -76,9 +80,9 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
             "Otoritas", "Periode Gajian"};
 
     String[] options = new String[]{"Approval Cuti","Approval Dinas","Approval Dirumahkan","Approval Izin","Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment","Approval Reward"};
-    String[] urloptions = new String[]{generator.getapprovalcutiyurl,generator.getapprovaldinasyurl,generator.getapprovaldirumahkanyurl,generator.getapprovalizinyurl,generator.getapprovalgolonganyurl,generator.getapprovalkaryawanyurl,generator.getapprovalpinjamanyurl,generator.getapprovalpdlyurl,generator.getapprovalpunihsmentyurl,generator.getapprovalrewardyurl};
+    String[] urloptions = new String[]{generator.approvalcutiyurl,generator.approvaldinasyurl,generator.approvaldirumahkanyurl,generator.approvalizinyurl,generator.approvalgolonganyurl,generator.approvalkaryawanyurl,generator.approvalpinjamanyurl,generator.approvalpdlyurl,generator.approvalpunihsmentyurl,generator.approvalrewardyurl};
 
-
+    List<String> passed;
 
     private Context ctx;
     private AdapterListBasicjob_extention.OnItemClickListener mOnItemClickListener;
@@ -91,8 +95,9 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
         this.mOnItemClickListener = mItemClickListener;
     }
 
-    public AdapterListSwipe_approval(Context context, List<listjobextension> items,CoordinatorLayout snakebar) {
+    public AdapterListSwipe_approval(Context context, List<listjobextension> items,CoordinatorLayout snakebar,List<String> pass) {
         snake = snakebar;
+        passed =pass;
         this.items = items;
         ctx = context;
     }
@@ -104,6 +109,8 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
         public RelativeLayout main;
         public SparkButton spark;
         public SparkButton sparktrue;
+
+        public List<String> passed1;
 
         public Boolean spark1=false;
         public Boolean spark2=true;
@@ -144,15 +151,19 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
 
             final OriginalViewHolder view = (OriginalViewHolder) holder;
 
+            listjobextension p = items.get(position);
 
+            view.passed1 = new ArrayList<>();
+
+            view.passed1=passed;
 
             view.spark.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     view.spark.playAnimation();
                     if(view.spark.isChecked()){
-                       //execute data
-                        removeItem(position);
+                        acceptordeny acc = new acceptordeny(ctx,p.getTipe(),p.getIddata(),0,snake,view.passed1,position);
+                        acc.execute();
                     }
                     else {
                         Snackbar.make(snake,"Press again to Confirm",Snackbar.LENGTH_SHORT).show();
@@ -175,7 +186,8 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                 public void onClick(View v) {
                     view.sparktrue.playAnimation();
                     if(view.sparktrue.isChecked()){
-                        removeItem(position);
+                        acceptordeny acc = new acceptordeny(ctx,p.getTipe(),p.getIddata(),1,snake,view.passed1,position);
+                        acc.execute();
                     }
                     else {
                         Snackbar.make(snake,"Press again to Confirm",Snackbar.LENGTH_SHORT).show();
@@ -194,7 +206,7 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
             });
 
 
-            listjobextension p = items.get(position);
+
 
             if (p.getIsselected()){
                 //if item is selected then,set foreground color of FrameLayout.
@@ -341,22 +353,105 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
         String tipe = "";
         View nothing ;
         TextView txt_nothing;
-        int accordeny;
+        String iddata;
+        String status;
+        CoordinatorLayout parent;
+        int position;
+        List<String> passs =new ArrayList<>();
         //listjobextension =
 
-        public acceptordeny(Context context,String choice,int acceptordenydata)
+        public acceptordeny(Context context,String choice,String iddata,int stat, CoordinatorLayout snakebcar,List<String> passedy,int positoin)
         {
+
+            passs = passedy;
+            String message = "";
+            dialog = new ProgressDialog(ctx);
+
+            dialog.setCancelable(false);
+
+
+
+
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
 
-            accordeny = acceptordenydata;
+            if(stat==1){
+                status = "Diterima";
+                message = message+ "Approving ";
+            }
+            else {
+                status = "Ditolak";
+                message = message+ "Approving";
+            }
+
+            parent = snakebcar;
+            this.iddata = iddata;
+
+
 
             this.txt_nothing = txt_nothing;
             this.nothing = nothing;
 
             for(int i=0;i<options.length;i++){
                 if(options[i]==choice){
-                    urldata = urloptions[i];
-                    tipe = choice;
+
+                    if(i==4){
+                        if(stat==0){
+                            urldata = urloptions[i]+"/reject";
+                            tipe = choice;
+
+                            dialog.setMessage(message + tipe);
+                            dialog.show();
+                        }
+                        else {
+                            urldata = urloptions[i]+"/approve";
+                            tipe = choice;
+
+                            dialog.setMessage(message + tipe);
+                            dialog.show();
+                        }
+
+                    }
+                    else if(i==5){
+                        if(stat==0){
+                            urldata = urloptions[i]+"/reject";
+                            tipe = choice;
+
+                            dialog.setMessage(message + tipe);
+                            dialog.show();
+                        }
+                        else {
+                            urldata = urloptions[i]+"/approve";
+                            tipe = choice;
+
+                            dialog.setMessage(message + tipe);
+                            dialog.show();
+                        }
+
+                    }
+                    else if(i==7){
+                        if(stat==0){
+                            urldata = urloptions[i]+"/reject";
+                            tipe = choice;
+
+                            dialog.setMessage(message + tipe);
+                            dialog.show();
+                        }
+                        else {
+                            urldata = urloptions[i]+"/approve";
+                            tipe = choice;
+
+                            dialog.setMessage(message + tipe);
+                            dialog.show();
+                        }
+
+                    }
+                    else {
+                        urldata = urloptions[i];
+                        tipe = choice;
+
+                        dialog.setMessage(message + tipe);
+                        dialog.show();
+                    }
                     //this.txt_nothing.setText("Tidak Ada data "+options[i]);
                 }
             }
@@ -371,7 +466,7 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
         }
 
         protected String doInBackground(Void...arg0) {
-            Log.d(TAG + " DoINBackGround","On doInBackground...");
+            Log.d(TAG + " DoINBackGround",urldata);
 
             try {
 
@@ -389,47 +484,98 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                             "Approval Reward"};*/
 
                     if(tipe.equals("Approval Cuti")){
+                        RequestBody body = new FormBody.Builder()
+                                .add("id",iddata)
+                                .add("status",status)
+                                .build();
                         request = new Request.Builder()
                                 .header("Authorization",prefs.getString("Authorization",""))
                                 .url(urldata)
+                                .put(body)
                                 .build();
 
                     }
                     else if (tipe.equals("Approval Dinas") ){
+                        RequestBody body = new FormBody.Builder()
+                                .add("id",iddata)
+                                .add("status",status)
+                                .build();
                         request = new Request.Builder()
                                 .header("Authorization",prefs.getString("Authorization",""))
                                 .url(urldata)
+                                .put(body)
                                 .build();
 
                     }
                     else if (tipe.equals("Approval Dirumahkan") ){
+                        RequestBody body = new FormBody.Builder()
+                                .add("id",iddata)
+                                .add("status",status)
+                                .build();
                         request = new Request.Builder()
                                 .header("Authorization",prefs.getString("Authorization",""))
                                 .url(urldata)
+                                .put(body)
                                 .build();
 
                     }
                     else if (tipe.equals("Approval Izin") ){
+                        RequestBody body = new FormBody.Builder()
+                                .add("id",iddata)
+                                .add("status",status)
+                                .build();
                         request = new Request.Builder()
                                 .header("Authorization",prefs.getString("Authorization",""))
                                 .url(urldata)
+                                .put(body)
                                 .build();
 
                     }
                     else if (tipe.equals("Approval Golongan") ){
+                        Log.e(TAG, "doInBackground: "+"golongan" );
+                        Log.e("list", passs.toString());
+                        RequestBody body = new FormBody.Builder()
+                                .add("temp_id",passs.get(0))
+                                .add("golongan",passs.get(1))
+                                .add("keterangan",passs.get(2))
+                                .add("gaji",passs.get(3))
+                                .add("kehadiran",passs.get(4))
+                                .add("makan",passs.get(5))
+                                .add("transport",passs.get(6))
+                                .add("thr",passs.get(7))
+                                .add("tundip",passs.get(8))
+                                .add("tunjangan",passs.get(9))
+                                .add("absen",passs.get(10))
+                                .add("bjps",passs.get(11))
+                                .add("pot_lain",passs.get(12))
+                                .add("lembur",passs.get(13))
+                                .add("umk",passs.get(14))
+                                .build();
+
+
+                        Log.e(TAG, "temp_id"+passs.get(0) );
+
                         request = new Request.Builder()
                                 .header("Authorization",prefs.getString("Authorization",""))
+                                .put(body)
                                 .url(urldata)
                                 .build();
 
                     }
                     else if (tipe.equals("Approval Karyawan") ){
+                        Log.e(TAG, "doInBackground: "+"karyawan" );
+                        RequestBody body = new FormBody.Builder()
+                                .add("id",passs.get(0))
+                                .build();
+
                         request = new Request.Builder()
                                 .header("Authorization",prefs.getString("Authorization",""))
+                                .post(body)
                                 .url(urldata)
                                 .build();
 
                     }
+
                     else if (tipe.equals("Approval Pinjaman") ){
                         request = new Request.Builder()
                                 .header("Authorization",prefs.getString("Authorization",""))
@@ -438,8 +584,24 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
 
                     }
                     else if (tipe.equals("Approval Pdm") ){
+                        Log.e(TAG, "doInBackground: "+"pdm" );
+                        RequestBody body = new FormBody.Builder()
+                                .add("id",passs.get(0))
+                                .add("id_promosi",passs.get(1))
+                                .add("id_karyawan",passs.get(2))
+                                .add("id_cabang1",passs.get(3))
+                                .add("id_departemen1",passs.get(4))
+                                .add("id_jabatan1",passs.get(5))
+                                .add("id_golongan1",passs.get(6))
+                                .add("id_grup1",passs.get(7))
+                                .add("tanggal",passs.get(8))
+                                .add("judul",passs.get(9))
+                                .add("keterangans",passs.get(10))
+                                .build();
+
                         request = new Request.Builder()
                                 .header("Authorization",prefs.getString("Authorization",""))
+                                .put(body)
                                 .url(urldata)
                                 .build();
 
@@ -514,46 +676,124 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
 
                 if (result != null) {
 
-                    if(tipe.equals("Approval Cuti")){
+                    Log.e("list", passs.toString());
 
+                    if(tipe.equals("Approval Cuti")){
+                        if(result.getString("status").equals("true")){
+                            Snackbar.make(parent,"Sukses Approval",Snackbar.LENGTH_SHORT).show();
+                            removeItem(position);
+                        }
+                        else {
+                            Snackbar.make(parent,"Gagal Approval",Snackbar.LENGTH_SHORT).show();
+                        }
                     }
                     else if (tipe.equals("Approval Dinas") ){
-
+                        if(result.getString("status").equals("true")){
+                            Snackbar.make(parent,"Sukses Approval",Snackbar.LENGTH_SHORT).show();
+                            removeItem(position);
+                        }
+                        else {
+                            Snackbar.make(parent,"Gagal Approval",Snackbar.LENGTH_SHORT).show();
+                        }
                     }
                     else if (tipe.equals("Approval Dirumahkan") ){
-
+                        if(result.getString("status").equals("true")){
+                            Snackbar.make(parent,"Sukses Approval",Snackbar.LENGTH_SHORT).show();
+                            removeItem(position);
+                        }
+                        else {
+                            Snackbar.make(parent,"Gagal Approval",Snackbar.LENGTH_SHORT).show();
+                        }
                     }
                     else if (tipe.equals("Approval Izin") ){
-
+                        if(result.getString("status").equals("true")){
+                            Snackbar.make(parent,"Sukses Approval",Snackbar.LENGTH_SHORT).show();
+                            removeItem(position);
+                        }
+                        else {
+                            Snackbar.make(parent,"Gagal Approval",Snackbar.LENGTH_SHORT).show();
+                        }
                     }
                     else if (tipe.equals("Approval Golongan") ){
-
+                        if(result.getString("status").equals("true")){
+                            for (int i=0;i<15;i++){
+                                passs.remove(position*14);
+                            }
+                            Snackbar.make(parent,"Sukses Approval",Snackbar.LENGTH_SHORT).show();
+                            removeItem(position);
+                        }
+                        else {
+                            Snackbar.make(parent,"Gagal Approval",Snackbar.LENGTH_SHORT).show();
+                        }
                     }
                     else if (tipe.equals("Approval Karyawan") ){
-
+                        if(result.getString("status").equals("true")){
+                            passs.remove(position);
+                            Snackbar.make(parent,"Sukses Approval",Snackbar.LENGTH_SHORT).show();
+                            removeItem(position);
+                        }
+                        else {
+                            Snackbar.make(parent,"Gagal Approval",Snackbar.LENGTH_SHORT).show();
+                        }
                     }
                     else if (tipe.equals("Approval Pinjaman") ){
-
+                        if(result.getString("status").equals("true")){
+                            passs.remove(position);
+                            Snackbar.make(parent,"Sukses Approval",Snackbar.LENGTH_SHORT).show();
+                            removeItem(position);
+                        }
+                        else {
+                            Snackbar.make(parent,"Gagal Approval",Snackbar.LENGTH_SHORT).show();
+                        }
                     }
                     else if (tipe.equals("Approval Pdm") ){
-
+                        if(result.getString("status").equals("true")){
+                            for (int i=0;i<10;i++){
+                                passs.remove(position*9);
+                            }
+                            Snackbar.make(parent,"Sukses Approval",Snackbar.LENGTH_SHORT).show();
+                            removeItem(position);
+                        }
+                        else {
+                            Snackbar.make(parent,"Gagal Approval",Snackbar.LENGTH_SHORT).show();
+                        }
                     }
                     else if (tipe.equals("Approval Punishment") ){
-
+                        if(result.getString("status").equals("true")){
+                            passs.remove(position);
+                            Snackbar.make(parent,"Sukses Approval",Snackbar.LENGTH_SHORT).show();
+                            removeItem(position);
+                        }
+                        else {
+                            Snackbar.make(parent,"Gagal Approval",Snackbar.LENGTH_SHORT).show();
+                        }
                     }
                     else if (tipe.equals("Approval Reward") ){
+                        if(result.getString("status").equals("true")){
+                            passs.remove(position);
+                            Snackbar.make(parent,"Sukses Approval",Snackbar.LENGTH_SHORT).show();
+                            removeItem(position);
+                        }
+                        else {
+                            Snackbar.make(parent,"Gagal Approval",Snackbar.LENGTH_SHORT).show();
+                        }
+                    }
 
+                    if(dialog!=null){
+                        if(dialog.isShowing()){
+                            dialog.dismiss();
+                        }
                     }
 
 
 
                 }
                 else {
-                    //Snackbar.make(parent_view,"Gagal" + result.getString("message"),Toast.LENGTH_LONG).show();
+                    Snackbar.make(parent,"Gagal" + result.toString(),Toast.LENGTH_LONG).show();
                 }
             }catch (Exception E){
                 E.printStackTrace();
-                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent,"Gagal" + E.getMessage(),Toast.LENGTH_LONG).show();
                 //Snackbar.make(parent_view,"Gagal" + E.getMessage(),Toast.LENGTH_LONG).show();
             }
 

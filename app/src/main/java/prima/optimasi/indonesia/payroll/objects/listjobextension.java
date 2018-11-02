@@ -2,8 +2,12 @@ package prima.optimasi.indonesia.payroll.objects;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
 
+import java.util.List;
+
 public class listjobextension {
-    String namakaryawan,keterangan,profilepicture,tanggal1,tanggal2,jabatan,tipe,tgldiajukan;
+    String namakaryawan,keterangan,profilepicture,tanggal1,tanggal2,jabatan,tipe,tgldiajukan,iddata;
+
+    List<String> passedparameters;
 
     Boolean isselected = false;
 
@@ -32,6 +36,11 @@ public class listjobextension {
 
     }
 
+    public List<String> getPassedparameters() {
+        return passedparameters;
+    }
+
+
     public String getTanggal1() {
         return tanggal1;
     }
@@ -42,6 +51,14 @@ public class listjobextension {
 
     public Boolean getIsselected() {
         return isselected;
+    }
+
+    public String getIddata() {
+        return iddata;
+    }
+
+    public void setPassedparameters(List<String> passedparameters) {
+        this.passedparameters = passedparameters;
     }
 
     public void setTgldiajukan(String tgldiajukan) {
@@ -78,5 +95,9 @@ public class listjobextension {
 
     public void setIsselected(Boolean isselected) {
         this.isselected = isselected;
+    }
+
+    public void setIddata(String iddata) {
+        this.iddata = iddata;
     }
 }

@@ -99,6 +99,7 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
         super.onCreate(savedInstanceState);
         setContentView(R.layout.owner_approval);
 
+
         parent_view = findViewById(R.id.snakebar);
 
         recyclerView = findViewById(R.id.recyclerView);
@@ -269,13 +270,18 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
 
         protected void onPostExecute(String result1) {
 
+
+
             try {
                 List<listjobextension> listdata = new ArrayList<>();
 
                 if (result != null) {
 
+                    Log.e(TAG, tipe + " " + result.toString());
+
+                    List<String> passing= new ArrayList<>();
+
                     if(tipe.equals("Approval Cuti")){
-                        Log.e(tipe,result.toString() );
                         if(result.getString("status").equals("true")) {
 
                             Log.e(TAG, tipe + " " + result.toString());
@@ -285,6 +291,7 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                             for (int i = 0; i < arrays.length(); i++) {
                                 JSONObject obj = arrays.getJSONObject(i);
                                 listjobextension data = new listjobextension();
+                                data.setIddata(obj.getString("id_cuti"));
                                 data.setJabatan(obj.getString("jabatan"));
                                 data.setKeterangan(obj.getString("keterangans"));
                                 data.setTanggal1(obj.getString("mulai_berlaku").substring(0,10));
@@ -313,6 +320,7 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                             for (int i = 0; i < arrays.length(); i++) {
                                 JSONObject obj = arrays.getJSONObject(i);
                                 listjobextension data = new listjobextension();
+                                data.setIddata(obj.getString("id_dinas"));
                                 data.setJabatan(obj.getString("jabatan"));
                                 data.setKeterangan(obj.getString("keterangans"));
                                 data.setTanggal1(obj.getString("tgl_dinas").substring(0,10));
@@ -341,6 +349,7 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                             for (int i = 0; i < arrays.length(); i++) {
                                 JSONObject obj = arrays.getJSONObject(i);
                                 listjobextension data = new listjobextension();
+                                data.setIddata(obj.getString("id_dirumahkan"));
                                 data.setJabatan(obj.getString("jabatan"));
                                 data.setKeterangan(obj.getString("keterangans"));
                                 data.setTanggal1(obj.getString("tgl_dirumahkan").substring(0,10));
@@ -370,6 +379,7 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                                 JSONObject obj = arrays.getJSONObject(i);
                                 listjobextension data = new listjobextension();
                                 data.setJabatan(obj.getString("jabatan"));
+                                data.setIddata(obj.getString("id_izin"));
                                 data.setKeterangan(obj.getString("keterangans"));
                                 data.setTanggal1(obj.getString("tgl_izin").substring(0,10));
                                 data.setTanggal2(obj.getString("akhir_izin").substring(0,10));
@@ -394,168 +404,175 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                         // "Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment",
                         // "Approval Reward"};
                         //
+                        if(result.getString("status").equals("true")) {
 
 
-                        JSONArray arrays = result.getJSONArray("data");
-                        JSONArray arrays1 = result.getJSONArray("data1");
-                        for (int i = 0; i < arrays.length(); i++) {
-                            JSONObject obj = arrays.getJSONObject(i);
+                            JSONArray arrays = result.getJSONArray("data");
+                            JSONArray arrays1 = result.getJSONArray("data1");
+                            for (int i = 0; i < arrays.length(); i++) {
+                                JSONObject obj = arrays.getJSONObject(i);
 
-                            listjobextension data = new listjobextension();
+                                listjobextension data = new listjobextension();
 
-                            String arrow = " ➡ ";
+                                String arrow = " ➡ ";
 
-                            int index = 0 ;
+                                int index = 0;
 
-                            Boolean isnotsame = false;
+                                Boolean isnotsame = false;
 
-                            for (int j = 0; j < arrays1.length(); j++) {
-                                JSONObject obj1 = arrays1.getJSONObject(j);
-                                if(obj.getString("id_golongan").equals(obj1.getString("id_golongan"))){
-                                    isnotsame = false;
+                                for (int j = 0; j < arrays1.length(); j++) {
+                                    JSONObject obj1 = arrays1.getJSONObject(j);
+                                    if (obj.getString("id_golongan").equals(obj1.getString("id_golongan"))) {
+                                        isnotsame = false;
 
-                                    break;
-                                }
-                                else{
-                                    isnotsame = true;
-                                    index++;
-                                }
+                                        passing.add(obj1.getString("temp_id_golongan"));
+                                        passing.add(obj1.getString("golongan"));
+                                        passing.add(obj1.getString("keterangan"));
+                                        passing.add(obj1.getString("gaji"));
+                                        passing.add(obj1.getString("kehadiran"));
+                                        passing.add(obj1.getString("makan"));
+                                        passing.add(obj1.getString("transport"));
+                                        passing.add(obj1.getString("thr"));
+                                        passing.add(obj1.getString("tundip"));
+                                        passing.add(obj1.getString("tunjangan_lain"));
+                                        passing.add(obj1.getString("absen"));
+                                        passing.add(obj1.getString("bpjs"));
+                                        passing.add(obj1.getString("pot_lain"));
+                                        passing.add(obj1.getString("lembur"));
+                                        passing.add(obj1.getString("umk"));
 
-                            }
+                                        break;
+                                    } else {
+                                        isnotsame = true;
+                                        index++;
+                                    }
 
-                            if(isnotsame){
-                                data.setNamakaryawan(obj.getString("golongan"));
-                                data.setTipe(tipe);
-
-                                DecimalFormat formatter = new DecimalFormat("###,###,###");
-
-
-                                Double gaji = Double.parseDouble(obj.getString("gaji"));
-                                Double makan = Double.parseDouble(obj.getString("makan"));
-                                Double transport = Double.parseDouble(obj.getString("transport"));
-                                Double thr = Double.parseDouble(obj.getString("thr"));
-                                Double tundip = Double.parseDouble(obj.getString("tundip"));
-                                Double tunjangan_lain = Double.parseDouble(obj.getString("tunjangan_lain"));
-                                Double bpjs = Double.parseDouble(obj.getString("bpjs"));
-                                Double potlain = Double.parseDouble(obj.getString("pot_lain"));
-                                String lembur = "";
-
-                                if(obj.getInt("lembur")==1){
-                                    lembur = "Hidup";
-                                }
-                                else {
-                                    lembur = "Tetap";
                                 }
 
-                                Double umk = Double.parseDouble(obj.getString("umk"));
-
-                                String newline = "\n";
-                                String spacing = " : ";
-
-                                data.setKeterangan("Keterangan"+spacing+obj.getString("keterangan")+newline
-                                        +"Gaji"+spacing+formatter.format(gaji)+newline+"Makan"+spacing+formatter.format(makan)+newline+"Transport"
-                                        +spacing+formatter.format(transport)+newline+"thr"+spacing+formatter.format(thr)+newline+"Tundip"+spacing+formatter.format(tundip)+newline
-                                        +"Tunjangan Lain"+spacing+formatter.format(tunjangan_lain)+newline+"BPJS"+spacing+formatter.format(bpjs)+newline
-                                        +"Potongan Lain"+spacing+formatter.format(potlain)+newline+"Lembur"+spacing+lembur+newline+"UMK"+spacing+formatter.format(umk)+newline);
-
-                                listdata.add(data);
-                            }else{
-
-                                JSONObject obj1 = arrays1.getJSONObject(index);
-
-                                data.setNamakaryawan(obj.getString("golongan"));
-                                data.setTipe(tipe);
-
-                                DecimalFormat formatter = new DecimalFormat("###,###,###");
-
-
-                                Double gaji1 = Double.parseDouble(obj.getString("gaji"));
-                                Double makan1 = Double.parseDouble(obj.getString("makan"));
-                                Double transport1 = Double.parseDouble(obj.getString("transport"));
-                                Double thr1 = Double.parseDouble(obj.getString("thr"));
-                                Double tundip1 = Double.parseDouble(obj.getString("tundip"));
-                                Double tunjangan_lain1 = Double.parseDouble(obj.getString("tunjangan_lain"));
-                                Double bpjs1 = Double.parseDouble(obj.getString("bpjs"));
-                                Double potlain1 = Double.parseDouble(obj.getString("pot_lain"));
-                                String lembur1 = "";
-
-                                if(obj.getInt("lembur")==1){
-                                    lembur1 = "Hidup";
-                                }
-                                else {
-                                    lembur1 = "Tetap";
-                                }
-
-                                Double umk1 = Double.parseDouble(obj.getString("umk"));
-
-
-                                String newline = "\n";
-                                String spacing = " : ";
-
-                                if(!obj.getString("golongan").equals(obj1.getString("golongan"))){
-                                    data.setNamakaryawan(obj.getString("golongan")+arrow+obj1.getString("golongan"));
-                                }
-                                else {
+                                if (isnotsame) {
                                     data.setNamakaryawan(obj.getString("golongan"));
-                                }
+                                    data.setTipe(tipe);
 
-                                data.setTipe(tipe);
+                                    DecimalFormat formatter = new DecimalFormat("###,###,###");
 
-                                String texting = "Keterangan"+spacing;
 
-                                if(!obj.getString("golongan").equals(obj1.getString("golongan"))){
-                                    texting = texting + obj.getString("keterangan")+arrow+obj1.getString("golongan")+newline;
-                                }
-                                else {
-                                    texting = texting + obj.getString("keterangan")+newline;
-                                }
+                                    Double gaji = Double.parseDouble(obj.getString("gaji"));
+                                    Double makan = Double.parseDouble(obj.getString("makan"));
+                                    Double transport = Double.parseDouble(obj.getString("transport"));
+                                    Double thr = Double.parseDouble(obj.getString("thr"));
+                                    Double tundip = Double.parseDouble(obj.getString("tundip"));
+                                    Double tunjangan_lain = Double.parseDouble(obj.getString("tunjangan_lain"));
+                                    Double bpjs = Double.parseDouble(obj.getString("bpjs"));
+                                    Double potlain = Double.parseDouble(obj.getString("pot_lain"));
+                                    String lembur = "";
 
-                                Double gaji2 = Double.parseDouble(obj1.getString("gaji"));
-                                Double makan2 = Double.parseDouble(obj1.getString("makan"));
-                                Double transport2 = Double.parseDouble(obj1.getString("transport"));
-                                Double thr2 = Double.parseDouble(obj1.getString("thr"));
-                                //Double tundip2 = Double.parseDouble(obj1.getString("tundip"));
-                                Double tunjangan_lain2 = Double.parseDouble(obj1.getString("tunjangan_lain"));
-                                Double bpjs2 = Double.parseDouble(obj1.getString("bpjs"));
-                                Double potlain2 = Double.parseDouble(obj1.getString("pot_lain"));
-                                String lembur2 = "";
+                                    if (obj.getInt("lembur") == 1) {
+                                        lembur = "Hidup";
+                                    } else {
+                                        lembur = "Tetap";
+                                    }
 
-                                if(obj1.getInt("lembur")==1){
-                                    lembur2 = "Hidup";
-                                }
-                                else {
-                                    lembur2 = "Tetap";
-                                }
+                                    Double umk = Double.parseDouble(obj.getString("umk"));
 
-                                Double umk2 = Double.parseDouble(obj1.getString("umk"));
+                                    String newline = "\n";
+                                    String spacing = " : ";
 
-                                if(gaji1==gaji2){
-                                    texting = texting+"Gaji"+spacing+formatter.format(gaji1)+newline;
-                                }
-                                else {
-                                    texting = texting+"Gaji"+spacing+formatter.format(gaji1)+arrow+formatter.format(gaji2)+newline;
-                                }
+                                    data.setKeterangan("Keterangan" + spacing + obj.getString("keterangan") + newline
+                                            + "Gaji" + spacing + formatter.format(gaji) + newline + "Makan" + spacing + formatter.format(makan) + newline + "Transport"
+                                            + spacing + formatter.format(transport) + newline + "thr" + spacing + formatter.format(thr) + newline + "Tundip" + spacing + formatter.format(tundip) + newline
+                                            + "Tunjangan Lain" + spacing + formatter.format(tunjangan_lain) + newline + "BPJS" + spacing + formatter.format(bpjs) + newline
+                                            + "Potongan Lain" + spacing + formatter.format(potlain) + newline + "Lembur" + spacing + lembur + newline + "UMK" + spacing + formatter.format(umk) + newline);
 
-                                if(makan1==makan2){
-                                    texting = texting+"Makan"+spacing+formatter.format(makan1)+newline;
-                                }
-                                else {
-                                    texting = texting+"Makan"+spacing+formatter.format(makan1)+arrow+formatter.format(makan2)+newline;
-                                }
+                                    listdata.add(data);
+                                } else {
 
-                                if(transport1 == transport2){
-                                    texting = texting+"Transport"+spacing+formatter.format(transport1)+newline;
-                                }
-                                else {
-                                    texting = texting+"Transport"+spacing+formatter.format(transport1)+arrow+formatter.format(transport2)+newline;
-                                }
+                                    JSONObject obj1 = arrays1.getJSONObject(index);
 
-                                if(thr1==thr2){
-                                    texting = texting+"THR"+spacing+formatter.format(thr1)+newline;
-                                }
-                                else {
-                                    texting = texting+"THR"+spacing+formatter.format(thr1)+arrow+formatter.format(thr2)+newline;
-                                }
+                                    data.setNamakaryawan(obj.getString("golongan"));
+                                    data.setTipe(tipe);
+
+                                    DecimalFormat formatter = new DecimalFormat("###,###,###");
+
+
+                                    Double gaji1 = Double.parseDouble(obj.getString("gaji"));
+                                    Double makan1 = Double.parseDouble(obj.getString("makan"));
+                                    Double transport1 = Double.parseDouble(obj.getString("transport"));
+                                    Double thr1 = Double.parseDouble(obj.getString("thr"));
+                                    Double tundip1 = Double.parseDouble(obj.getString("tundip"));
+                                    Double tunjangan_lain1 = Double.parseDouble(obj.getString("tunjangan_lain"));
+                                    Double bpjs1 = Double.parseDouble(obj.getString("bpjs"));
+                                    Double potlain1 = Double.parseDouble(obj.getString("pot_lain"));
+                                    String lembur1 = "";
+
+                                    if (obj.getInt("lembur") == 1) {
+                                        lembur1 = "Hidup";
+                                    } else {
+                                        lembur1 = "Tetap";
+                                    }
+
+                                    Double umk1 = Double.parseDouble(obj.getString("umk"));
+
+
+                                    String newline = "\n";
+                                    String spacing = " : ";
+
+                                    if (!obj.getString("golongan").equals(obj1.getString("golongan"))) {
+                                        data.setNamakaryawan(obj.getString("golongan") + arrow + obj1.getString("golongan"));
+                                    } else {
+                                        data.setNamakaryawan(obj.getString("golongan"));
+                                    }
+
+                                    data.setTipe(tipe);
+
+                                    String texting = "Keterangan" + spacing;
+
+                                    if (!obj.getString("golongan").equals(obj1.getString("golongan"))) {
+                                        texting = texting + obj.getString("keterangan") + arrow + obj1.getString("golongan") + newline;
+                                    } else {
+                                        texting = texting + obj.getString("keterangan") + newline;
+                                    }
+
+                                    Double gaji2 = Double.parseDouble(obj1.getString("gaji"));
+                                    Double makan2 = Double.parseDouble(obj1.getString("makan"));
+                                    Double transport2 = Double.parseDouble(obj1.getString("transport"));
+                                    Double thr2 = Double.parseDouble(obj1.getString("thr"));
+                                    //Double tundip2 = Double.parseDouble(obj1.getString("tundip"));
+                                    Double tunjangan_lain2 = Double.parseDouble(obj1.getString("tunjangan_lain"));
+                                    Double bpjs2 = Double.parseDouble(obj1.getString("bpjs"));
+                                    Double potlain2 = Double.parseDouble(obj1.getString("pot_lain"));
+                                    String lembur2 = "";
+
+                                    if (obj1.getInt("lembur") == 1) {
+                                        lembur2 = "Hidup";
+                                    } else {
+                                        lembur2 = "Tetap";
+                                    }
+
+                                    Double umk2 = Double.parseDouble(obj1.getString("umk"));
+
+                                    if (gaji1 == gaji2) {
+                                        texting = texting + "Gaji" + spacing + formatter.format(gaji1) + newline;
+                                    } else {
+                                        texting = texting + "Gaji" + spacing + formatter.format(gaji1) + arrow + formatter.format(gaji2) + newline;
+                                    }
+
+                                    if (makan1 == makan2) {
+                                        texting = texting + "Makan" + spacing + formatter.format(makan1) + newline;
+                                    } else {
+                                        texting = texting + "Makan" + spacing + formatter.format(makan1) + arrow + formatter.format(makan2) + newline;
+                                    }
+
+                                    if (transport1 == transport2) {
+                                        texting = texting + "Transport" + spacing + formatter.format(transport1) + newline;
+                                    } else {
+                                        texting = texting + "Transport" + spacing + formatter.format(transport1) + arrow + formatter.format(transport2) + newline;
+                                    }
+
+                                    if (thr1 == thr2) {
+                                        texting = texting + "THR" + spacing + formatter.format(thr1) + newline;
+                                    } else {
+                                        texting = texting + "THR" + spacing + formatter.format(thr1) + arrow + formatter.format(thr2) + newline;
+                                    }
 
                                     /*if(tundip1==tundip2){
                                         texting = texting+"Tundip"+spacing+formatter.format(tundip1)+newline;
@@ -564,61 +581,53 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                                         texting = texting+"Tundip"+spacing+formatter.format(tundip1)+arrow+formatter.format(tundip2)+newline;
                                     }*/
 
-                                if(tunjangan_lain1==tunjangan_lain2){
-                                    texting = texting+"Tunjangan Lain"+spacing+formatter.format(tunjangan_lain1)+newline;
+                                    if (tunjangan_lain1 == tunjangan_lain2) {
+                                        texting = texting + "Tunjangan Lain" + spacing + formatter.format(tunjangan_lain1) + newline;
+                                    } else {
+                                        texting = texting + "Tunjangan Lain" + spacing + formatter.format(tunjangan_lain1) + arrow + formatter.format(tunjangan_lain2) + newline;
+                                    }
+
+                                    if (bpjs1 == bpjs2) {
+                                        texting = texting + "BPJS" + spacing + formatter.format(bpjs1) + newline;
+                                    } else {
+                                        texting = texting + "BPJS" + spacing + formatter.format(bpjs1) + arrow + formatter.format(bpjs2) + newline;
+                                    }
+
+                                    if (potlain1 == potlain2) {
+                                        texting = texting + "Potongan Lain" + spacing + formatter.format(potlain1) + newline;
+                                    } else {
+                                        texting = texting + "Potongan Lain" + spacing + formatter.format(potlain1) + arrow + formatter.format(potlain2) + newline;
+                                    }
+
+                                    if (lembur1.equals(lembur2)) {
+                                        texting = texting + "Lembur" + spacing + lembur1 + newline;
+                                    } else {
+                                        texting = texting + "Lembur" + spacing + lembur1 + arrow + lembur2 + newline;
+                                    }
+
+                                    if (umk1 == umk2) {
+                                        texting = texting + "UMK" + spacing + formatter.format(umk1) + newline;
+                                    } else {
+                                        texting = texting + "UMK" + spacing + formatter.format(umk1) + arrow + formatter.format(umk2) + newline;
+                                    }
+
+
+                                    String newline2 = "\n";
+                                    String spacing2 = " : ";
+
+
+                                    data.setKeterangan(texting);
+
+                                    listdata.add(data);
                                 }
-                                else {
-                                    texting = texting+"Tunjangan Lain"+spacing+formatter.format(tunjangan_lain1)+arrow+formatter.format(tunjangan_lain2)+newline;
-                                }
-
-                                if(bpjs1==bpjs2){
-                                    texting = texting+"BPJS"+spacing+formatter.format(bpjs1)+newline;
-                                }
-                                else {
-                                    texting = texting+"BPJS"+spacing+formatter.format(bpjs1)+arrow+formatter.format(bpjs2)+newline;
-                                }
-
-                                if(potlain1==potlain2){
-                                    texting = texting+"Potongan Lain"+spacing+formatter.format(potlain1)+newline;
-                                }
-                                else {
-                                    texting = texting + "Potongan Lain" + spacing + formatter.format(potlain1) + arrow + formatter.format(potlain2) + newline;
-                                }
-
-                                if(lembur1.equals(lembur2)){
-                                    texting = texting+"Lembur"+spacing+lembur1+newline;
-                                }
-                                else {
-                                    texting = texting + "Lembur" + spacing + lembur1 + arrow + lembur2 + newline;
-                                }
-
-                                if(umk1==umk2){
-                                    texting = texting+"UMK"+spacing+formatter.format(umk1)+newline;
-                                }
-                                else {
-                                    texting = texting + "UMK" + spacing + formatter.format(umk1) + arrow + formatter.format(umk2) + newline;
-                                }
-
-
-
-
-
-                                String newline2 = "\n";
-                                String spacing2 = " : ";
-
-
-                                data.setKeterangan(texting);
-
-                                listdata.add(data);
                             }
                         }
                     }
                     else if (tipe.equals("Approval Karyawan") ){
 
-                        //String[] options = new String[]{"Approval Cuti","Approval Dinas","Approval Dirumahkan","Approval Izin",
-                        // "Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment",
-                        // "Approval Reward"};
-                        //
+                        Log.e( "karyawan data",result.getJSONArray("data1").toString() );
+
+
 
                         String newline = "\n";
                         String spacing = " : ";
@@ -640,11 +649,12 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                             int index = 0 ;
 
                             Boolean isnotsame = false;
-
                             for (int j = 0; j < arrays1.length(); j++) {
                                 JSONObject obj1 = arrays1.getJSONObject(j);
                                 if(obj.getString("idfp").equals(obj1.getString("idfp"))){
                                     isnotsame = false;
+
+                                    passing.add(obj1.getString("id"));
 
                                     break;
                                 }
@@ -667,7 +677,7 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                                 }
 
 
-                                DecimalFormat formatter = new DecimalFormat("###,###,###");
+
 
                                 //0,1,2,39,37,36
 
@@ -702,31 +712,8 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                                 }
                                 data.setKeterangan(texting);
 
-                                listdata.add(data);
+                                //listdata.add(data);
 
-                                    /*Double gaji = Double.parseDouble(obj.getString("gaji"));
-                                    String kode_karyawan = obj.getString("kode_karyawan");
-                                    String idfp= obj.getString("kode_karyawan");
-                                    String alamat = obj.getString("");
-                                    String tempat_lahir = obj.getString("");
-                                    String tgl_lahir = obj.getString("");
-                                    String telepon = obj.getString("");
-                                    String no_wali = obj.getString("");
-                                    String email = obj.getString("");
-                                    String tglmasuk = obj.getString("");
-                                    String kelamin = obj.getString("");
-                                    String status_nikah = obj.getString("");
-                                    String pendidikan = obj.getString("");
-                                    String wn = obj.getString("");
-                                    String agama = obj.getString("");
-                                    String shift = obj.getString("");
-                                    String status_kerja = obj.getString("");
-                                    String foto = obj.getString("foto");
-                                    String kontrak = obj.getString("");
-                                    String periode = obj.getString("");
-                                    String  = obj.getString("");
-                                    String  = obj.getString("");
-                                    String lembur = "";*/
                             }else{
 
                                 JSONObject obj1 = arrays1.getJSONObject(index);
@@ -778,7 +765,28 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
 
                                             }
                                             else {
-                                                texting = texting + karyawandetail[k]+spacing+obj.getString(karyawan[k])+arrow+obj1.getString(karyawan[k])+newline;
+                                                if(obj.getString(karyawan[k]).contains("T00:00:00.000Z")){
+                                                    SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                                                    SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
+                                                    if(obj1.getString(karyawan[k]).equals("null")){
+                                                        texting = texting + karyawandetail[k]+spacing+format2.format(format1.parse(obj.getString(karyawan[k]).substring(0,10)))+arrow+obj1.getString(karyawan[k])+newline;
+                                                    }else {
+                                                        texting = texting + karyawandetail[k]+spacing+format2.format(format1.parse(obj.getString(karyawan[k]).substring(0,10)))+arrow+format2.format(format1.parse(obj1.getString(karyawan[k]).substring(0,10)))+newline;
+                                                    }
+
+                                                }
+                                                else {
+
+
+                                                    if(obj1.getString(karyawan[k]).contains("T00:00:00.000Z")) {
+                                                        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                                                        SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
+                                                        texting = texting + karyawandetail[k]+spacing+obj.getString(karyawan[k])+arrow+format2.format(format1.parse(obj1.getString(karyawan[k]).substring(0,10)))+newline;
+                                                    }
+                                                    else {
+                                                        texting = texting + karyawandetail[k] + spacing + obj.getString(karyawan[k]) + arrow + obj1.getString(karyawan[k]) + newline;
+                                                    }
+                                                }
                                             }
 
                                         }
@@ -800,10 +808,6 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                                 //listdata.add(data);
                             }
                         }
-
-
-
-
                     }
                     else if (tipe.equals("Approval Pinjaman") ){
 
@@ -816,6 +820,9 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                         JSONArray arrays = result.getJSONArray("res1");
                         for (int i = 0; i < arrays.length(); i++) {
                             JSONObject obj = arrays.getJSONObject(i);
+
+                            passing.add(obj.getString("id_pinjaman"));
+                            passing.add(obj.getString("status"));
 
                             DecimalFormat formatter = new DecimalFormat("###,###,###");
                             listjobextension data = new listjobextension();
@@ -860,6 +867,18 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                                 for (int j = 0; j < arrays1.length(); j++) {
                                     JSONObject obj1 = arrays1.getJSONObject(j);
                                     if(obj.getString("id_promosi").equals(obj1.getString("id_promosi"))){
+
+                                        passing.add(obj1.getString("temp_id_promosi"));
+                                        passing.add(obj1.getString("id_promosi"));
+                                        passing.add(obj1.getString("id_karyawan"));
+                                        passing.add(obj1.getString("id_cabang1"));
+                                        passing.add(obj1.getString("id_departemen1"));
+                                        passing.add(obj1.getString("id_jabatan1"));
+                                        passing.add(obj1.getString("id_golongan1"));
+                                        passing.add(obj1.getString("id_grup1"));
+                                        passing.add(obj1.getString("tanggal"));
+                                        passing.add(obj1.getString("judul"));
+                                        passing.add(obj1.getString("keterangans"));
 
                                         listjobextension data = new listjobextension();
 
@@ -947,6 +966,11 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                             JSONArray arrays = result.getJSONArray("data");
                             for (int i = 0; i < arrays.length(); i++) {
                                 JSONObject obj = arrays.getJSONObject(i);
+
+                                passing.add(obj.getString("id_rewards"));
+                                passing.add(obj.getString("status"));
+
+
                                 listjobextension data = new listjobextension();
                                 data.setJabatan(obj.getString("jabatan"));
                                 data.setKeterangan("Kasus : "+obj.getString("judul")+"\n"+"Nilai : "+formatter.format(obj.getInt("nilai"))+"\nKeterangan : "+obj.getString("keterangan"));
@@ -979,6 +1003,10 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                             JSONArray arrays = result.getJSONArray("data");
                             for (int i = 0; i < arrays.length(); i++) {
                                 JSONObject obj = arrays.getJSONObject(i);
+
+                                passing.add(obj.getString("id_rewards"));
+                                passing.add(obj.getString("status"));
+
                                 listjobextension data = new listjobextension();
                                 data.setJabatan(obj.getString("jabatan"));
                                 data.setKeterangan("Nilai : "+formatter.format(obj.getInt("nilai"))+"\nKeterangan : "+obj.getString("keteranganr"));
@@ -1007,7 +1035,7 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                         nothing.setVisibility(View.GONE);
                     }*/
 
-                    adapter = new AdapterListSwipe_approval(approval.this,listdata,tempcoor);
+                    adapter = new AdapterListSwipe_approval(approval.this,listdata,tempcoor,passing);
                     adapter.notifyDataSetChanged();
 
                     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -1039,6 +1067,11 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
         }
     }
 
+    @Override
+    public void onBackPressed() {
 
+        setResult(RESULT_OK);
 
+        finish();
+    }
 }

@@ -57,6 +57,8 @@ public class generator {
     //public static String Server="153.92.4.147";
     public static String Server="192.168.5.254";
 
+    public static mainmenu_owner tempactivity = null;
+
     //public static String Server="153.92.4.147";
 
     public static Bitmap tempbitmap = null;
@@ -121,7 +123,7 @@ public class generator {
     public static String approvalpunihsmentyurl="http://"+ generator.Server+":4000/approvalPunishment";
     public static String approvalpinjamanyurl="http://"+ generator.Server+":4000/approvalPinjaman";
     public static String approvalgolonganyurl="http://"+ generator.Server+":4000/approvalGolongan";
-    public static String approvalpdlyurl="http://"+ generator.Server+":4000/approvalPdl";
+    public static String approvalpdlyurl="http://"+ generator.Server+":4000/approvalPdm";
 
     public static String getapprovaldinasyurl="http://"+ generator.Server+":4000/approvaldinas";
     public static String getapprovalcutiyurl="http://"+ generator.Server+":4000/approvalcuti";
