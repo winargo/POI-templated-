@@ -59,7 +59,7 @@ public class AdapterListSectionedKontrakKerja extends RecyclerView.Adapter<Recyc
         public OriginalViewHolder(View v) {
             super(v);
             sisakontrakkerja = v.findViewById(R.id.sisakontrakkerja);
-            image =  v.findViewById(R.id.image);
+            //image =  v.findViewById(R.id.image);
             nama = (TextView) v.findViewById(R.id.nama);
             lyt_parent = (View) v.findViewById(R.id.lyt_parent);
             //bt_expand = (View) v.findViewById(R.id.bt_expand);
@@ -87,7 +87,7 @@ public class AdapterListSectionedKontrakKerja extends RecyclerView.Adapter<Recyc
             view.sisakontrakkerja.setText(p.getKontrakkerja());
             //view.image.setVisibility(View.VISIBLE);
             //view.image.setImageResource(R.drawable.baseline_account_circle_black_24dp);
-            Picasso.get().load(p.getImagelink()).transform(new CircleTransform()).into(view.image);
+            //Picasso.get().load(p.getImagelink()).transform(new CircleTransform()).into(view.image);
 
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override

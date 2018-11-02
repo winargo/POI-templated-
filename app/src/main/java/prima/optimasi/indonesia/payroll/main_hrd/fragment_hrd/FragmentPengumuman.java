@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.Snackbar;
@@ -16,11 +18,14 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.applandeo.materialcalendarview.CalendarView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,16 +50,21 @@ public class FragmentPengumuman extends Fragment {
 
     private View parent_view;
 
+    private SwipeRefreshLayout refreshpengumuman;
+
     private RecyclerView recyclerView;
     private AdapterGridTwoLineLight mAdapter;
 
     List<pengumuman> items;
 
+    BottomNavigationView bottomnac;
+
     private BottomSheetBehavior mBehavior;
     private BottomSheetDialog mBottomSheetDialog;
     private SharedPreferences prefs;
-    SwipeRefreshLayout refresh;
     private View bottom_sheet;
+
+    CalendarView calender;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,9 +74,36 @@ public class FragmentPengumuman extends Fragment {
 
         items = new ArrayList<>();
 
+        bottomnac = rootView.findViewById(R.id.navigation);
+
+        calender = rootView.findViewById(R.id.calendarView);
         parent_view = rootView.findViewById(R.id.bgLayout);
         prefs = getActivity().getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
 
+        bottomnac.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.navigation_pengumuman:
+                        calender.setVisibility(View.GONE);
+                        refreshpengumuman.setVisibility(View.VISIBLE);
+                        //refreshkabag.setVisibility(View.VISIBLE);
+                        //refreshaktifitas.setVisibility(View.GONE);
+                        //refreshkaryawan.setVisibility(View.GONE);
+                        bottomnac.setBackgroundColor(getResources().getColor(R.color.light_blue_900));
+                        return true;
+                    case R.id.navigation_kalender:
+                        calender.setVisibility(View.VISIBLE);
+                        refreshpengumuman.setVisibility(View.GONE);
+                        //refreshkabag.setVisibility(View.GONE);
+                        //refreshaktifitas.setVisibility(View.GONE);
+                        //refreshkaryawan.setVisibility(View.VISIBLE);
+                        bottomnac.setBackgroundColor(getResources().getColor(R.color.deep_purple_900));
+                        return true;
+                }
+                return false;
+            }
+        });
         initComponent(rootView);
         //showBottomSheetDialog(mAdapter.getItem(0));
 
@@ -78,9 +115,9 @@ public class FragmentPengumuman extends Fragment {
 
     private void initComponent(View v) {
 
-        refresh = v.findViewById(R.id.pengswiperefresh);
+        refreshpengumuman = v.findViewById(R.id.pengswiperefresh);
 
-        refresh.setOnRefreshListener(
+        refreshpengumuman.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
@@ -101,13 +138,8 @@ public class FragmentPengumuman extends Fragment {
 
         items = new ArrayList<>();
 
-        if(mAdapter!=null){
-
-        }
-        else {
-            retrivepengumuman peng = new retrivepengumuman(getActivity(),prefs.getString("Authorization",""));
-            peng.execute();
-        }
+        retrivepengumuman peng = new retrivepengumuman(getActivity(),prefs.getString("Authorization",""));
+        peng.execute();
 
 
         //set data and list adapter
@@ -193,7 +225,6 @@ public class FragmentPengumuman extends Fragment {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
 
             try {
-                this.dialog.setMessage("Loading Data...");
 
                 JSONObject jsonObject;
 
@@ -231,17 +262,15 @@ public class FragmentPengumuman extends Fragment {
                     return null;
                 }
             } catch (IOException e) {
-                this.dialog.dismiss();
                 Log.e("doInBackground: ", "IO Exception" + e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Error IOException";
             } catch (NullPointerException e) {
-                this.dialog.dismiss();
                 Log.e("doInBackground: ", "null data" + e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Please check Connection and Server";
             } catch (Exception e) {
-                this.dialog.dismiss();
+                e.printStackTrace();
                 Log.e("doInBackground: ", e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Error Occured, PLease Contact Administrator/Support";
@@ -434,7 +463,7 @@ public class FragmentPengumuman extends Fragment {
                             mAdapter.notifyDataSetChanged();
                         }
 
-                        refresh.setRefreshing(false);
+                        refreshpengumuman.setRefreshing(false);
 
                     } catch (JSONException e) {
                         e.printStackTrace();

@@ -1,11 +1,27 @@
 package prima.optimasi.indonesia.payroll.objects;
 
 public class listkaryawandaftarabsensi {
-    String iskar;
+    String iskar, nama;
     String kode, jabatan;
     String tanggal_masuk, tanggal_keluar;
     String status, jenis, keterangan;
-    String banyak;
+    String banyak, total;
+
+    public String getTotal() {
+        return total;
+    }
+
+    public void setTotal(String total) {
+        this.total = total;
+    }
+
+    public String getNama() {
+        return nama;
+    }
+
+    public void setNama(String nama) {
+        this.nama = nama;
+    }
 
     public String getBanyak() {
         return banyak;

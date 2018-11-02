@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.objects.listkaryawandaftarabsensi;
 import prima.optimasi.indonesia.payroll.objects.listkaryawankontrakkerja;
 import prima.optimasi.indonesia.payroll.universal.viewkaryawan;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
@@ -29,19 +31,19 @@ public class AdapterListDaftarAbsensi extends RecyclerView.Adapter<RecyclerView.
     private final int VIEW_SECTION = 0;
     private int animation_type = 0;
 
-    private List<listkaryawankontrakkerja> items = new ArrayList<>();
+    private List<listkaryawandaftarabsensi> items = new ArrayList<>();
     private Context ctx;
     private OnItemClickListener mOnItemClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(View view, listkaryawankontrakkerja obj, int position);
+        void onItemClick(View view, listkaryawandaftarabsensi obj, int position);
     }
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
         this.mOnItemClickListener = mItemClickListener;
     }
 
-    public AdapterListDaftarAbsensi(Context context, List<listkaryawankontrakkerja> items, int animation_type) {
+    public AdapterListDaftarAbsensi(Context context, List<listkaryawandaftarabsensi> items, int animation_type) {
         this.items = items;
         ctx = context;
         this.animation_type = animation_type;
@@ -49,16 +51,20 @@ public class AdapterListDaftarAbsensi extends RecyclerView.Adapter<RecyclerView.
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
         public ImageView image;
-        public TextView sisakontrakkerja, nama;
-        public View lyt_parent, bt_expand, lyt_expand;
+        public TextView jabatan, banyak, nama, no;
+        public View lyt_parent;
+        //public ImageButton bt_expand;
 
         public OriginalViewHolder(View v) {
             super(v);
-            sisakontrakkerja = v.findViewById(R.id.sisakontrakkerja);
             image =  v.findViewById(R.id.image);
-            nama = (TextView) v.findViewById(R.id.nama);
+            //nama = (TextView) v.findViewById(R.id.nama);
+            no = (TextView) v.findViewById(R.id.no);
+
+            jabatan = (TextView) v.findViewById(R.id.jabatan);
+            banyak = (TextView) v.findViewById(R.id.banyak);
             lyt_parent = (View) v.findViewById(R.id.lyt_parent);
-            //bt_expand = (View) v.findViewById(R.id.bt_expand);
+            //bt_expand = (ImageButton) v.findViewById(R.id.bt_expand);
             //lyt_expand = (View) v.findViewById(R.id.lyt_expand);
 
         }
@@ -67,7 +73,7 @@ public class AdapterListDaftarAbsensi extends RecyclerView.Adapter<RecyclerView.
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder vh;
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_kontrak_kerja, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_daftar_absensi, parent, false);
         vh = new OriginalViewHolder(v);
         return vh;
     }
@@ -75,15 +81,16 @@ public class AdapterListDaftarAbsensi extends RecyclerView.Adapter<RecyclerView.
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        final listkaryawankontrakkerja p = items.get(position);
+        final listkaryawandaftarabsensi p = items.get(position);
         if (holder instanceof OriginalViewHolder) {
             OriginalViewHolder view = (OriginalViewHolder) holder;
-
-            view.nama.setText(p.getNama());
-            view.sisakontrakkerja.setText(p.getKontrakkerja());
+            int banyak=position+1;
+            //view.nama.setText(p.getNama());
+            view.jabatan.setText(p.getJabatan());
+            view.banyak.setText("("+p.getBanyak()+"/"+p.getTotal()+")");
             //view.image.setVisibility(View.VISIBLE);
             //view.image.setImageResource(R.drawable.baseline_account_circle_black_24dp);
-            Picasso.get().load(p.getImagelink()).transform(new CircleTransform()).into(view.image);
+            //Picasso.get().load(p.getImagelink()).transform(new CircleTransform()).into(view.image);
 
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -99,6 +106,13 @@ public class AdapterListDaftarAbsensi extends RecyclerView.Adapter<RecyclerView.
                     }
                 }
             });
+            if(banyak==items.size()){
+                //view.bt_expand.setVisibility(View.INVISIBLE);
+                view.no.setVisibility(View.INVISIBLE);
+            }
+            else{
+                view.no.setText(""+banyak);
+            }
             /*
             view.bt_expand.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -135,12 +149,7 @@ public class AdapterListDaftarAbsensi extends RecyclerView.Adapter<RecyclerView.
         return items.size();
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        return this.items.get(position).isSection() ? VIEW_SECTION : VIEW_ITEM;
-    }
-
-    public void insertItem(int index, listkaryawankontrakkerja kar){
+    public void insertItem(int index, listkaryawandaftarabsensi kar){
         items.add(index, kar);
         notifyItemInserted(index);
     }
