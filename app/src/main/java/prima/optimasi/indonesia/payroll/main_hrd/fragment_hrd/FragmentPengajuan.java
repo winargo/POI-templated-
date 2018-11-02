@@ -1,4 +1,4 @@
-package prima.optimasi.indonesia.payroll.universal.activity;
+package prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -65,8 +67,9 @@ import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
 
-public class ActivityPengajuan extends AppCompatActivity {
+public class FragmentPengajuan extends Fragment {
     CoordinatorLayout parent_view;
+    NestedScrollView nsv;
     Button send;
     MaterialSpinner spinner;
     private SimpleDateFormat dateFormatter;
@@ -81,19 +84,22 @@ public class ActivityPengajuan extends AppCompatActivity {
     List<listkaryawanpengajuan> items;
     listkaryawanpengajuan ajukan;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pengajuan);
-        parent_view=findViewById(R.id.parent_view);
-        recyclerView=findViewById(R.id.recyclerView);
-
-        keterangan=findViewById(R.id.keterangan);
-        spinner = (MaterialSpinner) findViewById(R.id.spinner);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        ViewGroup rootView = (ViewGroup) inflater.inflate(
+                R.layout.activity_pengajuan, container, false);
+        parent_view=rootView.findViewById(R.id.parent_view);
+        nsv=rootView.findViewById(R.id.nsv);
+        recyclerView=rootView.findViewById(R.id.recyclerView);
+        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+        toolbar.setVisibility(View.GONE);
+        keterangan=rootView.findViewById(R.id.keterangan);
+        spinner = (MaterialSpinner) rootView.findViewById(R.id.spinner);
 
         spinner.setItems("Pilih Pengajuan","Cuti", "Izin", "Dinas", "Sakit");
         //spinner.setText("Pengajuan");
         spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
-        //boolean klik=false;
+            //boolean klik=false;
             @Override
             public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
                 Snackbar.make(view, "Clicked " + item, Snackbar.LENGTH_LONG).show();
@@ -104,9 +110,9 @@ public class ActivityPengajuan extends AppCompatActivity {
             }
 
         });
-
-        tglmasuk=findViewById(R.id.tglmasuk);
-        tglkeluar=findViewById(R.id.tglkeluar);
+        nsv.setPadding(0,0,0,0);
+        tglmasuk=rootView.findViewById(R.id.tglmasuk);
+        tglkeluar=rootView.findViewById(R.id.tglkeluar);
         //tglmasuk.setText(getCurrentDate());
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE,0);
@@ -125,11 +131,11 @@ public class ActivityPengajuan extends AppCompatActivity {
 
         //Log.v("NEXT DATE : ", formattedDate);
 
-        send=findViewById(R.id.send_pengajuan);
-        retrivegetcuti cuti=new retrivegetcuti(ActivityPengajuan.this);
+        send=rootView.findViewById(R.id.send_pengajuan);
+        retrivegetcuti cuti=new retrivegetcuti(getActivity());
         cuti.execute();
-        initToolbar();
         initComponent();
+        return rootView;
     }
 
     private class retrivegetcuti extends AsyncTask<Void, Integer, String>
@@ -266,9 +272,9 @@ public class ActivityPengajuan extends AppCompatActivity {
 
                             items.add(ajukan);
                         }
-                        pengajuan = new Adapterhistorypengajuan(ActivityPengajuan.this, items, ItemAnimation.LEFT_RIGHT);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(ActivityPengajuan.this));
-                        recyclerView.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(ActivityPengajuan.this, 3), true));
+                        pengajuan = new Adapterhistorypengajuan(getActivity(), items, ItemAnimation.LEFT_RIGHT);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                        recyclerView.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(getActivity(), 3), true));
 
 
                         recyclerView.setHasFixedSize(true);
@@ -509,7 +515,7 @@ public class ActivityPengajuan extends AppCompatActivity {
                     lama=tgl_masuk.compareTo(tgl_keluar)+1;
                     if(!spinner.getText().equals("Pilih Pengajuan")){
                         if(tgl_masuk.compareTo(tgl_keluar)>0) {
-                            final Dialog dialog = new Dialog(ActivityPengajuan.this);
+                            final Dialog dialog = new Dialog(getActivity());
                             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
                             dialog.setContentView(R.layout.dialog_warning);
                             dialog.setCancelable(true);
@@ -527,7 +533,7 @@ public class ActivityPengajuan extends AppCompatActivity {
                             ((AppCompatButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    Toast.makeText(getApplicationContext(), ((AppCompatButton) v).getText().toString() + " Clicked", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), ((AppCompatButton) v).getText().toString() + " Clicked", Toast.LENGTH_SHORT).show();
                                     dialog.dismiss();
                                 }
                             });
@@ -538,19 +544,19 @@ public class ActivityPengajuan extends AppCompatActivity {
                             Log.e("NEXT DATE : ", "Berhasil");
                             if(!keterangan.getText().toString().trim().equals("")){
                                 if(spinner.getText().equals("Cuti")){
-                                    retrivepengajuancuti cuti =new retrivepengajuancuti(ActivityPengajuan.this);
+                                    retrivepengajuancuti cuti =new retrivepengajuancuti(getActivity());
                                     cuti.execute();
                                 }
                                 else if(spinner.getText().equals("Izin")){
-                                    retrivepengajuanizin izin =new retrivepengajuanizin(ActivityPengajuan.this);
+                                    retrivepengajuanizin izin =new retrivepengajuanizin(getActivity());
                                     izin.execute();
                                 }
                                 else if(spinner.getText().equals("Dinas")){
-                                    retrivepengajuandinas dinas=new retrivepengajuandinas(ActivityPengajuan.this);
+                                    retrivepengajuandinas dinas=new retrivepengajuandinas(getActivity());
                                     dinas.execute();
                                 }
                                 else if(spinner.getText().equals("Sakit")){
-                                    retrivepengajuansakit sakit =new retrivepengajuansakit(ActivityPengajuan.this);
+                                    retrivepengajuansakit sakit =new retrivepengajuansakit(getActivity());
                                     sakit.execute();
                                 }
 
@@ -703,7 +709,7 @@ public class ActivityPengajuan extends AppCompatActivity {
                             Snackbar.make(parent_view, result.getString("message") , Snackbar.LENGTH_SHORT).show();
                         }
                         else {
-                            Snackbar.make(parent_view, "Pengajuan Cuti berhasil" , Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(parent_view, "Pengajuan Izin berhasil" , Snackbar.LENGTH_SHORT).show();
                         }
                         /*
                         "data":[{
@@ -1335,37 +1341,6 @@ public class ActivityPengajuan extends AppCompatActivity {
         datePicker.setThemeDark(true);
         datePicker.setAccentColor(getResources().getColor(R.color.colorPrimary));
         datePicker.setMinDate(cur_calender);
-        datePicker.show(getFragmentManager(), "Datepickerdialog");
-    }
-
-
-    private void initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        Tools.setSystemBarColor(this, R.color.colorPrimary);
-    }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_activity_main, menu);
-        MenuItem item=menu.findItem(R.id.action_settings);
-        item.setTitle("About");
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == android.R.id.home) {
-            finish();
-        }
-
-        return super.onOptionsItemSelected(item);
+        datePicker.show(getActivity().getFragmentManager(), "Datepickerdialog");
     }
 }

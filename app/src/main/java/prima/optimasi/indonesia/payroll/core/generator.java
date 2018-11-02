@@ -136,18 +136,23 @@ public class generator {
     public static String getapprovalgolonganyurl="http://"+ generator.Server+":4000/approvalGolongan/proses";
     public static String getapprovalpdlyurl="http://"+ generator.Server+":4000/approvalpdm/proses";
 
-    public static String getapprovalcutibulananyurl="http://"+ generator.Server+":4000/cuti/bulanan";
+    public static String getizinbulananyurl="http://"+ generator.Server+":4000/izin/bulan";
+    public static String getcutibulananyurl="http://"+ generator.Server+":4000/cuti/bulan";
+    public static String getsakitbulananyurl="http://"+ generator.Server+":4000/sakit/bulan";
     public static String getabsensikaryawanurl="http://"+ generator.Server+":4000/logabsensi";
 
     public static String jadwalurl="http://"+ generator.Server+":4000/karyawan/checkjadwal";
 
     public static String servertimeurl="http://"+ generator.Server+":4000/setting/waktu";
 
-
     public static String pengajuancutiurl="http://"+ generator.Server+":4000/cuti";
     public static String pengajuanizinurl="http://"+ generator.Server+":4000/izin";
     public static String pengajuansakiturl="http://"+ generator.Server+":4000/sakit";
     public static String pengajuandinasurl="http://"+ generator.Server+":4000/dinas";
+
+    public static String totalgajiurl="http://"+ generator.Server+":4000/penggajian/totalgaji";
+
+    public static String pengajuancutikodeurl="http://"+ generator.Server+":4000/cuti/kode";
     public static String pengajuanizinkodeurl="http://"+ generator.Server+":4000/izin/kode";
     public static String pengajuansakitkodeurl="http://"+ generator.Server+":4000/sakit/kode";
     public static String pengajuandinaskodeurl="http://"+ generator.Server+":4000/dinas/kode";
@@ -159,6 +164,8 @@ public class generator {
     public static String kontrakkerja2bulanurl="http://"+ generator.Server+":4000/kontrak/2bulan";
     public static String kontrakkerja3bulanurl="http://"+ generator.Server+":4000/kontrak/3bulan";
 
+    public static String daftarabsensiurl="http://"+ generator.Server+":4000/absensi/today";
+    public static String jabatanurl="http://"+ generator.Server+":4000/jabatan";
 
     public static JSONObject jsondatalogin = null ;
     public static JSONObject jsondatajadwal = null ;

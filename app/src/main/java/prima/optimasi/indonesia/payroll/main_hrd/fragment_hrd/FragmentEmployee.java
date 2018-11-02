@@ -21,6 +21,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.applandeo.materialcalendarview.CalendarView;
+import com.applandeo.materialcalendarview.EventDay;
+import com.applandeo.materialcalendarview.exceptions.OutOfDateRangeException;
+import com.applandeo.materialcalendarview.listeners.OnDayClickListener;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,6 +33,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -63,9 +69,15 @@ public class FragmentEmployee extends Fragment {
 
     TextView selectdate;
 
+    TextView totalkabag,totalkaryawan,totalhadir;
+
     List<listkaryawan> itemskaryawan;
     List<listkaryawan> itemskabag;
     List<listkaryawanaktivitas> itemaktifitas;
+
+    long selecteddate = 0L;
+
+    int nilaikabag=0,nilaikaryawan=0,nilaikehadiran=0,nilaiall = 0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -78,6 +90,9 @@ public class FragmentEmployee extends Fragment {
         refreshkaryawan = rootView.findViewById(R.id.swipekaryawan);
         refreshaktifitas = rootView.findViewById(R.id.swipeaktifitas);
 
+        totalhadir = rootView.findViewById(R.id.totalhadir);
+        totalkabag = rootView.findViewById(R.id.totalkabag);
+        totalkaryawan = rootView.findViewById(R.id.totalkaryawan);
 
         selectdate = rootView.findViewById(R.id.dateselection_karyawan);
         SimpleDateFormat fomat = new SimpleDateFormat("dd/MM/yyyy");
@@ -97,9 +112,39 @@ public class FragmentEmployee extends Fragment {
 
                 View linear = inflate.inflate(R.layout.calenderview,null);
 
+                CalendarView calender = linear.findViewById(R.id.calenderviews);
+
+                Calendar cal = Calendar.getInstance();
+
+
+
+                calender.setOnDayClickListener(new OnDayClickListener() {
+                    @Override
+                    public void onDayClick(EventDay eventDay) {
+                        Calendar clickedDayCalendar = eventDay.getCalendar();
+                        selecteddate = clickedDayCalendar.getTimeInMillis();
+                    }
+                });
+
+                if(selecteddate!=0L){
+                    cal.setTimeInMillis(selecteddate);
+                    try {
+                        calender.setDate(cal);
+                    } catch (OutOfDateRangeException e) {
+                        e.printStackTrace();
+                    }
+                }
+
                 dialog.setView(linear);
 
-                dialog.show();
+                AlertDialog dial = dialog.show();
+
+                dial.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialog) {
+
+                    }
+                });
             }
         });
 
@@ -401,6 +446,13 @@ public class FragmentEmployee extends Fragment {
                             }*/
 
                         }
+                        nilaikabag = itemskabag.size();
+                        nilaikaryawan = itemskaryawan.size();
+
+                        totalkaryawan.setText("Jumlah Karyawan : "+nilaikaryawan);
+                        totalkabag.setText("Jumlah Kepala bagian : "+nilaikabag);
+
+                        nilaiall = itemskabag.size()+itemskaryawan.size();
 
                         //mAdapter = new AdapterListSectioned(getActivity(), items, ItemAnimation.LEFT_RIGHT);
                         mAdapterkabag = new AdapterGridCaller(getActivity(), itemskabag,ItemAnimation.FADE_IN);
@@ -649,6 +701,13 @@ public class FragmentEmployee extends Fragment {
                         if(mAdapteraktifitas!=null){
                             mAdapteraktifitas.notifyDataSetChanged();
                         }
+                        nilaikabag = itemskabag.size();
+                        nilaikaryawan = itemskaryawan.size();
+
+                        totalkaryawan.setText("Jumlah Karyawan : "+nilaikaryawan);
+                        totalkabag.setText("Jumlah Kepala bagian : "+nilaikabag);
+
+                        nilaiall = nilaikabag + nilaikaryawan;
 
                         refreshkabag.setRefreshing(false);
                         refreshkaryawan.setRefreshing(false);
@@ -1045,6 +1104,9 @@ public class FragmentEmployee extends Fragment {
                             }*/
 
                         }
+                        nilaikehadiran = itemaktifitas.size();
+
+                        totalhadir.setText("Jumlah Karyawan Hadir : ("+nilaikehadiran+"/"+nilaiall+")");
 
                         //mAdapter = new AdapterListSectioned(getActivity(), items, ItemAnimation.LEFT_RIGHT);
                         mAdapteraktifitas = new Adapterabsensiaktifitas(getActivity(), itemaktifitas,ItemAnimation.FADE_IN);
@@ -1391,6 +1453,9 @@ public class FragmentEmployee extends Fragment {
 
                         //mAdapter = new AdapterListSectioned(getActivity(), items, ItemAnimation.LEFT_RIGHT);
 
+                        nilaikehadiran = itemaktifitas.size();
+
+                        totalhadir.setText("Jumlah Karyawan Hadir : ("+nilaikehadiran+"/"+nilaiall+")");
                         if(mAdapteraktifitas!=null){
                             mAdapteraktifitas.notifyDataSetChanged();
                         }

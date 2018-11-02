@@ -871,21 +871,5 @@ public class viewkaryawan extends AppCompatActivity {
         }
         // ...
     }*/
-    private class SliderTimer extends TimerTask {
-
-        @Override
-        public void run() {
-            viewkaryawan.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (pager.getCurrentItem() < color.size() - 1) {
-                        pager.setCurrentItem(pager.getCurrentItem() + 1);
-                    } else {
-                        pager.setCurrentItem(0);
-                    }
-                }
-            });
-        }
-    }
 
 }

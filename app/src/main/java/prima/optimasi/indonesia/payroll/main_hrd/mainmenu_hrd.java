@@ -41,6 +41,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentPengajuan;
+import prima.optimasi.indonesia.payroll.main_kabag.cekjadwal;
 import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
 import qrcodescanner.QrCodeActivity;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -228,6 +230,30 @@ public class mainmenu_hrd extends AppCompatActivity
                     });
                     builder.show();
                 }
+                else if(listDataHeader.get(groupPosition).equals("Cek Jadwal")){
+                    String[] colors = {"Karyawan", "Sendiri"};
+
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_hrd.this);
+                    builder.setTitle("Cek Jadwal");
+                    builder.setItems(colors, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if(which==1) {
+                                Intent a = new Intent(mainmenu_hrd.this, cekjadwal.class);
+                                a.putExtra("cekjadwal",which);
+                                startActivity(a);
+                            }
+                            else {
+                                Intent a = new Intent(mainmenu_hrd.this, cekjadwal.class);
+                                a.putExtra("cekjadwal",which);
+                                startActivity(a);
+                            }
+                        }
+                    });
+                    builder.show();
+
+                }
                 return false;
             }
         });
@@ -406,7 +432,7 @@ public class mainmenu_hrd extends AppCompatActivity
                 case 4:
                     return new FragmentHome();
                 case 5:
-                    return new FragmentHome();
+                    return new FragmentPengajuan();
                 default:
                     return null;
             }
