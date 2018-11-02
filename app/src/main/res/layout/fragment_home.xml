@@ -71,7 +71,7 @@
                                 android:id="@+id/totalgajibersih"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="92776"
+                                android:text="0"
                                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
                                 android:textColor="@color/grey_60"
                                 android:textStyle="bold" />
@@ -144,7 +144,7 @@
                                 android:id="@+id/totalgajipotongan"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="92776"
+                                android:text="0"
                                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
                                 android:textColor="@color/grey_60"
                                 android:textStyle="bold" />
@@ -152,7 +152,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Total Gaji Potongan"
+                                android:text="Total Potongan"
                                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
                                 android:textColor="@color/grey_40" />
 
@@ -471,7 +471,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Keterangan"
+                            android:text="(0 orang)"
                             android:gravity="right"
                             android:layout_marginTop="8dp"
                             android:textSize="12sp"
@@ -576,7 +576,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Keterangan"
+                            android:text="(0 orang)"
                             android:layout_marginTop="8dp"
                             android:gravity="right"
                             android:textSize="12sp"
@@ -682,7 +682,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Keterangan"
+                            android:text="(0 orang)"
                             android:gravity="right"
                             android:textSize="12sp"
                             android:layout_marginTop="8dp"
@@ -785,7 +785,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Keterangan"
+                            android:text="(0 orang)"
                             android:gravity="right"
                             android:layout_marginTop="8dp"
                             android:textSize="12sp"
