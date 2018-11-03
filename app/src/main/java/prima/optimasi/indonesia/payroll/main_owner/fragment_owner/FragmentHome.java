@@ -2,6 +2,7 @@ package prima.optimasi.indonesia.payroll.main_owner.fragment_owner;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
+import prima.optimasi.indonesia.payroll.main_owner.Activity_Chart;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListDaftarAbsensi;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListSectionedKontrakKerja;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListSectionedsakit;
@@ -87,6 +89,13 @@ public class FragmentHome extends Fragment {
         totalgajibersih=rootView.findViewById(R.id.totalgajibersih);
         totalgajipotongan=rootView.findViewById(R.id.totalgajipotongan);
 
+        totalgajibersih.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(getActivity(), Activity_Chart.class);
+                startActivity(intent);
+            }
+        });
         parent_view=rootView.findViewById(R.id.parent_view);
         lyt_parent=rootView.findViewById(R.id.lyt_parent);
         lyt_parent2=rootView.findViewById(R.id.lyt_parent2bulan);
