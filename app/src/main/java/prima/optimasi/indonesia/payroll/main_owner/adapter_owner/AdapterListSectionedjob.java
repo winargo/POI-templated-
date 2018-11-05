@@ -666,210 +666,164 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                         }
                         else if (tipe.equals("Approval Karyawan") ){
 
-                            Log.e( "karyawan data",result.toString() );
+                            if(result.getString("status").equals(true)) {
 
-                            String newline = "\n";
-                            String spacing = " : ";
+                                Log.e("karyawan data", result.toString());
 
-
-
-
-                            JSONArray arrays = result.getJSONArray("data");
-                            JSONArray arrays1 = result.getJSONArray("data1");
-                            for (int i = 0; i < arrays.length(); i++) {
-                                JSONObject obj = arrays.getJSONObject(i);
-
-                                listjobextension data = new listjobextension();
-
-                                String texting = "";
-
-                                String arrow = " ➡ ";
-
-                                int index = 0 ;
-
-                                Boolean isnotsame = false;
-
-                                for (int j = 0; j < arrays1.length(); j++) {
-                                    JSONObject obj1 = arrays1.getJSONObject(j);
-                                    if(obj.getString("idfp").equals(obj1.getString("idfp"))){
-                                        isnotsame = false;
-
-                                        break;
-                                    }
-                                    else{
-                                        isnotsame = true;
-                                        index++;
-                                    }
-
-                                }
-
-                                if(isnotsame){
-                                    data.setNamakaryawan(obj.getString("nama"));
-                                    data.setTipe(tipe);
-
-                                    if(obj.getString("foto").equals("")){
-                                        data.setProfilepicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ");
-                                    }
-                                    else {
-                                        data.setProfilepicture(generator.profileurl+obj.getString("foto"));
-                                    }
+                                String newline = "\n";
+                                String spacing = " : ";
 
 
+                                JSONArray arrays = result.getJSONArray("data");
+                                JSONArray arrays1 = result.getJSONArray("data1");
+                                for (int i = 0; i < arrays.length(); i++) {
+                                    JSONObject obj = arrays.getJSONObject(i);
 
+                                    listjobextension data = new listjobextension();
 
-                                    //0,1,2,39,37,36
+                                    String texting = "";
 
-                                    for (int k = 0 ; k<obj.length();k++){
-                                        if(k==0){
+                                    String arrow = " ➡ ";
 
-                                        }
-                                        else if(k==1){
+                                    int index = 0;
 
-                                        }else if(k==2){
+                                    Boolean isnotsame = false;
 
-                                        }
-                                        else if(k==39){
+                                    for (int j = 0; j < arrays1.length(); j++) {
+                                        JSONObject obj1 = arrays1.getJSONObject(j);
+                                        if (obj.getString("idfp").equals(obj1.getString("idfp"))) {
+                                            isnotsame = false;
 
-                                        }
-                                        else if(k==37){
-
-                                        }
-                                        else if(k==36){
-
-                                        }
-                                        else {
-                                            if(k==3){
-                                                texting = texting + karyawandetail[k]+spacing+obj.getString(karyawan[k])+newline;
-
-                                            }
-                                            if(k==7){
-                                                texting = texting + karyawandetail[k]+spacing+obj.getString(karyawan[k])+newline;
-                                            }
+                                            break;
+                                        } else {
+                                            isnotsame = true;
+                                            index++;
                                         }
 
                                     }
-                                    data.setKeterangan(texting);
 
-                                    //listdata.add(data);
+                                    if (isnotsame) {
+                                        data.setNamakaryawan(obj.getString("nama"));
+                                        data.setTipe(tipe);
 
-                                }else{
-
-                                    JSONObject obj1 = arrays1.getJSONObject(index);
-
-                                    data.setNamakaryawan(obj1.getString("nama")+"("+obj1.getString("info_approve").toUpperCase()+")");
-                                    data.setTipe(tipe);
-
-                                    if(obj.getString("foto").equals("")){
-                                        data.setProfilepicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ");
-                                    }
-                                    else {
-                                        data.setProfilepicture(generator.profileurl+obj1.getString("foto"));
-                                    }
-
-
-                                    DecimalFormat formatter = new DecimalFormat("###,###,###");
-
-                                    //0,1,2,39,37,36
-
-                                    for (int k = 0 ; k<obj.length();k++){
-                                        if(k==0){
-
+                                        if (obj.getString("foto").equals("")) {
+                                            data.setProfilepicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ");
+                                        } else {
+                                            data.setProfilepicture(generator.profileurl + obj.getString("foto"));
                                         }
-                                        else if(k==1){
 
-                                        }else if(k==2){
 
-                                        }
-                                        else if(k==39){
+                                        //0,1,2,39,37,36
 
-                                        }
-                                        else if(k==37){
+                                        for (int k = 0; k < obj.length(); k++) {
+                                            if (k == 0) {
 
-                                        }
-                                        else if(k==36){
+                                            } else if (k == 1) {
 
-                                        }
-                                        else {
-                                            if(k==22){
-                                                if(obj.getString(karyawan[k]).equals(obj1.getString(karyawan[k]))){
+                                            } else if (k == 2) {
+
+                                            } else if (k == 39) {
+
+                                            } else if (k == 37) {
+
+                                            } else if (k == 36) {
+
+                                            } else {
+                                                if (k == 3) {
+                                                    texting = texting + karyawandetail[k] + spacing + obj.getString(karyawan[k]) + newline;
 
                                                 }
-                                                else {
-                                                    texting = texting + karyawandetail[k]+spacing+formatter.format(Integer.parseInt(obj.getString(karyawan[k])))+arrow+formatter.format(Integer.parseInt(obj1.getString(karyawan[k])))+newline;
+                                                if (k == 7) {
+                                                    texting = texting + karyawandetail[k] + spacing + obj.getString(karyawan[k]) + newline;
                                                 }
-
                                             }
-                                            else {
-                                                if(obj.getString(karyawan[k]).equals(obj1.getString(karyawan[k]))){
 
-                                                }
-                                                else {
-                                                    if(obj.getString(karyawan[k]).contains("T00:00:00.000Z")){
-                                                        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-                                                        SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
-                                                        if(obj1.getString(karyawan[k]).equals("null")){
-                                                            texting = texting + karyawandetail[k]+spacing+format2.format(format1.parse(obj.getString(karyawan[k]).substring(0,10)))+arrow+obj1.getString(karyawan[k])+newline;
-                                                        }else {
-                                                            texting = texting + karyawandetail[k]+spacing+format2.format(format1.parse(obj.getString(karyawan[k]).substring(0,10)))+arrow+format2.format(format1.parse(obj1.getString(karyawan[k]).substring(0,10)))+newline;
-                                                        }
+                                        }
+                                        data.setKeterangan(texting);
 
+                                        //listdata.add(data);
+
+                                    } else {
+
+                                        JSONObject obj1 = arrays1.getJSONObject(index);
+
+                                        data.setNamakaryawan(obj1.getString("nama") + "(" + obj1.getString("info_approve").toUpperCase() + ")");
+                                        data.setTipe(tipe);
+
+                                        if (obj.getString("foto").equals("")) {
+                                            data.setProfilepicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ");
+                                        } else {
+                                            data.setProfilepicture(generator.profileurl + obj1.getString("foto"));
+                                        }
+
+
+                                        DecimalFormat formatter = new DecimalFormat("###,###,###");
+
+                                        //0,1,2,39,37,36
+
+                                        for (int k = 0; k < obj.length(); k++) {
+                                            if (k == 0) {
+
+                                            } else if (k == 1) {
+
+                                            } else if (k == 2) {
+
+                                            } else if (k == 39) {
+
+                                            } else if (k == 37) {
+
+                                            } else if (k == 36) {
+
+                                            } else {
+                                                if (k == 22) {
+                                                    if (obj.getString(karyawan[k]).equals(obj1.getString(karyawan[k]))) {
+
+                                                    } else {
+                                                        texting = texting + karyawandetail[k] + spacing + formatter.format(Integer.parseInt(obj.getString(karyawan[k]))) + arrow + formatter.format(Integer.parseInt(obj1.getString(karyawan[k]))) + newline;
                                                     }
-                                                    else {
 
+                                                } else {
+                                                    if (obj.getString(karyawan[k]).equals(obj1.getString(karyawan[k]))) {
 
-                                                        if(obj1.getString(karyawan[k]).contains("T00:00:00.000Z")) {
+                                                    } else {
+                                                        if (obj.getString(karyawan[k]).contains("T00:00:00.000Z")) {
                                                             SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
                                                             SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
-                                                            texting = texting + karyawandetail[k]+spacing+obj.getString(karyawan[k])+arrow+format2.format(format1.parse(obj1.getString(karyawan[k]).substring(0,10)))+newline;
-                                                        }
-                                                        else {
-                                                            texting = texting + karyawandetail[k] + spacing + obj.getString(karyawan[k]) + arrow + obj1.getString(karyawan[k]) + newline;
+                                                            if (obj1.getString(karyawan[k]).equals("null")) {
+                                                                texting = texting + karyawandetail[k] + spacing + format2.format(format1.parse(obj.getString(karyawan[k]).substring(0, 10))) + arrow + obj1.getString(karyawan[k]) + newline;
+                                                            } else {
+                                                                texting = texting + karyawandetail[k] + spacing + format2.format(format1.parse(obj.getString(karyawan[k]).substring(0, 10))) + arrow + format2.format(format1.parse(obj1.getString(karyawan[k]).substring(0, 10))) + newline;
+                                                            }
+
+                                                        } else {
+
+
+                                                            if (obj1.getString(karyawan[k]).contains("T00:00:00.000Z")) {
+                                                                SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                                                                SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
+                                                                texting = texting + karyawandetail[k] + spacing + obj.getString(karyawan[k]) + arrow + format2.format(format1.parse(obj1.getString(karyawan[k]).substring(0, 10))) + newline;
+                                                            } else {
+                                                                texting = texting + karyawandetail[k] + spacing + obj.getString(karyawan[k]) + arrow + obj1.getString(karyawan[k]) + newline;
+                                                            }
                                                         }
                                                     }
                                                 }
                                             }
                                         }
+                                        if (texting.equals("")) {
+                                            data.setKeterangan("Tidak Ada Perubahaan");
+                                        } else {
+                                            data.setKeterangan(texting);
+                                        }
+
+
+                                        listdata.add(data);
+                                        //listdata.add(data);
                                     }
-                                    if(texting.equals("")){
-                                        data.setKeterangan("Tidak Ada Perubahaan");
-                                    }
-                                    else {
-                                        data.setKeterangan(texting);
-                                    }
-
-
-                                    listdata.add(data);
-/*14238-14238/prima.optimasi.indonesia.payroll E/karyawan data: {"status":true,"message":"berhasil get data","data":[{"id":1,"kode_karyawan":"EMP-1","idfp":"KRY0001","nama":"Tes1","alamat":"1"
-,"tempat_lahir":"1","tgl_lahir":"2018-08-23T00:00:00.000Z","telepon":"12313","no_wali":"12321321321","email":"12312@sad.asd","tgl_masuk":"0000-00-00","kelamin":"laki-laki","status_nikah":"Menikah
-","pendidikan":"SMA Sederajat","wn":"Asing","agama":"Katholik","shift":"tidak","status_kerja":"aktif","ibu_kandung":"12312321","suami_istri":"12312321","tanggungan":123213,"npwp":"1318","gaji":3
-2640000,"rekening":"12321312312133","id_bank":6,"id_departemen":1,"id_jabatan":1,"id_grup":10,"id_golongan":15,"atas_nama":"tes1","foto":"8c674d66f16b0ee916f030b2c9b40921.jpg","id_cabang":2,"sta
-rt_date":"2018-09-01T00:00:00.000Z","expired_date":"2018-10-26T00:00:00.000Z","jab_index":0,"kontrak":"ya","file_kontrak":"","otoritas":1,"periode_gaji":"2-Mingguan","qrcode_file":"d756a9b60a078
-d4746e15bb89f7acd5c.png"},{"id":3,"kode_karyawan":"EMP-2","idfp":"KRY0002","nama":"Tes12","alamat":"asdasddasd","tempat_lahir":"tetetettettetetete","tgl_lahir":"0000-00-00","telepon":"1231321321
-321","no_wali":"123213123","email":"12312@sad.asd","tgl_masuk":"2018-08-29T00:00:00.000Z","kelamin":"perempuan","status_nikah":"Menikah","pendidikan":"SMP","wn":"Indonesia","agama":"Protestan","
-shift":"ya","status_kerja":"aktif","ibu_kandung":"asdsad","suami_istri":"assdaadsd","tanggungan":0,"npwp":"1232132131","gaji":111,"rekening":"1231223112313213","id_bank":6,"id_departemen":15,"id_
-jabatan":9,"id_grup":8,"id_golongan":62,"atas_nama":"tes12","foto":"cba9fab615b35fbf35839e6f2ca6fef3.jpg","id_cabang":2,"start_date":"2018-10-01T00:00:00.000Z","expired_date":"2018-11-28T00:00:00
-.000Z","jab_index":0,"kontrak":"ya","file_kontrak":"","otoritas":3,"periode_gaji":"Bulanan","qrcode_file":""},{"id":4,"kode_karyawan":"EMP-04","idfp":"KYR0003","nama":"Sutrina Sudjipto1","alamat"
-:"Jln.Melati No.77","tempat_lahir":"Medan","tgl_lahir":"1992-08-01T00:00:00.000Z","telepon":"000000000","no_wali":"000000000000","email":"gagaga@gmail.com","tgl_masuk":"2018-08-01T00:00:00.000Z","ke
-lamin":"perempuan","status_nikah":"Menikah","pendidikan":"Diploma 3","wn":"Indonesia","agama":"Katholik","shift":"ya","status_kerja":"aktif","ibu_kandung":"adssdasa","suami_istri":"daasda","tanggunga
-n":123132133,"npwp":"1232132113","gaji":60000,"rekening":"213131321","id_bank":1,"id_departemen":15,"id_jabatan":30,"id_grup":9,"id_golongan":28,"atas_nama":"Sutrina Sudjipto1","foto":"cf0092a461ec58
-6d8aebcf6c34a2e1c6.jpg","id_cabang":1,"start_date":"2018-09-01T00:00:00.000Z","expired_date":"2018-12-28T00:00:00.000Z","jab_index":0,"kontrak":"ya","file_kontrak":"","otoritas":3,"periode_gaji":"Bul
-anan","qrcode_file":""},{"id":7,"kode_karyawan":"EMP-07","idfp":"KRY0007","nama":"Sparno","alamat":"Jln.Surabaya","tempat_lahir":"Bogor","tgl_lahir":"1994-07-02T00:00:00.000Z","telepon":"000000000","
-no_wali":"0000000000","email":"modomodo@gmail.com","tgl_masuk":"2018-08-04T00:00:00.000Z","kelamin":"laki-laki","status_nikah":"Menikah","pendidikan":"Sarjana S1","wn":"Indonesia","agama":"Islam","shi
-ft":"ya","status_kerja":"aktif","ibu_kandung":"Meiling","suami_istri":"Lastri","tanggungan":3,"npwp":"001011101010","gaji":0,"rekening":"00010000","id_bank":1,"id_departemen":16,"id_jabatan":10,"id_gr
-up":6,"id_golongan":25,"atas_nama":"Sparno","foto":"17a490b3ab8e38e296e3b1b18a433eb9.jpg","id_cabang":2,"start_date":"2018-10-08T00:00:00.000Z","expired_date":"2019-01-27T00:00:00.000Z","jab_index":0,
-"kontrak":"ya","file_kontrak":"","otoritas":2,"periode_gaji":"2-Mingguan","qrcode_file":"4b267aa6e56888580342445702d212f3.png"},{"id":8,"kode_karyawan":"EMP-08","idfp":"KRY0008","nama":"Aston","alamat
-":"Jln.Melati1","tempat_lahir":"Medan","tgl_lahir":"1992-07-02T00:00:00.000Z","telepon":"000000000","no_wali":"090909090909","email":"gagaga@gmail.com","tgl_masuk":"2018-07-09T00:00:00.000Z","kelamin"
-:"perempuan","status_nikah":"Menikah","pendidikan":"Sarjana S3","wn":"Indonesia","agama":"Islam","shift":"ya","status_kerja":"aktif","ibu_kandung":"Lisa","suami_istri":"sadaa","tanggungan"
-11-01 15:27:19.906*/
-
-
-                                    //listdata.add(data);
                                 }
+
+
                             }
-
-
-
-
                         }
                         else if (tipe.equals("Approval Pinjaman") ){
                             

@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/usr/local/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/editor/ic_money_off_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/usr/local/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/image/ic_timer_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -28,8 +28,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_money_off" />
-                            <entry key="sourceFile" value="$USER_HOME$/Downloads/no-entry-symbol.svg" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_scan" />
+                            <entry key="sourceFile" value="$USER_HOME$/Downloads/7803b20e24ad3c01b765f982bc81b365.svg" />
                           </map>
                         </option>
                       </PersistentState>

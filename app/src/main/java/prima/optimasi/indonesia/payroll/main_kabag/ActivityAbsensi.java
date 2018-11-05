@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -46,7 +47,7 @@ public class ActivityAbsensi extends AppCompatActivity {
     CoordinatorLayout parent_view;
 
     public static String jabatan="JABATAN";
-    MaterialRippleLayout checkin, checkout, breakin, breakout, extrain, extraout, absensi, absensiwajah, scan;
+    FloatingActionButton checkin, checkout, breakin, breakout, extrain, extraout, absensi, absensiwajah, scan;
     SharedPreferences prefs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +103,7 @@ public class ActivityAbsensi extends AppCompatActivity {
         absensiteks.setText("Absensi");
         absensiwajahteks.setText("Absensi Wajah");
 
+        /*
         ImageView image = findViewById(R.id.image);
         ImageView image_checkout = findViewById(R.id.image_checkout);
         ImageView image_breakin = findViewById(R.id.image_breakin);
@@ -117,7 +119,7 @@ public class ActivityAbsensi extends AppCompatActivity {
         Picasso.get().load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlrePrH8HNpXnZDBTvLTGSDpTngRFS8kfJHrRM8HvOP94eYC3M").into(image_extrain);
         Picasso.get().load("http://www.officepower.net/wp-content/uploads/2015/11/OP_Blog_Q4_0411_Freedom.jpg").into(image_extraout);
         Picasso.get().load("https://d35kskn2b3gqvv.cloudfront.net/wp-content/uploads/2016/10/qrcodes.png").into(image_absensi);
-        Picasso.get().load("https://wi-images.condecdn.net/image/wgyjRWNyLYJ/crop/810/f/istockfae.jpg").into(image_absensiwajah);
+        Picasso.get().load("https://wi-images.condecdn.net/image/wgyjRWNyLYJ/crop/810/f/istockfae.jpg").into(image_absensiwajah);*/
 
         checkin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,6 +220,7 @@ public class ActivityAbsensi extends AppCompatActivity {
         breakoutteks.setText("Break OUT");
         absensiteks.setText("Absensi");
 
+        /*
         ImageView imagescan = findViewById(R.id.image);
         ImageView image_checkin = findViewById(R.id.image_checkin);
         ImageView image_checkout = findViewById(R.id.image_checkout);
@@ -230,7 +233,7 @@ public class ActivityAbsensi extends AppCompatActivity {
         Picasso.get().load("http://sainte-catherine.fr/wordpress/wp-content/uploads/2018/05/sondage-padel-620x330.jpg").into(image_checkout);
         Picasso.get().load("http://www.metrochemgroup.com/wp-content/uploads/2018/04/meal-break.jpg").into(image_breakin);
         Picasso.get().load("https://www.kidcheck.com/wp-content/uploads/2016/06/time-limit-1-300x217.jpg").into(image_breakout);
-        Picasso.get().load("https://d35kskn2b3gqvv.cloudfront.net/wp-content/uploads/2016/10/qrcodes.png").into(image_absensi);
+        Picasso.get().load("https://d35kskn2b3gqvv.cloudfront.net/wp-content/uploads/2016/10/qrcodes.png").into(image_absensi);*/
 
         scan.setOnClickListener(new View.OnClickListener() {
             @Override

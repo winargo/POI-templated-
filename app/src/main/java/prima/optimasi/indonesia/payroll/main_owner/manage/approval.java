@@ -967,7 +967,7 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                             for (int i = 0; i < arrays.length(); i++) {
                                 JSONObject obj = arrays.getJSONObject(i);
 
-                                passing.add(obj.getString("id_rewards"));
+                                passing.add(obj.getString("id"));
                                 passing.add(obj.getString("status"));
 
 

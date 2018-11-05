@@ -71,11 +71,13 @@ public class FragmentHome extends Fragment {
     RecyclerView recyclerView, recyclerView2, recyclerView3, recyclerViewhabis, recyclerViewdaftar;
     boolean expansi=false, expansi2=false, expansi3=false, expansihabis=false;
     int banyak1bulan=0, banyak2bulan=0,banyak3bulan=0, banyakhabis=0, banyakkaryawan=0, totalkaryawan=0;
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_home, container, false);
+
         recyclerView=rootView.findViewById(R.id.recyclerView);
         recyclerView2=rootView.findViewById(R.id.recyclerView2bulan);
         recyclerView3=rootView.findViewById(R.id.recyclerView3bulan);
@@ -130,12 +132,12 @@ public class FragmentHome extends Fragment {
                     if(!expansi){
                         lyt_expand.setVisibility(View.VISIBLE);
                         expansi=true;
-                        expand.setImageResource(R.drawable.ic_collapse_arrow);
+                        expand.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_collapse_arrow));
                     }
                     else{
                         lyt_expand.setVisibility(View.GONE);
                         expansi=false;
-                        expand.setImageResource(R.drawable.ic_expand_arrow);
+                        expand.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
                     }
                 }
 
@@ -151,11 +153,11 @@ public class FragmentHome extends Fragment {
                     if (!expansi2) {
                         lyt_expand2.setVisibility(View.VISIBLE);
                         expansi2 = true;
-                        expand2.setImageResource(R.drawable.ic_collapse_arrow);
+                        expand2.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_collapse_arrow));
                     } else {
                         lyt_expand2.setVisibility(View.GONE);
                         expansi2 = false;
-                        expand2.setImageResource(R.drawable.ic_expand_arrow);
+                        expand2.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
                     }
                 }
             }
@@ -170,11 +172,11 @@ public class FragmentHome extends Fragment {
                     if (!expansi3) {
                         lyt_expand3.setVisibility(View.VISIBLE);
                         expansi3 = true;
-                        expand3.setImageResource(R.drawable.ic_collapse_arrow);
+                        expand3.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_collapse_arrow));
                     } else {
                         lyt_expand3.setVisibility(View.GONE);
                         expansi3 = false;
-                        expand3.setImageResource(R.drawable.ic_expand_arrow);
+                        expand3.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
                     }
                 }
             }
@@ -189,11 +191,11 @@ public class FragmentHome extends Fragment {
                     if (!expansihabis) {
                         lyt_expandhabis.setVisibility(View.VISIBLE);
                         expansihabis = true;
-                        expandhabis.setImageResource(R.drawable.ic_collapse_arrow);
+                        expandhabis.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_collapse_arrow));
                     } else {
                         lyt_expandhabis.setVisibility(View.GONE);
                         expansihabis = false;
-                        expandhabis.setImageResource(R.drawable.ic_expand_arrow);
+                        expandhabis.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
                     }
                 }
             }
@@ -208,11 +210,11 @@ public class FragmentHome extends Fragment {
                     if (!expansi) {
                         lyt_expand.setVisibility(View.VISIBLE);
                         expansi = true;
-                        expand.setImageResource(R.drawable.ic_collapse_arrow);
+                        expand.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_collapse_arrow));
                     } else {
                         lyt_expand.setVisibility(View.GONE);
                         expansi = false;
-                        expand.setImageResource(R.drawable.ic_expand_arrow);
+                        expand.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
                     }
                 }
             }
@@ -227,11 +229,11 @@ public class FragmentHome extends Fragment {
                     if (!expansi2) {
                         lyt_expand2.setVisibility(View.VISIBLE);
                         expansi2 = true;
-                        expand2.setImageResource(R.drawable.ic_collapse_arrow);
+                        expand2.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_collapse_arrow));
                     } else {
                         lyt_expand2.setVisibility(View.GONE);
                         expansi2 = false;
-                        expand2.setImageResource(R.drawable.ic_expand_arrow);
+                        expand2.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
                     }
                 }
             }
@@ -246,11 +248,11 @@ public class FragmentHome extends Fragment {
                     if (!expansi3) {
                         lyt_expand3.setVisibility(View.VISIBLE);
                         expansi3 = true;
-                        expand3.setImageResource(R.drawable.ic_collapse_arrow);
+                        expand3.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_collapse_arrow));
                     } else {
                         lyt_expand3.setVisibility(View.GONE);
                         expansi3 = false;
-                        expand3.setImageResource(R.drawable.ic_expand_arrow);
+                        expand3.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
                     }
                 }
             }
@@ -265,11 +267,11 @@ public class FragmentHome extends Fragment {
                     if (!expansihabis) {
                         lyt_expandhabis.setVisibility(View.VISIBLE);
                         expansihabis = true;
-                        expandhabis.setImageResource(R.drawable.ic_collapse_arrow);
+                        expandhabis.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_collapse_arrow));
                     } else {
                         lyt_expandhabis.setVisibility(View.GONE);
                         expansihabis = false;
-                        expandhabis.setImageResource(R.drawable.ic_expand_arrow);
+                        expandhabis.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
                     }
                 }
             }
@@ -1566,7 +1568,6 @@ public class FragmentHome extends Fragment {
                         for (int i = 0; i < pengsarray.length(); i++) {
                             JSONObject obj = pengsarray.getJSONObject(i);
                             list_jabatan.add(obj.getString("jabatan"));
-                            Log.e("Jabatan",list_jabatan.get(i));
                         }
                         /*
                         List<String> listjabatan=new ArrayList<>();

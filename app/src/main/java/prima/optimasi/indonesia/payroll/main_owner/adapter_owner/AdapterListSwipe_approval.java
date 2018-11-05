@@ -577,9 +577,16 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                     }
 
                     else if (tipe.equals("Approval Pinjaman") ){
+
+                        RequestBody body = new FormBody.Builder()
+                                .add("id",passs.get(0))
+                                .add("status",status)
+                                .build();
+
                         request = new Request.Builder()
                                 .header("Authorization",prefs.getString("Authorization",""))
                                 .url(urldata)
+                                .put(body)
                                 .build();
 
                     }
@@ -607,17 +614,33 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
 
                     }
                     else if (tipe.equals("Approval Punishment") ){
+
+                        RequestBody body = new FormBody.Builder()
+                                .add("id",passs.get(0))
+                                .add("status",status)
+                                .build();
+
                         request = new Request.Builder()
                                 .header("Authorization",prefs.getString("Authorization",""))
                                 .url(urldata)
+                                .put(body)
                                 .build();
+
 
                     }
                     else if (tipe.equals("Approval Reward") ){
+
+                        RequestBody body = new FormBody.Builder()
+                                .add("id",passs.get(0))
+                                .add("status",status)
+                                .build();
+
                         request = new Request.Builder()
                                 .header("Authorization",prefs.getString("Authorization",""))
                                 .url(urldata)
+                                .put(body)
                                 .build();
+
 
                     }
 
@@ -738,7 +761,9 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                     }
                     else if (tipe.equals("Approval Pinjaman") ){
                         if(result.getString("status").equals("true")){
-                            passs.remove(position);
+                            for (int i=0;i<2;i++){
+                                passs.remove(position*1);
+                            }
                             Snackbar.make(parent,"Sukses Approval",Snackbar.LENGTH_SHORT).show();
                             removeItem(position);
                         }
@@ -760,7 +785,9 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                     }
                     else if (tipe.equals("Approval Punishment") ){
                         if(result.getString("status").equals("true")){
-                            passs.remove(position);
+                            for (int i=0;i<2;i++){
+                                passs.remove(position*1);
+                            }
                             Snackbar.make(parent,"Sukses Approval",Snackbar.LENGTH_SHORT).show();
                             removeItem(position);
                         }
@@ -770,7 +797,9 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                     }
                     else if (tipe.equals("Approval Reward") ){
                         if(result.getString("status").equals("true")){
-                            passs.remove(position);
+                            for (int i=0;i<2;i++){
+                                passs.remove(position*1);
+                            }
                             Snackbar.make(parent,"Sukses Approval",Snackbar.LENGTH_SHORT).show();
                             removeItem(position);
                         }

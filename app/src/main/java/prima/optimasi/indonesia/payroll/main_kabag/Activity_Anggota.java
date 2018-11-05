@@ -21,12 +21,15 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +39,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -62,6 +66,7 @@ public class Activity_Anggota extends AppCompatActivity {
 
     private Adapterviewkaryawan mAdapterkaryawan;
 
+    //MaterialSearchBar searchBar;
     MaterialSearchView searchView;
     BottomNavigationView bottomnac;
 
@@ -91,7 +96,29 @@ public class Activity_Anggota extends AppCompatActivity {
         recyclerViewkaryawan.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(this, 3), true));
         recyclerViewkaryawan.setHasFixedSize(true);
         recyclerViewkaryawan.setNestedScrollingEnabled(false);
-        searchView = (MaterialSearchView) findViewById(R.id.search_view);
+        searchView=findViewById(R.id.searchView);
+        /*
+        searchBar = (MaterialSearchBar) findViewById(R.id.searchBar);
+
+        searchBar.setHint("Search..");
+        searchBar.setSpeechMode(true);
+        searchBar.addTextChangeListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                //SEARCH FILTER
+                mAdapterkaryawan.getFilter().filter(charSequence);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });*/
 
         /*
         EditText search=findViewById(R.id.search_text_karyawan);
@@ -590,14 +617,14 @@ public class Activity_Anggota extends AppCompatActivity {
 
         MenuItem item = menu.findItem(R.id.action_search);
 
-
         searchView.setMenuItem(item);
+
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 //Do some magic
                 mAdapterkaryawan.getFilter().filter(query);
-                recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
                 return false;
             }
 
@@ -606,7 +633,7 @@ public class Activity_Anggota extends AppCompatActivity {
                 //Do some magic
                 Log.e("Text", "newText=" + query);
                 mAdapterkaryawan.getFilter().filter(query);
-                recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
                 return false;
             }
         });
@@ -623,12 +650,11 @@ public class Activity_Anggota extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
             finish();
-        }
-        else if (id == R.id.action_search) {
+        } else if (id == R.id.action_search) {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
 
+    }
 }
