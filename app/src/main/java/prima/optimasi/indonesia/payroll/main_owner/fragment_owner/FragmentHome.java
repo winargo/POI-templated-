@@ -368,181 +368,69 @@ public class FragmentHome extends Fragment {
         protected void onPostExecute(String result1) {
 
             try {
-                Log.e(TAG, "data json result" + result.toString());
+
                 if (result != null) {
+                    Log.e(TAG, "kerja 1 bulan" + result.toString());
                     try {
-                        items = new ArrayList<>();
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                        JSONArray pengsarray = result.getJSONArray("data");
-                        Log.e(TAG, "onPostExecute: " + pengsarray);
-                        String status="";
-                        //String tempcall="";
-                        int sisa=0;
-                        boolean first=true;
-                        if(pengsarray.length()==0){
-                            sisakontrakkerja.setText("(0 orang)");
-                            //Snackbar.make(parent_view,"Tidak ada karyawan",Snackbar.LENGTH_SHORT).show();
-                        }
-                        for (int i = 0; i < pengsarray.length(); i++) {
-                            status=pengsarray.getString(i);
+                        if(result.getString("status").equals("true")) {
+                            items = new ArrayList<>();
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                            JSONArray pengsarray = result.getJSONArray("data");
+                            Log.e(TAG, "onPostExecute: " + pengsarray);
+                            String status = "";
+                            //String tempcall="";
+                            int sisa = 0;
+                            boolean first = true;
+                            if (pengsarray.length() == 0) {
+                                sisakontrakkerja.setText("(0 orang)");
+                                //Snackbar.make(parent_view,"Tidak ada karyawan",Snackbar.LENGTH_SHORT).show();
+                            }
+                            for (int i = 0; i < pengsarray.length(); i++) {
+                                status = pengsarray.getString(i);
 
-                            if (!status.equals("null")){
+                                if (!status.equals("null")) {
 
 
-                            JSONObject obj = pengsarray.getJSONObject(i);
-                            sisa=Integer.parseInt(obj.getString("sisa"));
+                                    JSONObject obj = pengsarray.getJSONObject(i);
+                                    sisa = Integer.parseInt(obj.getString("sisa"));
 
-                            /*
-                            if(first){
+                                    banyak1bulan++;
+                                    if (i + 1 == pengsarray.length()) {
+                                        sisakontrakkerja.setText("(" + banyak1bulan + " orang)");
 
-                                //if(tempcall.equals("")){
+                                    }
                                     kontrakkerja = new listkaryawankontrakkerja();
-                                    kontrakkerja.setKontrakkerja("Kontrak Kerja kurang dari 1 bulan");
-                                    kontrakkerja.setSection(false);
-                                    //tempcall="1bulan";
-                                    items.add(kontrakkerja);
-                                    first=false;
-                                    Log.e(TAG, "onPostExecute: Section1 berhasil" );
-                                    //recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                                //}
-                                /*
-                                else if(!tempcall.equals("1bulan")){
-                                    kontrakkerja = new listkaryawankontrakkerja();
-                                    kontrakkerja.setKontrakkerja("Kontrak Kerja kurang dari 1 bulan");
+                                    kontrakkerja.setKontrakkerja("Sisa kontrak kerja " + sisa + " hari");
                                     kontrakkerja.setSection(true);
-                                    //tempcall = sisa;
+                                    //kontrakkerja.setSisa("("+banyak+" orang)");
+                                    //kar.setIskar(obj.getString("id"));
+                                    kontrakkerja.setImagelink(generator.profileurl + obj.getString("foto"));
+
+                                    Log.e(TAG, "image data" + kontrakkerja.getImagelink());
+
+                                    //kontrakkerja.setIskar(obj.getString("kode_karyawan"));
+                                    kontrakkerja.setNama(obj.getString("nama"));
                                     items.add(kontrakkerja);
-                                    //recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
 
                                 }
-                            }*/
-                            /*
-                            else if(sisa<60 && sisa>30){
-                                kontrakkerja = new listkaryawankontrakkerja();
-                                kontrakkerja.setKontrakkerja("Kontrak Kerja kurang dari 2 bulan");
-                                kontrakkerja.setSection(true);
 
-                                items.add(kontrakkerja);
-                            }*/
-                            banyak1bulan++;
-                            if(i+1==pengsarray.length()){
-                                sisakontrakkerja.setText("("+banyak1bulan+" orang)");
-
-                            }
-                            kontrakkerja=new listkaryawankontrakkerja();
-                            kontrakkerja.setKontrakkerja("Sisa kontrak kerja "+sisa+" hari");
-                            kontrakkerja.setSection(true);
-                            //kontrakkerja.setSisa("("+banyak+" orang)");
-                            //kar.setIskar(obj.getString("id"));
-                            kontrakkerja.setImagelink(generator.profileurl+obj.getString("foto"));
-
-                            Log.e(TAG, "image data" + kontrakkerja.getImagelink() );
-
-                            //kontrakkerja.setIskar(obj.getString("kode_karyawan"));
-                            kontrakkerja.setNama(obj.getString("nama"));
-                            items.add(kontrakkerja);
-
-                            //kontrakkerja.setJabatan(obj.getString("jabatan"));
-
-                            /*
-                            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-                            SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
-
-
-                            kar.setTglmulai(format2.format(format1.parse(obj.getString("tgl_sakit").substring(0,10))));
-                            kar.setTglakhir(format2.format(format1.parse(obj.getString("akhir_sakit").substring(0,10))));
-                            kar.setKeterangan(obj.getString("keterangans"));
-                            kar.setHari(obj.getString("lama"));
-                            */
-                            //kar.setJabatan(obj.getString("jabatan"));
-
-                            /*
-                            kontrakkerja.setSection(false);
-                            kontrakkerja.setImagelink(generator.profileurl+obj.getString("foto"));
-
-                            Log.e(TAG, "image data" + kontrakkerja.getImagelink() );
-                            kontrakkerja.setIskar(obj.getString("kode_karyawan"));
-                            kontrakkerja.setNama(obj.getString("nama"));
-                            kontrakkerja.setJabatan(obj.getString("jabatan"));
-                            kontrakkerja.setKontrakkerja(obj.getString("kontrak_kerja"));
-
-                            */
 
                             }
 
 
-                        }
-                        /*
-                        adapter = new AdapterListSectionedKontrakKerja(getActivity(), items, ItemAnimation.LEFT_RIGHT);
-                        recyclerView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-                        recyclerView.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(getActivity(), 3), true));
 
 
-                        recyclerView.setHasFixedSize(true);
-                        recyclerView.setAdapter(adapter);*/
-                        /*
-                        String tempcall = "";
+                            adapter = new AdapterListSectionedKontrakKerja(getActivity(), items, ItemAnimation.LEFT_RIGHT);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                            recyclerView.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(getActivity(), 3), true));
 
-                        for (int i = 0; i < pengsarray.length(); i++) {
-                            JSONObject obj = pengsarray.getJSONObject(i);
-                            if(!tempcall.equals(obj.getString("tanggal").substring(0,10))){
-                                if(tempcall.equals("")){
-                                    datacuti kar = new datacuti();
-                                    kar.setDatatgl(obj.getString("tanggal").substring(0,10));
-                                    kar.setIssection(true);
-                                    tempcall = obj.getString("tanggal").substring(0,10);
-                                    items.add(kontrakkerja);
-                                }
-                                else{
-                                    datacuti kar = new datacuti();
-                                    kar.setDatatgl(obj.getString("tanggal").substring(0,10));
-                                    kar.setIssection(true);
-                                    tempcall = obj.getString("tanggal").substring(0,10);
-                                    items.add(kontrakkerja);
-                                }
-                            }
-                            datacuti kar = new datacuti();
-                            kar.setIssection(false);
-                            //kar.setIskar(obj.getString("id"));
-                            kar.setImageurl(generator.profileurl+obj.getString("foto"));
 
-                            Log.e(TAG, "image data" + kar.getImageurl() );
-
-                            kar.setNama(obj.getString("nama"));
-                            kar.setJabatan(obj.getString("jabatan"));
-                            kar.setImageurl(generator.profileurl+obj.getString("foto"));
-
-                            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-                            SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
-
-                            kar.setTglmulai(format2.format(format1.parse(obj.getString("tgl_sakit").substring(0,10))));
-                            kar.setTglakhir(format2.format(format1.parse(obj.getString("akhir_sakit").substring(0,10))));
-                            kar.setKeterangan(obj.getString("keterangans"));
-                            kar.setHari(obj.getString("lama"));
-                            //kar.setJabatan(obj.getString("jabatan"));
-                            items.add(kontrakkerja);
-
+                            recyclerView.setHasFixedSize(true);
+                            recyclerView.setAdapter(adapter);
 
                         }
 
-                        adapter = new AdapterListSectionedKontrakKerja(getActivity(), items, ItemAnimation.LEFT_RIGHT);
-
-                        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-                        recyclerView.setHasFixedSize(true);
-                        recyclerView.setAdapter(adapter);
-
-                        */
-
-
-                        adapter = new AdapterListSectionedKontrakKerja(getActivity(), items, ItemAnimation.LEFT_RIGHT);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        recyclerView.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(getActivity(), 3), true));
-
-
-                        recyclerView.setHasFixedSize(true);
-                        recyclerView.setAdapter(adapter);
                         retrivekontrakkerja2bulan kar = new retrivekontrakkerja2bulan(getActivity());
                         kar.execute();
 
@@ -603,7 +491,7 @@ public class FragmentHome extends Fragment {
         }
 
         protected String doInBackground(Void...arg0) {
-            Log.d(TAG + " DoINBackGround","On doInBackground...");
+            //Log.d(TAG + " DoINBackGround","On doInBackground...");
 
             try {
                 //this.dialog.setMessage("Loading Data...");
@@ -666,183 +554,74 @@ public class FragmentHome extends Fragment {
 
         protected void onProgressUpdate(Integer...a){
             super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+            //Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
         }
 
         protected void onPostExecute(String result1) {
 
             try {
-                Log.e(TAG, "data json result" + result.toString());
+
                 if (result != null) {
+                    Log.e(TAG, "kerja 2 bulan" + result.toString());
                     try {
-                        items = new ArrayList<>();
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                        JSONArray pengsarray = result.getJSONArray("data");
-                        Log.e(TAG, "onPostExecute: " + pengsarray);
-                        String status="";
-                        //String tempcall="";
-                        int sisa=0;
-                        boolean first=true;
-                        if(pengsarray.length()==0){
-                            sisakontrakkerja2.setText("(0 orang)");
-                            //Snackbar.make(parent_view,"Tidak ada karyawan",Snackbar.LENGTH_SHORT).show();
-                        }
-                        for (int i = 0; i < pengsarray.length(); i++) {
-                            status=pengsarray.getString(i);
-
-                            if (!status.equals("null")) {
-
-
-                                JSONObject obj = pengsarray.getJSONObject(i);
-                                sisa = Integer.parseInt(obj.getString("sisa"));
-                                /*
-                                if (first && sisa > 30) {
-
-                                    //if(tempcall.equals("")){
-                                    kontrakkerja = new listkaryawankontrakkerja();
-                                    kontrakkerja.setKontrakkerja("Kontrak Kerja kurang dari 2 bulan");
-                                    kontrakkerja.setSection(true);
-                                    //tempcall="1bulan";
-                                    items.add(kontrakkerja);
-                                    first = false;
-                                    //recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                                }
-                                /*
-                                else if(!tempcall.equals("1bulan")){
-                                    kontrakkerja = new listkaryawankontrakkerja();
-                                    kontrakkerja.setKontrakkerja("Kontrak Kerja kurang dari 1 bulan");
-                                    kontrakkerja.setSection(true);
-                                    //tempcall = sisa;
-                                    items.add(kontrakkerja);
-                                    //recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-                                }*/
-
-                            /*
-                            else if(sisa<60 && sisa>30){
-                                kontrakkerja = new listkaryawankontrakkerja();
-                                kontrakkerja.setKontrakkerja("Kontrak Kerja kurang dari 2 bulan");
-                                kontrakkerja.setSection(true);
-
-                                items.add(kontrakkerja);
-                            }*/
-
-
-                                if(sisa>30 && sisa<=60){
-                                    banyak2bulan++;
-                                    kontrakkerja = new listkaryawankontrakkerja();
-                                    kontrakkerja.setSection(true);
-                                    kontrakkerja.setKontrakkerja("Sisa kontrak Kerja "+sisa+" hari");
-                                    //kar.setIskar(obj.getString("id"));
-                                    kontrakkerja.setImagelink(generator.profileurl + obj.getString("foto"));
-
-                                    Log.e(TAG, "image data" + kontrakkerja.getImagelink());
-
-                                    //kontrakkerja.setIskar(obj.getString("kode_karyawan"));
-                                    kontrakkerja.setNama(obj.getString("nama"));
-                                    //kontrakkerja.setJabatan(obj.getString("jabatan"));
-                                    items.add(kontrakkerja);
-                                }
-                                if(i+1==pengsarray.length()){
-                                    sisakontrakkerja2.setText("("+banyak2bulan+" orang)");
-
-                                }
-
-
-                            /*
-                            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-                            SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
-
-
-                            kar.setTglmulai(format2.format(format1.parse(obj.getString("tgl_sakit").substring(0,10))));
-                            kar.setTglakhir(format2.format(format1.parse(obj.getString("akhir_sakit").substring(0,10))));
-                            kar.setKeterangan(obj.getString("keterangans"));
-                            kar.setHari(obj.getString("lama"));
-                            */
-                                //kar.setJabatan(obj.getString("jabatan"));
-
-                            /*
-                            kontrakkerja.setSection(false);
-                            kontrakkerja.setImagelink(generator.profileurl+obj.getString("foto"));
-
-                            Log.e(TAG, "image data" + kontrakkerja.getImagelink() );
-                            kontrakkerja.setIskar(obj.getString("kode_karyawan"));
-                            kontrakkerja.setNama(obj.getString("nama"));
-                            kontrakkerja.setJabatan(obj.getString("jabatan"));
-                            kontrakkerja.setKontrakkerja(obj.getString("kontrak_kerja"));
-
-                            */
+                        if(result.getString("status").equals("true")) {
+                            items = new ArrayList<>();
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                            JSONArray pengsarray = result.getJSONArray("data");
+                            //Log.e(TAG, "onPostExecute: " + pengsarray);
+                            String status = "";
+                            //String tempcall="";
+                            int sisa = 0;
+                            boolean first = true;
+                            if (pengsarray.length() == 0) {
+                                sisakontrakkerja2.setText("(0 orang)");
+                                //Snackbar.make(parent_view,"Tidak ada karyawan",Snackbar.LENGTH_SHORT).show();
                             }
+                            for (int i = 0; i < pengsarray.length(); i++) {
+                                status = pengsarray.getString(i);
+
+                                if (!status.equals("null")) {
 
 
+                                    JSONObject obj = pengsarray.getJSONObject(i);
+                                    sisa = Integer.parseInt(obj.getString("sisa"));
+
+                                    if (sisa > 30 && sisa <= 60) {
+                                        banyak2bulan++;
+                                        kontrakkerja = new listkaryawankontrakkerja();
+                                        kontrakkerja.setSection(true);
+                                        kontrakkerja.setKontrakkerja("Sisa kontrak Kerja " + sisa + " hari");
+                                        //kar.setIskar(obj.getString("id"));
+                                        kontrakkerja.setImagelink(generator.profileurl + obj.getString("foto"));
+
+                                        Log.e(TAG, "image data" + kontrakkerja.getImagelink());
+
+                                        //kontrakkerja.setIskar(obj.getString("kode_karyawan"));
+                                        kontrakkerja.setNama(obj.getString("nama"));
+                                        //kontrakkerja.setJabatan(obj.getString("jabatan"));
+                                        items.add(kontrakkerja);
+                                    }
+                                    if (i + 1 == pengsarray.length()) {
+                                        sisakontrakkerja2.setText("(" + banyak2bulan + " orang)");
+
+                                    }
+
+                                }
+
+
+                            }
+                            adapter = new AdapterListSectionedKontrakKerja(getActivity(), items, ItemAnimation.LEFT_RIGHT);
+                            recyclerView2.setLayoutManager(new LinearLayoutManager(getActivity()));
+                            recyclerView2.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(getActivity(), 3), true));
+
+
+                            recyclerView2.setHasFixedSize(true);
+                            recyclerView2.setAdapter(adapter);
 
 
                         }
-                        adapter = new AdapterListSectionedKontrakKerja(getActivity(), items, ItemAnimation.LEFT_RIGHT);
-                        recyclerView2.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        recyclerView2.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(getActivity(), 3), true));
-
-
-                        recyclerView2.setHasFixedSize(true);
-                        recyclerView2.setAdapter(adapter);
-
                         retrivekontrakkerja3bulan kar = new retrivekontrakkerja3bulan(getActivity());
                         kar.execute();
-                        /*
-                        String tempcall = "";
-
-                        for (int i = 0; i < pengsarray.length(); i++) {
-                            JSONObject obj = pengsarray.getJSONObject(i);
-                            if(!tempcall.equals(obj.getString("tanggal").substring(0,10))){
-                                if(tempcall.equals("")){
-                                    datacuti kar = new datacuti();
-                                    kar.setDatatgl(obj.getString("tanggal").substring(0,10));
-                                    kar.setIssection(true);
-                                    tempcall = obj.getString("tanggal").substring(0,10);
-                                    items.add(kontrakkerja);
-                                }
-                                else{
-                                    datacuti kar = new datacuti();
-                                    kar.setDatatgl(obj.getString("tanggal").substring(0,10));
-                                    kar.setIssection(true);
-                                    tempcall = obj.getString("tanggal").substring(0,10);
-                                    items.add(kontrakkerja);
-                                }
-                            }
-                            datacuti kar = new datacuti();
-                            kar.setIssection(false);
-                            //kar.setIskar(obj.getString("id"));
-                            kar.setImageurl(generator.profileurl+obj.getString("foto"));
-
-                            Log.e(TAG, "image data" + kar.getImageurl() );
-
-                            kar.setNama(obj.getString("nama"));
-                            kar.setJabatan(obj.getString("jabatan"));
-                            kar.setImageurl(generator.profileurl+obj.getString("foto"));
-
-                            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-                            SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
-
-                            kar.setTglmulai(format2.format(format1.parse(obj.getString("tgl_sakit").substring(0,10))));
-                            kar.setTglakhir(format2.format(format1.parse(obj.getString("akhir_sakit").substring(0,10))));
-                            kar.setKeterangan(obj.getString("keterangans"));
-                            kar.setHari(obj.getString("lama"));
-                            //kar.setJabatan(obj.getString("jabatan"));
-                            items.add(kontrakkerja);
-
-
-                        }
-
-                        adapter = new AdapterListSectionedKontrakKerja(getActivity(), items, ItemAnimation.LEFT_RIGHT);
-
-                        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-                        recyclerView.setHasFixedSize(true);
-                        recyclerView.setAdapter(adapter);
-
-                        */
-
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -963,175 +742,68 @@ public class FragmentHome extends Fragment {
 
         protected void onProgressUpdate(Integer...a){
             super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+            //Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
         }
 
         protected void onPostExecute(String result1) {
 
             try {
-                Log.e(TAG, "data json result" + result.toString());
                 if (result != null) {
+                    Log.e(TAG, "kerja 3 bulan" + result.toString());
                     try {
-                        items = new ArrayList<>();
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                        JSONArray pengsarray = result.getJSONArray("data");
-                        Log.e(TAG, "onPostExecute: " + pengsarray);
-                        String status="";
-                        //String tempcall="";
-                        int sisa=0;
-                        boolean first=true;
-                        if(pengsarray.length()==0){
-                            sisakontrakkerja3.setText("(0 orang)");
-                            //Snackbar.make(parent_view,"Tidak ada karyawan",Snackbar.LENGTH_SHORT).show();
-                        }
-                        for (int i = 0; i < pengsarray.length(); i++) {
-                            status=pengsarray.getString(i);
-
-                            if (!status.equals("null")) {
-
-
-                                JSONObject obj = pengsarray.getJSONObject(i);
-                                sisa = Integer.parseInt(obj.getString("sisa"));
-                                /*
-                                if (first && sisa > 30) {
-
-                                    //if(tempcall.equals("")){
-                                    kontrakkerja = new listkaryawankontrakkerja();
-                                    kontrakkerja.setKontrakkerja("Kontrak Kerja kurang dari 2 bulan");
-                                    kontrakkerja.setSection(true);
-                                    //tempcall="1bulan";
-                                    items.add(kontrakkerja);
-                                    first = false;
-                                    //recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                                }*/
-                                /*
-                                else if(!tempcall.equals("1bulan")){
-                                    kontrakkerja = new listkaryawankontrakkerja();
-                                    kontrakkerja.setKontrakkerja("Kontrak Kerja kurang dari 1 bulan");
-                                    kontrakkerja.setSection(true);
-                                    //tempcall = sisa;
-                                    items.add(kontrakkerja);
-                                    //recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-                                }*/
-
-                            /*
-                            else if(sisa<60 && sisa>30){
-                                kontrakkerja = new listkaryawankontrakkerja();
-                                kontrakkerja.setKontrakkerja("Kontrak Kerja kurang dari 2 bulan");
-                                kontrakkerja.setSection(true);
-
-                                items.add(kontrakkerja);
-                            }*/
-                            if(sisa>60  && sisa<=90){
-                                banyak3bulan++;
-                                kontrakkerja = new listkaryawankontrakkerja();
-                                kontrakkerja.setSection(true);
-                                kontrakkerja.setKontrakkerja("Sisa kontrak Kerja "+sisa+" hari");
-                                //kar.setIskar(obj.getString("id"));
-                                kontrakkerja.setImagelink(generator.profileurl + obj.getString("foto"));
-
-                                Log.e(TAG, "image data" + kontrakkerja.getImagelink());
-
-                                //kontrakkerja.setIskar(obj.getString("kode_karyawan"));
-                                kontrakkerja.setNama(obj.getString("nama"));
-                                //kontrakkerja.setJabatan(obj.getString("jabatan"));
-                                items.add(kontrakkerja);
+                        if(result.getString("status").equals("true")) {
+                            items = new ArrayList<>();
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                            JSONArray pengsarray = result.getJSONArray("data");
+                            //Log.e(TAG, "onPostExecute: " + pengsarray);
+                            String status = "";
+                            //String tempcall="";
+                            int sisa = 0;
+                            boolean first = true;
+                            if (pengsarray.length() == 0) {
+                                sisakontrakkerja3.setText("(0 orang)");
+                                //Snackbar.make(parent_view,"Tidak ada karyawan",Snackbar.LENGTH_SHORT).show();
                             }
-                            if(i+1==pengsarray.length()){
-                                sisakontrakkerja3.setText("("+banyak3bulan+" orang)");
+                            for (int i = 0; i < pengsarray.length(); i++) {
+                                status = pengsarray.getString(i);
 
-                            }
-                            /*
-                            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-                            SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
+                                if (!status.equals("null")) {
 
 
-                            kar.setTglmulai(format2.format(format1.parse(obj.getString("tgl_sakit").substring(0,10))));
-                            kar.setTglakhir(format2.format(format1.parse(obj.getString("akhir_sakit").substring(0,10))));
-                            kar.setKeterangan(obj.getString("keterangans"));
-                            kar.setHari(obj.getString("lama"));
-                            */
-                                //kar.setJabatan(obj.getString("jabatan"));
+                                    JSONObject obj = pengsarray.getJSONObject(i);
+                                    sisa = Integer.parseInt(obj.getString("sisa"));
 
-                            /*
-                            kontrakkerja.setSection(false);
-                            kontrakkerja.setImagelink(generator.profileurl+obj.getString("foto"));
+                                    if (sisa > 60 && sisa <= 90) {
+                                        banyak3bulan++;
+                                        kontrakkerja = new listkaryawankontrakkerja();
+                                        kontrakkerja.setSection(true);
+                                        kontrakkerja.setKontrakkerja("Sisa kontrak Kerja " + sisa + " hari");
+                                        //kar.setIskar(obj.getString("id"));
+                                        kontrakkerja.setImagelink(generator.profileurl + obj.getString("foto"));
 
-                            Log.e(TAG, "image data" + kontrakkerja.getImagelink() );
-                            kontrakkerja.setIskar(obj.getString("kode_karyawan"));
-                            kontrakkerja.setNama(obj.getString("nama"));
-                            kontrakkerja.setJabatan(obj.getString("jabatan"));
-                            kontrakkerja.setKontrakkerja(obj.getString("kontrak_kerja"));
+                                        Log.e(TAG, "image data" + kontrakkerja.getImagelink());
 
-                            */
-                            }
+                                        //kontrakkerja.setIskar(obj.getString("kode_karyawan"));
+                                        kontrakkerja.setNama(obj.getString("nama"));
+                                        //kontrakkerja.setJabatan(obj.getString("jabatan"));
+                                        items.add(kontrakkerja);
+                                    }
+                                    if (i + 1 == pengsarray.length()) {
+                                        sisakontrakkerja3.setText("(" + banyak3bulan + " orang)");
 
-
-
-
-                        }
-
-                        /*
-                        String tempcall = "";
-
-                        for (int i = 0; i < pengsarray.length(); i++) {
-                            JSONObject obj = pengsarray.getJSONObject(i);
-                            if(!tempcall.equals(obj.getString("tanggal").substring(0,10))){
-                                if(tempcall.equals("")){
-                                    datacuti kar = new datacuti();
-                                    kar.setDatatgl(obj.getString("tanggal").substring(0,10));
-                                    kar.setIssection(true);
-                                    tempcall = obj.getString("tanggal").substring(0,10);
-                                    items.add(kontrakkerja);
-                                }
-                                else{
-                                    datacuti kar = new datacuti();
-                                    kar.setDatatgl(obj.getString("tanggal").substring(0,10));
-                                    kar.setIssection(true);
-                                    tempcall = obj.getString("tanggal").substring(0,10);
-                                    items.add(kontrakkerja);
+                                    }
                                 }
                             }
-                            datacuti kar = new datacuti();
-                            kar.setIssection(false);
-                            //kar.setIskar(obj.getString("id"));
-                            kar.setImageurl(generator.profileurl+obj.getString("foto"));
-
-                            Log.e(TAG, "image data" + kar.getImageurl() );
-
-                            kar.setNama(obj.getString("nama"));
-                            kar.setJabatan(obj.getString("jabatan"));
-                            kar.setImageurl(generator.profileurl+obj.getString("foto"));
-
-                            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-                            SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
-
-                            kar.setTglmulai(format2.format(format1.parse(obj.getString("tgl_sakit").substring(0,10))));
-                            kar.setTglakhir(format2.format(format1.parse(obj.getString("akhir_sakit").substring(0,10))));
-                            kar.setKeterangan(obj.getString("keterangans"));
-                            kar.setHari(obj.getString("lama"));
-                            //kar.setJabatan(obj.getString("jabatan"));
-                            items.add(kontrakkerja);
 
 
+                            adapter = new AdapterListSectionedKontrakKerja(getActivity(), items, ItemAnimation.LEFT_RIGHT);
+                            recyclerView3.setLayoutManager(new LinearLayoutManager(getActivity()));
+                            recyclerView3.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(getActivity(), 3), true));
+
+
+                            recyclerView3.setHasFixedSize(true);
+                            recyclerView3.setAdapter(adapter);
                         }
-
-                        adapter = new AdapterListSectionedKontrakKerja(getActivity(), items, ItemAnimation.LEFT_RIGHT);
-
-                        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-                        recyclerView.setHasFixedSize(true);
-                        recyclerView.setAdapter(adapter);
-                        */
-                        adapter = new AdapterListSectionedKontrakKerja(getActivity(), items, ItemAnimation.LEFT_RIGHT);
-                        recyclerView3.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        recyclerView3.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(getActivity(), 3), true));
-
-
-                        recyclerView3.setHasFixedSize(true);
-                        recyclerView3.setAdapter(adapter);
                         retrivekontrakkerjahabis kar = new retrivekontrakkerjahabis(getActivity());
                         kar.execute();
 
@@ -1162,6 +834,7 @@ public class FragmentHome extends Fragment {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
+
     private class retrivekontrakkerjahabis extends AsyncTask<Void, Integer, String>
     {
         String response = "";
@@ -1260,171 +933,62 @@ public class FragmentHome extends Fragment {
         protected void onPostExecute(String result1) {
 
             try {
-                Log.e(TAG, "data json result" + result.toString());
+
                 if (result != null) {
+                    Log.e(TAG, "kerja habis" + result.toString());
                     try {
-                        items = new ArrayList<>();
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                        JSONArray pengsarray = result.getJSONArray("data");
-                        Log.e(TAG, "onPostExecute: " + pengsarray);
-                        String status="";
-                        //String tempcall="";
-                        int sisa=0;
-                        boolean first=true;
-                        if(pengsarray.length()==0){
-                            sisakontrakkerjahabis.setText("(0 orang)");
-                            //Snackbar.make(parent_view,"Tidak ada karyawan",Snackbar.LENGTH_SHORT).show();
-                        }
-                        for (int i = 0; i < pengsarray.length(); i++) {
-                            status=pengsarray.getString(i);
+                        if(result.getString("status").equals("true")) {
+                            items = new ArrayList<>();
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                            JSONArray pengsarray = result.getJSONArray("data");
+                            Log.e(TAG, "onPostExecute: " + pengsarray);
+                            String status = "";
+                            //String tempcall="";
+                            int sisa = 0;
+                            boolean first = true;
+                            if (pengsarray.length() == 0) {
+                                sisakontrakkerjahabis.setText("(0 orang)");
+                                //Snackbar.make(parent_view,"Tidak ada karyawan",Snackbar.LENGTH_SHORT).show();
+                            }
+                            for (int i = 0; i < pengsarray.length(); i++) {
+                                status = pengsarray.getString(i);
 
-                            if (!status.equals("null")) {
+                                if (!status.equals("null")) {
 
 
-                                JSONObject obj = pengsarray.getJSONObject(i);
-                                sisa = Integer.parseInt(obj.getString("sisa"));
-                                /*
-                                if (first && sisa > 30) {
+                                    JSONObject obj = pengsarray.getJSONObject(i);
+                                    sisa = Integer.parseInt(obj.getString("sisa"));
 
-                                    //if(tempcall.equals("")){
-                                    kontrakkerja = new listkaryawankontrakkerja();
-                                    kontrakkerja.setKontrakkerja("Kontrak Kerja kurang dari 2 bulan");
-                                    kontrakkerja.setSection(true);
-                                    //tempcall="1bulan";
-                                    items.add(kontrakkerja);
-                                    first = false;
-                                    //recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                                }*/
-                                /*
-                                else if(!tempcall.equals("1bulan")){
-                                    kontrakkerja = new listkaryawankontrakkerja();
-                                    kontrakkerja.setKontrakkerja("Kontrak Kerja kurang dari 1 bulan");
-                                    kontrakkerja.setSection(true);
-                                    //tempcall = sisa;
-                                    items.add(kontrakkerja);
-                                    //recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                                    if (sisa <= 0) {
+                                        banyakhabis++;
+                                        kontrakkerja = new listkaryawankontrakkerja();
+                                        kontrakkerja.setSection(true);
+                                        kontrakkerja.setKontrakkerja("Kontrak Kerja sudah habis");
+                                        //kar.setIskar(obj.getString("id"));
+                                        kontrakkerja.setImagelink(generator.profileurl + obj.getString("foto"));
 
-                                }*/
+                                        Log.e(TAG, "image data" + kontrakkerja.getImagelink());
 
-                            /*
-                            else if(sisa<60 && sisa>30){
-                                kontrakkerja = new listkaryawankontrakkerja();
-                                kontrakkerja.setKontrakkerja("Kontrak Kerja kurang dari 2 bulan");
-                                kontrakkerja.setSection(true);
+                                        //kontrakkerja.setIskar(obj.getString("kode_karyawan"));
+                                        kontrakkerja.setNama(obj.getString("nama"));
+                                        //kontrakkerja.setJabatan(obj.getString("jabatan"));
+                                        items.add(kontrakkerja);
+                                    }
+                                    if (i + 1 == pengsarray.length()) {
+                                        sisakontrakkerjahabis.setText("(" + banyakhabis + " orang)");
 
-                                items.add(kontrakkerja);
-                            }*/
-                                if(sisa<=0){
-                                    banyakhabis++;
-                                    kontrakkerja = new listkaryawankontrakkerja();
-                                    kontrakkerja.setSection(true);
-                                    kontrakkerja.setKontrakkerja("Kontrak Kerja sudah habis");
-                                    //kar.setIskar(obj.getString("id"));
-                                    kontrakkerja.setImagelink(generator.profileurl + obj.getString("foto"));
-
-                                    Log.e(TAG, "image data" + kontrakkerja.getImagelink());
-
-                                    //kontrakkerja.setIskar(obj.getString("kode_karyawan"));
-                                    kontrakkerja.setNama(obj.getString("nama"));
-                                    //kontrakkerja.setJabatan(obj.getString("jabatan"));
-                                    items.add(kontrakkerja);
+                                    }
                                 }
-                                if(i+1==pengsarray.length()){
-                                    sisakontrakkerjahabis.setText("("+banyakhabis+" orang)");
-
-                                }
-
-
-                            /*
-                            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-                            SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
-
-
-                            kar.setTglmulai(format2.format(format1.parse(obj.getString("tgl_sakit").substring(0,10))));
-                            kar.setTglakhir(format2.format(format1.parse(obj.getString("akhir_sakit").substring(0,10))));
-                            kar.setKeterangan(obj.getString("keterangans"));
-                            kar.setHari(obj.getString("lama"));
-                            */
-                                //kar.setJabatan(obj.getString("jabatan"));
-
-                            /*
-                            kontrakkerja.setSection(false);
-                            kontrakkerja.setImagelink(generator.profileurl+obj.getString("foto"));
-
-                            Log.e(TAG, "image data" + kontrakkerja.getImagelink() );
-                            kontrakkerja.setIskar(obj.getString("kode_karyawan"));
-                            kontrakkerja.setNama(obj.getString("nama"));
-                            kontrakkerja.setJabatan(obj.getString("jabatan"));
-                            kontrakkerja.setKontrakkerja(obj.getString("kontrak_kerja"));
-
-                            */
                             }
 
+                            adapter = new AdapterListSectionedKontrakKerja(getActivity(), items, ItemAnimation.LEFT_RIGHT);
+                            recyclerViewhabis.setLayoutManager(new LinearLayoutManager(getActivity()));
+                            recyclerViewhabis.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(getActivity(), 3), true));
 
 
-
+                            recyclerViewhabis.setHasFixedSize(true);
+                            recyclerViewhabis.setAdapter(adapter);
                         }
-
-                        /*
-                        String tempcall = "";
-
-                        for (int i = 0; i < pengsarray.length(); i++) {
-                            JSONObject obj = pengsarray.getJSONObject(i);
-                            if(!tempcall.equals(obj.getString("tanggal").substring(0,10))){
-                                if(tempcall.equals("")){
-                                    datacuti kar = new datacuti();
-                                    kar.setDatatgl(obj.getString("tanggal").substring(0,10));
-                                    kar.setIssection(true);
-                                    tempcall = obj.getString("tanggal").substring(0,10);
-                                    items.add(kontrakkerja);
-                                }
-                                else{
-                                    datacuti kar = new datacuti();
-                                    kar.setDatatgl(obj.getString("tanggal").substring(0,10));
-                                    kar.setIssection(true);
-                                    tempcall = obj.getString("tanggal").substring(0,10);
-                                    items.add(kontrakkerja);
-                                }
-                            }
-                            datacuti kar = new datacuti();
-                            kar.setIssection(false);
-                            //kar.setIskar(obj.getString("id"));
-                            kar.setImageurl(generator.profileurl+obj.getString("foto"));
-
-                            Log.e(TAG, "image data" + kar.getImageurl() );
-
-                            kar.setNama(obj.getString("nama"));
-                            kar.setJabatan(obj.getString("jabatan"));
-                            kar.setImageurl(generator.profileurl+obj.getString("foto"));
-
-                            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-                            SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
-
-                            kar.setTglmulai(format2.format(format1.parse(obj.getString("tgl_sakit").substring(0,10))));
-                            kar.setTglakhir(format2.format(format1.parse(obj.getString("akhir_sakit").substring(0,10))));
-                            kar.setKeterangan(obj.getString("keterangans"));
-                            kar.setHari(obj.getString("lama"));
-                            //kar.setJabatan(obj.getString("jabatan"));
-                            items.add(kontrakkerja);
-
-
-                        }
-
-                        adapter = new AdapterListSectionedKontrakKerja(getActivity(), items, ItemAnimation.LEFT_RIGHT);
-
-                        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-                        recyclerView.setHasFixedSize(true);
-                        recyclerView.setAdapter(adapter);
-                        */
-                        adapter = new AdapterListSectionedKontrakKerja(getActivity(), items, ItemAnimation.LEFT_RIGHT);
-                        recyclerViewhabis.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        recyclerViewhabis.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(getActivity(), 3), true));
-
-
-                        recyclerViewhabis.setHasFixedSize(true);
-                        recyclerViewhabis.setAdapter(adapter);
                         retrivegetjabatan kar = new retrivegetjabatan(getActivity());
                         kar.execute();
 
@@ -1455,6 +1019,7 @@ public class FragmentHome extends Fragment {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
+
     private class retrivegetjabatan extends AsyncTask<Void, Integer, String>
     {
         String response = "";
@@ -1551,82 +1116,38 @@ public class FragmentHome extends Fragment {
         protected void onPostExecute(String result1) {
 
             try {
-                Log.e(TAG, "data json result" + result.toString());
+
                 if (result != null) {
                     try {
-                        list_jabatan=new ArrayList<>();
-                        JSONArray pengsarray = result.getJSONArray("data");
-                        for (int i = 0; i < pengsarray.length(); i++) {
-                            JSONObject obj = pengsarray.getJSONObject(i);
-                            list_jabatan.add(obj.getString("jabatan"));
-                            Log.e("Jabatan",list_jabatan.get(i));
-                        }
-                        /*
-                        List<String> listjabatan=new ArrayList<>();
-                        List<String> listbanyak=new ArrayList<>();
-                        daftaritems = new ArrayList<>();
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                        JSONArray pengsarray = result.getJSONArray("data");
-                        Log.e(TAG, "onPostExecute: " + pengsarray);
-                        String status="";
-                        //String tempcall="";
-                        int banyak=0, total=0;
-                        for (int i = 0; i < pengsarray.length(); i++) {
-                            JSONObject obj = pengsarray.getJSONObject(i);
-                            //daftarabsensi=new listkaryawandaftarabsensi();
-                            if(!obj.getString("jabatan").equals("") && !listjabatan.contains(obj.getString("jabatan"))){
-                                Log.e(TAG, "Berhasil1");
-                                listjabatan.add(obj.getString("jabatan"));
-                                banyak++;
-                                total+=banyak;
-                                listbanyak.add(""+banyak);
+                        if(result.getString("status").equals("true")) {
+                            Log.e(TAG, "data jabatan" + result.toString());
+                            list_jabatan = new ArrayList<>();
+                            JSONArray pengsarray = result.getJSONArray("data");
+                            for (int i = 0; i < pengsarray.length(); i++) {
+                                JSONObject obj = pengsarray.getJSONObject(i);
+                                list_jabatan.add(obj.getString("jabatan"));
+                                Log.e("Jabatan", list_jabatan.get(i));
                             }
-                            else if(!obj.getString("jabatan").equals("") && listjabatan.contains(obj.getString("jabatan"))){
-                                Log.e(TAG, "Berhasil2");
-                                banyak++;
-                            }
-                            /*
-                            if(i+1==pengsarray.length()){
-                                daftarabsensi.setJabatan("");
-                                daftarabsensi.setBanyak("");
-                                daftaritems.add(daftarabsensi);
-                                daftarabsensi.setJabatan("");
-                                daftarabsensi.setBanyak("");
-                                daftaritems.add(daftarabsensi);
-                            }*/
-                        //}
-                        /*
-                        for(int i=0;i<listjabatan.size();i++){
-                            Log.e(TAG, "Berhasil3");
-                            daftarabsensi=new listkaryawandaftarabsensi();
-                            daftarabsensi.setJabatan(listjabatan.get(i));
-                            daftarabsensi.setBanyak(listbanyak.get(i));
-                            daftaritems.add(daftarabsensi);
-                        }
-                        daftarabsensi=new listkaryawandaftarabsensi();
-                        daftarabsensi.setJabatan("Total Karyawan");
-                        daftarabsensi.setBanyak(""+total);
+                            daftaritems = new ArrayList<>();
 
-                        adapterabsensi= new AdapterListDaftarAbsensi(getActivity(), daftaritems, ItemAnimation.BOTTOM_UP);
-                        recyclerViewdaftar.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        recyclerViewdaftar.setHasFixedSize(true);
-                        recyclerViewdaftar.setAdapter(adapterabsensi);*/
-                        daftaritems = new ArrayList<>();
+                            for (int i = 0; i < list_jabatan.size(); i++) {
 
-                        for(int i=0;i<list_jabatan.size();i++){
-                            retrivedaftarabsensi kar = new retrivedaftarabsensi(getActivity(), list_jabatan.get(i),i);
-                            kar.execute();
                             /*
                             if(i+1==list_jabatan.size()){
                                 Log.e("MASUK ADAPTER", "Berhasil");
-                                adapterabsensi= new AdapterListDaftarAbsensi(getActivity(), daftaritems, ItemAnimation.BOTTOM_UP);
+
+                            }*/
+
+                                adapterabsensi = new AdapterListDaftarAbsensi(getActivity(), daftaritems, ItemAnimation.BOTTOM_UP);
                                 recyclerViewdaftar.setLayoutManager(new LinearLayoutManager(getActivity()));
                                 recyclerViewdaftar.setHasFixedSize(true);
                                 recyclerViewdaftar.setAdapter(adapterabsensi);
-                            }*/
+
+                                retrivedaftarabsensi kar = new retrivedaftarabsensi(getActivity(), list_jabatan.get(i), i);
+                                kar.execute();
+                            }
+
                         }
-
-
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -1766,7 +1287,7 @@ public class FragmentHome extends Fragment {
                 if (result != null) {
                     try {
 
-                        Log.e(TAG, "data json result" + result.toString());
+                        Log.e(TAG, "daftar absensi" + result.toString());
 
                         List<String> listjabatan = new ArrayList<>();
                         List<String> listbanyak = new ArrayList<>();
@@ -1782,56 +1303,6 @@ public class FragmentHome extends Fragment {
                             daftaritems.add(daftarabsensi);
                         }
 
-
-
-                        /*
-                        JSONArray pengsarray = result.getJSONArray("data");
-                        Log.e(TAG, "onPostExecute: " + pengsarray);
-                        String status="";
-                        //String tempcall="";Jabta
-                        int banyak=0, total=0;
-                        for (int i = 0; i < pengsarray.length(); i++) {
-                            JSONObject obj = pengsarray.getJSONObject(i);
-                            //daftarabsensi=new listkaryawandaftarabsensi();
-                            if(!obj.getString("jabatan").equals("") && !listjabatan.contains(obj.getString("jabatan"))){
-                                Log.e(TAG, "Berhasil1");
-                                listjabatan.add(obj.getString("jabatan"));
-                                banyak++;
-                                total+=banyak;
-                                listbanyak.add(""+banyak);
-                            }
-                            else if(!obj.getString("jabatan").equals("") && listjabatan.contains(obj.getString("jabatan"))){
-                                Log.e(TAG, "Berhasil2");
-                                banyak++;
-                            }
-                            /*
-                            if(i+1==pengsarray.length()){
-                                daftarabsensi.setJabatan("");
-                                daftarabsensi.setBanyak("");
-                                daftaritems.add(daftarabsensi);
-                                daftarabsensi.setJabatan("");
-                                daftarabsensi.setBanyak("");
-                                daftaritems.add(daftarabsensi);
-                            }*/
-                        /*
-                        }
-                        for(int i=0;i<listjabatan.size();i++){
-                            Log.e(TAG, "Berhasil3");
-                            daftarabsensi=new listkaryawandaftarabsensi();
-                            daftarabsensi.setJabatan(listjabatan.get(i));
-                            daftarabsensi.setBanyak(listbanyak.get(i));
-                            daftaritems.add(daftarabsensi);
-                        }
-                        daftarabsensi=new listkaryawandaftarabsensi();
-                        daftarabsensi.setJabatan("Total Karyawan");
-                        daftarabsensi.setBanyak(""+total);
-
-                        adapterabsensi= new AdapterListDaftarAbsensi(getActivity(), daftaritems, ItemAnimation.BOTTOM_UP);
-                        recyclerViewdaftar.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        recyclerViewdaftar.setHasFixedSize(true);
-                        recyclerViewdaftar.setAdapter(adapterabsensi);
-                        //retrivedaftarabsensi kar = new retrivedaftarabsensi(getActivity());*/
-                        //kar.execute();
                         if(panjang+1==list_jabatan.size()){
                             daftarabsensi=new listkaryawandaftarabsensi();
                             daftarabsensi.setJabatan("Total Karyawan");
@@ -1978,8 +1449,11 @@ public class FragmentHome extends Fragment {
         protected void onPostExecute(String result1) {
 
             try {
-                Log.e(TAG, "data json result" + result.toString());
+
                 if (result != null) {
+
+                    Log.e(TAG, "total gaji" + result.toString());
+
                     try {
                         //JSONArray pengsarray = result.getJSONArray("data");
                         JSONObject obj = result.getJSONObject("data");
@@ -2127,7 +1601,7 @@ public class FragmentHome extends Fragment {
         protected void onPostExecute(String result1) {
 
             try {
-                Log.e(TAG, "data json result" + result.toString());
+                Log.e(TAG, "get izin" + result.toString());
                 if (result != null) {
                     try {
                         JSONArray pengsarray = result.getJSONArray("rows");
