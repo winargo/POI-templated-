@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.helper.FilterHelper;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 import prima.optimasi.indonesia.payroll.universal.viewkaryawan;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
@@ -52,9 +53,10 @@ public class Adapterviewkaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
         this.items = items;
         ctx = context;
         this.animation_type = animation;
+        this.itemsfilter=items;
     }
 
-    public class OriginalViewHolder extends RecyclerView.ViewHolder {
+    public class OriginalViewHolder extends RecyclerView.ViewHolder{
         public ImageView image;
         public TextView name;
         public TextView brief;
@@ -76,6 +78,11 @@ public class Adapterviewkaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
+    public void setItems(List<listkaryawan> filteredGalaxies)
+    {
+        this.itemsfilter=filteredGalaxies;
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder vh;
@@ -87,7 +94,8 @@ public class Adapterviewkaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        final listkaryawan obj = items.get(position);
+
+        final listkaryawan obj = itemsfilter.get(position);
         if (holder instanceof OriginalViewHolder) {
             OriginalViewHolder view = (OriginalViewHolder) holder;
             view.name.setText(obj.getNama());
@@ -130,7 +138,7 @@ public class Adapterviewkaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return itemsfilter.size();
     }
 
     public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
@@ -150,6 +158,12 @@ public class Adapterviewkaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
+    @Override
+    public Filter getFilter() {
+        //this.itemsfilter=items;
+        return FilterHelper.newInstance(items,this);
+    }
+    /*
     @Override
     public Filter getFilter() {
         return new Filter() {
@@ -183,7 +197,7 @@ public class Adapterviewkaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
             }
         };
     }
-
+    */
     /*
     public interface AdapterviewkaryawanListener {
         public void onSelected(listkaryawan item);

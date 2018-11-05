@@ -6,12 +6,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.helper.FilterHelper;
 import prima.optimasi.indonesia.payroll.model.Image;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 import prima.optimasi.indonesia.payroll.universal.viewjadwalkaryawan;
@@ -21,9 +24,11 @@ import prima.optimasi.indonesia.payroll.utils.Tools;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Adapterkaryawan extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class Adapterkaryawan extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     private List<listkaryawan> items = new ArrayList<>();
+    private List<listkaryawan> itemsfilter = new ArrayList<>();
+
     private int animation_type = 0;
 
     private OnLoadMoreListener onLoadMoreListener;
@@ -43,6 +48,8 @@ public class Adapterkaryawan extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.items = items;
         ctx = context;
         this.animation_type = animation_type;
+        this.itemsfilter = items;
+
     }
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
@@ -70,7 +77,8 @@ public class Adapterkaryawan extends RecyclerView.Adapter<RecyclerView.ViewHolde
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        final listkaryawan obj = items.get(position);
+
+        final listkaryawan obj = itemsfilter.get(position);
         if (holder instanceof OriginalViewHolder) {
             OriginalViewHolder view = (OriginalViewHolder) holder;
             view.name.setText(obj.getNama());
@@ -96,6 +104,12 @@ public class Adapterkaryawan extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
+    public void setItems(List<listkaryawan> filteredGalaxies)
+    {
+        this.itemsfilter=filteredGalaxies;
+    }
+
+
     private int lastPosition = -1;
     private boolean on_attach = true;
 
@@ -108,7 +122,7 @@ public class Adapterkaryawan extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return itemsfilter.size();
     }
 
     public void setOnLoadMoreListener(OnLoadMoreListener onLoadMoreListener) {
@@ -117,6 +131,57 @@ public class Adapterkaryawan extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public interface OnLoadMoreListener {
         void onLoadMore(int current_page);
+    }
+
+    @Override
+    public Filter getFilter() {
+        //this.itemsfilter=items;
+        return new Filter() {
+
+
+            @Override
+            protected Filter.FilterResults performFiltering(CharSequence constraint) {
+                Filter.FilterResults filterResults = new Filter.FilterResults();
+
+                if (constraint.length() > 0) {
+                    //CHANGE TO UPPER
+                    constraint = constraint.toString().toUpperCase();
+
+                    //HOLD FILTERS WE FIND
+                    List<listkaryawan> foundFilters = new ArrayList<>();
+
+                    String galaxy;
+
+                    //ITERATE CURRENT LIST
+                    for (int i = 0; i < items.size(); i++) {
+                        galaxy = items.get(i).getNama();
+
+                        //SEARCH
+                        if (galaxy.toUpperCase().contains(constraint)) {
+                            //ADD IF FOUND
+                            foundFilters.add(items.get(i));
+                        }
+                    }
+
+                    //SET RESULTS TO FILTER LIST
+                    filterResults.count = foundFilters.size();
+                    filterResults.values = foundFilters;
+                } else {
+                    //NO ITEM FOUND.LIST REMAINS INTACT
+                    filterResults.count = items.size();
+                    filterResults.values = items;
+                }
+
+                //RETURN RESULTS
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, Filter.FilterResults filterResults) {
+                setItems((List<listkaryawan>) filterResults.values);
+                notifyDataSetChanged();
+            }
+        };
     }
 
 }

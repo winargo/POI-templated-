@@ -23,6 +23,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,6 +55,7 @@ import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.widget.LineItemDecoration;
 
 public class cekjadwal extends AppCompatActivity {
+    MaterialSearchView searchView;
     Adapterkaryawan mAdapterkaryawan;
     RecyclerView recyclerView, recyclerView_karyawan;
     Adapterjadwal adapter;
@@ -75,6 +78,7 @@ public class cekjadwal extends AppCompatActivity {
         else{
             setContentView(R.layout.activity_cek_jadwal_karyawan);
             recyclerView_karyawan = (RecyclerView) findViewById(R.id.recyclerView_karyawan);
+            searchView=findViewById(R.id.searchView);
         }
 
         parent_view=findViewById(R.id.parent_view);
@@ -115,10 +119,42 @@ public class cekjadwal extends AppCompatActivity {
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_activity_main, menu);
-        MenuItem item=menu.findItem(R.id.action_settings);
-        item.setTitle("About");
-        return true;
+        if(cek_jadwal==1){
+            getMenuInflater().inflate(R.menu.menu_activity_main, menu);
+            MenuItem item=menu.findItem(R.id.action_settings);
+            item.setTitle("About");
+            return true;
+        }
+        else{
+            getMenuInflater().inflate(R.menu.menu_search, menu);
+
+            MenuItem item = menu.findItem(R.id.action_search);
+
+            searchView.setMenuItem(item);
+
+            searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    //Do some magic
+                    mAdapterkaryawan.getFilter().filter(query);
+                    //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String query) {
+                    //Do some magic
+                    Log.e("Text", "newText=" + query);
+                    mAdapterkaryawan.getFilter().filter(query);
+                    //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                    return false;
+                }
+            });
+
+            return true;
+        }
+
+
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -2,6 +2,7 @@ package prima.optimasi.indonesia.payroll.main_owner.fragment_owner;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
+import prima.optimasi.indonesia.payroll.main_owner.Activity_Chart;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListDaftarAbsensi;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListSectionedKontrakKerja;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListSectionedsakit;
@@ -89,6 +91,13 @@ public class FragmentHome extends Fragment {
         totalgajibersih=rootView.findViewById(R.id.totalgajibersih);
         totalgajipotongan=rootView.findViewById(R.id.totalgajipotongan);
 
+        totalgajibersih.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(getActivity(), Activity_Chart.class);
+                startActivity(intent);
+            }
+        });
         parent_view=rootView.findViewById(R.id.parent_view);
         lyt_parent=rootView.findViewById(R.id.lyt_parent);
         lyt_parent2=rootView.findViewById(R.id.lyt_parent2bulan);
@@ -1119,6 +1128,7 @@ public class FragmentHome extends Fragment {
 
                 if (result != null) {
                     try {
+<<<<<<< HEAD
                         if(result.getString("status").equals("true")) {
                             Log.e(TAG, "data jabatan" + result.toString());
                             list_jabatan = new ArrayList<>();
@@ -1127,6 +1137,37 @@ public class FragmentHome extends Fragment {
                                 JSONObject obj = pengsarray.getJSONObject(i);
                                 list_jabatan.add(obj.getString("jabatan"));
                                 Log.e("Jabatan", list_jabatan.get(i));
+=======
+                        list_jabatan=new ArrayList<>();
+                        JSONArray pengsarray = result.getJSONArray("data");
+                        for (int i = 0; i < pengsarray.length(); i++) {
+                            JSONObject obj = pengsarray.getJSONObject(i);
+                            list_jabatan.add(obj.getString("jabatan"));
+                        }
+                        /*
+                        List<String> listjabatan=new ArrayList<>();
+                        List<String> listbanyak=new ArrayList<>();
+                        daftaritems = new ArrayList<>();
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        JSONArray pengsarray = result.getJSONArray("data");
+                        Log.e(TAG, "onPostExecute: " + pengsarray);
+                        String status="";
+                        //String tempcall="";
+                        int banyak=0, total=0;
+                        for (int i = 0; i < pengsarray.length(); i++) {
+                            JSONObject obj = pengsarray.getJSONObject(i);
+                            //daftarabsensi=new listkaryawandaftarabsensi();
+                            if(!obj.getString("jabatan").equals("") && !listjabatan.contains(obj.getString("jabatan"))){
+                                Log.e(TAG, "Berhasil1");
+                                listjabatan.add(obj.getString("jabatan"));
+                                banyak++;
+                                total+=banyak;
+                                listbanyak.add(""+banyak);
+                            }
+                            else if(!obj.getString("jabatan").equals("") && listjabatan.contains(obj.getString("jabatan"))){
+                                Log.e(TAG, "Berhasil2");
+                                banyak++;
+>>>>>>> cf29c1f282b07860bd39a085e03ddbb67406bd27
                             }
                             daftaritems = new ArrayList<>();
 
