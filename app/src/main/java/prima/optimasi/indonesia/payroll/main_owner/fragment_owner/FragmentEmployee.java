@@ -4,19 +4,24 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +31,7 @@ import com.applandeo.materialcalendarview.CalendarView;
 import com.applandeo.materialcalendarview.EventDay;
 import com.applandeo.materialcalendarview.exceptions.OutOfDateRangeException;
 import com.applandeo.materialcalendarview.listeners.OnDayClickListener;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,13 +55,14 @@ import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.helper.SwipeItemTouchHelper;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterGridCaller;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.Adapterabsensiaktifitas;
+import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 import prima.optimasi.indonesia.payroll.objects.listkaryawanaktivitas;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
 
-public class FragmentEmployee extends Fragment {
+public class FragmentEmployee extends Fragment{
 
     private View parent_view;
 
@@ -90,6 +97,8 @@ public class FragmentEmployee extends Fragment {
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_employee, container, false);
+
+
 
         parent_view = rootView.findViewById(R.id.employeecoordinator);
 
@@ -213,6 +222,15 @@ public class FragmentEmployee extends Fragment {
 
         initComponent(rootView);
 
+        String query=getArguments().getString("query");
+        if(!query.equals(null)){
+            if(refreshkabag.getVisibility()==View.VISIBLE){
+                mAdapterkabag.getFilter().filter(query);
+            }
+            else{
+                mAdapterkaryawan.getFilter().filter(query);
+            }
+        }
         return rootView;
     }
 
@@ -1485,4 +1503,46 @@ public class FragmentEmployee extends Fragment {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        // What i have added is this
+        setHasOptionsMenu(true);
+    }
+
+    /*
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        menu.clear();
+        inflater.inflate(R.menu.activity_mainmenu, menu);
+        MenuItem item=menu.findItem(R.id.action_search);
+        item.setVisible(true);
+        MaterialSearchView searchView=new MaterialSearchView(((mainmenu_owner)getActivity()).getSupportActionBar().getThemedContext());
+        searchView.setMenuItem(item);
+
+
+        MenuItemCompat.setShowAsAction(item,MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW|MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
+        MenuItemCompat.setActionView(item,searchView);
+        Log.e("Text", "Berhasil");
+
+        searchView.setOnQueryTextListener(this);
+    }
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        //Do some magic
+        //mAdapterkabag.getFilter().filter(query);
+        //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String query) {
+        //Do some magic
+        Log.e("Text", "newText=" + query);
+        //mAdapterkabag.getFilter().filter(query);
+        //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+        return false;
+    }*/
 }

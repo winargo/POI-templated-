@@ -107,6 +107,7 @@ public class mainmenu_kabag extends AppCompatActivity
 
         generator initializedata = new generator(mainmenu_kabag.this);
 
+
         CircularImageView imageuser =findViewById(R.id.imageView);
 
         if(prefs.getString("profileimage","").equals(generator.profileurl)){
@@ -297,8 +298,9 @@ public class mainmenu_kabag extends AppCompatActivity
                 icon_born.setScaleY(scale >= 0 ? scale : 0);
                 borndate.setScaleX(scale >= 0 ? scale : 0);
                 borndate.setScaleY(scale >= 0 ? scale : 0);
-                show.setScaleX(scale >= 0 ? 0 : scale*4);
-                show.setScaleY(scale >= 0 ? 0 : scale*4);
+                //show.setScaleX(scale >= 0 ? 0 : scale*4);
+                //show.setScaleY(scale >= 0 ? 0 : scale*4);
+
 
 
             }
