@@ -341,7 +341,7 @@
             app:fabSize="normal"
             app:backgroundTint="@color/colorPrimary"
             app:rippleColor="@color/blue_500"
-            app:srcCompat="@drawable/logout_terbalik" />
+            app:srcCompat="@drawable/logout" />
 
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>

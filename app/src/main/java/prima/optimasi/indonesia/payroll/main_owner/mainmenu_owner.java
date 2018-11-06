@@ -31,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
@@ -42,6 +43,7 @@ import java.util.List;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
+import prima.optimasi.indonesia.payroll.adapter.AdapterGridCaller;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentJob;
@@ -55,6 +57,7 @@ import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 public class mainmenu_owner extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    MaterialSearchView searchView;
     Adaptermenujabatan listAdapter;
     private ProgressDialog loadingprogress=null;
     ExpandableListView expListView;
@@ -63,7 +66,7 @@ public class mainmenu_owner extends AppCompatActivity
     ViewPager pager;
     TabLayout tabpager ;
     Menu tempmenu ;
-
+    int posisi=0;
     int[] iconstyle = {R.drawable.baseline_home_black_18dp,R.drawable.ic_person_outline_white_24dp,R.drawable.baseline_assessment_black_24dp,R.drawable.baseline_announcement_black_24dp,R.drawable.ic_baseline_work_24px};
 
     private String[] tabTitles = new String[]{"Home", "Karyawan", "Laporan","Informasi","Tugas"};
@@ -104,6 +107,7 @@ public class mainmenu_owner extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        searchView=findViewById(R.id.searchView);
 
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         expListView = drawer.findViewById(R.id.lvExp);
@@ -159,6 +163,7 @@ public class mainmenu_owner extends AppCompatActivity
             @Override
             public void onTabSelected(TabLayout.Tab tab){
                 int position = tab.getPosition();
+                posisi=position;
                 if(position==3){
                     if(tempmenu!=null){
                         tempmenu.findItem(R.id.action_search).setVisible(true);
@@ -331,7 +336,11 @@ public class mainmenu_owner extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        }
+        else if(searchView.isSearchOpen()){
+            searchView.closeSearch();
+        }
+        else {
             super.onBackPressed();
         }
     }
@@ -342,6 +351,56 @@ public class mainmenu_owner extends AppCompatActivity
         getMenuInflater().inflate(R.menu.activity_mainmenu, menu);
 
         tempmenu = menu;
+        MenuItem item = menu.findItem(R.id.action_search);
+
+        searchView.setMenuItem(item);
+
+        if(posisi==1){
+            searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    FragmentEmployee fe=new FragmentEmployee();
+                    fe
+                    /*
+                    //Do some magic
+                    Bundle bundle=new Bundle();
+                    bundle.putString("query",query);
+//set Fragmentclass Arguments
+                    FragmentEmployee fragobj=new FragmentEmployee();
+                    fragobj.setArguments(bundle);*/
+                    //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String query) {
+                    //Do some magic
+                    Log.e("Text", "newText=" + query);
+
+                    //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                    return false;
+                }
+            });
+        }
+        /*
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //Do some magic
+                mAdapterkaryawan.getFilter().filter(query);
+                //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                //Do some magic
+                Log.e("Text", "newText=" + query);
+                mAdapterkaryawan.getFilter().filter(query);
+                //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                return false;
+            }
+        });*/
 
         return true;
     }
@@ -390,10 +449,9 @@ public class mainmenu_owner extends AppCompatActivity
             startActivity(a);
 
         }
-        else if(id==R.id.action_search){
-
+        else if (id == R.id.action_search) {
+            return true;
         }
-
 
         return super.onOptionsItemSelected(item);
     }

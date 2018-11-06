@@ -289,8 +289,8 @@ public class mainmenu_karyawan extends AppCompatActivity
                 icon_born.setScaleY(scale >= 0 ? scale : 0);
                 borndate.setScaleX(scale >= 0 ? scale : 0);
                 borndate.setScaleY(scale >= 0 ? scale : 0);
-                show.setScaleX(scale >= 0 ? 0 : scale*4);
-                show.setScaleY(scale >= 0 ? 0 : scale*4);
+                //show.setScaleX(scale >= 0 ? 0 : scale*4);
+                //show.setScaleY(scale >= 0 ? 0 : scale*4);
             }
 
         });

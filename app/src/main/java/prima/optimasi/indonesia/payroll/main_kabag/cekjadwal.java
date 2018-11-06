@@ -780,4 +780,14 @@ public class cekjadwal extends AppCompatActivity {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
+    @Override
+    public void onBackPressed() {
+        if(cek_jadwal==0) {
+            if (searchView.isSearchOpen()) {
+                searchView.closeSearch();
+            } else {
+                super.onBackPressed();
+            }
+        }
+    }
 }
