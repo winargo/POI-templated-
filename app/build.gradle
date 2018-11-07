@@ -93,8 +93,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.4'
 
     implementation 'net.frakbot:jumpingbeans:1.3.0'
+
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
+    implementation 'com.github.PhilJay:MPAndroidChart-Realm:v2.0.2@aar'
 }
 
 
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'realm-android'

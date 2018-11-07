@@ -360,7 +360,6 @@ public class mainmenu_owner extends AppCompatActivity
                 @Override
                 public boolean onQueryTextSubmit(String query) {
                     FragmentEmployee fe=new FragmentEmployee();
-                    fe
                     /*
                     //Do some magic
                     Bundle bundle=new Bundle();

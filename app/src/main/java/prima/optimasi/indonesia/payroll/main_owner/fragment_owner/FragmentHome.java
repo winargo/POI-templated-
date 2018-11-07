@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -21,6 +22,18 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.BarLineChartBase;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.realm.implementation.RealmBarDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.LargeValueFormatter;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,11 +41,16 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -46,6 +64,7 @@ import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListSect
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListSectionedsakit;
 import prima.optimasi.indonesia.payroll.main_owner.report.owner_sakit;
 import prima.optimasi.indonesia.payroll.objects.datacuti;
+import prima.optimasi.indonesia.payroll.objects.datagajiobject;
 import prima.optimasi.indonesia.payroll.objects.listkaryawandaftarabsensi;
 import prima.optimasi.indonesia.payroll.objects.listkaryawankontrakkerja;
 import prima.optimasi.indonesia.payroll.universal.viewkaryawan;
@@ -65,12 +84,19 @@ public class FragmentHome extends Fragment {
     List<String> list_jabatan;
     CoordinatorLayout parent_view;
     listkaryawankontrakkerja kontrakkerja;
+
+    Double counting=0.0d;
+
     listkaryawandaftarabsensi daftarabsensi;
     AdapterListSectionedKontrakKerja adapter;
     AdapterListDaftarAbsensi adapterabsensi;
     RecyclerView recyclerView, recyclerView2, recyclerView3, recyclerViewhabis, recyclerViewdaftar;
     boolean expansi=false, expansi2=false, expansi3=false, expansihabis=false;
     int banyak1bulan=0, banyak2bulan=0,banyak3bulan=0, banyakhabis=0, banyakkaryawan=0, totalkaryawan=0;
+
+    BarChart barChart ;
+
+    Realm mRealm;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,7 +104,100 @@ public class FragmentHome extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_home, container, false);
 
-        recyclerView=rootView.findViewById(R.id.recyclerView);
+
+        mRealm = Realm.getDefaultInstance();
+
+        barChart =rootView.findViewById(R.id.incbarchart);
+
+        mRealm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<datagajiobject> rows = realm.where(datagajiobject.class).findAll();
+                rows.deleteAllFromRealm();
+            }
+        });
+
+        Calendar calendar = Calendar.getInstance();
+
+        int thisYear = calendar.get(Calendar.YEAR);
+
+        SimpleDateFormat sdfyear = new SimpleDateFormat("MMM");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM-yy");
+        Calendar cal = Calendar.getInstance();
+
+        cal.add(Calendar.MONTH, -12);
+
+        String perios="";
+
+        List<String> monthbarbottom = new ArrayList<>();
+        List<String> monthnumber = new ArrayList<>();
+        List<Integer> yearnumber = new ArrayList<>();
+
+// loop adding one day in each iteration
+        for(int i = 0; i< 12; i++) {
+            cal.add(Calendar.MONTH, 1);
+
+            monthbarbottom.add(sdf.format(cal.getTime()));
+
+            if((Calendar.MONTH+"").length()>1){
+                Log.e("month data",""+(cal.get(Calendar.MONTH)+1) );
+                monthnumber.add(""+(cal.get(Calendar.MONTH)+1));
+            }
+            else {
+                Log.e("month data","0"+(cal.get(Calendar.MONTH)+1) );
+                monthnumber.add("0"+(cal.get(Calendar.MONTH)+1));
+            }
+
+
+            yearnumber.add(cal.get(Calendar.YEAR));
+
+            Log.e("Month data",(cal.get(Calendar.MONTH)+1)+" / "+cal.get(Calendar.YEAR) );
+
+
+            if (i == 0) {
+                perios = perios + sdf.format(cal.getTime()) + " - ";
+            }
+            if (i == 11) {
+                perios = perios + sdf.format(cal.getTime());
+            }
+
+            System.out.println(sdf.format(cal.getTime()) + sdfyear.format(cal.getTime()));
+            int finalI = i;
+
+
+        }
+
+
+
+        final int[] count = {0};
+        for(int i =0 ; i<monthbarbottom.size();i++) {
+
+            Calendar c = Calendar.getInstance();
+
+            try {
+                c.setTime(sdf.parse(monthbarbottom.get(i)));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            Double value =0.0d;
+
+            Realm finalMRealm1 = mRealm;
+            String finalPerios = perios;
+
+            SimpleDateFormat fomat = new SimpleDateFormat("yyyy-MM-dd");
+
+            String dt1 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-0"+Calendar.DAY_OF_MONTH;
+            String dt2 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-"+c.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+            retrivegajibychart gaji = new retrivegajibychart(getActivity(), dt1, dt2 ,mRealm,perios,i,monthbarbottom,count);
+            gaji.execute();
+        }
+
+
+
+
+        recyclerView = rootView.findViewById(R.id.recyclerView);
         recyclerView2=rootView.findViewById(R.id.recyclerView2bulan);
         recyclerView3=rootView.findViewById(R.id.recyclerView3bulan);
         recyclerViewhabis=rootView.findViewById(R.id.recyclerViewhabiskontrak);
@@ -98,6 +217,7 @@ public class FragmentHome extends Fragment {
                 startActivity(intent);
             }
         });
+
         parent_view=rootView.findViewById(R.id.parent_view);
         lyt_parent=rootView.findViewById(R.id.lyt_parent);
         lyt_parent2=rootView.findViewById(R.id.lyt_parent2bulan);
@@ -1473,8 +1593,8 @@ public class FragmentHome extends Fragment {
                             temp=""+i+temp;
                         }*/
 
-                        totalgajibersih.setText("RP "+formatter.format((double)Integer.parseInt(obj.getString("gajiBersih"))));
-                        totalgajipotongan.setText("RP "+formatter.format((double)Integer.parseInt(obj.getString("totalPotongan"))));
+                        totalgajibersih.setText("RP "+formatter.format(Double.parseDouble(obj.getString("gajiBersih"))));
+                        totalgajipotongan.setText("RP "+formatter.format(Double.parseDouble(obj.getString("totalPotongan"))));
                         retrivegetizin kar = new retrivegetizin(getActivity());
                         kar.execute();
 
@@ -1884,6 +2004,270 @@ public class FragmentHome extends Fragment {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
                     }  catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+
+            /*
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }*/
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
+    private class retrivegajibychart extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        ProgressDialog dialog ;
+        String urldata = generator.getgajibytwodate;
+        String passeddata = "" ;
+        SimpleDateFormat sdfchart = new SimpleDateFormat("yyyy-MM-dd");
+        String dt1="";
+        String dt2="";
+        int position =0;
+        Double value = 0.0d;
+        List<String> monthbarbottom ;
+        String finalPerios = "";
+        int[] count;
+
+        public retrivegajibychart(Context context,String dt1,String dt2,Realm frealm,String periode,int postion,List<String> montbarbottom,int[] count)
+        {
+            this.count = count;
+
+            this.dt1 = dt1;
+            this.dt2 = dt2;
+
+            finalPerios = periode;
+
+            Log.e( "dt1 and 2 ",dt1+" "+dt2 );
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+
+            monthbarbottom = montbarbottom ;
+
+            this.position = postion;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            super.onPreExecute();
+            //this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                //this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    RequestBody body = new FormBody.Builder()
+                            .add("start",dt1)
+                            .add("end",dt2)
+                            .build();
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .post(body)
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+
+                if (result != null) {
+                    Log.e(TAG, "kerja 1 bulan" + result.toString());
+                    try {
+                        if(result.getString("status").equals("true")){
+                            JSONObject obj = result.getJSONObject("data");
+
+                            DecimalFormat formattery = new DecimalFormat("###,###,###.00");
+
+                            value = Double.parseDouble(obj.getString("gajiBersih").replace(",",""));
+                        }
+                        //JSONArray pengsarray = result.getJSONArray("data");
+
+                        //int gaji=1000000;
+
+
+
+                        mRealm.beginTransaction();
+                        datagajiobject score1 = new datagajiobject(value.floatValue(), (float) position, monthbarbottom.get(position));
+                        //Log.e("replace", "/" + String.valueOf(thisYear) + " " + datesdata.get(finalI));
+                        mRealm.copyToRealm(score1);
+                        mRealm.commitTransaction();
+
+                        barChart.invalidate();
+                        barChart.getAxisLeft().setDrawGridLines(false);
+                        barChart.getXAxis().setDrawGridLines(false);
+                        barChart.setExtraBottomOffset(5f);
+
+                        barChart.getXAxis().setLabelCount(7);
+                        barChart.getXAxis().setGranularity(1f);
+
+                        // no description text
+                        barChart.getDescription().setEnabled(false);
+
+                        // enable touch gestures
+                        barChart.setTouchEnabled(true);
+
+                        if (barChart instanceof BarLineChartBase) {
+
+                            BarLineChartBase mChart = (BarLineChartBase) barChart;
+
+                            mChart.setDrawGridBackground(false);
+
+                            // enable scaling and dragging
+                            mChart.setDragEnabled(true);
+                            mChart.setScaleEnabled(true);
+
+                            // if disabled, scaling can be done on x- and y-axis separately
+                            mChart.setPinchZoom(false);
+
+                            YAxis leftAxis = mChart.getAxisLeft();
+                            leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
+                            leftAxis.setTextSize(8f);
+                            leftAxis.setTextColor(Color.BLACK);
+
+                            XAxis xAxis = mChart.getXAxis();
+                            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+                            xAxis.setTextSize(8f);
+                            xAxis.setTextColor(Color.BLACK);
+
+                            mChart.getAxisRight().setEnabled(false);
+                        }
+
+                        RealmResults<datagajiobject> results = mRealm.where(datagajiobject.class).findAll();
+
+                        IAxisValueFormatter formatter = new IAxisValueFormatter() {
+                            @Override
+                            public String getFormattedValue(float value, AxisBase axis) {
+                                return monthbarbottom.get((int) value);
+                            }
+                        };
+                        barChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
+
+                        barChart.getXAxis().setValueFormatter(formatter);
+
+                        // BAR-CHART
+                        RealmBarDataSet<datagajiobject> barDataSet = new RealmBarDataSet<datagajiobject>(results, "ranges", "datagaji");
+
+                        barDataSet.setColor(Color.BLUE);
+                        if(counting==0){
+                            counting = value;
+                        }
+                        else if(counting==value){
+                            counting = value;
+                            //barDataSet.setColor(Color.BLUE);
+                        }
+                        else if(counting<value){
+                            counting = value;
+                            //barDataSet.setColor(Color.GREEN);
+                        }
+                        else if(counting>value){
+                            counting = value;
+                            //barDataSet.setColor(Color.RED);
+                        }
+
+                        //barDataSet.setColor(generator.green);
+
+                        barDataSet.setLabel("Period Gaji : " + finalPerios);
+
+                        ArrayList<IBarDataSet> barDataSets = new ArrayList<IBarDataSet>();
+                        barDataSets.add(barDataSet);
+
+                        BarData barData = new BarData(barDataSets);
+
+                        barChart.setData(barData);
+                        barChart.setFitBars(true);
+                        barChart.animateY(1400, Easing.EasingOption.EaseInOutQuart);
+
+                        barChart.invalidate();
+
+                        if (count[0] == monthbarbottom.size()) {
+                            mRealm.close();
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (Exception e) {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
                     }

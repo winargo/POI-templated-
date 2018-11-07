@@ -99,7 +99,9 @@ public class generator {
     public static String sakiturl="http://"+ generator.Server+":"+generator.port+"/laporan/sakit";
     public static String pinjamanurl = "http://"+ generator.Server+":"+generator.port+"/laporan/pinjaman";
     public static String izinurl = "http://"+ generator.Server+":"+generator.port+"/laporan/izin";
-    public static String pengajianurl = "http://"+ generator.Server+":"+generator.port+"/laporan/pengajian";
+    public static String pengajianurl = "http://"+ generator.Server+":"+generator.port+"/laporan/penggajian";
+
+    public static String getgajibytwodate = "http://"+ generator.Server+":"+generator.port+"/penggajian/laporan";
 
     public static String checkinurl="http://"+ generator.Server+":"+generator.port+"/absensi/checkin";
     public static String checkouturl="http://"+ generator.Server+":"+generator.port+"/absensi/checkout";

@@ -222,7 +222,7 @@ public class FragmentEmployee extends Fragment{
 
         initComponent(rootView);
 
-        String query=getArguments().getString("query");
+        /*String query=getArguments().getString("query");
         if(!query.equals(null)){
             if(refreshkabag.getVisibility()==View.VISIBLE){
                 mAdapterkabag.getFilter().filter(query);
@@ -231,6 +231,7 @@ public class FragmentEmployee extends Fragment{
                 mAdapterkaryawan.getFilter().filter(query);
             }
         }
+        */
         return rootView;
     }
 
