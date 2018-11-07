@@ -709,7 +709,7 @@ public class FragmentPengajuan extends Fragment {
                             Snackbar.make(parent_view, result.getString("message") , Snackbar.LENGTH_SHORT).show();
                         }
                         else {
-                            Snackbar.make(parent_view, "Pengajuan Izin berhasil" , Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(parent_view, "Pengajuan Cuti berhasil" , Snackbar.LENGTH_SHORT).show();
                         }
                         /*
                         "data":[{

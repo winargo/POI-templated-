@@ -67,6 +67,7 @@ import prima.optimasi.indonesia.payroll.objects.datacuti;
 import prima.optimasi.indonesia.payroll.objects.datagajiobject;
 import prima.optimasi.indonesia.payroll.objects.listkaryawandaftarabsensi;
 import prima.optimasi.indonesia.payroll.objects.listkaryawankontrakkerja;
+import prima.optimasi.indonesia.payroll.universal.activity.ActivityListKaryawan;
 import prima.optimasi.indonesia.payroll.universal.viewkaryawan;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
@@ -74,6 +75,7 @@ import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
 
 public class FragmentHome extends Fragment {
 
+    View lyt_totalizin, lyt_totalsakit,lyt_totalcuti;
     TextView totalizin, totalsakit, totalcuti, totalgajibersih, totalgajipotongan;
     ImageButton expand, expand2, expand3, expandhabis;
     LinearLayout lyt_parent, lyt_parent2, lyt_parent3, lyt_parenthabis;
@@ -206,6 +208,10 @@ public class FragmentHome extends Fragment {
         totalizin=rootView.findViewById(R.id.totalizin);
         totalsakit=rootView.findViewById(R.id.totalsakit);
         totalcuti=rootView.findViewById(R.id.totalcuti);
+
+        lyt_totalizin=rootView.findViewById(R.id.lyt_totalizin);
+        lyt_totalsakit=rootView.findViewById(R.id.lyt_totalsakit);
+        lyt_totalcuti=rootView.findViewById(R.id.lyt_totalcuti);
 
         totalgajibersih=rootView.findViewById(R.id.totalgajibersih);
         totalgajipotongan=rootView.findViewById(R.id.totalgajipotongan);
@@ -1255,8 +1261,6 @@ public class FragmentHome extends Fragment {
                             for (int i = 0; i < pengsarray.length(); i++) {
                                 JSONObject obj = pengsarray.getJSONObject(i);
                                 list_jabatan.add(obj.getString("jabatan"));
-                                Log.e("Jabatan", list_jabatan.get(i));
-
                                 retrivedaftarabsensi kar = new retrivedaftarabsensi(getActivity(), list_jabatan.get(i), i);
                                 kar.execute();
                             }
@@ -1267,13 +1271,7 @@ public class FragmentHome extends Fragment {
                             recyclerViewdaftar.setLayoutManager(new LinearLayoutManager(getActivity()));
                             recyclerViewdaftar.setHasFixedSize(true);
                             recyclerViewdaftar.setAdapter(adapterabsensi);
-
-
                         }
-
-
-
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
@@ -1593,7 +1591,11 @@ public class FragmentHome extends Fragment {
                             temp=""+i+temp;
                         }*/
 
+<<<<<<< HEAD
                         totalgajibersih.setText("RP "+formatter.format(Double.parseDouble(obj.getString("gajiBersih"))));
+=======
+                        totalgajibersih.setText("RP "+formatter.format((double)Integer.parseInt(obj.getString("gajiBersih"))));
+>>>>>>> 929fab908c4fe5d11845038726302986b733273a
                         totalgajipotongan.setText("RP "+formatter.format(Double.parseDouble(obj.getString("totalPotongan"))));
                         retrivegetizin kar = new retrivegetizin(getActivity());
                         kar.execute();
@@ -1728,6 +1730,14 @@ public class FragmentHome extends Fragment {
                     try {
                         JSONArray pengsarray = result.getJSONArray("rows");
                         totalizin.setText(""+pengsarray.length());
+                        lyt_totalizin.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent=new Intent(getActivity(),ActivityListKaryawan.class);
+                                intent.putExtra("keterangan","izin");
+                                getActivity().startActivity(intent);
+                            }
+                        });
                         retrivegetsakit kar = new retrivegetsakit(getActivity());
                         kar.execute();
 
@@ -1864,6 +1874,14 @@ public class FragmentHome extends Fragment {
                     try {
                         JSONArray pengsarray = result.getJSONArray("rows");
                         totalsakit.setText(""+pengsarray.length());
+                        lyt_totalsakit.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent=new Intent(getActivity(),ActivityListKaryawan.class);
+                                intent.putExtra("keterangan","sakit");
+                                getActivity().startActivity(intent);
+                            }
+                        });
                         retrivegetcuti kar = new retrivegetcuti(getActivity());
                         kar.execute();
 
@@ -2000,6 +2018,14 @@ public class FragmentHome extends Fragment {
                     try {
                         JSONArray pengsarray = result.getJSONArray("rows");
                         totalcuti.setText(""+pengsarray.length());
+                        lyt_totalcuti.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent=new Intent(getActivity(),ActivityListKaryawan.class);
+                                intent.putExtra("keterangan","cuti");
+                                getActivity().startActivity(intent);
+                            }
+                        });
                     }  catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());

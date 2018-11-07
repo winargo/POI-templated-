@@ -31,8 +31,11 @@ import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.applandeo.materialcalendarview.CalendarUtils;
 import com.applandeo.materialcalendarview.CalendarView;
 import com.applandeo.materialcalendarview.EventDay;
+import com.applandeo.materialcalendarview.builders.DatePickerBuilder;
+import com.applandeo.materialcalendarview.listeners.OnDayClickListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,8 +46,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -59,6 +65,7 @@ import prima.optimasi.indonesia.payroll.data.DataGenerator;
 import prima.optimasi.indonesia.payroll.main_hrd.mainmenu_hrd;
 import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
 import prima.optimasi.indonesia.payroll.main_karyawan.mainmenu_karyawan;
+import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
 import prima.optimasi.indonesia.payroll.model.Image;
 import prima.optimasi.indonesia.payroll.objects.pengumuman;
 import prima.optimasi.indonesia.payroll.utils.Tools;
@@ -90,6 +97,8 @@ public class FragmentPengumuman extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.activity_bottom_sheet_floating, container, false);
 
+        generator.posisipengumuman=0;
+
         items = new ArrayList<>();
 
 
@@ -111,6 +120,8 @@ public class FragmentPengumuman extends Fragment {
                     case R.id.navigation_pengumuman:
                         calender.setVisibility(View.GONE);
                         refreshpengumuman.setVisibility(View.VISIBLE);
+                        generator.posisipengumuman=0;
+                        ((mainmenu_owner) getActivity()).closeAll();
                         //refreshkabag.setVisibility(View.VISIBLE);
                         //refreshaktifitas.setVisibility(View.GONE);
                         //refreshkaryawan.setVisibility(View.GONE);
@@ -119,6 +130,9 @@ public class FragmentPengumuman extends Fragment {
                     case R.id.navigation_kalender:
                         calender.setVisibility(View.VISIBLE);
                         refreshpengumuman.setVisibility(View.GONE);
+                        generator.posisipengumuman=1;
+                        ((mainmenu_owner) getActivity()).hideAll();
+
                         //refreshkabag.setVisibility(View.GONE);
                         //refreshaktifitas.setVisibility(View.GONE);
                         //refreshkaryawan.setVisibility(View.VISIBLE);
@@ -295,7 +309,7 @@ public class FragmentPengumuman extends Fragment {
                         recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
                         recyclerView.setHasFixedSize(true);
                         recyclerView.setAdapter(mAdapter);
-
+                        generator.adapterpeng=mAdapter;
                         retriveliburan peng = new retriveliburan(getActivity(),prefs.getString("Authorization",""));
                         peng.execute();
 
@@ -447,6 +461,8 @@ public class FragmentPengumuman extends Fragment {
                         }
 
                         refreshpengumuman.setRefreshing(false);
+                        ((mainmenu_owner) getActivity()).closesearch();
+
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -595,7 +611,9 @@ public class FragmentPengumuman extends Fragment {
                                 events.add(new EventDay(calendars, R.drawable.dot));
                             }
                         }
+                        Calendar calendar = Calendar.getInstance();
 
+                        calender.setDate(calendar);
                         calender.setEvents(events);
 
 
@@ -624,6 +642,20 @@ public class FragmentPengumuman extends Fragment {
 
 
             Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+
+            if(refreshpengumuman !=null && calender !=null  && bottomnac!=null){
+                bottomnac.setSelectedItemId(R.id.navigation_pengumuman);
+                calender.setVisibility(View.GONE);
+                refreshpengumuman.setVisibility(View.VISIBLE);
+                generator.posisipengumuman=0;
+                ((mainmenu_owner) getActivity()).closeAll();
+            }
         }
     }
 

@@ -29,7 +29,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 

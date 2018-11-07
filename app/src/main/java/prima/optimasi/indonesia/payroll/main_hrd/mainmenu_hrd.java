@@ -44,9 +44,16 @@ import android.widget.Toast;
 import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentPengajuan;
 import prima.optimasi.indonesia.payroll.main_kabag.cekjadwal;
 import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
+import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
 import qrcodescanner.QrCodeActivity;
+
+import com.applandeo.materialcalendarview.CalendarView;
+import com.applandeo.materialcalendarview.EventDay;
+import com.applandeo.materialcalendarview.exceptions.OutOfDateRangeException;
+import com.applandeo.materialcalendarview.listeners.OnDayClickListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.JsonObject;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
@@ -55,6 +62,7 @@ import org.json.JSONObject;
 
 import java.security.PrivateKey;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.zip.Inflater;
@@ -74,14 +82,16 @@ import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
 public class mainmenu_hrd extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    long selecteddate = 0L;
 
+    MaterialSearchView searchView;
     Adaptermenujabatan listAdapter;
     ExpandableListView expListView;
     ProgressDialog loadingdata;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
 
-
+    Menu tempmenu;
 
     SharedPreferences prefs;
 
@@ -112,6 +122,8 @@ public class mainmenu_hrd extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        searchView=findViewById(R.id.searchView);
+
 
         generator initializedata = new generator(mainmenu_hrd.this);
 
@@ -164,6 +176,49 @@ public class mainmenu_hrd extends AppCompatActivity
         pager.setAdapter(adapter);
 
         tabpager.setupWithViewPager(pager);
+
+        tabpager.setTabMode(TabLayout.MODE_SCROLLABLE);
+
+        tabpager.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener(){
+            @Override
+            public void onTabSelected(TabLayout.Tab tab){
+                int position = tab.getPosition();
+                if(position==3){
+                    if(tempmenu!=null){
+                        tempmenu.findItem(R.id.action_search).setVisible(true);
+                        tempmenu.findItem(R.id.action_add).setVisible(true);
+                        tempmenu.findItem(R.id.action_calendar).setVisible(false);
+
+                    }
+                }
+                else if(position ==1){
+                    if(tempmenu!=null){
+                        tempmenu.findItem(R.id.action_search).setVisible(true);
+                        tempmenu.findItem(R.id.action_add).setVisible(false);
+                        tempmenu.findItem(R.id.action_calendar).setVisible(false);
+
+                    }
+                }
+                else {
+                    if(tempmenu!=null){
+                        tempmenu.findItem(R.id.action_search).setVisible(false);
+                        tempmenu.findItem(R.id.action_add).setVisible(false);
+                        tempmenu.findItem(R.id.action_calendar).setVisible(false);
+
+                    }
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         for (int i = 0; i < tabpager.getTabCount(); i++) {
             //noinspection ConstantConditions
@@ -306,7 +361,11 @@ public class mainmenu_hrd extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        }
+        else if(searchView.isSearchOpen()){
+            searchView.closeSearch();
+        }
+        else {
             super.onBackPressed();
         }
     }
@@ -315,6 +374,42 @@ public class mainmenu_hrd extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.activity_mainmenu, menu);
+        tempmenu = menu;
+        MenuItem item = menu.findItem(R.id.action_search);
+
+        searchView.setMenuItem(item);
+
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if(generator.posisi==0){
+                    generator.adapterkabag.getFilter().filter(query);
+                }
+                else if(generator.posisi==1){
+                    generator.adapterkar.getFilter().filter(query);
+                }
+                if(generator.posisipengumuman==0){
+                    generator.adapterpeng.getFilter().filter(query);
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                Log.e("Text", "newText=" + query);
+
+                if(generator.posisi==0){
+                    generator.adapterkabag.getFilter().filter(query);
+                }
+                else if(generator.posisi==1){
+                    generator.adapterkar.getFilter().filter(query);
+                }
+                if(generator.posisipengumuman==0){
+                    generator.adapterpeng.getFilter().filter(query);
+                }
+                return false;
+            }
+        });
         return true;
     }
 
@@ -357,6 +452,54 @@ public class mainmenu_hrd extends AppCompatActivity
 
 
             startActivity(logout);
+
+            return true;
+        }
+        else if (id == R.id.action_calendar) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(mainmenu_hrd.this).setPositiveButton("Select",null).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            LayoutInflater inflate = LayoutInflater.from(mainmenu_hrd.this);
+
+            View linear = inflate.inflate(R.layout.calenderview,null);
+
+            CalendarView calender = linear.findViewById(R.id.calenderviews);
+
+            Calendar cal = Calendar.getInstance();
+
+
+
+            calender.setOnDayClickListener(new OnDayClickListener() {
+                @Override
+                public void onDayClick(EventDay eventDay) {
+                    Calendar clickedDayCalendar = eventDay.getCalendar();
+                    selecteddate = clickedDayCalendar.getTimeInMillis();
+                }
+            });
+
+            if(selecteddate!=0L){
+                cal.setTimeInMillis(selecteddate);
+                try {
+                    calender.setDate(cal);
+                } catch (OutOfDateRangeException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            dialog.setView(linear);
+
+            AlertDialog dial = dialog.show();
+
+            dial.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
+
+                }
+            });
 
             return true;
         }
@@ -443,5 +586,28 @@ public class mainmenu_hrd extends AppCompatActivity
             return tabTitles.length;
         }
         // ...
+    }
+    public void closesearch(){
+        searchView.closeSearch();
+        tempmenu.findItem(R.id.action_search).setVisible(true);
+        tempmenu.findItem(R.id.action_calendar).setVisible(false);
+
+
+    }
+    public void closeAll(){
+        searchView.closeSearch();
+        tempmenu.findItem(R.id.action_search).setVisible(true);
+        tempmenu.findItem(R.id.action_add).setVisible(true);
+
+    }
+    public void hidesearch(){
+        tempmenu.findItem(R.id.action_search).setVisible(false);
+        tempmenu.findItem(R.id.action_calendar).setVisible(true);
+
+    }
+    public void hideAll(){
+        tempmenu.findItem(R.id.action_search).setVisible(false);
+        tempmenu.findItem(R.id.action_add).setVisible(false);
+
     }
 }

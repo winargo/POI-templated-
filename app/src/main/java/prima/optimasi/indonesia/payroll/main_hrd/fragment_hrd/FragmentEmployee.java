@@ -41,8 +41,10 @@ import okhttp3.Request;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
+import prima.optimasi.indonesia.payroll.main_hrd.mainmenu_hrd;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterGridCaller;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.Adapterabsensiaktifitas;
+import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 import prima.optimasi.indonesia.payroll.objects.listkaryawanaktivitas;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
@@ -83,6 +85,7 @@ public class FragmentEmployee extends Fragment {
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_employee, container, false);
+        generator.posisi=0;
 
         parent_view = rootView.findViewById(R.id.employeecoordinator);
 
@@ -93,60 +96,6 @@ public class FragmentEmployee extends Fragment {
         totalhadir = rootView.findViewById(R.id.totalhadir);
         totalkabag = rootView.findViewById(R.id.totalkabag);
         totalkaryawan = rootView.findViewById(R.id.totalkaryawan);
-
-        selectdate = rootView.findViewById(R.id.dateselection_karyawan);
-        SimpleDateFormat fomat = new SimpleDateFormat("dd/MM/yyyy");
-
-
-        selectdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity()).setPositiveButton("Select",null).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-
-                LayoutInflater inflate = LayoutInflater.from(getActivity());
-
-                View linear = inflate.inflate(R.layout.calenderview,null);
-
-                CalendarView calender = linear.findViewById(R.id.calenderviews);
-
-                Calendar cal = Calendar.getInstance();
-
-
-
-                calender.setOnDayClickListener(new OnDayClickListener() {
-                    @Override
-                    public void onDayClick(EventDay eventDay) {
-                        Calendar clickedDayCalendar = eventDay.getCalendar();
-                        selecteddate = clickedDayCalendar.getTimeInMillis();
-                    }
-                });
-
-                if(selecteddate!=0L){
-                    cal.setTimeInMillis(selecteddate);
-                    try {
-                        calender.setDate(cal);
-                    } catch (OutOfDateRangeException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                dialog.setView(linear);
-
-                AlertDialog dial = dialog.show();
-
-                dial.setOnShowListener(new DialogInterface.OnShowListener() {
-                    @Override
-                    public void onShow(DialogInterface dialog) {
-
-                    }
-                });
-            }
-        });
 
 
         refreshkabag.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -183,18 +132,24 @@ public class FragmentEmployee extends Fragment {
                         refreshaktifitas.setVisibility(View.GONE);
                         refreshkaryawan.setVisibility(View.GONE);
                         bottomnac.setBackgroundColor(getResources().getColor(R.color.light_blue_900));
+                        generator.posisi=0;
+                        ((mainmenu_hrd) getActivity()).closesearch();
                         return true;
                     case R.id.navigation_people:
                         refreshkabag.setVisibility(View.GONE);
                         refreshaktifitas.setVisibility(View.GONE);
                         refreshkaryawan.setVisibility(View.VISIBLE);
                         bottomnac.setBackgroundColor(getResources().getColor(R.color.green_900));
+                        generator.posisi=1;
+                        ((mainmenu_hrd) getActivity()).closesearch();
                         return true;
                     case R.id.navigation_recents:
                         refreshkabag.setVisibility(View.GONE);
                         refreshaktifitas.setVisibility(View.VISIBLE);
                         refreshkaryawan.setVisibility(View.GONE);
                         bottomnac.setBackgroundColor(getResources().getColor(R.color.red_900));
+                        generator.posisi=2;
+                        ((mainmenu_hrd) getActivity()).hidesearch();
                         return true;
                 }
                 return false;
@@ -459,7 +414,8 @@ public class FragmentEmployee extends Fragment {
                         mAdapterkaryawan = new AdapterGridCaller(getActivity(), itemskaryawan,ItemAnimation.FADE_IN);
                         recyclerViewkabag.setAdapter(mAdapterkabag);
                         recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
-
+                        generator.adapterkabag=mAdapterkabag;
+                        generator.adapterkar=mAdapterkaryawan;
                         retriveabsensi absensi = new retriveabsensi(getActivity());
                         absensi.execute();
 
@@ -1484,6 +1440,22 @@ public class FragmentEmployee extends Fragment {
 
 
             Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+
+            if(refreshkabag !=null && refreshkaryawan !=null && refreshaktifitas!=null && bottomnac!=null){
+                bottomnac.setSelectedItemId(R.id.navigation_kabag);
+                refreshkabag.setVisibility(View.VISIBLE);
+                refreshaktifitas.setVisibility(View.GONE);
+                refreshkaryawan.setVisibility(View.GONE);
+                bottomnac.setBackgroundColor(getResources().getColor(R.color.light_blue_900));
+                generator.posisi=0;
+                ((mainmenu_hrd) getActivity()).closesearch();
+            }
         }
     }
 }
