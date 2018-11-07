@@ -18,6 +18,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +39,7 @@ import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.main_owner.manage.pengumuman.addpengumuman;
 import prima.optimasi.indonesia.payroll.model.Image;
+import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 import prima.optimasi.indonesia.payroll.objects.pengumuman;
 import prima.optimasi.indonesia.payroll.universal.viewkaryawan;
 import prima.optimasi.indonesia.payroll.universal.viewpengumuman;
@@ -55,9 +58,11 @@ import java.util.List;
 import static android.media.MediaCodec.MetricsConstants.MODE;
 import static android.widget.Toast.LENGTH_SHORT;
 
-public class AdapterGridTwoLineLight extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class AdapterGridTwoLineLight extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     private List<pengumuman> items = new ArrayList<>();
+    private List<pengumuman> itemsfilter = new ArrayList<>();
+
 
     private View ssnake;
 
@@ -78,6 +83,8 @@ public class AdapterGridTwoLineLight extends RecyclerView.Adapter<RecyclerView.V
         this.items = items;
         ctx = context;
         ssnake = snake;
+        this.itemsfilter = items;
+
     }
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
@@ -106,7 +113,7 @@ public class AdapterGridTwoLineLight extends RecyclerView.Adapter<RecyclerView.V
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        final pengumuman obj = items.get(position);
+        final pengumuman obj = itemsfilter.get(position);
             final AdapterGridTwoLineLight.OriginalViewHolder view = (AdapterGridTwoLineLight.OriginalViewHolder) holder;
             view.name.setText(obj.getTitle());
             final SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
@@ -175,7 +182,7 @@ public class AdapterGridTwoLineLight extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return itemsfilter.size();
     }
 
     public pengumuman getItem(int position) {
@@ -380,5 +387,62 @@ public class AdapterGridTwoLineLight extends RecyclerView.Adapter<RecyclerView.V
 
     public void notift() {
         this.notifyDataSetChanged();
+    }
+
+    public void setItems(List<pengumuman> filteredGalaxies)
+    {
+        this.itemsfilter=filteredGalaxies;
+    }
+
+
+    @Override
+    public Filter getFilter() {
+        //this.itemsfilter=items;
+        return new Filter() {
+
+
+            @Override
+            protected Filter.FilterResults performFiltering(CharSequence constraint) {
+                Filter.FilterResults filterResults = new Filter.FilterResults();
+
+                if (constraint.length() > 0) {
+                    //CHANGE TO UPPER
+                    constraint = constraint.toString().toUpperCase();
+
+                    //HOLD FILTERS WE FIND
+                    List<pengumuman> foundFilters = new ArrayList<>();
+
+                    String galaxy;
+
+                    //ITERATE CURRENT LIST
+                    for (int i = 0; i < items.size(); i++) {
+                        galaxy = items.get(i).getTitle();
+
+                        //SEARCH
+                        if (galaxy.toUpperCase().contains(constraint)) {
+                            //ADD IF FOUND
+                            foundFilters.add(items.get(i));
+                        }
+                    }
+
+                    //SET RESULTS TO FILTER LIST
+                    filterResults.count = foundFilters.size();
+                    filterResults.values = foundFilters;
+                } else {
+                    //NO ITEM FOUND.LIST REMAINS INTACT
+                    filterResults.count = items.size();
+                    filterResults.values = items;
+                }
+
+                //RETURN RESULTS
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, Filter.FilterResults filterResults) {
+                setItems((List<pengumuman>) filterResults.values);
+                notifyDataSetChanged();
+            }
+        };
     }
 }

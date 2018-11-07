@@ -22,9 +22,12 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import okhttp3.FormBody;
 import okhttp3.RequestBody;
 import prima.optimasi.indonesia.payroll.activity_login;
+import prima.optimasi.indonesia.payroll.adapter.AdapterGridTwoLine;
+import prima.optimasi.indonesia.payroll.adapter.AdapterGridTwoLineLight;
 import prima.optimasi.indonesia.payroll.main_hrd.mainmenu_hrd;
 import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
 import prima.optimasi.indonesia.payroll.main_karyawan.mainmenu_karyawan;
+import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterGridCaller;
 import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
 import prima.optimasi.indonesia.payroll.objects.pengumuman;
 import prima.optimasi.indonesia.payroll.okhttpclass;
@@ -166,12 +169,20 @@ public class generator {
 
     public static String daftarabsensiurl="http://"+ generator.Server+":"+generator.port+"/absensi/today";
     public static String jabatanurl="http://"+ generator.Server+":"+generator.port+"/jabatan";
+    public static String karyawanjabatanurl="http://"+ generator.Server+":"+generator.port+"/karyawan/jabatan";
+
 
     public static JSONObject jsondatalogin = null ;
     public static JSONObject jsondatajadwal = null ;
 
     //tempdata
     public static List<pengumuman> temppengumumanpassdata = null;
+
+    public static AdapterGridCaller adapterkabag=null,adapterkar=null;
+    public static AdapterGridTwoLineLight adapterpeng=null;
+
+    public static int posisi=0, posisipengumuman=0;
+    public static boolean ubah=false;
 
     public static Boolean isconnected(Context context){
         Boolean status = false;

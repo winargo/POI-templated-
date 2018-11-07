@@ -25,6 +25,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.applandeo.materialcalendarview.CalendarView;
@@ -43,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -97,9 +99,7 @@ public class FragmentEmployee extends Fragment{
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_employee, container, false);
-
-
-
+        generator.posisi=0;
         parent_view = rootView.findViewById(R.id.employeecoordinator);
 
         refreshkabag = rootView.findViewById(R.id.swipekabag);
@@ -110,6 +110,7 @@ public class FragmentEmployee extends Fragment{
         totalkabag = rootView.findViewById(R.id.totalkabag);
         totalkaryawan = rootView.findViewById(R.id.totalkaryawan);
 
+        /*
         selectdate = rootView.findViewById(R.id.dateselection_karyawan);
         SimpleDateFormat fomat = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -163,6 +164,7 @@ public class FragmentEmployee extends Fragment{
                 });
             }
         });
+        */
 
 
         refreshkabag.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -202,40 +204,44 @@ public class FragmentEmployee extends Fragment{
                         refreshaktifitas.setVisibility(View.GONE);
                         refreshkaryawan.setVisibility(View.GONE);
                         bottomnac.setBackgroundColor(getResources().getColor(R.color.light_blue_900));
+                        generator.posisi=0;
+                        ((mainmenu_owner) getActivity()).closesearch();
+
                         return true;
                     case R.id.navigation_people:
                         refreshkabag.setVisibility(View.GONE);
                         refreshaktifitas.setVisibility(View.GONE);
                         refreshkaryawan.setVisibility(View.VISIBLE);
                         bottomnac.setBackgroundColor(getResources().getColor(R.color.green_900));
+                        generator.posisi=1;
+                        ((mainmenu_owner) getActivity()).closesearch();
+
                         return true;
                     case R.id.navigation_recents:
                         refreshkabag.setVisibility(View.GONE);
                         refreshaktifitas.setVisibility(View.VISIBLE);
                         refreshkaryawan.setVisibility(View.GONE);
                         bottomnac.setBackgroundColor(getResources().getColor(R.color.red_900));
+                        generator.posisi=2;
+                        ((mainmenu_owner) getActivity()).hidesearch();
+
                         return true;
                 }
                 return false;
             }
         });
-
         initComponent(rootView);
 
-        String query=getArguments().getString("query");
-        if(!query.equals(null)){
-            if(refreshkabag.getVisibility()==View.VISIBLE){
-                mAdapterkabag.getFilter().filter(query);
-            }
-            else{
-                mAdapterkaryawan.getFilter().filter(query);
-            }
-        }
+
+
         return rootView;
     }
 
 
     private void initComponent(View v) {
+
+
+
         recyclerViewkaryawan = (RecyclerView) v.findViewById(R.id.recyclerView_karyawan);
         recyclerViewkaryawan.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         recyclerViewkaryawan.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(getActivity(), 3), true));
@@ -491,7 +497,8 @@ public class FragmentEmployee extends Fragment{
                         mAdapterkaryawan = new AdapterGridCaller(getActivity(), itemskaryawan,ItemAnimation.FADE_IN);
                         recyclerViewkabag.setAdapter(mAdapterkabag);
                         recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
-
+                        generator.adapterkabag=mAdapterkabag;
+                        generator.adapterkar=mAdapterkaryawan;
                         retriveabsensi absensi = new retriveabsensi(getActivity());
                         absensi.execute();
 
@@ -746,6 +753,7 @@ public class FragmentEmployee extends Fragment{
 
                         refreshkabag.setRefreshing(false);
                         refreshkaryawan.setRefreshing(false);
+                        ((mainmenu_owner) getActivity()).closesearch();
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
@@ -1130,6 +1138,7 @@ public class FragmentEmployee extends Fragment{
 
 
 
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
@@ -1504,15 +1513,17 @@ public class FragmentEmployee extends Fragment{
         }
     }
 
+
+    /*
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // What i have added is this
         setHasOptionsMenu(true);
-    }
+    }*/
+
 
     /*
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
         menu.clear();
@@ -1528,21 +1539,21 @@ public class FragmentEmployee extends Fragment{
         Log.e("Text", "Berhasil");
 
         searchView.setOnQueryTextListener(this);
-    }
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        //Do some magic
-        //mAdapterkabag.getFilter().filter(query);
-        //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String query) {
-        //Do some magic
-        Log.e("Text", "newText=" + query);
-        //mAdapterkabag.getFilter().filter(query);
-        //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
-        return false;
     }*/
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+
+            if(refreshkabag !=null && refreshkaryawan !=null && refreshaktifitas!=null && bottomnac!=null){
+                bottomnac.setSelectedItemId(R.id.navigation_kabag);
+                refreshkabag.setVisibility(View.VISIBLE);
+                refreshaktifitas.setVisibility(View.GONE);
+                refreshkaryawan.setVisibility(View.GONE);
+                bottomnac.setBackgroundColor(getResources().getColor(R.color.light_blue_900));
+                generator.posisi=0;
+                ((mainmenu_owner) getActivity()).closesearch();
+            }
+        }
+    }
 }

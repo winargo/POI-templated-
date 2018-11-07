@@ -1,6 +1,8 @@
 package prima.optimasi.indonesia.payroll.main_owner;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -13,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -30,13 +33,19 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.applandeo.materialcalendarview.CalendarView;
+import com.applandeo.materialcalendarview.EventDay;
+import com.applandeo.materialcalendarview.exceptions.OutOfDateRangeException;
+import com.applandeo.materialcalendarview.listeners.OnDayClickListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -56,6 +65,7 @@ import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
 public class mainmenu_owner extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    long selecteddate = 0L;
 
     MaterialSearchView searchView;
     Adaptermenujabatan listAdapter;
@@ -163,23 +173,28 @@ public class mainmenu_owner extends AppCompatActivity
             @Override
             public void onTabSelected(TabLayout.Tab tab){
                 int position = tab.getPosition();
-                posisi=position;
                 if(position==3){
                     if(tempmenu!=null){
                         tempmenu.findItem(R.id.action_search).setVisible(true);
                         tempmenu.findItem(R.id.action_add).setVisible(true);
+                        tempmenu.findItem(R.id.action_calendar).setVisible(false);
+
                     }
                 }
                 else if(position ==1){
                     if(tempmenu!=null){
-                        tempmenu.findItem(R.id.action_search).setVisible(false);
+                        tempmenu.findItem(R.id.action_search).setVisible(true);
                         tempmenu.findItem(R.id.action_add).setVisible(false);
+                        tempmenu.findItem(R.id.action_calendar).setVisible(false);
+
                     }
                 }
                 else {
                     if(tempmenu!=null){
                         tempmenu.findItem(R.id.action_search).setVisible(false);
                         tempmenu.findItem(R.id.action_add).setVisible(false);
+                        tempmenu.findItem(R.id.action_calendar).setVisible(false);
+
                     }
                 }
             }
@@ -355,39 +370,36 @@ public class mainmenu_owner extends AppCompatActivity
 
         searchView.setMenuItem(item);
 
-        if(posisi==1){
-            searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String query) {
-                    FragmentEmployee fe=new FragmentEmployee();
-                    fe
-                    /*
-                    //Do some magic
-                    Bundle bundle=new Bundle();
-                    bundle.putString("query",query);
-//set Fragmentclass Arguments
-                    FragmentEmployee fragobj=new FragmentEmployee();
-                    fragobj.setArguments(bundle);*/
-                    //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
-                    return false;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String query) {
-                    //Do some magic
-                    Log.e("Text", "newText=" + query);
-
-                    //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
-                    return false;
-                }
-            });
-        }
-        /*
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                //FragmentEmployee fe=new FragmentEmployee();
+                //fe.setFilter(query);
+
+                if(generator.posisi==0){
+                    generator.adapterkabag.getFilter().filter(query);
+                }
+                else if(generator.posisi==1){
+                    generator.adapterkar.getFilter().filter(query);
+
+                }
+                if(generator.posisipengumuman==0){
+                    generator.adapterpeng.getFilter().filter(query);
+                }
+
+
+
+
                 //Do some magic
-                mAdapterkaryawan.getFilter().filter(query);
+                /*
+                Bundle bundle=new Bundle();
+                bundle.putString("query",query);
+                //set Fragmentclass Arguments
+                FragmentEmployee fragobj=new FragmentEmployee();
+                fragobj.setArguments(bundle);
+                fragobj.setFilter();*/
+
+
                 //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
                 return false;
             }
@@ -395,12 +407,34 @@ public class mainmenu_owner extends AppCompatActivity
             @Override
             public boolean onQueryTextChange(String query) {
                 //Do some magic
+                //FragmentEmployee fe=new FragmentEmployee();
+                //fe.setFilter(query);
                 Log.e("Text", "newText=" + query);
-                mAdapterkaryawan.getFilter().filter(query);
+
+                if(generator.posisi==0){
+                    generator.adapterkabag.getFilter().filter(query);
+                }
+                else if(generator.posisi==1){
+                    generator.adapterkar.getFilter().filter(query);
+                }
+                if(generator.posisipengumuman==0){
+                    generator.adapterpeng.getFilter().filter(query);
+                }
+
+                //Do some magic
+                /*
+                Bundle bundle=new Bundle();
+                bundle.putString("query",query);
+                //set Fragmentclass Arguments
+                FragmentEmployee fragobj=new FragmentEmployee();
+                fragobj.setArguments(bundle);*/
+
                 //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
                 return false;
             }
-        });*/
+        });
+
+
 
         return true;
     }
@@ -450,6 +484,54 @@ public class mainmenu_owner extends AppCompatActivity
 
         }
         else if (id == R.id.action_search) {
+            return true;
+        }
+        else if (id == R.id.action_calendar) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(mainmenu_owner.this).setPositiveButton("Select",null).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            LayoutInflater inflate = LayoutInflater.from(mainmenu_owner.this);
+
+            View linear = inflate.inflate(R.layout.calenderview,null);
+
+            CalendarView calender = linear.findViewById(R.id.calenderviews);
+
+            Calendar cal = Calendar.getInstance();
+
+
+
+            calender.setOnDayClickListener(new OnDayClickListener() {
+                @Override
+                public void onDayClick(EventDay eventDay) {
+                    Calendar clickedDayCalendar = eventDay.getCalendar();
+                    selecteddate = clickedDayCalendar.getTimeInMillis();
+                }
+            });
+
+            if(selecteddate!=0L){
+                cal.setTimeInMillis(selecteddate);
+                try {
+                    calender.setDate(cal);
+                } catch (OutOfDateRangeException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            dialog.setView(linear);
+
+            AlertDialog dial = dialog.show();
+
+            dial.setOnShowListener(new DialogInterface.OnShowListener() {
+                @Override
+                public void onShow(DialogInterface dialog) {
+
+                }
+            });
+
             return true;
         }
 
@@ -549,5 +631,28 @@ public class mainmenu_owner extends AppCompatActivity
             return tabTitles.length;
         }
         // ...
+    }
+    public void closesearch(){
+        searchView.closeSearch();
+        tempmenu.findItem(R.id.action_search).setVisible(true);
+        tempmenu.findItem(R.id.action_calendar).setVisible(false);
+
+
+    }
+    public void closeAll(){
+        searchView.closeSearch();
+        tempmenu.findItem(R.id.action_search).setVisible(true);
+        tempmenu.findItem(R.id.action_add).setVisible(true);
+
+    }
+    public void hidesearch(){
+        tempmenu.findItem(R.id.action_search).setVisible(false);
+        tempmenu.findItem(R.id.action_calendar).setVisible(true);
+
+    }
+    public void hideAll(){
+        tempmenu.findItem(R.id.action_search).setVisible(false);
+        tempmenu.findItem(R.id.action_add).setVisible(false);
+
     }
 }

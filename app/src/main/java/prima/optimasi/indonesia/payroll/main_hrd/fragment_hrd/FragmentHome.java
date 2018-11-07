@@ -1556,83 +1556,26 @@ public class FragmentHome extends Fragment {
         protected void onPostExecute(String result1) {
 
             try {
-                Log.e(TAG, "data json result" + result.toString());
                 if (result != null) {
                     try {
-                        list_jabatan=new ArrayList<>();
-                        JSONArray pengsarray = result.getJSONArray("data");
-                        for (int i = 0; i < pengsarray.length(); i++) {
-                            JSONObject obj = pengsarray.getJSONObject(i);
-                            list_jabatan.add(obj.getString("jabatan"));
-                            Log.e("Jabatan",list_jabatan.get(i));
-                        }
-                        /*
-                        List<String> listjabatan=new ArrayList<>();
-                        List<String> listbanyak=new ArrayList<>();
-                        daftaritems = new ArrayList<>();
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                        JSONArray pengsarray = result.getJSONArray("data");
-                        Log.e(TAG, "onPostExecute: " + pengsarray);
-                        String status="";
-                        //String tempcall="";
-                        int banyak=0, total=0;
-                        for (int i = 0; i < pengsarray.length(); i++) {
-                            JSONObject obj = pengsarray.getJSONObject(i);
-                            //daftarabsensi=new listkaryawandaftarabsensi();
-                            if(!obj.getString("jabatan").equals("") && !listjabatan.contains(obj.getString("jabatan"))){
-                                Log.e(TAG, "Berhasil1");
-                                listjabatan.add(obj.getString("jabatan"));
-                                banyak++;
-                                total+=banyak;
-                                listbanyak.add(""+banyak);
+                        if (result.getString("status").equals("true")) {
+                            Log.e(TAG, "data jabatan" + result.toString());
+                            list_jabatan = new ArrayList<>();
+                            JSONArray pengsarray = result.getJSONArray("data");
+                            for (int i = 0; i < pengsarray.length(); i++) {
+                                JSONObject obj = pengsarray.getJSONObject(i);
+                                list_jabatan.add(obj.getString("jabatan"));
+                                retrivedaftarabsensi kar = new retrivedaftarabsensi(getActivity(), list_jabatan.get(i), i);
+                                kar.execute();
                             }
-                            else if(!obj.getString("jabatan").equals("") && listjabatan.contains(obj.getString("jabatan"))){
-                                Log.e(TAG, "Berhasil2");
-                                banyak++;
-                            }
-                            /*
-                            if(i+1==pengsarray.length()){
-                                daftarabsensi.setJabatan("");
-                                daftarabsensi.setBanyak("");
-                                daftaritems.add(daftarabsensi);
-                                daftarabsensi.setJabatan("");
-                                daftarabsensi.setBanyak("");
-                                daftaritems.add(daftarabsensi);
-                            }*/
-                        //}
-                        /*
-                        for(int i=0;i<listjabatan.size();i++){
-                            Log.e(TAG, "Berhasil3");
-                            daftarabsensi=new listkaryawandaftarabsensi();
-                            daftarabsensi.setJabatan(listjabatan.get(i));
-                            daftarabsensi.setBanyak(listbanyak.get(i));
-                            daftaritems.add(daftarabsensi);
+
+                            daftaritems = new ArrayList<>();
+
+                            adapterabsensi = new AdapterListDaftarAbsensi(getActivity(), daftaritems, ItemAnimation.BOTTOM_UP);
+                            recyclerViewdaftar.setLayoutManager(new LinearLayoutManager(getActivity()));
+                            recyclerViewdaftar.setHasFixedSize(true);
+                            recyclerViewdaftar.setAdapter(adapterabsensi);
                         }
-                        daftarabsensi=new listkaryawandaftarabsensi();
-                        daftarabsensi.setJabatan("Total Karyawan");
-                        daftarabsensi.setBanyak(""+total);
-
-                        adapterabsensi= new AdapterListDaftarAbsensi(getActivity(), daftaritems, ItemAnimation.BOTTOM_UP);
-                        recyclerViewdaftar.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        recyclerViewdaftar.setHasFixedSize(true);
-                        recyclerViewdaftar.setAdapter(adapterabsensi);*/
-                        daftaritems = new ArrayList<>();
-
-                        for(int i=0;i<list_jabatan.size();i++){
-                            retrivedaftarabsensi kar = new retrivedaftarabsensi(getActivity(), list_jabatan.get(i),i);
-                            kar.execute();
-                            /*
-                            if(i+1==list_jabatan.size()){
-                                Log.e("MASUK ADAPTER", "Berhasil");
-                                adapterabsensi= new AdapterListDaftarAbsensi(getActivity(), daftaritems, ItemAnimation.BOTTOM_UP);
-                                recyclerViewdaftar.setLayoutManager(new LinearLayoutManager(getActivity()));
-                                recyclerViewdaftar.setHasFixedSize(true);
-                                recyclerViewdaftar.setAdapter(adapterabsensi);
-                            }*/
-                        }
-
-
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
@@ -1771,7 +1714,7 @@ public class FragmentHome extends Fragment {
                 if (result != null) {
                     try {
 
-                        Log.e(TAG, "data json result" + result.toString());
+                        Log.e(TAG, "daftar absensi" + result.toString());
 
                         List<String> listjabatan = new ArrayList<>();
                         List<String> listbanyak = new ArrayList<>();
@@ -1787,56 +1730,6 @@ public class FragmentHome extends Fragment {
                             daftaritems.add(daftarabsensi);
                         }
 
-
-
-                        /*
-                        JSONArray pengsarray = result.getJSONArray("data");
-                        Log.e(TAG, "onPostExecute: " + pengsarray);
-                        String status="";
-                        //String tempcall="";Jabta
-                        int banyak=0, total=0;
-                        for (int i = 0; i < pengsarray.length(); i++) {
-                            JSONObject obj = pengsarray.getJSONObject(i);
-                            //daftarabsensi=new listkaryawandaftarabsensi();
-                            if(!obj.getString("jabatan").equals("") && !listjabatan.contains(obj.getString("jabatan"))){
-                                Log.e(TAG, "Berhasil1");
-                                listjabatan.add(obj.getString("jabatan"));
-                                banyak++;
-                                total+=banyak;
-                                listbanyak.add(""+banyak);
-                            }
-                            else if(!obj.getString("jabatan").equals("") && listjabatan.contains(obj.getString("jabatan"))){
-                                Log.e(TAG, "Berhasil2");
-                                banyak++;
-                            }
-                            /*
-                            if(i+1==pengsarray.length()){
-                                daftarabsensi.setJabatan("");
-                                daftarabsensi.setBanyak("");
-                                daftaritems.add(daftarabsensi);
-                                daftarabsensi.setJabatan("");
-                                daftarabsensi.setBanyak("");
-                                daftaritems.add(daftarabsensi);
-                            }*/
-                        /*
-                        }
-                        for(int i=0;i<listjabatan.size();i++){
-                            Log.e(TAG, "Berhasil3");
-                            daftarabsensi=new listkaryawandaftarabsensi();
-                            daftarabsensi.setJabatan(listjabatan.get(i));
-                            daftarabsensi.setBanyak(listbanyak.get(i));
-                            daftaritems.add(daftarabsensi);
-                        }
-                        daftarabsensi=new listkaryawandaftarabsensi();
-                        daftarabsensi.setJabatan("Total Karyawan");
-                        daftarabsensi.setBanyak(""+total);
-
-                        adapterabsensi= new AdapterListDaftarAbsensi(getActivity(), daftaritems, ItemAnimation.BOTTOM_UP);
-                        recyclerViewdaftar.setLayoutManager(new LinearLayoutManager(getActivity()));
-                        recyclerViewdaftar.setHasFixedSize(true);
-                        recyclerViewdaftar.setAdapter(adapterabsensi);
-                        //retrivedaftarabsensi kar = new retrivedaftarabsensi(getActivity());*/
-                        //kar.execute();
                         if(panjang+1==list_jabatan.size()){
                             daftarabsensi=new listkaryawandaftarabsensi();
                             daftarabsensi.setJabatan("Total Karyawan");
@@ -1845,16 +1738,10 @@ public class FragmentHome extends Fragment {
                             daftaritems.add(daftarabsensi);
 
                             Log.e("MASUK ADAPTER", "Berhasil"+daftaritems.size());
-                            adapterabsensi= new AdapterListDaftarAbsensi(getActivity(), daftaritems, ItemAnimation.BOTTOM_UP);
-                            recyclerViewdaftar.setLayoutManager(new LinearLayoutManager(getActivity()));
-                            recyclerViewdaftar.setHasFixedSize(true);
-                            recyclerViewdaftar.setAdapter(adapterabsensi);
+                            adapterabsensi.notifyDataSetChanged();
 
                             retrivegetizin kar = new retrivegetizin(getActivity());
                             kar.execute();
-                            /*
-                            retrivegetizin kar = new retrivegetizin(getActivity());
-                            kar.execute();*/
                         }
 
 
@@ -1882,7 +1769,6 @@ public class FragmentHome extends Fragment {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
-
     private class retrivegetizin extends AsyncTask<Void, Integer, String>
     {
         String response = "";
