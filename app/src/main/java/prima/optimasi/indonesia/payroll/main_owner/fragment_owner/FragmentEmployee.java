@@ -232,7 +232,6 @@ public class FragmentEmployee extends Fragment{
         });
         initComponent(rootView);
 
-<<<<<<< HEAD
         /*String query=getArguments().getString("query");
         if(!query.equals(null)){
             if(refreshkabag.getVisibility()==View.VISIBLE){
@@ -243,10 +242,6 @@ public class FragmentEmployee extends Fragment{
             }
         }
         */
-=======
-
-
->>>>>>> 929fab908c4fe5d11845038726302986b733273a
         return rootView;
     }
 

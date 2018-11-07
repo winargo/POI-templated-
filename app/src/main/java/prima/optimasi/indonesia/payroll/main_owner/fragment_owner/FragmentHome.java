@@ -1591,11 +1591,7 @@ public class FragmentHome extends Fragment {
                             temp=""+i+temp;
                         }*/
 
-<<<<<<< HEAD
                         totalgajibersih.setText("RP "+formatter.format(Double.parseDouble(obj.getString("gajiBersih"))));
-=======
-                        totalgajibersih.setText("RP "+formatter.format((double)Integer.parseInt(obj.getString("gajiBersih"))));
->>>>>>> 929fab908c4fe5d11845038726302986b733273a
                         totalgajipotongan.setText("RP "+formatter.format(Double.parseDouble(obj.getString("totalPotongan"))));
                         retrivegetizin kar = new retrivegetizin(getActivity());
                         kar.execute();

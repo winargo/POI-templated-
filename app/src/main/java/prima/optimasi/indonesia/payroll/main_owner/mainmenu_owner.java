@@ -369,37 +369,6 @@ public class mainmenu_owner extends AppCompatActivity
         MenuItem item = menu.findItem(R.id.action_search);
 
         searchView.setMenuItem(item);
-
-<<<<<<< HEAD
-        if(posisi==1){
-            searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String query) {
-                    FragmentEmployee fe=new FragmentEmployee();
-                    /*
-                    //Do some magic
-                    Bundle bundle=new Bundle();
-                    bundle.putString("query",query);
-//set Fragmentclass Arguments
-                    FragmentEmployee fragobj=new FragmentEmployee();
-                    fragobj.setArguments(bundle);*/
-                    //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
-                    return false;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String query) {
-                    //Do some magic
-                    Log.e("Text", "newText=" + query);
-
-                    //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
-                    return false;
-                }
-            });
-        }
-        /*
-=======
->>>>>>> 929fab908c4fe5d11845038726302986b733273a
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
