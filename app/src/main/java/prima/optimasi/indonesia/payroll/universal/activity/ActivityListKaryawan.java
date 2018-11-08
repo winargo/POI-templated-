@@ -391,12 +391,8 @@ public class ActivityListKaryawan extends AppCompatActivity {
                         // "id_golongan":null,"atas_nama":"Astros","foto":"","id_cabang":2,"start_date":null,"expired_date":null,"jab_index":0,"kontrak":"tidak","file_kontrak":"",
                         // "otoritas":4,"periode_gaji":"2-Mingguan","qrcode_file":"196d351656861176861dc93ac15a9fee.png","jabatan":"Admin Kantor","keterangan":"Jabatan","tunjangan":0}]}
 
-                    Log.e(TAG, "daftar absensi" + result.toString());
+                        Log.e(TAG, "daftar absensi" + result.toString());
                         items=new ArrayList<>();
-
-                        List<String> listjabatan = new ArrayList<>();
-                        List<String> listbanyak = new ArrayList<>();
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         JSONArray pengsarray = result.getJSONArray("data");
                         for(int i=0;i<pengsarray.length();i++){
                             JSONObject obj = pengsarray.getJSONObject(i);
@@ -416,34 +412,6 @@ public class ActivityListKaryawan extends AppCompatActivity {
                         recyclerView.setLayoutManager(new LinearLayoutManager(ActivityListKaryawan.this));
                         recyclerView.setHasFixedSize(true);
                         recyclerView.setAdapter(adapter);
-                        //if(!result.getString("data1").equals("0")){
-
-                            /*
-                            banyakkaryawan+=pengsarray.length();
-                            daftarabsensi.setTotal(result.getString("data1"));
-                            totalkaryawan+=Integer.parseInt(result.getString("data1"));
-                            daftaritems.add(daftarabsensi);*/
-
-
-                        /*
-                        if(panjang+1==list_jabatan.size()){
-                            daftarabsensi=new listkaryawandaftarabsensi();
-                            daftarabsensi.setJabatan("Total Karyawan");
-                            daftarabsensi.setBanyak(""+banyakkaryawan);
-                            daftarabsensi.setTotal(""+totalkaryawan);
-                            daftaritems.add(daftarabsensi);
-
-                            Log.e("MASUK ADAPTER", "Berhasil"+daftaritems.size());
-                            adapterabsensi.notifyDataSetChanged();
-
-                            FragmentHome.retrivetotalgaji kar = new FragmentHome.retrivetotalgaji(getActivity());
-                            kar.execute();
-
-                            retrivegetizin kar = new retrivegetizin(getActivity());
-                            kar.execute();
-                        }
-                        */
-
 
                     }catch (JSONException e) {
                         e.printStackTrace();

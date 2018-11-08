@@ -49,20 +49,11 @@ import okhttp3.Response;
 import static android.content.Context.MODE_PRIVATE;
 
 public class generator {
-    //public static String Server="153.92.4.147";
-    //public static String Server="192.168.5.254";
-    //public static String Server="153.92.4.147";
-    //public static String Server="192.168.5.254";
-    //public static String Server="153.92.4.147";
-    //public static String Server="192.168.5.254";
-    //public static String Server="153.92.4.147";
+
     public static String Server="192.168.5.254";
-    //public static String Server="153.92.4.147";
     //public static String Server="153.92.4.147";
 
     public static mainmenu_owner tempactivity = null;
-
-    //public static String Server="153.92.4.147";
 
     public static Bitmap tempbitmap = null;
 
@@ -156,6 +147,7 @@ public class generator {
     public static String pengajuandinasurl="http://"+ generator.Server+":"+generator.port+"/dinas";
 
     public static String totalgajiurl="http://"+ generator.Server+":"+generator.port+"/penggajian/totalgaji";
+    public static String laporanpengajianurl="http://"+ generator.Server+":"+generator.port+"/penggajian/laporan";
 
     public static String pengajuancutikodeurl="http://"+ generator.Server+":"+generator.port+"/cuti/kode";
     public static String pengajuanizinkodeurl="http://"+ generator.Server+":"+generator.port+"/izin/kode";
@@ -184,7 +176,6 @@ public class generator {
     public static AdapterGridTwoLineLight adapterpeng=null;
 
     public static int posisi=0, posisipengumuman=0;
-    public static boolean ubah=false;
 
     public static Boolean isconnected(Context context){
         Boolean status = false;
@@ -452,6 +443,7 @@ public class generator {
 
 
             try {
+
                 AlertDialog alertDialog = new AlertDialog.Builder(cntx).create();
                 alertDialog.setTitle("Selamat Datang");
                 alertDialog.setMessage("Anda Berhasil Login PrimaHRD");
@@ -462,6 +454,8 @@ public class generator {
                             }
                         });
                 alertDialog.show();
+
+
 
                 //JSONArray bArray= responseObject.getJSONArray("B");
                 //for(int i=0;i<bArray.length();i++){

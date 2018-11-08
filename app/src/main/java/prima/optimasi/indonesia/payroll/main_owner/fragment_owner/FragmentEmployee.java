@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
@@ -80,6 +81,7 @@ public class FragmentEmployee extends Fragment{
     private AdapterGridCaller mAdapterkaryawan;
     private Adapterabsensiaktifitas mAdapteraktifitas;
 
+    //ProgressDialog progressDialog;
     BottomNavigationView bottomnac;
 
     TextView selectdate;
@@ -110,6 +112,25 @@ public class FragmentEmployee extends Fragment{
         totalkabag = rootView.findViewById(R.id.totalkabag);
         totalkaryawan = rootView.findViewById(R.id.totalkaryawan);
 
+        bottomnac = rootView.findViewById(R.id.navigation);
+
+        initComponent(rootView);
+        /*
+        progressDialog = new ProgressDialog(rootView.getContext());
+
+        progressDialog.setTitle("Loading...");
+
+        progressDialog.setCancelable(false);
+
+        progressDialog.show();
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                progressDialog.dismiss();
+            }
+        },2000L);*/
         /*
         selectdate = rootView.findViewById(R.id.dateselection_karyawan);
         SimpleDateFormat fomat = new SimpleDateFormat("dd/MM/yyyy");
@@ -167,6 +188,25 @@ public class FragmentEmployee extends Fragment{
         */
 
 
+
+
+
+        /*String query=getArguments().getString("query");
+        if(!query.equals(null)){
+            if(refreshkabag.getVisibility()==View.VISIBLE){
+                mAdapterkabag.getFilter().filter(query);
+            }
+            else{
+                mAdapterkaryawan.getFilter().filter(query);
+            }
+        }
+        */
+        return rootView;
+    }
+
+
+    private void initComponent(View v) {
+
         refreshkabag.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -193,7 +233,7 @@ public class FragmentEmployee extends Fragment{
             }
         });
 
-        bottomnac = rootView.findViewById(R.id.navigation);
+
 
         bottomnac.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -230,24 +270,6 @@ public class FragmentEmployee extends Fragment{
                 return false;
             }
         });
-        initComponent(rootView);
-
-        /*String query=getArguments().getString("query");
-        if(!query.equals(null)){
-            if(refreshkabag.getVisibility()==View.VISIBLE){
-                mAdapterkabag.getFilter().filter(query);
-            }
-            else{
-                mAdapterkaryawan.getFilter().filter(query);
-            }
-        }
-        */
-        return rootView;
-    }
-
-
-    private void initComponent(View v) {
-
 
 
         recyclerViewkaryawan = (RecyclerView) v.findViewById(R.id.recyclerView_karyawan);

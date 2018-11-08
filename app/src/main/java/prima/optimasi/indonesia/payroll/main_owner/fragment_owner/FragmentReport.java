@@ -72,7 +72,7 @@ public class FragmentReport extends Fragment {
 
         items.add(izin);
         izin = new listreport();
-        izin.setJudul("Penggajian");
+        izin.setJudul("Pengajian");
         izin.setDeskripsi("Laporan Dan Statistik Pengajian Karyawan");
 
         items.add(izin);
