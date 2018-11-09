@@ -61,7 +61,7 @@ import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
 public class ActivityListKaryawan extends AppCompatActivity {
     MaterialSearchView searchView;
     CoordinatorLayout parent_view;
-    TextView tanggal;
+    TextView tanggal, tidakada;
     RecyclerView recyclerView;
     AdapterListKaryawan adapter;
     List<listkaryawan> items;
@@ -73,6 +73,7 @@ public class ActivityListKaryawan extends AppCompatActivity {
         parent_view=findViewById(R.id.parent_view);
         recyclerView=findViewById(R.id.recyclerView);
         tanggal=findViewById(R.id.tanggal);
+        tidakada=findViewById(R.id.tidakada);
 
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE,0);
@@ -394,6 +395,10 @@ public class ActivityListKaryawan extends AppCompatActivity {
                         Log.e(TAG, "daftar absensi" + result.toString());
                         items=new ArrayList<>();
                         JSONArray pengsarray = result.getJSONArray("data");
+                        if(pengsarray.length()==0){
+                            tidakada.setVisibility(View.VISIBLE);
+                            tidakada.setText("Tidak ada "+jabatan+" yang hadir");
+                        }
                         for(int i=0;i<pengsarray.length();i++){
                             JSONObject obj = pengsarray.getJSONObject(i);
                             kar=new listkaryawan();

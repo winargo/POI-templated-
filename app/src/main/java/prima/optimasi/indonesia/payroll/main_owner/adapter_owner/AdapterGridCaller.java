@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.balysv.materialripple.MaterialRippleLayout;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,7 +82,14 @@ public class AdapterGridCaller extends RecyclerView.Adapter<RecyclerView.ViewHol
             OriginalViewHolder view = (OriginalViewHolder) holder;
             view.name.setText(obj.getNama());
             view.brief.setText(obj.getDesc() + " - " + obj.getJabatan());
+            if(obj.getImagelink().equals("")){
+                Picasso.get().load("http://www.racemph.com/wp-content/uploads/2016/09/profile-image-placeholder.png").into(view.image);
+                //Picasso.get().load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ").into(view.image);
+            }
 
+            else{
+                Tools.displayImageOriginal(ctx, view.image, obj.getImagelink());
+            }
            /* try{
                 if(obj.getImagelink().equals("")){
 
@@ -90,9 +98,6 @@ public class AdapterGridCaller extends RecyclerView.Adapter<RecyclerView.ViewHol
             catch (NullPointerException e){
                 view.lyt_parent.setVisibility(View.GONE);
             }*/
-
-
-            Tools.displayImageOriginal(ctx, view.image, obj.getImagelink());
 
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -10,6 +10,7 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:id="@+id/swipekabag"
+        android:visibility="gone"
 
         android:layout_marginBottom="50sp"
         android:layout_height="match_parent">
@@ -99,8 +100,6 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_marginBottom="50sp"
-        android:visibility="gone"
-
         android:id="@+id/swipeaktifitas"
         android:layout_height="match_parent">
         <android.support.v4.widget.NestedScrollView
@@ -112,19 +111,38 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-
-                <TextView
-                    android:background="@drawable/layout_textviewround"
-                    android:backgroundTint="@color/red_500"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_gravity="bottom"
-                    android:id="@+id/totalhadir"
-                    android:textSize="8pt"
-                    android:layout_margin="5sp"
-                    android:gravity="center"
-                    android:textColor="@color/overlay_light_90"
-                    android:text=""
-                    android:layout_height="40sp" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_margin="5sp">
+                    <TextView
+                        android:background="@drawable/layout_textviewround"
+                        android:backgroundTint="@color/red_500"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_gravity="bottom"
+                        android:id="@+id/totalhadir"
+                        android:textSize="8pt"
+
+                        android:gravity="center"
+                        android:textColor="@color/overlay_light_90"
+                        android:text=""
+                        android:layout_height="40sp" />
+                    <TextView
+                        android:background="@drawable/ic_event"
+                        android:backgroundTint="@android:color/black"
+                        android:layout_width="wrap_content"
+                        android:layout_marginLeft="@dimen/spacing_middle"
+                        android:layout_gravity="bottom"
+                        android:id="@+id/dateselection_karyawan"
+                        android:textSize="8pt"
+                        android:gravity="center"
+                        android:textColor="@color/overlay_light_90"
+                        android:text=""
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerView_aktifitas"

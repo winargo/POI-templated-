@@ -49,7 +49,6 @@ import okhttp3.Response;
 import static android.content.Context.MODE_PRIVATE;
 
 public class generator {
-<<<<<<< HEAD
     //public static String Server="153.92.4.147";
     //public static String Server="192.168.5.254";
     //public static String Server="153.92.4.147";
@@ -58,11 +57,10 @@ public class generator {
     //public static String Server="192.168.5.254";
     //public static String Server="153.92.4.147";
     //public static String Server="192.168.5.254";
-    public static String Server="153.92.4.147";
-=======
+    //public static String Server="153.92.4.147";
 
     public static String Server="192.168.5.254";
->>>>>>> d07d570cf97405416836f79c4ad434514aaf7d15
+
     //public static String Server="153.92.4.147";
 
     public static mainmenu_owner tempactivity = null;
@@ -92,6 +90,8 @@ public class generator {
     public static String kabaggrupkaryawanurl="http://"+ generator.Server+":"+generator.port+"/groupkaryawan/list";
 
     public static String getabsensiurl="http://"+ generator.Server+":"+generator.port+"/absensi";
+    public static String getabsensidateurl="http://"+ generator.Server+":"+generator.port+"/absensi/date";
+
 
     public static String ownerurl="http://"+ generator.Server+"/poihrd/uploads/pengguna/";
 
