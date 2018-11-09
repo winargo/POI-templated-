@@ -30,6 +30,39 @@
 
             </android.support.design.widget.AppBarLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/dari"
+                    android:layout_width="0sp"
+                    android:layout_weight="1"
+                    android:layout_margin="@dimen/spacing_middle"
+                    android:textSize="7pt"
+                    android:gravity="left"
+                    android:text="Dari"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/sampai"
+                    android:layout_width="0sp"
+                    android:layout_weight="1"
+                    android:layout_margin="@dimen/spacing_middle"
+                    android:textSize="7pt"
+                    android:gravity="right"
+                    android:text="Sampai"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/tidakada"
+                android:layout_width="match_parent"
+                android:layout_margin="@dimen/spacing_middle"
+                android:textSize="7pt"
+                android:gravity="left"
+                android:text="Tidak ada report pengajian pada tanggal tersebut"
+                android:layout_height="wrap_content" />
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_report"
                 android:layout_width="match_parent"
@@ -37,7 +70,7 @@
 
             </android.support.v7.widget.RecyclerView>
             <LinearLayout
-                android:id="@+id/activatepinjaman"
+                android:id="@+id/activatepengajian"
                 android:visibility="gone"
                 android:background="@color/grey_100"
                 android:layout_width="match_parent"
@@ -61,16 +94,16 @@
                             android:layout_margin="4sp"
                             android:textSize="7pt"
                             android:textAlignment="center"
-                            android:text="Total Pinjaman"
+                            android:text="Total Gaji Awal"
                             android:layout_height="wrap_content" />
                         <TextView
                             android:layout_width="0sp"
                             android:layout_weight="1"
-                            android:id="@+id/ttlpinjam"
+                            android:id="@+id/ttlgajiawal"
                             android:layout_margin="4sp"
                             android:textSize="7pt"
                             android:textAlignment="center"
-                            android:text="Total Pinjaman"
+                            android:text="Total Gaji Awal"
                             android:layout_height="wrap_content" />
 
                     </LinearLayout>
@@ -93,16 +126,16 @@
                             android:layout_margin="4sp"
                             android:textSize="7pt"
                             android:textAlignment="center"
-                            android:text="Total Bayar"
+                            android:text="Total Gaji Bersih"
                             android:layout_height="wrap_content" />
                         <TextView
                             android:layout_width="0sp"
-                            android:id="@+id/ttlbayar"
+                            android:id="@+id/ttlgajibersih"
                             android:layout_weight="1"
                             android:layout_margin="4sp"
                             android:textSize="7pt"
                             android:textAlignment="center"
-                            android:text="Total Bayar"
+                            android:text="Total Gaji Bersih"
                             android:layout_height="wrap_content" />
 
                     </LinearLayout>
@@ -126,16 +159,16 @@
                             android:layout_margin="4sp"
                             android:textSize="7pt"
                             android:textAlignment="center"
-                            android:text="Total Sisa"
+                            android:text="Total Potongan"
                             android:layout_height="wrap_content" />
                         <TextView
                             android:layout_width="0sp"
-                            android:id="@+id/ttlsisa"
+                            android:id="@+id/ttlpotongan"
                             android:layout_weight="1"
                             android:layout_margin="4sp"
                             android:textSize="7pt"
                             android:textAlignment="center"
-                            android:text="Total Sisa"
+                            android:text="Total Potongan"
                             android:layout_height="wrap_content" />
 
                     </LinearLayout>
