@@ -172,6 +172,7 @@ public class AdapterListBasicjob_extention extends RecyclerView.Adapter<Recycler
                 Picasso.get().load(p.getProfilepicture()).transform(new CircleTransform()).into(view.image);
 
                 view.name.setText(p.getNamakaryawan());
+
                 try {
                     view.desc.setText("Tanggal Pengajuan : "+format1.format(format.parse(p.getTgldiajukan()))+"\n"+p.getKeterangan());
                 } catch (ParseException e) {

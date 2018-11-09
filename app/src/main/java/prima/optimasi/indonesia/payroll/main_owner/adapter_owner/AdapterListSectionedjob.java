@@ -457,12 +457,12 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                             }
                         }
                         else if (tipe.equals("Approval Golongan") ){
-                            
+
                             //String[] options = new String[]{"Approval Cuti","Approval Dinas","Approval Dirumahkan","Approval Izin",
                             // "Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment",
                             // "Approval Reward"};
                             //
-                            if(result.getString("status").equals(true)) {
+                            if(result.getString("status").equals("true")) {
 
                                 JSONArray arrays = result.getJSONArray("data");
                                 JSONArray arrays1 = result.getJSONArray("data1");
@@ -524,7 +524,7 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                                                 + "Tunjangan Lain" + spacing + formatter.format(tunjangan_lain) + newline + "BPJS" + spacing + formatter.format(bpjs) + newline
                                                 + "Potongan Lain" + spacing + formatter.format(potlain) + newline + "Lembur" + spacing + lembur + newline + "UMK" + spacing + formatter.format(umk) + newline);
 
-                                        //listdata.add(data);
+                                        listdata.add(data);
                                     } else {
 
                                         JSONObject obj1 = arrays1.getJSONObject(index);
@@ -666,7 +666,7 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                         }
                         else if (tipe.equals("Approval Karyawan") ){
 
-                            if(result.getString("status").equals(true)) {
+                            if(result.getString("status").equals("true")) {
 
                                 Log.e("karyawan data", result.toString());
 
@@ -744,81 +744,87 @@ public class AdapterListSectionedjob extends RecyclerView.Adapter<RecyclerView.V
                                         //listdata.add(data);
 
                                     } else {
+                                        Log.e(TAG, "array 1"+arrays1.toString() );
 
-                                        JSONObject obj1 = arrays1.getJSONObject(index);
+                                        if(arrays1.length()==0){
 
-                                        data.setNamakaryawan(obj1.getString("nama") + "(" + obj1.getString("info_approve").toUpperCase() + ")");
-                                        data.setTipe(tipe);
-
-                                        if (obj.getString("foto").equals("")) {
-                                            data.setProfilepicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ");
-                                        } else {
-                                            data.setProfilepicture(generator.profileurl + obj1.getString("foto"));
                                         }
+                                        else {
+                                            JSONObject obj1 = arrays1.getJSONObject(index);
 
+                                            data.setNamakaryawan(obj1.getString("nama") + "(" + obj1.getString("info_approve").toUpperCase() + ")");
+                                            data.setTipe(tipe);
 
-                                        DecimalFormat formatter = new DecimalFormat("###,###,###");
-
-                                        //0,1,2,39,37,36
-
-                                        for (int k = 0; k < obj.length(); k++) {
-                                            if (k == 0) {
-
-                                            } else if (k == 1) {
-
-                                            } else if (k == 2) {
-
-                                            } else if (k == 39) {
-
-                                            } else if (k == 37) {
-
-                                            } else if (k == 36) {
-
+                                            if (obj.getString("foto").equals("")) {
+                                                data.setProfilepicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ");
                                             } else {
-                                                if (k == 22) {
-                                                    if (obj.getString(karyawan[k]).equals(obj1.getString(karyawan[k]))) {
+                                                data.setProfilepicture(generator.profileurl + obj1.getString("foto"));
+                                            }
 
-                                                    } else {
-                                                        texting = texting + karyawandetail[k] + spacing + formatter.format(Integer.parseInt(obj.getString(karyawan[k]))) + arrow + formatter.format(Integer.parseInt(obj1.getString(karyawan[k]))) + newline;
-                                                    }
+
+                                            DecimalFormat formatter = new DecimalFormat("###,###,###");
+
+                                            //0,1,2,39,37,36
+
+                                            for (int k = 0; k < obj.length(); k++) {
+                                                if (k == 0) {
+
+                                                } else if (k == 1) {
+
+                                                } else if (k == 2) {
+
+                                                } else if (k == 39) {
+
+                                                } else if (k == 37) {
+
+                                                } else if (k == 36) {
 
                                                 } else {
-                                                    if (obj.getString(karyawan[k]).equals(obj1.getString(karyawan[k]))) {
-
-                                                    } else {
-                                                        if (obj.getString(karyawan[k]).contains("T00:00:00.000Z")) {
-                                                            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-                                                            SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
-                                                            if (obj1.getString(karyawan[k]).equals("null")) {
-                                                                texting = texting + karyawandetail[k] + spacing + format2.format(format1.parse(obj.getString(karyawan[k]).substring(0, 10))) + arrow + obj1.getString(karyawan[k]) + newline;
-                                                            } else {
-                                                                texting = texting + karyawandetail[k] + spacing + format2.format(format1.parse(obj.getString(karyawan[k]).substring(0, 10))) + arrow + format2.format(format1.parse(obj1.getString(karyawan[k]).substring(0, 10))) + newline;
-                                                            }
+                                                    if (k == 22) {
+                                                        if (obj.getString(karyawan[k]).equals(obj1.getString(karyawan[k]))) {
 
                                                         } else {
+                                                            texting = texting + karyawandetail[k] + spacing + formatter.format(Integer.parseInt(obj.getString(karyawan[k]))) + arrow + formatter.format(Integer.parseInt(obj1.getString(karyawan[k]))) + newline;
+                                                        }
 
+                                                    } else {
+                                                        if (obj.getString(karyawan[k]).equals(obj1.getString(karyawan[k]))) {
 
-                                                            if (obj1.getString(karyawan[k]).contains("T00:00:00.000Z")) {
+                                                        } else {
+                                                            if (obj.getString(karyawan[k]).contains("T00:00:00.000Z")) {
                                                                 SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
                                                                 SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
-                                                                texting = texting + karyawandetail[k] + spacing + obj.getString(karyawan[k]) + arrow + format2.format(format1.parse(obj1.getString(karyawan[k]).substring(0, 10))) + newline;
+                                                                if (obj1.getString(karyawan[k]).equals("null")) {
+                                                                    texting = texting + karyawandetail[k] + spacing + format2.format(format1.parse(obj.getString(karyawan[k]).substring(0, 10))) + arrow + obj1.getString(karyawan[k]) + newline;
+                                                                } else {
+                                                                    texting = texting + karyawandetail[k] + spacing + format2.format(format1.parse(obj.getString(karyawan[k]).substring(0, 10))) + arrow + format2.format(format1.parse(obj1.getString(karyawan[k]).substring(0, 10))) + newline;
+                                                                }
+
                                                             } else {
-                                                                texting = texting + karyawandetail[k] + spacing + obj.getString(karyawan[k]) + arrow + obj1.getString(karyawan[k]) + newline;
+
+
+                                                                if (obj1.getString(karyawan[k]).contains("T00:00:00.000Z")) {
+                                                                    SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                                                                    SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
+                                                                    texting = texting + karyawandetail[k] + spacing + obj.getString(karyawan[k]) + arrow + format2.format(format1.parse(obj1.getString(karyawan[k]).substring(0, 10))) + newline;
+                                                                } else {
+                                                                    texting = texting + karyawandetail[k] + spacing + obj.getString(karyawan[k]) + arrow + obj1.getString(karyawan[k]) + newline;
+                                                                }
                                                             }
                                                         }
                                                     }
                                                 }
                                             }
-                                        }
-                                        if (texting.equals("")) {
-                                            data.setKeterangan("Tidak Ada Perubahaan");
-                                        } else {
-                                            data.setKeterangan(texting);
-                                        }
+                                            if (texting.equals("")) {
+                                                data.setKeterangan("Tidak Ada Perubahaan");
+                                            } else {
+                                                data.setKeterangan(texting);
+                                            }
 
 
-                                        listdata.add(data);
-                                        //listdata.add(data);
+                                            listdata.add(data);
+                                            //listdata.add(data);
+                                        }
                                     }
                                 }
 

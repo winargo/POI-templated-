@@ -82,7 +82,7 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
     String[] options = new String[]{"Approval Cuti","Approval Dinas","Approval Dirumahkan","Approval Izin","Approval Golongan","Approval Karyawan","Approval Pinjaman","Approval Pdm","Approval Punishment","Approval Reward"};
     String[] urloptions = new String[]{generator.approvalcutiyurl,generator.approvaldinasyurl,generator.approvaldirumahkanyurl,generator.approvalizinyurl,generator.approvalgolonganyurl,generator.approvalkaryawanyurl,generator.approvalpinjamanyurl,generator.approvalpdlyurl,generator.approvalpunihsmentyurl,generator.approvalrewardyurl};
 
-    List<String> passed;
+    List<String> passed=new ArrayList<>();
 
     private Context ctx;
     private AdapterListBasicjob_extention.OnItemClickListener mOnItemClickListener;

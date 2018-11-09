@@ -405,6 +405,7 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                         // "Approval Reward"};
                         //
                         if(result.getString("status").equals("true")) {
+                            passing = new ArrayList<>();
 
 
                             JSONArray arrays = result.getJSONArray("data");
@@ -422,8 +423,11 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
 
                                 for (int j = 0; j < arrays1.length(); j++) {
                                     JSONObject obj1 = arrays1.getJSONObject(j);
+                                    Log.e("approval glongan obj1", arrays1.toString() );
                                     if (obj.getString("id_golongan").equals(obj1.getString("id_golongan"))) {
                                         isnotsame = false;
+
+
 
                                         passing.add(obj1.getString("temp_id_golongan"));
                                         passing.add(obj1.getString("golongan"));
@@ -715,94 +719,86 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                                 //listdata.add(data);
 
                             }else{
+                                if(arrays1.length()==0){
 
-                                JSONObject obj1 = arrays1.getJSONObject(index);
-
-                                data.setNamakaryawan(obj1.getString("nama")+"("+obj1.getString("info_approve").toUpperCase()+")");
-                                data.setTipe(tipe);
-
-                                if(obj.getString("foto").equals("")){
-                                    data.setProfilepicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ");
                                 }
+
                                 else {
-                                    data.setProfilepicture(generator.profileurl+obj1.getString("foto"));
-                                }
+                                    JSONObject obj1 = arrays1.getJSONObject(index);
 
+                                    data.setNamakaryawan(obj1.getString("nama") + "(" + obj1.getString("info_approve").toUpperCase() + ")");
+                                    data.setTipe(tipe);
 
-                                DecimalFormat formatter = new DecimalFormat("###,###,###");
-
-                                //0,1,2,39,37,36
-
-                                for (int k = 0 ; k<obj.length();k++){
-                                    if(k==0){
-
+                                    if (obj.getString("foto").equals("")) {
+                                        data.setProfilepicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ");
+                                    } else {
+                                        data.setProfilepicture(generator.profileurl + obj1.getString("foto"));
                                     }
-                                    else if(k==1){
 
-                                    }else if(k==2){
 
-                                    }
-                                    else if(k==39){
+                                    DecimalFormat formatter = new DecimalFormat("###,###,###");
 
-                                    }
-                                    else if(k==37){
+                                    //0,1,2,39,37,36
 
-                                    }
-                                    else if(k==36){
+                                    for (int k = 0; k < obj.length(); k++) {
+                                        if (k == 0) {
 
-                                    }
-                                    else {
-                                        if(k==22){
-                                            if(obj.getString(karyawan[k]).equals(obj1.getString(karyawan[k]))){
+                                        } else if (k == 1) {
 
-                                            }
-                                            else {
-                                                texting = texting + karyawandetail[k]+spacing+formatter.format(Integer.parseInt(obj.getString(karyawan[k])))+arrow+formatter.format(Integer.parseInt(obj1.getString(karyawan[k])))+newline;
-                                            }
-                                        }
-                                        else {
-                                            if(obj.getString(karyawan[k]).equals(obj1.getString(karyawan[k]))){
+                                        } else if (k == 2) {
 
-                                            }
-                                            else {
-                                                if(obj.getString(karyawan[k]).contains("T00:00:00.000Z")){
-                                                    SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-                                                    SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
-                                                    if(obj1.getString(karyawan[k]).equals("null")){
-                                                        texting = texting + karyawandetail[k]+spacing+format2.format(format1.parse(obj.getString(karyawan[k]).substring(0,10)))+arrow+obj1.getString(karyawan[k])+newline;
-                                                    }else {
-                                                        texting = texting + karyawandetail[k]+spacing+format2.format(format1.parse(obj.getString(karyawan[k]).substring(0,10)))+arrow+format2.format(format1.parse(obj1.getString(karyawan[k]).substring(0,10)))+newline;
-                                                    }
+                                        } else if (k == 39) {
 
+                                        } else if (k == 37) {
+
+                                        } else if (k == 36) {
+
+                                        } else {
+                                            if (k == 22) {
+                                                if (obj.getString(karyawan[k]).equals(obj1.getString(karyawan[k]))) {
+
+                                                } else {
+                                                    texting = texting + karyawandetail[k] + spacing + formatter.format(Integer.parseInt(obj.getString(karyawan[k]))) + arrow + formatter.format(Integer.parseInt(obj1.getString(karyawan[k]))) + newline;
                                                 }
-                                                else {
+                                            } else {
+                                                if (obj.getString(karyawan[k]).equals(obj1.getString(karyawan[k]))) {
 
-
-                                                    if(obj1.getString(karyawan[k]).contains("T00:00:00.000Z")) {
+                                                } else {
+                                                    if (obj.getString(karyawan[k]).contains("T00:00:00.000Z")) {
                                                         SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
                                                         SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
-                                                        texting = texting + karyawandetail[k]+spacing+obj.getString(karyawan[k])+arrow+format2.format(format1.parse(obj1.getString(karyawan[k]).substring(0,10)))+newline;
-                                                    }
-                                                    else {
-                                                        texting = texting + karyawandetail[k] + spacing + obj.getString(karyawan[k]) + arrow + obj1.getString(karyawan[k]) + newline;
+                                                        if (obj1.getString(karyawan[k]).equals("null")) {
+                                                            texting = texting + karyawandetail[k] + spacing + format2.format(format1.parse(obj.getString(karyawan[k]).substring(0, 10))) + arrow + obj1.getString(karyawan[k]) + newline;
+                                                        } else {
+                                                            texting = texting + karyawandetail[k] + spacing + format2.format(format1.parse(obj.getString(karyawan[k]).substring(0, 10))) + arrow + format2.format(format1.parse(obj1.getString(karyawan[k]).substring(0, 10))) + newline;
+                                                        }
+
+                                                    } else {
+
+
+                                                        if (obj1.getString(karyawan[k]).contains("T00:00:00.000Z")) {
+                                                            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                                                            SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
+                                                            texting = texting + karyawandetail[k] + spacing + obj.getString(karyawan[k]) + arrow + format2.format(format1.parse(obj1.getString(karyawan[k]).substring(0, 10))) + newline;
+                                                        } else {
+                                                            texting = texting + karyawandetail[k] + spacing + obj.getString(karyawan[k]) + arrow + obj1.getString(karyawan[k]) + newline;
+                                                        }
                                                     }
                                                 }
-                                            }
 
+                                            }
                                         }
+
+                                    }
+                                    if (texting.equals("")) {
+                                        data.setKeterangan("Tidak Ada Perubahaan");
+                                    } else {
+                                        data.setKeterangan(texting);
                                     }
 
-                                }
-                                if(texting.equals("")){
-                                    data.setKeterangan("Tidak Ada Perubahaan");
-                                }
-                                else {
-                                    data.setKeterangan(texting);
-                                }
 
-
-                                listdata.add(data);
-
+                                    listdata.add(data);
+                                }
 
 
                                 //listdata.add(data);
