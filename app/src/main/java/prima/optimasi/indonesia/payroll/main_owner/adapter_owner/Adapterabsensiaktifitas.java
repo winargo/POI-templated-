@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -257,7 +258,14 @@ public class Adapterabsensiaktifitas extends RecyclerView.Adapter<RecyclerView.V
                 }
             });
 
-            Tools.displayImageOriginal(ctx, view.image, obj.getImagelink());
+            if(obj.getImagelink().equals("")){
+                Picasso.get().load("http://www.racemph.com/wp-content/uploads/2016/09/profile-image-placeholder.png").into(view.image);
+                //Picasso.get().load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ").into(view.image);
+            }
+
+            else{
+                Tools.displayImageOriginal(ctx, view.image, obj.getImagelink());
+            }
             view.lyt_expand_text.setVisibility(View.GONE);
 
             view.bt_toggle_text.setOnClickListener(new View.OnClickListener() {

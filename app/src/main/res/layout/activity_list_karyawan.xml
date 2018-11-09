@@ -51,6 +51,15 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Tanggal"/>
+        <TextView
+            android:id="@+id/tidakada"
+            android:layout_marginTop="@dimen/spacing_middle"
+            android:layout_marginBottom="@dimen/spacing_middle"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Tidak ada karyawan yang hadir"/>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"

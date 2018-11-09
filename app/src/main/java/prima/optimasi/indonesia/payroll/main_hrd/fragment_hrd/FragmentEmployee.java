@@ -36,8 +36,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
@@ -78,7 +80,7 @@ public class FragmentEmployee extends Fragment {
     List<listkaryawanaktivitas> itemaktifitas;
 
     long selecteddate = 0L;
-
+    String tanggal="";
     int nilaikabag=0,nilaikaryawan=0,nilaikehadiran=0,nilaiall = 0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -97,6 +99,74 @@ public class FragmentEmployee extends Fragment {
         totalkabag = rootView.findViewById(R.id.totalkabag);
         totalkaryawan = rootView.findViewById(R.id.totalkaryawan);
 
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd");
+        tanggal=format.format(c.getTime());
+        Log.e("Tanggal sekarang", tanggal);
+
+        selectdate = rootView.findViewById(R.id.dateselection_karyawan);
+        SimpleDateFormat fomat = new SimpleDateFormat("dd/MM/yyyy");
+
+
+        selectdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity()).setPositiveButton("Select", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        retriveabsensi absensi = new retriveabsensi(getActivity());
+                        absensi.execute();
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                LayoutInflater inflate = LayoutInflater.from(getActivity());
+
+                View linear = inflate.inflate(R.layout.calenderview,null);
+
+                CalendarView calender = linear.findViewById(R.id.calenderviews);
+
+                Calendar cal = Calendar.getInstance();
+
+                calender.setOnDayClickListener(new OnDayClickListener() {
+                    @Override
+                    public void onDayClick(EventDay eventDay) {
+                        Calendar clickedDayCalendar = eventDay.getCalendar();
+                        selecteddate = clickedDayCalendar.getTimeInMillis();
+                        SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/YYYY");
+                        SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd");
+                        tanggal=format.format(clickedDayCalendar.getTime());
+                        Log.e("Tanggal", tanggal);
+
+
+                    }
+                });
+
+                if(selecteddate!=0L){
+                    cal.setTimeInMillis(selecteddate);
+                    try {
+                        calender.setDate(cal);
+                    } catch (OutOfDateRangeException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                dialog.setView(linear);
+
+                AlertDialog dial = dialog.show();
+
+                dial.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialog) {
+
+                    }
+                });
+            }
+        });
 
         refreshkabag.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -327,9 +397,14 @@ public class FragmentEmployee extends Fragment {
                                 kar.setSection(false);
                                 kar.setJabatan("Karyawan");
                                 kar.setIskar(obj.getString("id"));
-                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
-
-                                Log.e(TAG, "image data" + kar.getImagelink() );
+                                if (!obj.getString("foto").equals("")) {
+                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
+                                else{
+                                    kar.setImagelink("");
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
 
                                 kar.setNama(obj.getString("nama"));
                                 kar.setDesc(obj.getString("jabatan"));
@@ -355,10 +430,14 @@ public class FragmentEmployee extends Fragment {
                                 kar.setSection(false);
                                 kar.setJabatan("Kepala Bagian");
                                 kar.setIskar(obj.getString("id"));
-                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
-
-                                Log.e(TAG, "image data" + kar.getImagelink() );
-
+                                if (!obj.getString("foto").equals("")) {
+                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
+                                else{
+                                    kar.setImagelink("");
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
                                 kar.setNama(obj.getString("nama"));
                                 kar.setDesc(obj.getString("jabatan"));
                                 itemskabag.add(kar);
@@ -577,9 +656,14 @@ public class FragmentEmployee extends Fragment {
                                 kar.setSection(false);
                                 kar.setJabatan("Karyawan");
                                 kar.setIskar(obj.getString("id"));
-                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
-
-                                Log.e(TAG, "image data" + kar.getImagelink() );
+                                if (!obj.getString("foto").equals("")) {
+                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
+                                else{
+                                    kar.setImagelink("");
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
 
                                 kar.setNama(obj.getString("nama"));
                                 kar.setDesc(obj.getString("jabatan"));
@@ -605,9 +689,14 @@ public class FragmentEmployee extends Fragment {
                                 kar.setSection(false);
                                 kar.setJabatan("Kepala Bagian");
                                 kar.setIskar(obj.getString("id"));
-                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
-
-                                Log.e(TAG, "image data" + kar.getImagelink() );
+                                if (!obj.getString("foto").equals("")) {
+                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
+                                else{
+                                    kar.setImagelink("");
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
 
                                 kar.setNama(obj.getString("nama"));
                                 kar.setDesc(obj.getString("jabatan"));
@@ -703,11 +792,12 @@ public class FragmentEmployee extends Fragment {
         JSONObject result = null ;
         JSONObject result1 = null ;
         ProgressDialog dialog ;
-        String urldata = generator.getabsensiurl;
+        String urldata = generator.getabsensidateurl;
         String passeddata = "" ;
 
         public retriveabsensi(Context context)
         {
+            nilaikehadiran=0;
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
             dialog = new ProgressDialog(context);
             this.username = generator.username;
@@ -731,13 +821,19 @@ public class FragmentEmployee extends Fragment {
                 this.dialog.setMessage("Loading Data...");
 
                 JSONObject jsonObject;
-                JSONObject jsonObject1;
 
                 try {
                     OkHttpClient client = new OkHttpClient();
 
+                    RequestBody body = new FormBody.Builder()
+                            .add("date",tanggal)
+                            .build();
+
+                    Log.e(TAG, tanggal);
+
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
+                            .post(body)
                             .url(urldata)
                             .build();
                     Response responses = null;
@@ -764,12 +860,13 @@ public class FragmentEmployee extends Fragment {
                     e.printStackTrace();
                     return null;
                 }
+                /*
                 try {
                     OkHttpClient client = new OkHttpClient();
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
-                            .url(generator.servertimeurl)
+                            .url(urldata)
                             .build();
                     Response responses = null;
 
@@ -794,7 +891,7 @@ public class FragmentEmployee extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                     return null;
-                }
+                }*/
             } catch (IOException e) {
                 this.dialog.dismiss();
                 Log.e("doInBackground: ", "IO Exception" + e.getMessage());
@@ -1068,8 +1165,6 @@ public class FragmentEmployee extends Fragment {
                         mAdapteraktifitas = new Adapterabsensiaktifitas(getActivity(), itemaktifitas,ItemAnimation.FADE_IN);
                         recyclerViewaktifitas.setAdapter(mAdapteraktifitas);
 
-
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
@@ -1104,11 +1199,12 @@ public class FragmentEmployee extends Fragment {
         SharedPreferences prefs ;
         JSONObject result = null ;
         ProgressDialog dialog ;
-        String urldata = generator.getabsensiurl;
+        String urldata = generator.getabsensidateurl;
         String passeddata = "" ;
 
         public retriveabsensirefresh(Context context)
         {
+            nilaikehadiran = 0;
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
             dialog = new ProgressDialog(context);
             this.username = generator.username;
@@ -1136,8 +1232,15 @@ public class FragmentEmployee extends Fragment {
                 try {
                     OkHttpClient client = new OkHttpClient();
 
+                    RequestBody body = new FormBody.Builder()
+                            .add("date",tanggal)
+                            .build();
+
+                    Log.e(TAG, tanggal);
+
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
+                            .post(body)
                             .url(urldata)
                             .build();
                     Response responses = null;
@@ -1249,9 +1352,14 @@ public class FragmentEmployee extends Fragment {
                                 }
 
                                 kar.setJabatan("Karyawan");
-                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
-
-                                Log.e(TAG, "image data" + kar.getImagelink() );
+                                if (!obj.getString("foto").equals("")) {
+                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
+                                else{
+                                    kar.setImagelink("");
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
 
                                 kar.setNama(obj.getString("nama"));
                                 kar.setDesc(obj.getString("jabatan"));
@@ -1301,9 +1409,14 @@ public class FragmentEmployee extends Fragment {
                                 }
 
                                 kar.setJabatan("Kepala Bagian");
-                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
-
-                                Log.e(TAG, "image data" + kar.getImagelink() );
+                                if (!obj.getString("foto").equals("")) {
+                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
+                                else{
+                                    kar.setImagelink("");
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
 
                                 kar.setNama(obj.getString("nama"));
                                 kar.setDesc(obj.getString("jabatan"));
@@ -1352,9 +1465,14 @@ public class FragmentEmployee extends Fragment {
                                     kar.setBreakout("-");
                                 }
                                 kar.setJabatan("HRD");
-                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
-
-                                Log.e(TAG, "image data" + kar.getImagelink() );
+                                if (!obj.getString("foto").equals("")) {
+                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
+                                else{
+                                    kar.setImagelink("");
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
 
                                 kar.setNama(obj.getString("nama"));
                                 kar.setDesc(obj.getString("jabatan"));
@@ -1388,9 +1506,14 @@ public class FragmentEmployee extends Fragment {
                                 }
 
                                 kar.setJabatan("Security");
-                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
-
-                                Log.e(TAG, "image data" + kar.getImagelink() );
+                                if (!obj.getString("foto").equals("")) {
+                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
+                                else{
+                                    kar.setImagelink("");
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
 
                                 kar.setNama(obj.getString("nama"));
                                 kar.setDesc(obj.getString("jabatan"));

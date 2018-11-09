@@ -46,6 +46,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -66,7 +67,6 @@ import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 public class mainmenu_owner extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     long selecteddate = 0L;
-
     MaterialSearchView searchView;
     Adaptermenujabatan listAdapter;
     private ProgressDialog loadingprogress=null;
@@ -177,7 +177,6 @@ public class mainmenu_owner extends AppCompatActivity
                     if(tempmenu!=null){
                         tempmenu.findItem(R.id.action_search).setVisible(true);
                         tempmenu.findItem(R.id.action_add).setVisible(true);
-                        tempmenu.findItem(R.id.action_calendar).setVisible(false);
 
                     }
                 }
@@ -185,7 +184,6 @@ public class mainmenu_owner extends AppCompatActivity
                     if(tempmenu!=null){
                         tempmenu.findItem(R.id.action_search).setVisible(true);
                         tempmenu.findItem(R.id.action_add).setVisible(false);
-                        tempmenu.findItem(R.id.action_calendar).setVisible(false);
 
                     }
                 }
@@ -193,8 +191,6 @@ public class mainmenu_owner extends AppCompatActivity
                     if(tempmenu!=null){
                         tempmenu.findItem(R.id.action_search).setVisible(false);
                         tempmenu.findItem(R.id.action_add).setVisible(false);
-                        tempmenu.findItem(R.id.action_calendar).setVisible(false);
-
                     }
                 }
             }
@@ -485,54 +481,6 @@ public class mainmenu_owner extends AppCompatActivity
         else if (id == R.id.action_search) {
             return true;
         }
-        else if (id == R.id.action_calendar) {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(mainmenu_owner.this).setPositiveButton("Select",null).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-
-            LayoutInflater inflate = LayoutInflater.from(mainmenu_owner.this);
-
-            View linear = inflate.inflate(R.layout.calenderview,null);
-
-            CalendarView calender = linear.findViewById(R.id.calenderviews);
-
-            Calendar cal = Calendar.getInstance();
-
-
-
-            calender.setOnDayClickListener(new OnDayClickListener() {
-                @Override
-                public void onDayClick(EventDay eventDay) {
-                    Calendar clickedDayCalendar = eventDay.getCalendar();
-                    selecteddate = clickedDayCalendar.getTimeInMillis();
-                }
-            });
-
-            if(selecteddate!=0L){
-                cal.setTimeInMillis(selecteddate);
-                try {
-                    calender.setDate(cal);
-                } catch (OutOfDateRangeException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            dialog.setView(linear);
-
-            AlertDialog dial = dialog.show();
-
-            dial.setOnShowListener(new DialogInterface.OnShowListener() {
-                @Override
-                public void onShow(DialogInterface dialog) {
-
-                }
-            });
-
-            return true;
-        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -634,7 +582,6 @@ public class mainmenu_owner extends AppCompatActivity
     public void closesearch(){
         searchView.closeSearch();
         tempmenu.findItem(R.id.action_search).setVisible(true);
-        tempmenu.findItem(R.id.action_calendar).setVisible(false);
 
 
     }
@@ -646,7 +593,6 @@ public class mainmenu_owner extends AppCompatActivity
     }
     public void hidesearch(){
         tempmenu.findItem(R.id.action_search).setVisible(false);
-        tempmenu.findItem(R.id.action_calendar).setVisible(true);
 
     }
     public void hideAll(){
