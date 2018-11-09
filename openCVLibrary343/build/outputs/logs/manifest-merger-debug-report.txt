@@ -23,15 +23,5 @@ INJECTED from D:\project\POI-templated-\openCVLibrary343\src\main\AndroidManifes
 		INJECTED from D:\project\POI-templated-\openCVLibrary343\src\main\AndroidManifest.xml
 uses-sdk
 ADDED from D:\project\POI-templated-\openCVLibrary343\src\main\AndroidManifest.xml:7:5-47
-INJECTED from D:\project\POI-templated-\openCVLibrary343\src\main\AndroidManifest.xml:7:5-47
-INJECTED from D:\project\POI-templated-\openCVLibrary343\src\main\AndroidManifest.xml:7:5-47
-INJECTED from D:\project\POI-templated-\openCVLibrary343\src\main\AndroidManifest.xml:7:5-47
-INJECTED from D:\project\POI-templated-\openCVLibrary343\src\main\AndroidManifest.xml:7:5-47
 	android:targetSdkVersion
 		ADDED from D:\project\POI-templated-\openCVLibrary343\src\main\AndroidManifest.xml:7:15-44
-		INJECTED from D:\project\POI-templated-\openCVLibrary343\src\main\AndroidManifest.xml
-		INJECTED from D:\project\POI-templated-\openCVLibrary343\src\main\AndroidManifest.xml
-	android:minSdkVersion
-		INJECTED from D:\project\POI-templated-\openCVLibrary343\src\main\AndroidManifest.xml
-		ADDED from D:\project\POI-templated-\openCVLibrary343\src\main\AndroidManifest.xml:7:5-47
-		INJECTED from D:\project\POI-templated-\openCVLibrary343\src\main\AndroidManifest.xml
