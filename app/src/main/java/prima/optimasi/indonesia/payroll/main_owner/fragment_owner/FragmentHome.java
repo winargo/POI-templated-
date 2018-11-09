@@ -141,14 +141,14 @@ public class FragmentHome extends Fragment {
 
             monthbarbottom.add(sdf.format(cal.getTime()));
 
-            if((Calendar.MONTH+"").length()>1){
+            //f((Calendar.MONTH+"").length()){
                 Log.e("month data",""+(cal.get(Calendar.MONTH)+1) );
                 monthnumber.add(""+(cal.get(Calendar.MONTH)+1));
-            }
+            /*}
             else {
                 Log.e("month data","0"+(cal.get(Calendar.MONTH)+1) );
                 monthnumber.add("0"+(cal.get(Calendar.MONTH)+1));
-            }
+            }*/
 
 
             yearnumber.add(cal.get(Calendar.YEAR));
@@ -189,7 +189,7 @@ public class FragmentHome extends Fragment {
 
             SimpleDateFormat fomat = new SimpleDateFormat("yyyy-MM-dd");
 
-            String dt1 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-0"+Calendar.DAY_OF_MONTH;
+            String dt1 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-0"+c.get(Calendar.DAY_OF_MONTH);
             String dt2 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-"+c.getActualMaximum(Calendar.DAY_OF_MONTH);
 
             retrivegajibychart gaji = new retrivegajibychart(getActivity(), dt1, dt2 ,mRealm,perios,i,monthbarbottom,count);
@@ -2074,6 +2074,8 @@ public class FragmentHome extends Fragment {
         {
             this.count = count;
 
+            Log.e("data 1 data 2",dt1+" "+dt2 );
+
             this.dt1 = dt1;
             this.dt2 = dt2;
 
@@ -2187,7 +2189,7 @@ public class FragmentHome extends Fragment {
 
                         //int gaji=1000000;
 
-
+                        Log.e("gaji",value+"" );
 
                         mRealm.beginTransaction();
                         datagajiobject score1 = new datagajiobject(value.floatValue(), (float) position, monthbarbottom.get(position));

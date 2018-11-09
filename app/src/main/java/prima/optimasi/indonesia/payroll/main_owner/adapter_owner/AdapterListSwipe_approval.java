@@ -773,8 +773,8 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                     }
                     else if (tipe.equals("Approval Pdm") ){
                         if(result.getString("status").equals("true")){
-                            for (int i=0;i<10;i++){
-                                passs.remove(position*9);
+                            for (int i=0;i<11;i++){
+                                passs.remove(position*10);
                             }
                             Snackbar.make(parent,"Sukses Approval",Snackbar.LENGTH_SHORT).show();
                             removeItem(position);
