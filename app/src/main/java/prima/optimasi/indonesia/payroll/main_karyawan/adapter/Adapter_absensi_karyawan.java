@@ -149,10 +149,7 @@ public class Adapter_absensi_karyawan extends RecyclerView.Adapter<RecyclerView.
             view.checkpos.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view1) {
-                    if(p.getCheckposss()){
-
-                    }
-                    else {
+                    if(!p.getCheckposss()){
                         p.setCheckposss(true);
                         String temp = "";
                         temp = view.checkpos.getText().toString();
@@ -174,18 +171,7 @@ public class Adapter_absensi_karyawan extends RecyclerView.Adapter<RecyclerView.
             view.checkin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view1) {
-                    if(p.getCheckins()){
-
-                        /*
-                        if(p.getCheckin().equals("null")){
-                            view.checkin.setText("-");
-                        }
-                        else{
-                            view.checkin.setText(p.getCheckin());
-                        }
-                        */
-                    }
-                    else {
+                    if(!p.getCheckins()){
                         p.setCheckins(true);
                         String temp = "";
                         temp = view.checkin.getText().toString();
@@ -207,17 +193,7 @@ public class Adapter_absensi_karyawan extends RecyclerView.Adapter<RecyclerView.
             view.checkout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view1) {
-                    if(p.getCheckouts()){
-
-                        /*
-                        if(p.getCheckout().equals("null")){
-                            view.checkout.setText("-");
-                        }
-                        else{
-                            view.checkout.setText(p.getCheckout());
-                        }*/
-                    }
-                    else {
+                    if(!p.getCheckouts()){
                         p.setCheckouts(true);
                         String temp = "";
                         temp = view.checkout.getText().toString();
@@ -239,17 +215,7 @@ public class Adapter_absensi_karyawan extends RecyclerView.Adapter<RecyclerView.
             view.breakin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view1) {
-                    if(p.getBreakins()){
-
-                        /*
-                        if(p.getBreakin().equals("null")){
-                            view.breakin.setText("-");
-                        }
-                        else{
-                            view.breakin.setText(p.getBreakin());
-                        }*/
-                    }
-                    else {
+                    if(!p.getBreakins()){
                         p.setBreakins(true);
                         String temp = "";
                         temp = view.breakin.getText().toString();
@@ -271,17 +237,7 @@ public class Adapter_absensi_karyawan extends RecyclerView.Adapter<RecyclerView.
             view.breakout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view1) {
-                    if(p.getBreakouts()){
-
-                        /*
-                        if(p.getBreakout().equals("null")){
-                            view.breakout.setText("-");
-                        }
-                        else{
-                            view.breakout.setText(p.getBreakout());
-                        }*/
-                    }
-                    else {
+                    if(!p.getBreakouts()){
                         p.setBreakouts(true);
                         String temp = "";
                         temp = view.breakout.getText().toString();

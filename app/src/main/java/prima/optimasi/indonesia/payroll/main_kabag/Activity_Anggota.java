@@ -67,7 +67,6 @@ public class Activity_Anggota extends AppCompatActivity {
 
     private Adapterviewkaryawan mAdapterkaryawan;
 
-    //MaterialSearchBar searchBar;
     MaterialSearchView searchView;
     BottomNavigationView bottomnac;
 
@@ -98,28 +97,6 @@ public class Activity_Anggota extends AppCompatActivity {
         recyclerViewkaryawan.setHasFixedSize(true);
         recyclerViewkaryawan.setNestedScrollingEnabled(false);
         searchView=findViewById(R.id.searchView);
-        /*
-        searchBar = (MaterialSearchBar) findViewById(R.id.searchBar);
-
-        searchBar.setHint("Search..");
-        searchBar.setSpeechMode(true);
-        searchBar.addTextChangeListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                //SEARCH FILTER
-                mAdapterkaryawan.getFilter().filter(charSequence);
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });*/
 
         /*
         EditText search=findViewById(R.id.search_text_karyawan);
