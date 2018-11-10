@@ -87,6 +87,8 @@ public class generator {
     public static String kabaggrupkaryawanurl="http://"+ generator.Server+":"+generator.port+"/groupkaryawan/list";
 
     public static String getabsensiurl="http://"+ generator.Server+":"+generator.port+"/absensi";
+    public static String getabsensidateurl="http://"+ generator.Server+":"+generator.port+"/absensi/date";
+
 
     public static String ownerurl="http://"+ generator.Server+"/poihrd/uploads/pengguna/";
 
