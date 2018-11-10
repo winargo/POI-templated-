@@ -111,11 +111,13 @@ public class AdapterListDaftarAbsensi extends RecyclerView.Adapter<RecyclerView.
             });
             if(banyak==items.size()){
                 //view.bt_expand.setVisibility(View.INVISIBLE);
-                view.no.setVisibility(View.INVISIBLE);
+                view.no.setText("");
+
             }
             else{
-                view.no.setText(""+banyak);
+                view.no.setText(String.valueOf(banyak));
             }
+
             /*
             view.bt_expand.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -56,8 +56,8 @@ public class generator {
     //public static String Server="153.92.4.147";
     //public static String Server="192.168.5.254";
     //public static String Server="153.92.4.147";
-    //public static String Server="192.168.5.254";
-    public static String Server="153.92.4.147";
+    public static String Server="192.168.5.254";
+    //public static String Server="153.92.4.147";
     //public static String Server="153.92.4.147";
 
     public static mainmenu_owner tempactivity = null;
@@ -157,6 +157,8 @@ public class generator {
 
     public static String totalgajiurl="http://"+ generator.Server+":"+generator.port+"/penggajian/totalgaji";
     public static String laporanpengajianurl="http://"+ generator.Server+":"+generator.port+"/penggajian/laporan";
+    public static String pengajiangajikaryawanurl="http://"+ generator.Server+":"+generator.port+"/penggajian/gajikaryawan";
+
 
     public static String pengajuancutikodeurl="http://"+ generator.Server+":"+generator.port+"/cuti/kode";
     public static String pengajuanizinkodeurl="http://"+ generator.Server+":"+generator.port+"/izin/kode";
