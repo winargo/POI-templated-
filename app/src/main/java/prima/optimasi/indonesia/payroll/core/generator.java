@@ -56,15 +56,15 @@ public class generator {
     //public static String Server="153.92.4.147";
     //public static String Server="192.168.5.254";
     //public static String Server="153.92.4.147";
-    public static String Server="192.168.5.254";
-    //public static String Server="153.92.4.147";
+    //public static String Server="192.168.5.254";
+    public static String Server="153.92.4.147";
     //public static String Server="153.92.4.147";
 
     public static mainmenu_owner tempactivity = null;
 
     public static Bitmap tempbitmap = null;
 
-    public static String port = "4000";
+    public static String port = "3000";
     public static String username = "";
     public static String password = "";
     public static String token = "";
