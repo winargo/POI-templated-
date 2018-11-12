@@ -49,14 +49,12 @@ import okhttp3.Response;
 import static android.content.Context.MODE_PRIVATE;
 
 public class generator {
+    //public static String Server="192.168.5.254";
+<<<<<<< HEAD
+=======
     //public static String Server="153.92.4.147";
     //public static String Server="192.168.5.254";
-    //public static String Server="153.92.4.147";
-    //public static String Server="192.168.5.254";
-    //public static String Server="153.92.4.147";
-    //public static String Server="192.168.5.254";
-    //public static String Server="153.92.4.147";
-    //public static String Server="192.168.5.254";
+>>>>>>> 3cd594fc43c9878d3821312d06b445261035f5dd
     public static String Server="153.92.4.147";
     //public static String Server="153.92.4.147";
 
@@ -64,7 +62,7 @@ public class generator {
 
     public static Bitmap tempbitmap = null;
 
-    public static String port = "4000";
+    public static String port = "3000";
     public static String username = "";
     public static String password = "";
     public static String token = "";
@@ -141,9 +139,12 @@ public class generator {
     public static String getapprovalgolonganyurl="http://"+ generator.Server+":"+generator.port+"/approvalGolongan/proses";
     public static String getapprovalpdlyurl="http://"+ generator.Server+":"+generator.port+"/approvalpdm/proses";
 
-    public static String getizinbulananyurl="http://"+ generator.Server+":"+generator.port+"/izin/bulan";
-    public static String getcutibulananyurl="http://"+ generator.Server+":"+generator.port+"/cuti/bulan";
-    public static String getsakitbulananyurl="http://"+ generator.Server+":"+generator.port+"/sakit/bulan";
+    public static String getizinhariyurl="http://"+ generator.Server+":"+generator.port+"/izin/hari";
+    public static String getcutihariyurl="http://"+ generator.Server+":"+generator.port+"/cuti/hari";
+    public static String getsakithariyurl="http://"+ generator.Server+":"+generator.port+"/sakit/hari";
+    public static String getdinashariyurl="http://"+ generator.Server+":"+generator.port+"/dinas/hari";
+    public static String absensitelatyurl="http://"+ generator.Server+":"+generator.port+"/absensi/telat";
+
     public static String getabsensikaryawanurl="http://"+ generator.Server+":"+generator.port+"/logabsensi";
 
     public static String jadwalurl="http://"+ generator.Server+":"+generator.port+"/karyawan/checkjadwal";
@@ -157,6 +158,8 @@ public class generator {
 
     public static String totalgajiurl="http://"+ generator.Server+":"+generator.port+"/penggajian/totalgaji";
     public static String laporanpengajianurl="http://"+ generator.Server+":"+generator.port+"/penggajian/laporan";
+    public static String pengajiangajikaryawanurl="http://"+ generator.Server+":"+generator.port+"/penggajian/gajikaryawan";
+
 
     public static String pengajuancutikodeurl="http://"+ generator.Server+":"+generator.port+"/cuti/kode";
     public static String pengajuanizinkodeurl="http://"+ generator.Server+":"+generator.port+"/izin/kode";

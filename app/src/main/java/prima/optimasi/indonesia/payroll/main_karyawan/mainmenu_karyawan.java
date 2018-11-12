@@ -1,18 +1,22 @@
 package prima.optimasi.indonesia.payroll.main_karyawan;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -30,14 +34,22 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.activity.MainMenu;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentCekGaji;
 import prima.optimasi.indonesia.payroll.universal.activity.ActivityLogAbsensi;
@@ -55,6 +67,12 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,7 +89,7 @@ import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 public class mainmenu_karyawan extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-
+    CoordinatorLayout parent_view;
     Adaptermenujabatan listAdapter;
     ExpandableListView expListView;
     ProgressDialog loadingdata;
@@ -86,7 +104,7 @@ public class mainmenu_karyawan extends AppCompatActivity
 
     ViewPager pager;
     TabLayout tabpager;
-
+    Double gaji;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         loadingdata = new ProgressDialog(this);
@@ -97,6 +115,7 @@ public class mainmenu_karyawan extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_karyawan);
 
+        parent_view=findViewById(R.id.parent_view);
         prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
 
         if(prefs.getInt("statustoken",0)==0){
@@ -169,10 +188,9 @@ public class mainmenu_karyawan extends AppCompatActivity
         cekgaji.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Intent intent=new Intent(mainmenu_kabag.this,FragmentPengumuman.class);
-                //startActivity(intent);
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.parent_view,new FragmentCekGaji()).addToBackStack("Home").commit();
+                gaji=0.0d;
+                retrivegaji gajis=new retrivegaji(mainmenu_karyawan.this);
+                gajis.execute();
             }
         });
         pengajuan.setOnClickListener(new View.OnClickListener() {
@@ -541,6 +559,176 @@ public class mainmenu_karyawan extends AppCompatActivity
         if(loadingdata.isShowing()){
             loadingdata.dismiss();
         }
+    }
+
+    private class retrivegaji extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        ProgressDialog dialog ;
+        String urldata = generator.pengajiangajikaryawanurl;
+        String passeddata = "" ;
+        Context ctx;
+        public retrivegaji(Context context)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+            this.ctx=context;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            super.onPreExecute();
+            //this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                //this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    RequestBody body = new FormBody.Builder()
+                            .add("id",prefs.getString("id",""))
+                            .build();
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .post(body)
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+
+                if (result != null) {
+
+                    Log.e(TAG, "Gaji" + result.toString());
+
+                    try {
+                        JSONArray pengsarray = result.getJSONArray("data");
+                        //JSONObject obj = result.getJSONObject("data");
+                        //int gaji=1000000;
+                        for(int i=0;i<pengsarray.length();i++){
+                            JSONObject obj = pengsarray.getJSONObject(i);
+                            gaji+=Double.parseDouble(obj.getString("gaji"));
+                        }
+                        showgaji("Gaji",gaji);
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
+    public void showgaji(String teks, Double Gaji){
+        DecimalFormat formatter = new DecimalFormat("###,###,###.00");
+
+        final Dialog gajisendiri = new Dialog(mainmenu_karyawan.this);
+        gajisendiri.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        gajisendiri.setContentView(R.layout.dialog_gajisendiri);
+        gajisendiri.setCancelable(true);
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(gajisendiri.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        TextView gajiteks=gajisendiri.findViewById(R.id.gajiteks);
+        gajiteks.setText(teks);
+        ((ImageButton) gajisendiri.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gajisendiri.dismiss();
+            }
+        });
+        ((Button) gajisendiri.findViewById(R.id.bt_save)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                gajisendiri.dismiss();
+            }
+        });
+
+        final TextView gaji_sendiri = (TextView) gajisendiri.findViewById(R.id.gajisendiri);
+        gaji_sendiri.setText("RP "+formatter.format(Gaji));
+        gajisendiri.show();
+        gajisendiri.getWindow().setAttributes(lp);
     }
 
     /*

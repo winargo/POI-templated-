@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -53,8 +54,14 @@ import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
 
 public class FragmentHome extends Fragment {
 
+<<<<<<< HEAD
     LinearLayout lineartotalgaji;
     TextView totalizin, totalsakit, totalcuti, totalgajibersih;
+=======
+    SwipeRefreshLayout refreshhome;
+    LinearLayout lineartotalgaji, lineartotalgajipotongan;
+    TextView totalizin, totalsakit, totalcuti, totalgajibersih, totalgajipotongan;
+>>>>>>> fbf77071c6afc3af6d46dc495e84214efb9297be
     ImageButton expand, expand2, expand3, expandhabis;
     LinearLayout lyt_parent, lyt_parent2, lyt_parent3, lyt_parenthabis;
     LinearLayout lyt_expand, lyt_expand2, lyt_expand3, lyt_expandhabis;
@@ -75,6 +82,16 @@ public class FragmentHome extends Fragment {
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_home, container, false);
+        refreshhome = rootView.findViewById(R.id.swipehome);
+        refreshhome.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                retrivekontrakkerjaref ref = new retrivekontrakkerjaref(getActivity());
+                ref.execute();
+                refreshhome.setRefreshing(false);
+            }
+        });
+
         recyclerView=rootView.findViewById(R.id.recyclerView);
         recyclerView2=rootView.findViewById(R.id.recyclerView2bulan);
         recyclerView3=rootView.findViewById(R.id.recyclerView3bulan);
@@ -469,6 +486,192 @@ public class FragmentHome extends Fragment {
         }
     }
 
+    private class retrivekontrakkerjaref extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        ProgressDialog dialog ;
+        String urldata = generator.kontrakkerja1bulanurl;
+        String passeddata = "" ;
+
+        public retrivekontrakkerjaref(Context context)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            super.onPreExecute();
+            //this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                //this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+
+                if (result != null) {
+                    Log.e(TAG, "kerja 1 bulan" + result.toString());
+                    try {
+                        if(result.getString("status").equals("true")) {
+                            items = new ArrayList<>();
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                            JSONArray pengsarray = result.getJSONArray("data");
+                            Log.e(TAG, "onPostExecute: " + pengsarray);
+                            String status = "";
+                            //String tempcall="";
+                            int sisa = 0;
+                            boolean first = true;
+                            banyak1bulan=0;
+                            if (pengsarray.length() == 0) {
+                                sisakontrakkerja.setText("(0 orang)");
+                                //Snackbar.make(parent_view,"Tidak ada karyawan",Snackbar.LENGTH_SHORT).show();
+                            }
+                            for (int i = 0; i < pengsarray.length(); i++) {
+                                status = pengsarray.getString(i);
+
+                                if (!status.equals("null")) {
+
+
+                                    JSONObject obj = pengsarray.getJSONObject(i);
+                                    sisa = Integer.parseInt(obj.getString("sisa"));
+
+                                    banyak1bulan++;
+                                    if (i + 1 == pengsarray.length()) {
+                                        sisakontrakkerja.setText("(" + banyak1bulan + " orang)");
+
+                                    }
+                                    kontrakkerja = new listkaryawankontrakkerja();
+                                    kontrakkerja.setKontrakkerja("Sisa kontrak kerja " + sisa + " hari");
+                                    kontrakkerja.setSection(true);
+                                    //kontrakkerja.setSisa("("+banyak+" orang)");
+                                    //kar.setIskar(obj.getString("id"));
+                                    kontrakkerja.setImagelink(generator.profileurl + obj.getString("foto"));
+
+                                    Log.e(TAG, "image data" + kontrakkerja.getImagelink());
+
+                                    //kontrakkerja.setIskar(obj.getString("kode_karyawan"));
+                                    kontrakkerja.setNama(obj.getString("nama"));
+                                    items.add(kontrakkerja);
+
+
+                                }
+
+
+                            }
+                            if(adapter!=null){
+                                adapter.notifyDataSetChanged();
+                            }
+                            refreshhome.setRefreshing(false);
+
+                        }
+
+                        retrivekontrakkerja2bulanref kar = new retrivekontrakkerja2bulanref(getActivity());
+                        kar.execute();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+
+            /*
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }*/
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
     private class retrivekontrakkerja2bulan extends AsyncTask<Void, Integer, String>
     {
         String response = "";
@@ -657,6 +860,192 @@ public class FragmentHome extends Fragment {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
+
+    private class retrivekontrakkerja2bulanref extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        ProgressDialog dialog ;
+        String urldata = generator.kontrakkerja2bulanurl;
+        String passeddata = "" ;
+
+        public retrivekontrakkerja2bulanref(Context context)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            super.onPreExecute();
+            //this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            //Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                //this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            //Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+
+                if (result != null) {
+                    Log.e(TAG, "kerja 2 bulan" + result.toString());
+                    try {
+                        if(result.getString("status").equals("true")) {
+                            items = new ArrayList<>();
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                            JSONArray pengsarray = result.getJSONArray("data");
+                            //Log.e(TAG, "onPostExecute: " + pengsarray);
+                            String status = "";
+                            //String tempcall="";
+                            int sisa = 0;
+                            boolean first = true;
+                            banyak2bulan=0;
+                            if (pengsarray.length() == 0) {
+                                sisakontrakkerja2.setText("(0 orang)");
+                                //Snackbar.make(parent_view,"Tidak ada karyawan",Snackbar.LENGTH_SHORT).show();
+                            }
+                            for (int i = 0; i < pengsarray.length(); i++) {
+                                status = pengsarray.getString(i);
+
+                                if (!status.equals("null")) {
+
+
+                                    JSONObject obj = pengsarray.getJSONObject(i);
+                                    sisa = Integer.parseInt(obj.getString("sisa"));
+
+                                    if (sisa > 30 && sisa <= 60) {
+                                        banyak2bulan++;
+                                        kontrakkerja = new listkaryawankontrakkerja();
+                                        kontrakkerja.setSection(true);
+                                        kontrakkerja.setKontrakkerja("Sisa kontrak Kerja " + sisa + " hari");
+                                        //kar.setIskar(obj.getString("id"));
+                                        kontrakkerja.setImagelink(generator.profileurl + obj.getString("foto"));
+
+                                        Log.e(TAG, "image data" + kontrakkerja.getImagelink());
+
+                                        //kontrakkerja.setIskar(obj.getString("kode_karyawan"));
+                                        kontrakkerja.setNama(obj.getString("nama"));
+                                        //kontrakkerja.setJabatan(obj.getString("jabatan"));
+                                        items.add(kontrakkerja);
+                                    }
+                                    if (i + 1 == pengsarray.length()) {
+                                        sisakontrakkerja2.setText("(" + banyak2bulan + " orang)");
+
+                                    }
+
+                                }
+
+
+                            }
+                            if(adapter!=null){
+                                adapter.notifyDataSetChanged();
+                            }
+                            refreshhome.setRefreshing(false);
+                        }
+                        retrivekontrakkerja3bulanref kar = new retrivekontrakkerja3bulanref(getActivity());
+                        kar.execute();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+
+            /*
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }*/
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
     private class retrivekontrakkerja3bulan extends AsyncTask<Void, Integer, String>
     {
         String response = "";
@@ -842,6 +1231,187 @@ public class FragmentHome extends Fragment {
         }
     }
 
+    private class retrivekontrakkerja3bulanref extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        ProgressDialog dialog ;
+        String urldata = generator.kontrakkerja3bulanurl;
+        String passeddata = "" ;
+
+        public retrivekontrakkerja3bulanref(Context context)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            super.onPreExecute();
+            //this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                //this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            //Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+                if (result != null) {
+                    Log.e(TAG, "kerja 3 bulan" + result.toString());
+                    try {
+                        if(result.getString("status").equals("true")) {
+                            items = new ArrayList<>();
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                            JSONArray pengsarray = result.getJSONArray("data");
+                            //Log.e(TAG, "onPostExecute: " + pengsarray);
+                            String status = "";
+                            //String tempcall="";
+                            int sisa = 0;
+                            boolean first = true;
+                            banyak3bulan=0;
+                            if (pengsarray.length() == 0) {
+                                sisakontrakkerja3.setText("(0 orang)");
+                                //Snackbar.make(parent_view,"Tidak ada karyawan",Snackbar.LENGTH_SHORT).show();
+                            }
+                            for (int i = 0; i < pengsarray.length(); i++) {
+                                status = pengsarray.getString(i);
+
+                                if (!status.equals("null")) {
+
+
+                                    JSONObject obj = pengsarray.getJSONObject(i);
+                                    sisa = Integer.parseInt(obj.getString("sisa"));
+
+                                    if (sisa > 60 && sisa <= 90) {
+                                        banyak3bulan++;
+                                        kontrakkerja = new listkaryawankontrakkerja();
+                                        kontrakkerja.setSection(true);
+                                        kontrakkerja.setKontrakkerja("Sisa kontrak Kerja " + sisa + " hari");
+                                        //kar.setIskar(obj.getString("id"));
+                                        kontrakkerja.setImagelink(generator.profileurl + obj.getString("foto"));
+
+                                        Log.e(TAG, "image data" + kontrakkerja.getImagelink());
+
+                                        //kontrakkerja.setIskar(obj.getString("kode_karyawan"));
+                                        kontrakkerja.setNama(obj.getString("nama"));
+                                        //kontrakkerja.setJabatan(obj.getString("jabatan"));
+                                        items.add(kontrakkerja);
+                                    }
+                                    if (i + 1 == pengsarray.length()) {
+                                        sisakontrakkerja3.setText("(" + banyak3bulan + " orang)");
+
+                                    }
+                                }
+                            }
+                            if(adapter!=null){
+                                adapter.notifyDataSetChanged();
+                            }
+                            refreshhome.setRefreshing(false);
+                        }
+                        retrivekontrakkerjahabisref kar = new retrivekontrakkerjahabisref(getActivity());
+                        kar.execute();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+
+            /*
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }*/
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
     private class retrivekontrakkerjahabis extends AsyncTask<Void, Integer, String>
     {
         String response = "";
@@ -948,7 +1518,7 @@ public class FragmentHome extends Fragment {
                             items = new ArrayList<>();
                             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                             JSONArray pengsarray = result.getJSONArray("data");
-                            Log.e(TAG, "onPostExecute: " + pengsarray);
+                            Log.e(TAG, "kontrak kerja habis: " + pengsarray);
                             String status = "";
                             //String tempcall="";
                             int sisa = 0;
@@ -1026,6 +1596,189 @@ public class FragmentHome extends Fragment {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
+
+    private class retrivekontrakkerjahabisref extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        ProgressDialog dialog ;
+        String urldata = generator.kontrakkerjahabisurl;
+        String passeddata = "" ;
+
+        public retrivekontrakkerjahabisref(Context context)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            super.onPreExecute();
+            //this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                //this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+
+                if (result != null) {
+                    Log.e(TAG, "kerja habis" + result.toString());
+                    try {
+                        if(result.getString("status").equals("true")) {
+                            items = new ArrayList<>();
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                            JSONArray pengsarray = result.getJSONArray("data");
+                            Log.e(TAG, "onPostExecute: " + pengsarray);
+                            String status = "";
+                            //String tempcall="";
+                            int sisa = 0;
+                            boolean first = true;
+                            banyakhabis=0;
+                            if (pengsarray.length() == 0) {
+                                sisakontrakkerjahabis.setText("(0 orang)");
+                                //Snackbar.make(parent_view,"Tidak ada karyawan",Snackbar.LENGTH_SHORT).show();
+                            }
+                            for (int i = 0; i < pengsarray.length(); i++) {
+                                status = pengsarray.getString(i);
+
+                                if (!status.equals("null")) {
+
+
+                                    JSONObject obj = pengsarray.getJSONObject(i);
+                                    sisa = Integer.parseInt(obj.getString("sisa"));
+
+                                    if (sisa <= 0) {
+                                        banyakhabis++;
+                                        kontrakkerja = new listkaryawankontrakkerja();
+                                        kontrakkerja.setSection(true);
+                                        kontrakkerja.setKontrakkerja("Kontrak Kerja sudah habis");
+                                        //kar.setIskar(obj.getString("id"));
+                                        kontrakkerja.setImagelink(generator.profileurl + obj.getString("foto"));
+
+                                        Log.e(TAG, "image data" + kontrakkerja.getImagelink());
+
+                                        //kontrakkerja.setIskar(obj.getString("kode_karyawan"));
+                                        kontrakkerja.setNama(obj.getString("nama"));
+                                        //kontrakkerja.setJabatan(obj.getString("jabatan"));
+                                        items.add(kontrakkerja);
+                                    }
+                                    if (i + 1 == pengsarray.length()) {
+                                        sisakontrakkerjahabis.setText("(" + banyakhabis + " orang)");
+
+                                    }
+                                }
+                            }
+                            if(adapter!=null){
+                                adapter.notifyDataSetChanged();
+                            }
+                            refreshhome.setRefreshing(false);
+                        }
+                        retrivegetjabatanref kar = new retrivegetjabatanref(getActivity());
+                        kar.execute();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+
+            /*
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }*/
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
     private class retrivegetjabatan extends AsyncTask<Void, Integer, String>
     {
         String response = "";
@@ -1141,6 +1894,147 @@ public class FragmentHome extends Fragment {
                             recyclerViewdaftar.setLayoutManager(new LinearLayoutManager(getActivity()));
                             recyclerViewdaftar.setHasFixedSize(true);
                             recyclerViewdaftar.setAdapter(adapterabsensi);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+
+            /*
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }*/
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
+    private class retrivegetjabatanref extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        ProgressDialog dialog ;
+        String urldata = generator.jabatanurl;
+        String passeddata = "" ;
+
+        public retrivegetjabatanref(Context context)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            super.onPreExecute();
+            //this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                //this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+
+                if (result != null) {
+                    try {
+                        if (result.getString("status").equals("true")) {
+                            Log.e(TAG, "data jabatan" + result.toString());
+                            list_jabatan = new ArrayList<>();
+                            JSONArray pengsarray = result.getJSONArray("data");
+                            for (int i = 0; i < pengsarray.length(); i++) {
+                                JSONObject obj = pengsarray.getJSONObject(i);
+                                list_jabatan.add(obj.getString("jabatan"));
+                                retrivedaftarabsensiref kar = new retrivedaftarabsensiref(getActivity(), list_jabatan.get(i), i);
+                                kar.execute();
+                            }
+
+                            daftaritems = new ArrayList<>();
+
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -1335,6 +2229,177 @@ public class FragmentHome extends Fragment {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
+
+    private class retrivedaftarabsensiref extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        ProgressDialog dialog ;
+        String urldata = generator.daftarabsensiurl;
+        String passeddata = "" ;
+        String jabatan="";
+        int panjang;
+
+        public retrivedaftarabsensiref(Context context, String jabatan, int panjang)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+            this.jabatan=jabatan;
+            this.panjang=panjang;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            super.onPreExecute();
+            //this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                //this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    RequestBody body = new FormBody.Builder()
+                            .add("jabatan",jabatan)
+                            .build();
+
+                    Log.e(TAG, jabatan);
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .post(body)
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+                if (result != null) {
+                    try {
+
+                        Log.e(TAG, "daftar absensi" + result.toString());
+
+                        List<String> listjabatan = new ArrayList<>();
+                        List<String> listbanyak = new ArrayList<>();
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        JSONArray pengsarray = result.getJSONArray("data");
+                        if(!result.getString("data1").equals("0")){
+                            daftarabsensi=new listkaryawandaftarabsensi();
+                            daftarabsensi.setJabatan(jabatan);
+                            daftarabsensi.setBanyak(""+pengsarray.length());
+                            banyakkaryawan+=pengsarray.length();
+                            daftarabsensi.setTotal(result.getString("data1"));
+                            totalkaryawan+=Integer.parseInt(result.getString("data1"));
+                            daftaritems.add(daftarabsensi);
+                        }
+
+                        if(panjang+1==list_jabatan.size()){
+                            daftarabsensi=new listkaryawandaftarabsensi();
+                            daftarabsensi.setJabatan("Total Karyawan");
+                            daftarabsensi.setBanyak(""+banyakkaryawan);
+                            daftarabsensi.setTotal(""+totalkaryawan);
+                            daftaritems.add(daftarabsensi);
+
+                            Log.e("MASUK ADAPTER", "Berhasil"+daftaritems.size());
+                            if(adapterabsensi!=null){
+                                adapterabsensi.notifyDataSetChanged();
+                            }
+                            refreshhome.setRefreshing(false);
+
+                            retrivegetizin kar = new retrivegetizin(getActivity());
+                            kar.execute();
+                            /*
+                            retrivegetizin kar = new retrivegetizin(getActivity());
+                            kar.execute();*/
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+
+            /*
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }*/
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
     private class retrivegetizin extends AsyncTask<Void, Integer, String>
     {
         String response = "";
@@ -1344,7 +2409,7 @@ public class FragmentHome extends Fragment {
         SharedPreferences prefs ;
         JSONObject result = null ;
         ProgressDialog dialog ;
-        String urldata = generator.getizinbulananyurl;
+        String urldata = generator.getizinhariyurl;
         String passeddata = "" ;
 
         public retrivegetizin(Context context)
@@ -1480,7 +2545,7 @@ public class FragmentHome extends Fragment {
         SharedPreferences prefs ;
         JSONObject result = null ;
         ProgressDialog dialog ;
-        String urldata = generator.getsakitbulananyurl;
+        String urldata = generator.getsakithariyurl;
         String passeddata = "" ;
 
         public retrivegetsakit(Context context)
@@ -1616,7 +2681,7 @@ public class FragmentHome extends Fragment {
         SharedPreferences prefs ;
         JSONObject result = null ;
         ProgressDialog dialog ;
-        String urldata = generator.getcutibulananyurl;
+        String urldata = generator.getcutihariyurl;
         String passeddata = "" ;
 
         public retrivegetcuti(Context context)

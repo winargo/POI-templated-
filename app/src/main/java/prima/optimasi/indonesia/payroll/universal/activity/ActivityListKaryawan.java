@@ -93,6 +93,14 @@ public class ActivityListKaryawan extends AppCompatActivity {
             retriveketerangan kar=new retriveketerangan(this,"cuti");
             kar.execute();
         }
+        else if(getIntent().getStringExtra("keterangan").equals("dinas")){
+            retriveketerangan kar=new retriveketerangan(this,"dinas");
+            kar.execute();
+        }
+        else if(getIntent().getStringExtra("keterangan").equals("telat")){
+            retriveketerangan kar=new retriveketerangan(this,"telat");
+            kar.execute();
+        }
         else{
             retrivelistkaryawan kar=new retrivelistkaryawan(this,getIntent().getStringExtra("keterangan"));
             kar.execute();
@@ -125,13 +133,19 @@ public class ActivityListKaryawan extends AppCompatActivity {
             this.error = error ;
             this.keterangan=keterangan;
             if(keterangan.equals("izin")){
-                urldata=generator.getizinbulananyurl;
+                urldata=generator.getizinhariyurl;
             }
             else if(keterangan.equals("sakit")){
-                urldata=generator.getsakitbulananyurl;
+                urldata=generator.getsakithariyurl;
+            }
+            else if(keterangan.equals("cuti")){
+                urldata=generator.getcutihariyurl;
+            }
+            else if(keterangan.equals("dinas")){
+                urldata=generator.getdinashariyurl;
             }
             else{
-                urldata=generator.getcutibulananyurl;
+                urldata=generator.absensitelatyurl;
             }
         }
 
@@ -221,7 +235,7 @@ public class ActivityListKaryawan extends AppCompatActivity {
                         items=new ArrayList<>();
                         JSONArray pengsarray = result.getJSONArray("rows");
                         if(pengsarray.length()==0){
-                            tanggal.setText("Tidak ada karyawan yang "+keterangan+" bulan ini");
+                            tanggal.setText("Tidak ada karyawan yang "+keterangan+" hari ini");
                         }
                         else{
                             for (int i=0;i<pengsarray.length();i++){
