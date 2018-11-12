@@ -53,8 +53,8 @@ import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
 
 public class FragmentHome extends Fragment {
 
-    LinearLayout lineartotalgaji, lineartotalgajipotongan;
-    TextView totalizin, totalsakit, totalcuti, totalgajibersih, totalgajipotongan;
+    LinearLayout lineartotalgaji;
+    TextView totalizin, totalsakit, totalcuti, totalgajibersih;
     ImageButton expand, expand2, expand3, expandhabis;
     LinearLayout lyt_parent, lyt_parent2, lyt_parent3, lyt_parenthabis;
     LinearLayout lyt_expand, lyt_expand2, lyt_expand3, lyt_expandhabis;
@@ -86,15 +86,11 @@ public class FragmentHome extends Fragment {
         totalcuti=rootView.findViewById(R.id.totalcuti);
 
         lineartotalgaji=rootView.findViewById(R.id.lineartotalgaji);
-        lineartotalgajipotongan=rootView.findViewById(R.id.lineartotalgajipotongan);
 
         lineartotalgaji.setVisibility(View.GONE);
-        lineartotalgajipotongan.setVisibility(View.GONE);
-
         LinearLayout chartsalary=rootView.findViewById(R.id.chartsalary);
         chartsalary.setVisibility(View.GONE);
         totalgajibersih=rootView.findViewById(R.id.totalgajibersih);
-        totalgajipotongan=rootView.findViewById(R.id.totalgajipotongan);
 
         parent_view=rootView.findViewById(R.id.parent_view);
         lyt_parent=rootView.findViewById(R.id.lyt_parent);

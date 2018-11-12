@@ -43,6 +43,7 @@ import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentPengajuan;
 import prima.optimasi.indonesia.payroll.main_kabag.cekjadwal;
+import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentCekGaji;
 import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
 import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
 import qrcodescanner.QrCodeActivity;
@@ -95,10 +96,9 @@ public class mainmenu_hrd extends AppCompatActivity
 
     SharedPreferences prefs;
 
-    String[] tabTitles = new String []{" Home", "Pengumuman","Karyawan", "Profil","Cek Gaji","Pengajuan"};
+    String[] tabTitles = new String []{" Home", "Pengumuman","Karyawan","Cek Gaji","Pengajuan"};
     int[] iconstyle = new int[]{R.drawable.baseline_home_black_18dp,R.drawable.baseline_announcement_black_24dp,R.drawable.ic_baseline_people_24px,
             R.drawable.baseline_account_circle_black_24dp,R.drawable.baseline_monetization_on_black_24dp,R.drawable.baseline_assignment_black_24dp};
-
 
     ViewPager pager;
     TabLayout tabpager ;
@@ -176,6 +176,7 @@ public class mainmenu_hrd extends AppCompatActivity
         pager.setAdapter(adapter);
 
         tabpager.setupWithViewPager(pager);
+        pager.setOffscreenPageLimit(4);
 
         tabpager.setTabMode(TabLayout.MODE_SCROLLABLE);
 
@@ -496,7 +497,7 @@ public class mainmenu_hrd extends AppCompatActivity
     public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
 
         // tab titles
-        private String[] tabTitles = new String[]{"Home", "Pengumuman","Karyawan", "Profil","Cek Gaji","Pengajuan"};
+        private String[] tabTitles = new String[]{"Home", "Pengumuman","Karyawan", "Cek Gaji","Pengajuan"};
 
         public ExamplePagerAdapter(FragmentManager fm) {
             super(fm);
@@ -518,10 +519,8 @@ public class mainmenu_hrd extends AppCompatActivity
                 case 2:
                     return new FragmentEmployee();
                 case 3:
-                    return new FragmentProfil();
+                    return new FragmentCekGaji();
                 case 4:
-                    return new FragmentHome();
-                case 5:
                     return new FragmentPengajuan();
                 default:
                     return null;

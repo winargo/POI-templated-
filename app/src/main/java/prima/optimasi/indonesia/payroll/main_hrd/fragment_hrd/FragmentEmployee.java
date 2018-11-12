@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.applandeo.materialcalendarview.CalendarView;
@@ -71,7 +72,7 @@ public class FragmentEmployee extends Fragment {
 
     BottomNavigationView bottomnac;
 
-    TextView selectdate;
+    ImageView selectdate;
 
     TextView totalkabag,totalkaryawan,totalhadir;
 

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,6 +27,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -84,7 +86,7 @@ public class FragmentEmployee extends Fragment{
     //ProgressDialog progressDialog;
     BottomNavigationView bottomnac;
     String tanggal="";
-    TextView selectdate;
+    ImageView selectdate;
 
     TextView totalkabag,totalkaryawan,totalhadir;
 
@@ -145,7 +147,7 @@ public class FragmentEmployee extends Fragment{
                 AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity()).setPositiveButton("Select", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        retriveabsensi absensi = new retriveabsensi(getActivity());
+                        retriveabsensispecified absensi = new retriveabsensispecified(getActivity(),tanggal);
                         absensi.execute();
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -161,11 +163,18 @@ public class FragmentEmployee extends Fragment{
 
                 CalendarView calender = linear.findViewById(R.id.calenderviews);
 
+                calender.setHeaderColor(getActivity().getResources().getColor(R.color.red_500));
+
                 Calendar cal = Calendar.getInstance();
 
                 calender.setOnDayClickListener(new OnDayClickListener() {
                     @Override
                     public void onDayClick(EventDay eventDay) {
+
+                        if(mAdapteraktifitas!=null){
+                            itemaktifitas.clear();
+                            mAdapteraktifitas.notifyDataSetChanged();
+                        }
                         Calendar clickedDayCalendar = eventDay.getCalendar();
                         selecteddate = clickedDayCalendar.getTimeInMillis();
                         SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/YYYY");
@@ -1619,34 +1628,6 @@ public class FragmentEmployee extends Fragment{
         }
     }
 
-
-    /*
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        // What i have added is this
-        setHasOptionsMenu(true);
-    }*/
-
-
-    /*
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
-        menu.clear();
-        inflater.inflate(R.menu.activity_mainmenu, menu);
-        MenuItem item=menu.findItem(R.id.action_search);
-        item.setVisible(true);
-        MaterialSearchView searchView=new MaterialSearchView(((mainmenu_owner)getActivity()).getSupportActionBar().getThemedContext());
-        searchView.setMenuItem(item);
-
-
-        MenuItemCompat.setShowAsAction(item,MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW|MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
-        MenuItemCompat.setActionView(item,searchView);
-        Log.e("Text", "Berhasil");
-
-        searchView.setOnQueryTextListener(this);
-    }*/
-
     private class retriveabsensispecified extends AsyncTask<Void, Integer, String>
     {
         String response = "";
@@ -1656,11 +1637,12 @@ public class FragmentEmployee extends Fragment{
         SharedPreferences prefs ;
         JSONObject result = null ;
         ProgressDialog dialog ;
-        String urldata = generator.getabsensiurl;
+        String urldata = generator.getabsensidateurl;
         String passeddata = "" ;
 
-        public retriveabsensispecified(Context context)
+        public retriveabsensispecified(Context context,String dates)
         {
+            passeddata = dates;
             nilaikehadiran = 0;
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
             dialog = new ProgressDialog(context);
@@ -1689,8 +1671,15 @@ public class FragmentEmployee extends Fragment{
                 try {
                     OkHttpClient client = new OkHttpClient();
 
+                    RequestBody body = new FormBody.Builder()
+                            .add("date",passeddata)
+                            .build();
+
+                    Log.e(TAG, tanggal);
+
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
+                            .post(body)
                             .url(urldata)
                             .build();
                     Response responses = null;
@@ -1749,7 +1738,10 @@ public class FragmentEmployee extends Fragment{
                 Log.e(TAG, "data absensi karyawan" + result.toString());
                 if (result != null) {
                     try {
-                        itemaktifitas = new ArrayList<>();
+                        itemaktifitas.clear();
+
+                        mAdapteraktifitas.notifyDataSetChanged();
+
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         JSONArray pengsarray = result.getJSONArray("rows");
 
@@ -1968,7 +1960,7 @@ public class FragmentEmployee extends Fragment{
                         if(mAdapteraktifitas!=null){
                             mAdapteraktifitas.notifyDataSetChanged();
                         }
-                        refreshaktifitas.setRefreshing(false);
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());

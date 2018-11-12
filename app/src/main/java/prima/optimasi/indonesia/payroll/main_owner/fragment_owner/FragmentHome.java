@@ -76,7 +76,7 @@ import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
 public class FragmentHome extends Fragment {
 
     View lyt_totalizin, lyt_totalsakit,lyt_totalcuti;
-    TextView totalizin, totalsakit, totalcuti, totalgajibersih, totalgajipotongan;
+    TextView totalizin, totalsakit, totalcuti, totalgajibersih;
     ImageButton expand, expand2, expand3, expandhabis;
     LinearLayout lyt_parent, lyt_parent2, lyt_parent3, lyt_parenthabis;
     LinearLayout lyt_expand, lyt_expand2, lyt_expand3, lyt_expandhabis;
@@ -214,7 +214,6 @@ public class FragmentHome extends Fragment {
         lyt_totalcuti=rootView.findViewById(R.id.lyt_totalcuti);
 
         totalgajibersih=rootView.findViewById(R.id.totalgajibersih);
-        totalgajipotongan=rootView.findViewById(R.id.totalgajipotongan);
 
         totalgajibersih.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1592,7 +1591,7 @@ public class FragmentHome extends Fragment {
                         }*/
 
                         totalgajibersih.setText("RP "+formatter.format(Double.parseDouble(obj.getString("gajiBersih"))));
-                        totalgajipotongan.setText("RP "+formatter.format(Double.parseDouble(obj.getString("totalPotongan"))));
+                        //totalgajipotongan.setText("RP "+formatter.format(Double.parseDouble(obj.getString("totalPotongan"))));
                         retrivegetizin kar = new retrivegetizin(getActivity());
                         kar.execute();
 

@@ -52,18 +52,9 @@ public class ActivityAbsensi extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
-        Log.e("Jabatan : ", getIntent().getStringExtra("jabatan"));
-
-        if(getIntent().getStringExtra("jabatan").equals("kabag")) {
-            setContentView(R.layout.activity_absensi);
-            initComponent1();
-        }
-        else {
-            setContentView(R.layout.activity_absensi_security);
-            initComponent2();
-        }
-        //recyclerView = findViewById(R.id.recyclerView);
+        prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
+        setContentView(R.layout.activity_absensi);
+        initComponent1();
         parent_view= findViewById(R.id.parent_view);
         initToolbar();
     }

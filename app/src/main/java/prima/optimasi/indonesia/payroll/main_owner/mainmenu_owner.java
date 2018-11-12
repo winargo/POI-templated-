@@ -164,6 +164,7 @@ public class mainmenu_owner extends AppCompatActivity
         ExamplePagerAdapter adapter = new ExamplePagerAdapter(getSupportFragmentManager());
 
         pager.setAdapter(adapter);
+        pager.setOffscreenPageLimit(4);
 
         tabpager.setupWithViewPager(pager);
 
@@ -352,7 +353,13 @@ public class mainmenu_owner extends AppCompatActivity
             searchView.closeSearch();
         }
         else {
-            super.onBackPressed();
+            if(pager.getCurrentItem()!=0){
+                pager.setCurrentItem(pager.getCurrentItem()-1);
+            }
+            else{
+                super.onBackPressed();
+            }
+
         }
     }
 
