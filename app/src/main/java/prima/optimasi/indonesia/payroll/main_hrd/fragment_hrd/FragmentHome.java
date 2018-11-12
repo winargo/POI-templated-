@@ -54,14 +54,10 @@ import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
 
 public class FragmentHome extends Fragment {
 
-<<<<<<< HEAD
     LinearLayout lineartotalgaji;
     TextView totalizin, totalsakit, totalcuti, totalgajibersih;
-=======
+
     SwipeRefreshLayout refreshhome;
-    LinearLayout lineartotalgaji, lineartotalgajipotongan;
-    TextView totalizin, totalsakit, totalcuti, totalgajibersih, totalgajipotongan;
->>>>>>> fbf77071c6afc3af6d46dc495e84214efb9297be
     ImageButton expand, expand2, expand3, expandhabis;
     LinearLayout lyt_parent, lyt_parent2, lyt_parent3, lyt_parenthabis;
     LinearLayout lyt_expand, lyt_expand2, lyt_expand3, lyt_expandhabis;

@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-<<<<<<< HEAD
-      <module fileurl="file://$PROJECT_DIR$/.idea/POI-templated-.iml" filepath="$PROJECT_DIR$/.idea/POI-templated-.iml" />
-=======
-      <module fileurl="file://$PROJECT_DIR$/POI(templated).iml" filepath="$PROJECT_DIR$/POI(templated).iml" />
->>>>>>> fbf77071c6afc3af6d46dc495e84214efb9297be
+      <module fileurl="file://$PROJECT_DIR$/POI-templated-.iml" filepath="$PROJECT_DIR$/POI-templated-.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/openCVLibrary343/openCVLibrary343.iml" filepath="$PROJECT_DIR$/openCVLibrary343/openCVLibrary343.iml" />
     </modules>

@@ -76,14 +76,9 @@ import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
 
 public class FragmentHome extends Fragment {
 
-<<<<<<< HEAD
-    View lyt_totalizin, lyt_totalsakit,lyt_totalcuti;
-    TextView totalizin, totalsakit, totalcuti, totalgajibersih;
-=======
     private SwipeRefreshLayout refreshhome;
     View lyt_totalizin, lyt_totalsakit,lyt_totalcuti, lyt_totalabsen, lyt_totaltelat,lyt_totaldinas;
     TextView totalizin, totalsakit, totalcuti, totalabsen, totaltelat, totaldinas, totalgajibersih, totalgajipotongan;
->>>>>>> fbf77071c6afc3af6d46dc495e84214efb9297be
     ImageButton expand, expand2, expand3, expandhabis;
     LinearLayout lyt_parent, lyt_parent2, lyt_parent3, lyt_parenthabis;
     LinearLayout lyt_expand, lyt_expand2, lyt_expand3, lyt_expandhabis;
@@ -1569,17 +1564,7 @@ public class FragmentHome extends Fragment {
                             if(adapterabsensi!=null){
                                 adapterabsensi.notifyDataSetChanged();
                             }
-<<<<<<< HEAD
-                            temp=""+i+temp;
-                        }*/
-
-                        totalgajibersih.setText("RP "+formatter.format(Double.parseDouble(obj.getString("gajiBersih"))));
-                        //totalgajipotongan.setText("RP "+formatter.format(Double.parseDouble(obj.getString("totalPotongan"))));
-                        retrivegetizin kar = new retrivegetizin(getActivity());
-                        kar.execute();
-=======
                             refreshhome.setRefreshing(false);
->>>>>>> fbf77071c6afc3af6d46dc495e84214efb9297be
 
                             retrivetotalgaji kar = new retrivetotalgaji(getActivity());
                             kar.execute();
@@ -1719,7 +1704,7 @@ public class FragmentHome extends Fragment {
                         JSONObject obj = result.getJSONObject("data");
                         DecimalFormat formatter = new DecimalFormat("###,###,###.00");
                         totalgajibersih.setText("RP "+formatter.format(Double.parseDouble(obj.getString("gajiBersih"))));
-                        totalgajipotongan.setText("RP "+formatter.format(Double.parseDouble(obj.getString("totalPotongan"))));
+                        //totalgajipotongan.setText("RP "+formatter.format(Double.parseDouble(obj.getString("totalPotongan"))));
 
                         ket=new ArrayList<>();
                         ket.add(totalizin);
