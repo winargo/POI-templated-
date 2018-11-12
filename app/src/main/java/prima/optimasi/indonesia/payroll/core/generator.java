@@ -50,6 +50,11 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class generator {
     //public static String Server="192.168.5.254";
+<<<<<<< HEAD
+=======
+    //public static String Server="153.92.4.147";
+    //public static String Server="192.168.5.254";
+>>>>>>> 3cd594fc43c9878d3821312d06b445261035f5dd
     public static String Server="153.92.4.147";
     //public static String Server="153.92.4.147";
 
@@ -57,7 +62,7 @@ public class generator {
 
     public static Bitmap tempbitmap = null;
 
-    public static String port = "4000";
+    public static String port = "3000";
     public static String username = "";
     public static String password = "";
     public static String token = "";
