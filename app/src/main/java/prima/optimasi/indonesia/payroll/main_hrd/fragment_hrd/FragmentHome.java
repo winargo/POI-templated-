@@ -1517,7 +1517,7 @@ public class FragmentHome extends Fragment {
                             items = new ArrayList<>();
                             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                             JSONArray pengsarray = result.getJSONArray("data");
-                            Log.e(TAG, "onPostExecute: " + pengsarray);
+                            Log.e(TAG, "kontrak kerja habis: " + pengsarray);
                             String status = "";
                             //String tempcall="";
                             int sisa = 0;
@@ -2408,7 +2408,7 @@ public class FragmentHome extends Fragment {
         SharedPreferences prefs ;
         JSONObject result = null ;
         ProgressDialog dialog ;
-        String urldata = generator.getizinbulananyurl;
+        String urldata = generator.getizinhariyurl;
         String passeddata = "" ;
 
         public retrivegetizin(Context context)
@@ -2544,7 +2544,7 @@ public class FragmentHome extends Fragment {
         SharedPreferences prefs ;
         JSONObject result = null ;
         ProgressDialog dialog ;
-        String urldata = generator.getsakitbulananyurl;
+        String urldata = generator.getsakithariyurl;
         String passeddata = "" ;
 
         public retrivegetsakit(Context context)
@@ -2680,7 +2680,7 @@ public class FragmentHome extends Fragment {
         SharedPreferences prefs ;
         JSONObject result = null ;
         ProgressDialog dialog ;
-        String urldata = generator.getcutibulananyurl;
+        String urldata = generator.getcutihariyurl;
         String passeddata = "" ;
 
         public retrivegetcuti(Context context)

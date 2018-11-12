@@ -1,6 +1,7 @@
 package prima.optimasi.indonesia.payroll.main_owner.fragment_owner;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,12 +69,16 @@ import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
 import prima.optimasi.indonesia.payroll.main_karyawan.mainmenu_karyawan;
 import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
 import prima.optimasi.indonesia.payroll.model.Image;
+import prima.optimasi.indonesia.payroll.objects.listcalendar;
 import prima.optimasi.indonesia.payroll.objects.pengumuman;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
 
 public class FragmentPengumuman extends Fragment {
 
+    listcalendar cal;
+    List<listcalendar> itemscal;
+    String tanggal;
     private View parent_view;
 
     private SwipeRefreshLayout refreshpengumuman;
@@ -382,8 +388,6 @@ public class FragmentPengumuman extends Fragment {
                 try {
                     OkHttpClient client = new OkHttpClient();
 
-
-
                     Request request = new Request.Builder()
                             .header("Authorization",passeddata)
                             .url(urldata)
@@ -597,20 +601,55 @@ public class FragmentPengumuman extends Fragment {
                 Log.e(TAG, "data json result" + result.toString());
                 if (result != null) {
                     try {
+                        itemscal=new ArrayList<>();
+
                         List<EventDay> events = new ArrayList<>();
                         if(result.getString("status").equals("true")){
                             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                             JSONArray pengsarray = result.getJSONArray("row1");
 
                             for (int i = 0; i < pengsarray.length(); i++) {
+                                cal=new listcalendar();
                                 JSONObject obj = pengsarray.getJSONObject(i);
-
+                                cal.setTanggal(obj.getString("tanggal").substring(0,10));
+                                cal.setTipe(obj.getString("tipe"));
+                                cal.setEvent(obj.getString("event"));
+                                itemscal.add(cal);
                                 Date data = format.parse(obj.getString("tanggal"));
                                 Calendar calendars = Calendar.getInstance();
                                 calendars.setTime(data);
-                                events.add(new EventDay(calendars, R.drawable.dot));
+                                if(obj.getString("tipe").equals("Libur Nasional")){
+                                    events.add(new EventDay(calendars, R.drawable.dot));
+                                }
+                                else{
+                                    events.add(new EventDay(calendars, R.drawable.ic_dots));
+                                }
                             }
                         }
+                        calender.setOnDayClickListener(new OnDayClickListener() {
+                            @Override
+                            public void onDayClick(EventDay eventDay) {
+                                Calendar clickedDayCalendar = eventDay.getCalendar();
+                                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                                tanggal=format.format(clickedDayCalendar.getTime());
+                                Log.e("Tanggal", tanggal);
+                                for(int i=0;i<itemscal.size();i++){
+                                    if(itemscal.get(i).getTanggal().equals(tanggal)){
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                        builder.setTitle(itemscal.get(i).getTipe());
+                                        builder.setMessage(itemscal.get(i).getEvent());
+                                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                        builder.setCancelable(false);
+                                        builder.show();
+                                    }
+                                }
+                            }
+                        });
                         Calendar calendar = Calendar.getInstance();
 
                         calender.setDate(calendar);
