@@ -10,7 +10,6 @@
     android:orientation="vertical">
 
     <android.support.v7.widget.CardView
-        android:id="@+id/lyt_parent"
         android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,9 +21,9 @@
         app:cardCornerRadius="2dp"
         app:cardElevation="2dp">
     <LinearLayout
+        android:id="@+id/lyt_parent"
         android:layout_width="match_parent"
         android:layout_height="@dimen/lyt_dropdown"
-
 
         android:background="@android:color/white"
         android:gravity="center_vertical"

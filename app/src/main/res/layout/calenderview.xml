@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         app:type="one_day_picker"
         android:id="@+id/calenderviews"
+        app:selectionColor="@color/red_500"
         android:layout_height="match_parent">
 
     </com.applandeo.materialcalendarview.CalendarView>
