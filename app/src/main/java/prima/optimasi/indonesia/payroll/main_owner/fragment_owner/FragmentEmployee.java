@@ -162,8 +162,9 @@ public class FragmentEmployee extends Fragment{
                 View linear = inflate.inflate(R.layout.calenderview,null);
 
                 CalendarView calender = linear.findViewById(R.id.calenderviews);
+                calender.setHeaderColor(R.color.red_500);
 
-                calender.setHeaderColor(getActivity().getResources().getColor(R.color.red_500));
+                //calender.setHeaderColor(getActivity().getResources().getColor(R.color.red_500));
 
                 Calendar cal = Calendar.getInstance();
 
@@ -343,7 +344,7 @@ public class FragmentEmployee extends Fragment{
         {
 
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
-            dialog = new ProgressDialog(context);
+            //dialog = new ProgressDialog(context);
             this.username = generator.username;
             this.password = generator.password;
             this.error = error ;
@@ -352,9 +353,9 @@ public class FragmentEmployee extends Fragment{
         String TAG = getClass().getSimpleName();
 
         protected void onPreExecute (){
-            this.dialog.show();
+            //this.dialog.show();
             super.onPreExecute();
-            this.dialog.setMessage("Getting Data...");
+            //this.dialog.setMessage("Getting Data...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
         }
 
@@ -362,7 +363,7 @@ public class FragmentEmployee extends Fragment{
             Log.d(TAG + " DoINBackGround","On doInBackground...");
 
             try {
-                this.dialog.setMessage("Loading Data...");
+                //this.dialog.setMessage("Loading Data...");
 
                 JSONObject jsonObject;
 
@@ -399,17 +400,18 @@ public class FragmentEmployee extends Fragment{
                     return null;
                 }
             } catch (IOException e) {
-                this.dialog.dismiss();
+                //this.dialog.dismiss();
                 Log.e("doInBackground: ", "IO Exception" + e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Error IOException";
             } catch (NullPointerException e) {
-                this.dialog.dismiss();
+                //this.dialog.dismiss();
                 Log.e("doInBackground: ", "null data" + e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Please check Connection and Server";
             } catch (Exception e) {
-                this.dialog.dismiss();
+                e.printStackTrace();
+                //this.dialog.dismiss();
                 Log.e("doInBackground: ", e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Error Occured, PLease Contact Administrator/Support";
@@ -574,9 +576,10 @@ public class FragmentEmployee extends Fragment{
                 Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
             }
 
+            /*
             if(this.dialog.isShowing()){
                 dialog.dismiss();
-            }
+            }*/
 
 
             Log.d(TAG + " onPostExecute", "" + result1);
@@ -611,7 +614,7 @@ public class FragmentEmployee extends Fragment{
         protected void onPreExecute (){
             this.dialog.show();
             super.onPreExecute();
-            this.dialog.setMessage("Getting Data...");
+            //this.dialog.setMessage("Getting Data...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
         }
 
@@ -836,6 +839,7 @@ public class FragmentEmployee extends Fragment{
                 Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
             }
 
+
             if(this.dialog.isShowing()){
                 dialog.dismiss();
             }
@@ -861,7 +865,7 @@ public class FragmentEmployee extends Fragment{
         {
             nilaikehadiran=0;
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
-            dialog = new ProgressDialog(context);
+            //dialog = new ProgressDialog(context);
             this.username = generator.username;
             this.password = generator.password;
             this.error = error ;
@@ -870,9 +874,9 @@ public class FragmentEmployee extends Fragment{
         String TAG = getClass().getSimpleName();
 
         protected void onPreExecute (){
-            this.dialog.show();
+            //this.dialog.show();
             super.onPreExecute();
-            this.dialog.setMessage("Getting Data...");
+            //this.dialog.setMessage("Getting Data...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
         }
 
@@ -880,7 +884,7 @@ public class FragmentEmployee extends Fragment{
             Log.d(TAG + " DoINBackGround","On doInBackground...");
 
             try {
-                this.dialog.setMessage("Loading Data...");
+                //this.dialog.setMessage("Loading Data...");
 
                 JSONObject jsonObject;
 
@@ -955,17 +959,17 @@ public class FragmentEmployee extends Fragment{
                     return null;
                 }*/
             } catch (IOException e) {
-                this.dialog.dismiss();
+                //this.dialog.dismiss();
                 Log.e("doInBackground: ", "IO Exception" + e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Error IOException";
             } catch (NullPointerException e) {
-                this.dialog.dismiss();
+                //this.dialog.dismiss();
                 Log.e("doInBackground: ", "null data" + e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Please check Connection and Server";
             } catch (Exception e) {
-                this.dialog.dismiss();
+                //this.dialog.dismiss();
                 Log.e("doInBackground: ", e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Error Occured, PLease Contact Administrator/Support";
@@ -1243,9 +1247,10 @@ public class FragmentEmployee extends Fragment{
                 Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
             }
 
+            /*
             if(this.dialog.isShowing()){
                 dialog.dismiss();
-            }
+            }*/
 
 
             Log.d(TAG + " onPostExecute", "" + result1);
@@ -1279,7 +1284,7 @@ public class FragmentEmployee extends Fragment{
         protected void onPreExecute (){
             this.dialog.show();
             super.onPreExecute();
-            this.dialog.setMessage("Getting Data...");
+            //this.dialog.setMessage("Getting Data...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
         }
 
@@ -1656,7 +1661,7 @@ public class FragmentEmployee extends Fragment{
         protected void onPreExecute (){
             this.dialog.show();
             super.onPreExecute();
-            this.dialog.setMessage("Getting Data...");
+            //this.dialog.setMessage("Getting Data...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
         }
 
@@ -1740,7 +1745,7 @@ public class FragmentEmployee extends Fragment{
                     try {
                         itemaktifitas.clear();
 
-                        mAdapteraktifitas.notifyDataSetChanged();
+                        //mAdapteraktifitas.notifyDataSetChanged();
 
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         JSONArray pengsarray = result.getJSONArray("rows");

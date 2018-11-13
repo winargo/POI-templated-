@@ -109,6 +109,7 @@ public class FragmentHome extends Fragment {
     public List<Integer> banyakkontrakkerja;
     public List<RecyclerView> rv_kk;
     public List<View> lyt_ket;
+    String perios="";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -139,7 +140,7 @@ public class FragmentHome extends Fragment {
 
         cal.add(Calendar.MONTH, -12);
 
-        String perios="";
+
 
         List<String> monthbarbottom = new ArrayList<>();
         List<String> monthnumber = new ArrayList<>();
@@ -234,14 +235,6 @@ public class FragmentHome extends Fragment {
 
 
         totalgajibersih=rootView.findViewById(R.id.totalgajibersih);
-
-        totalgajibersih.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent=new Intent(getActivity(), Activity_Chart.class);
-                startActivity(intent);
-            }
-        });
 
         parent_view=rootView.findViewById(R.id.parent_view);
         lyt_parent=rootView.findViewById(R.id.lyt_parent);
@@ -447,13 +440,52 @@ public class FragmentHome extends Fragment {
         refreshhome.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                banyakkaryawan=0;
+                totalkaryawan=0;
+
+                banyakhabis=0;
+                banyak1bulan=0;
+                banyak2bulan=0;
+                banyak3bulan=0;
+
+                expansi=false;
+                expansi2=false;
+                expansi3=false;
+                expansihabis=false;
+
+                lyt_expandhabis.setVisibility(View.GONE);
+                expandhabis.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
+                lyt_expand.setVisibility(View.GONE);
+                expand.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
+                lyt_expand2.setVisibility(View.GONE);
+                expand2.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
+                lyt_expand3.setVisibility(View.GONE);
+                expand3.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
+
+                for(int i =0 ; i<monthbarbottom.size();i++) {
+
+                    Calendar c = Calendar.getInstance();
+
+                    try {
+                        c.setTime(sdf.parse(monthbarbottom.get(i)));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    String dt1 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-0"+c.get(Calendar.DAY_OF_MONTH);
+                    String dt2 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-"+c.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+                    retrivegajibychart gaji = new retrivegajibychart(getActivity(), dt1, dt2 ,mRealm,perios,i,monthbarbottom,count);
+                    gaji.execute();
+                }
+
                 for (int i = 0; i < kontrak_kerja.length; i++) {
                     retrivekontrakkerjakarref ref = new retrivekontrakkerjakarref(parent_view.getContext(), kontrak_kerja[i], kk.get(i), rv_kk.get(i), banyakkontrakkerja.get(i));
                     ref.execute();
-                    refreshhome.setRefreshing(false);
                 }
                 retrivegetjabatanref jab=new retrivegetjabatanref(getActivity());
                 jab.execute();
+                refreshhome.setRefreshing(false);
             }
         });
 
@@ -479,6 +511,7 @@ public class FragmentHome extends Fragment {
         public retrivekontrakkerjakar(Context context, String kontrakskerja, TextView tv, RecyclerView rv, int banyak)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            //dialog=new ProgressDialog(context);
             this.username = generator.username;
             this.password = generator.password;
             this.error = error ;
@@ -503,6 +536,7 @@ public class FragmentHome extends Fragment {
         String TAG = getClass().getSimpleName();
 
         protected void onPreExecute (){
+            //this.dialog.show();
             super.onPreExecute();
             //this.dialog.setMessage("Getting Data...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
@@ -734,6 +768,7 @@ public class FragmentHome extends Fragment {
         public retrivekontrakkerjakarref(Context context, String kontrakskerja, TextView tv, RecyclerView rv, int banyak)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            //dialog=new ProgressDialog(context);
             this.username = generator.username;
             this.password = generator.password;
             this.error = error ;
@@ -758,6 +793,7 @@ public class FragmentHome extends Fragment {
         String TAG = getClass().getSimpleName();
 
         protected void onPreExecute (){
+            //this.dialog.show();
             super.onPreExecute();
             //this.dialog.setMessage("Getting Data...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
@@ -938,7 +974,7 @@ public class FragmentHome extends Fragment {
                             if(adapter!=null){
                                 adapter.notifyDataSetChanged();
                             }
-                            refreshhome.setRefreshing(false);
+                            //refreshhome.setRefreshing(false);
 
                         }
 
@@ -984,6 +1020,7 @@ public class FragmentHome extends Fragment {
         public retrivegetjabatan(Context context)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            //dialog=new ProgressDialog(context);
             this.username = generator.username;
             this.password = generator.password;
             this.error = error ;
@@ -992,6 +1029,7 @@ public class FragmentHome extends Fragment {
         String TAG = getClass().getSimpleName();
 
         protected void onPreExecute (){
+            //this.dialog.show();
             super.onPreExecute();
             //this.dialog.setMessage("Getting Data...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
@@ -1395,7 +1433,6 @@ public class FragmentHome extends Fragment {
                             Log.e("MASUK ADAPTER", "Berhasil"+absen);
                             totalabsen.setText(String.valueOf(absen));
                             adapterabsensi.notifyDataSetChanged();
-
                             retrivetotalgaji kar = new retrivetotalgaji(getActivity());
                             kar.execute();
                         }
@@ -1564,7 +1601,7 @@ public class FragmentHome extends Fragment {
                             if(adapterabsensi!=null){
                                 adapterabsensi.notifyDataSetChanged();
                             }
-                            refreshhome.setRefreshing(false);
+                            //refreshhome.setRefreshing(false);
 
                             retrivetotalgaji kar = new retrivetotalgaji(getActivity());
                             kar.execute();
@@ -1609,6 +1646,7 @@ public class FragmentHome extends Fragment {
         public retrivetotalgaji(Context context)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            //dialog=new ProgressDialog(context);
             this.username = generator.username;
             this.password = generator.password;
             this.error = error ;
@@ -1617,6 +1655,7 @@ public class FragmentHome extends Fragment {
         String TAG = getClass().getSimpleName();
 
         protected void onPreExecute (){
+            //this.dialog.show();
             super.onPreExecute();
             //this.dialog.setMessage("Getting Data...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
@@ -1927,6 +1966,7 @@ public class FragmentHome extends Fragment {
 
         public retrivegajibychart(Context context,String dt1,String dt2,Realm frealm,String periode,int postion,List<String> montbarbottom,int[] count)
         {
+            dialog=new ProgressDialog(context);
             this.count = count;
 
             Log.e("data 1 data 2",dt1+" "+dt2 );
@@ -1950,6 +1990,7 @@ public class FragmentHome extends Fragment {
         String TAG = getClass().getSimpleName();
 
         protected void onPreExecute (){
+            this.dialog.show();
             super.onPreExecute();
             //this.dialog.setMessage("Getting Data...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
@@ -1959,7 +2000,7 @@ public class FragmentHome extends Fragment {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
 
             try {
-                //this.dialog.setMessage("Loading Data...");
+                this.dialog.setMessage("Loading Data...");
 
                 JSONObject jsonObject;
 
@@ -2161,10 +2202,10 @@ public class FragmentHome extends Fragment {
                 Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
             }
 
-            /*
+
             if(this.dialog.isShowing()){
                 dialog.dismiss();
-            }*/
+            }
 
 
             Log.d(TAG + " onPostExecute", "" + result1);

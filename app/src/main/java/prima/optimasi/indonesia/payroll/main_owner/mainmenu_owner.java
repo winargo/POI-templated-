@@ -95,14 +95,15 @@ public class mainmenu_owner extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        loadingprogress = new ProgressDialog(this);
-        loadingprogress.setTitle("Please Wait");
-        loadingprogress.setMessage("Loading Data...");
-        loadingprogress.show();
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
 
+        loadingprogress = new ProgressDialog(this);
+        loadingprogress.setTitle("Please Wait");
+        loadingprogress.setMessage("Loading Data...");
+        loadingprogress.show();
 
         prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
 

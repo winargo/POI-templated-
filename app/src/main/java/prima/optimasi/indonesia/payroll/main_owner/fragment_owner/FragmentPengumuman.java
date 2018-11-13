@@ -78,7 +78,7 @@ public class FragmentPengumuman extends Fragment {
 
     listcalendar cal;
     List<listcalendar> itemscal;
-    String tanggal;
+    String tanggal, tgl;
     private View parent_view;
 
     private SwipeRefreshLayout refreshpengumuman;
@@ -220,7 +220,7 @@ public class FragmentPengumuman extends Fragment {
         protected void onPreExecute (){
             this.dialog.show();
             super.onPreExecute();
-            this.dialog.setMessage("Getting Data...");
+            //this.dialog.setMessage("Getting Data...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
         }
 
@@ -228,7 +228,7 @@ public class FragmentPengumuman extends Fragment {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
 
                 try {
-                    this.dialog.setMessage("Loading Data...");
+                    //this.dialog.setMessage("Loading Data...");
 
                     JSONObject jsonObject;
 
@@ -276,6 +276,7 @@ public class FragmentPengumuman extends Fragment {
                     generator.jsondatalogin = null;
                     response = "Please check Connection and Server";
                 } catch (Exception e) {
+                    e.printStackTrace();
                     this.dialog.dismiss();
                     Log.e("doInBackground: ", e.getMessage());
                     generator.jsondatalogin = null;
@@ -338,6 +339,7 @@ public class FragmentPengumuman extends Fragment {
                 Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
             }
 
+
             if(this.dialog.isShowing()){
                 dialog.dismiss();
             }
@@ -373,7 +375,7 @@ public class FragmentPengumuman extends Fragment {
         protected void onPreExecute (){
             this.dialog.show();
             super.onPreExecute();
-            this.dialog.setMessage("Getting Data...");
+            //this.dialog.setMessage("Getting Data...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
         }
 
@@ -523,7 +525,7 @@ public class FragmentPengumuman extends Fragment {
         protected void onPreExecute (){
             this.dialog.show();
             super.onPreExecute();
-            this.dialog.setMessage("Getting Data...");
+            //this.dialog.setMessage("Getting Data...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
         }
 
@@ -531,7 +533,7 @@ public class FragmentPengumuman extends Fragment {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
 
             try {
-                this.dialog.setMessage("Loading Data...");
+                //this.dialog.setMessage("Loading Data...");
 
                 JSONObject jsonObject;
 
@@ -631,13 +633,15 @@ public class FragmentPengumuman extends Fragment {
                             public void onDayClick(EventDay eventDay) {
                                 Calendar clickedDayCalendar = eventDay.getCalendar();
                                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                                SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
+                                tgl=format1.format(clickedDayCalendar.getTime());
                                 tanggal=format.format(clickedDayCalendar.getTime());
                                 Log.e("Tanggal", tanggal);
                                 for(int i=0;i<itemscal.size();i++){
                                     if(itemscal.get(i).getTanggal().equals(tanggal)){
                                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                        builder.setTitle(itemscal.get(i).getTipe());
-                                        builder.setMessage(itemscal.get(i).getEvent());
+                                        builder.setTitle("Event");
+                                        builder.setMessage(tgl+" - "+itemscal.get(i).getEvent()+"\n");
                                         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialogInterface, int i) {

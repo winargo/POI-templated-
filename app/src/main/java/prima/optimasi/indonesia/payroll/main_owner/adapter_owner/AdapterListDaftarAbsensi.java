@@ -112,6 +112,9 @@ public class AdapterListDaftarAbsensi extends RecyclerView.Adapter<RecyclerView.
             if(banyak==items.size()){
                 //view.bt_expand.setVisibility(View.INVISIBLE);
                 view.no.setText("");
+                view.lyt_parent.setBackground(ctx.getDrawable(R.color.colorPrimary));
+                view.jabatan.setTextColor(ctx.getResources().getColor(R.color.qr_code_white));
+                view.banyak.setTextColor(ctx.getResources().getColor(R.color.qr_code_white));
 
             }
             else{
