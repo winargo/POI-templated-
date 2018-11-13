@@ -184,7 +184,7 @@ public class mainmenu_hrd extends AppCompatActivity
             @Override
             public void onTabSelected(TabLayout.Tab tab){
                 int position = tab.getPosition();
-                if(position==3){
+                if(position==9){
                     if(tempmenu!=null){
                         tempmenu.findItem(R.id.action_search).setVisible(true);
                         tempmenu.findItem(R.id.action_add).setVisible(true);

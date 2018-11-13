@@ -22,124 +22,208 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:descendantFocusability="blocksDescendants"
+
             android:orientation="vertical">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Rekap Gaji"
-                android:textStyle="bold"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
-                android:layout_margin="4sp"
-                />
-
             <LinearLayout
-                android:id="@+id/chartsalary"
+                android:id="@+id/sectiongaji"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingLeft="@dimen/spacing_middle"
-                android:paddingRight="@dimen/spacing_middle">
-
-                <android.support.v7.widget.CardView
+                android:orientation="vertical">
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/spacing_xsmall"
-                    android:layout_marginLeft="@dimen/spacing_xsmall"
-                    android:layout_marginRight="@dimen/spacing_xsmall"
-                    android:layout_marginTop="@dimen/spacing_xsmall"
-                    android:visibility="visible"
-                    app:cardCornerRadius="2dp"
-                    app:cardElevation="2dp">
+                    android:text="Rekap Gaji"
+                    android:textStyle="bold"
+                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
+                    android:layout_margin="4sp"
+                    />
 
-                    <com.github.mikephil.charting.charts.BarChart
-                        android:id="@+id/incbarchart"
-                        android:layout_width="match_parent"
-                        android:layout_height="300sp"/>
-
-
-
-
-                </android.support.v7.widget.CardView>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/lineartotalgaji"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingLeft="@dimen/spacing_middle"
-                android:paddingRight="@dimen/spacing_middle">
-
-                <android.support.v7.widget.CardView
+                <LinearLayout
+                    android:layout_marginBottom="5sp"
+                    android:id="@+id/chartsalary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/spacing_xsmall"
-                    android:layout_marginLeft="@dimen/spacing_xsmall"
-                    android:layout_marginRight="@dimen/spacing_xsmall"
-                    android:layout_marginTop="@dimen/spacing_xsmall"
-                    android:visibility="visible"
-                    app:cardCornerRadius="2dp"
-                    app:cardElevation="2dp">
+                    android:orientation="horizontal"
+                    android:paddingLeft="@dimen/spacing_middle"
+                    android:paddingRight="@dimen/spacing_middle">
 
-                    <LinearLayout
+                    <android.support.v7.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="@dimen/spacing_large">
+                        android:layout_marginBottom="@dimen/spacing_xsmall"
+                        android:layout_marginLeft="@dimen/spacing_xsmall"
+                        android:layout_marginRight="@dimen/spacing_xsmall"
+                        android:layout_marginTop="@dimen/spacing_xsmall"
+                        android:visibility="visible"
+                        app:cardCornerRadius="2dp"
+                        app:cardElevation="2dp">
 
-                        <RelativeLayout
-                            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp">
-
-                            <ImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_centerInParent="true"
-                                app:srcCompat="@drawable/hand_money" />
-
+                        <com.github.mikephil.charting.charts.BarChart
+                            android:id="@+id/incbarchart"
+                            android:layout_width="match_parent"
+                            android:layout_height="300sp"/>
 
 
-                        </RelativeLayout>
 
-                        <View
-                            android:layout_width="@dimen/spacing_middle"
-                            android:layout_height="0dp" />
+
+                    </android.support.v7.widget.CardView>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/lineartotalgaji"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="@dimen/spacing_middle"
+                    android:paddingRight="@dimen/spacing_middle">
+
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/spacing_xsmall"
+                        android:layout_marginLeft="@dimen/spacing_xsmall"
+                        android:layout_marginRight="@dimen/spacing_xsmall"
+                        android:layout_marginTop="@dimen/spacing_xsmall"
+                        android:visibility="visible"
+                        app:cardCornerRadius="2dp"
+                        app:cardElevation="2dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="vertical">
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/spacing_large">
 
-                            <TextView
-                                android:id="@+id/totalgajibersih"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="0"
-                                android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
-                                android:textColor="@color/grey_60"
-                                android:textStyle="bold" />
+                            <RelativeLayout
+                                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Total Gaji Bersih"
-                                android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
-                                android:textColor="@color/grey_40" />
+                                <ImageView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_centerInParent="true"
+                                    app:srcCompat="@drawable/hand_money" />
+
+
+
+                            </RelativeLayout>
+
+                            <View
+                                android:layout_width="@dimen/spacing_middle"
+                                android:layout_height="0dp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Gaji Bulan Sebelumnya"
+                                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
+                                    android:textColor="@color/grey_40" />
+
+                                <TextView
+                                    android:id="@+id/totalgajibersih"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
+                                    android:textColor="@color/grey_60"
+                                    android:textStyle="bold" />
+
+
+
+                            </LinearLayout>
 
                         </LinearLayout>
 
-                    </LinearLayout>
+                    </android.support.v7.widget.CardView>
 
-                </android.support.v7.widget.CardView>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/lineartotalgajiestimasi"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="@dimen/spacing_middle"
+                    android:paddingRight="@dimen/spacing_middle">
+
+                    <android.support.v7.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/spacing_xsmall"
+                        android:layout_marginLeft="@dimen/spacing_xsmall"
+                        android:layout_marginRight="@dimen/spacing_xsmall"
+                        android:layout_marginTop="@dimen/spacing_xsmall"
+                        android:visibility="visible"
+                        app:cardCornerRadius="2dp"
+                        app:cardElevation="2dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/spacing_large">
+
+                            <RelativeLayout
+                                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp">
+
+                                <ImageView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_centerInParent="true"
+                                    app:srcCompat="@drawable/timer" />
+
+
+
+                            </RelativeLayout>
+
+                            <View
+                                android:layout_width="@dimen/spacing_middle"
+                                android:layout_height="0dp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Total Gaji Bersih"
+                                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
+                                    android:textColor="@color/grey_40" />
+
+                                <TextView
+                                    android:id="@+id/totalgajiestimasi"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="0"
+                                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
+                                    android:textColor="@color/grey_60"
+                                    android:textStyle="bold" />
+
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </android.support.v7.widget.CardView>
+            </LinearLayout>
+
 
             </LinearLayout>
             <TextView
                 android:textStyle="bold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Rekap Aktivitas"
+                android:text="Rekap Aktivitas Hari ini"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
                 android:layout_margin="4sp"
                 />
@@ -169,6 +253,7 @@
                         android:orientation="vertical"
                         android:padding="@dimen/spacing_large">
 
+
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="40dp">
@@ -192,6 +277,13 @@
                         <View
                             android:layout_width="@dimen/spacing_middle"
                             android:layout_height="0dp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Izin"
+                            android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
+                            android:textColor="@color/grey_40" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -210,13 +302,7 @@
                                 android:textColor="@color/grey_60"
                                 android:textStyle="bold" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="Total Izin"
-                                android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
-                                android:textColor="@color/grey_40" />
+
 
                         </LinearLayout>
 
@@ -275,6 +361,14 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="Sakit"
+                                android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
+                                android:textColor="@color/grey_40" />
+
 
                             <TextView
                                 android:id="@+id/totalsakit"
@@ -288,13 +382,7 @@
                                 android:textColor="@color/grey_60"
                                 android:textStyle="bold" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="Total Sakit"
-                                android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
-                                android:textColor="@color/grey_40" />
+
 
                         </LinearLayout>
 
@@ -354,7 +442,13 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
-
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="Cuti"
+                                android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
+                                android:textColor="@color/grey_40" />
                             <TextView
                                 android:id="@+id/totalcuti"
                                 android:layout_width="wrap_content"
@@ -367,13 +461,7 @@
                                 android:textColor="@color/grey_60"
                                 android:textStyle="bold" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="Total Cuti"
-                                android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
-                                android:textColor="@color/grey_40" />
+
 
                         </LinearLayout>
 
@@ -437,7 +525,13 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
-
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="Absen"
+                                android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
+                                android:textColor="@color/grey_40" />
                             <TextView
                                 android:id="@+id/totalabsen"
                                 android:layout_width="wrap_content"
@@ -450,13 +544,7 @@
                                 android:textColor="@color/grey_60"
                                 android:textStyle="bold" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="Total Absen"
-                                android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
-                                android:textColor="@color/grey_40" />
+
 
                         </LinearLayout>
 
@@ -515,6 +603,13 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="Telat"
+                                android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
+                                android:textColor="@color/grey_40" />
 
                             <TextView
                                 android:id="@+id/totaltelat"
@@ -528,13 +623,6 @@
                                 android:textColor="@color/grey_60"
                                 android:textStyle="bold" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="Total Telat"
-                                android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
-                                android:textColor="@color/grey_40" />
 
                         </LinearLayout>
 
@@ -594,6 +682,13 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:text="Dinas"
+                                android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
+                                android:textColor="@color/grey_40" />
 
                             <TextView
                                 android:id="@+id/totaldinas"
@@ -607,13 +702,7 @@
                                 android:textColor="@color/grey_60"
                                 android:textStyle="bold" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:text="Total Dinas"
-                                android:textAppearance="@style/Base.TextAppearance.AppCompat.Caption"
-                                android:textColor="@color/grey_40" />
+
 
                         </LinearLayout>
 

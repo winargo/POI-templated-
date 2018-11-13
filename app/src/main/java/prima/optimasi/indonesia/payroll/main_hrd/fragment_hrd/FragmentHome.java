@@ -54,23 +54,32 @@ import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
 
 public class FragmentHome extends Fragment {
 
-    LinearLayout lineartotalgaji;
+    LinearLayout lineartotalgaji,sectiongaji;
+
     TextView totalizin, totalsakit, totalcuti, totalgajibersih;
 
     SwipeRefreshLayout refreshhome;
     ImageButton expand, expand2, expand3, expandhabis;
+
     LinearLayout lyt_parent, lyt_parent2, lyt_parent3, lyt_parenthabis;
     LinearLayout lyt_expand, lyt_expand2, lyt_expand3, lyt_expandhabis;
+
     TextView sisakontrakkerja, sisakontrakkerja2, sisakontrakkerja3, sisakontrakkerjahabis;
+
     List<listkaryawankontrakkerja> items;
     List<listkaryawandaftarabsensi> daftaritems;
     List<String> list_jabatan;
+
     CoordinatorLayout parent_view;
+
     listkaryawankontrakkerja kontrakkerja;
     listkaryawandaftarabsensi daftarabsensi;
+
     AdapterListSectionedKontrakKerja adapter;
     AdapterListDaftarAbsensi adapterabsensi;
+
     RecyclerView recyclerView, recyclerView2, recyclerView3, recyclerViewhabis, recyclerViewdaftar;
+
     boolean expansi=false, expansi2=false, expansi3=false, expansihabis=false;
     int banyak1bulan=0, banyak2bulan=0,banyak3bulan=0, banyakhabis=0, banyakkaryawan=0, totalkaryawan=0;
     @Override
@@ -78,6 +87,11 @@ public class FragmentHome extends Fragment {
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_home, container, false);
+
+        sectiongaji = rootView.findViewById(R.id.sectiongaji);
+
+        sectiongaji.setVisibility(View.GONE);
+
         refreshhome = rootView.findViewById(R.id.swipehome);
         refreshhome.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -150,6 +164,8 @@ public class FragmentHome extends Fragment {
 
             }
         });
+
+
 
         expand2.setOnClickListener(new View.OnClickListener() {
             @Override
