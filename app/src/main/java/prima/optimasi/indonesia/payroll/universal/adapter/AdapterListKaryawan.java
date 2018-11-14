@@ -1,22 +1,44 @@
 package prima.optimasi.indonesia.payroll.universal.adapter;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 import prima.optimasi.indonesia.payroll.objects.listkaryawankontrakkerja;
 import prima.optimasi.indonesia.payroll.universal.viewkaryawan;
@@ -27,7 +49,7 @@ import prima.optimasi.indonesia.payroll.utils.ViewAnimation;
 
 public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
-
+    Double gaji, potongan;
     private final int VIEW_ITEM = 1;
     private final int VIEW_SECTION = 0;
     private int animation_type = 0;
@@ -100,9 +122,19 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
                 Tools.displayImageOriginal(ctx, view.image, p.getImagelink());
             }
 
-            view.lyt_parent.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+            try{
+                if(p.getJenis().equals("cekgaji")){
+
+                    view.lyt_parent.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            gaji=0.0d;
+                            potongan=0.0d;
+                            retrivegaji g=new retrivegaji(ctx,p.getIskar());
+                            g.execute();
+
+                    /*
                     if (mOnItemClickListener != null) {
 
                         Intent viewkaryawans = new Intent(ctx,viewkaryawan.class);
@@ -111,9 +143,15 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
 
                         ctx.startActivity(viewkaryawans);
 
-                    }
+                    }*/
+                        }
+                    });
                 }
-            });
+            }
+            catch(NullPointerException e){
+                Log.e(getClass().getSimpleName(),"NULL");
+            }
+
             /*
             view.bt_expand.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -135,6 +173,185 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
             setAnimation(view.itemView, position);
         }
     }
+
+    private class retrivegaji extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        String urldata = generator.pengajiangajikaryawanurl;
+        String passeddata = "" ;
+        String id="";
+        int p=0;
+        public retrivegaji(Context context, String id)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+            this.id=id;
+            this.p=p;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            super.onPreExecute();
+            //this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                //this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    RequestBody body = new FormBody.Builder()
+                            .add("id",id)
+                            .build();
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .post(body)
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    Log.e(TAG,prefs.getString("Authorization","")+" "+id);
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+
+                if (result != null) {
+
+                    Log.e(TAG, "Gaji" + result.toString());
+
+                    try {
+                        //JSONArray pengsarray = result.getJSONArray("data");
+                        JSONObject obj = result.getJSONObject("data");
+                        JSONArray GB = obj.getJSONArray("gajiBersih");
+                        JSONArray GT = obj.getJSONArray("gajiTotal");
+                        JSONObject sumGB = GB.getJSONObject(0);
+                        JSONObject sumGT = GT.getJSONObject(0);
+                        gaji+=Double.parseDouble(sumGB.getString("gajiBersih"));
+                        potongan+=Double.parseDouble(sumGT.getString("gajiTotal"));
+                        potongan-=Double.parseDouble(sumGB.getString("gajiBersih"));
+
+                        showgaji("Gaji",gaji,potongan);
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Toast.makeText(ctx, "Terjadi Kesalahan Koneksi" + result, Toast.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Toast.makeText(ctx,E.getMessage().toString(),Toast.LENGTH_SHORT).show();
+            }
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
+    public void showgaji(String teks, Double Gaji, Double Potongan){
+        DecimalFormat formatter = new DecimalFormat("###,###,###.00");
+
+        final Dialog gajisendiri = new Dialog(ctx);
+        gajisendiri.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        gajisendiri.setContentView(R.layout.dialog_gajisendiri);
+        gajisendiri.setCancelable(true);
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(gajisendiri.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        TextView gajiteks=gajisendiri.findViewById(R.id.gajiteks);
+        gajiteks.setText(teks);
+        ((ImageButton) gajisendiri.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gajisendiri.dismiss();
+            }
+        });
+        ((Button) gajisendiri.findViewById(R.id.bt_save)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                gajisendiri.dismiss();
+            }
+        });
+
+        final TextView gajibersih = (TextView) gajisendiri.findViewById(R.id.gajibersih);
+        final TextView gajipotongan = (TextView) gajisendiri.findViewById(R.id.gajipotongan);
+
+        gajibersih.setText("RP "+formatter.format(Gaji));
+        gajipotongan.setText("RP "+formatter.format(Potongan));
+        gajisendiri.show();
+        gajisendiri.getWindow().setAttributes(lp);
+    }
+
     private boolean toggleLayoutExpand(boolean show, View view, View lyt_expand) {
         Tools.toggleArrow(show, view);
         if (show) {

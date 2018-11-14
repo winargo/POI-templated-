@@ -21,6 +21,8 @@ import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -80,6 +82,7 @@ import prima.optimasi.indonesia.payroll.universal.absence.facedetection;
 import prima.optimasi.indonesia.payroll.universal.activity.ActivityLogAbsensi;
 import prima.optimasi.indonesia.payroll.universal.activity.ActivityPengajuan;
 import prima.optimasi.indonesia.payroll.universal.activity.ActivityPengumuman;
+import prima.optimasi.indonesia.payroll.universal.adapter.AdapterListKaryawan;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import qrcodescanner.QrCodeActivity;
@@ -87,6 +90,7 @@ import qrcodescanner.QrCodeActivity;
 public class mainmenu_kabag extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    AdapterListKaryawan adapter;
     SharedPreferences prefs;
     CoordinatorLayout parent_view;
     Adaptermenujabatan listAdapter;
@@ -96,7 +100,8 @@ public class mainmenu_kabag extends AppCompatActivity
     ViewPager pager;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
-
+    List<listkaryawan> items;
+    listkaryawan kar;
     String[] tabTitles = new String []{" Home", "  Profil", "Pengumuman","Anggota","Cek Gaji","Pengajuan"};
     int[] iconstyle = new int[]{R.drawable.baseline_home_black_18dp,R.drawable.baseline_account_circle_black_24dp,R.drawable.baseline_announcement_black_24dp,R.drawable.ic_baseline_people_24px,R.drawable.baseline_monetization_on_black_24dp,R.drawable.baseline_assignment_black_24dp};
 
@@ -880,27 +885,65 @@ public class mainmenu_kabag extends AppCompatActivity
                             */
                             JSONArray pengsarray = result.getJSONArray("data");
 
+                            items=new ArrayList<>();
                             String tempcall = "";
                             int panjang=0;
                             for (int i = 0; i < pengsarray.length(); i++) {
                                 JSONObject obj = pengsarray.getJSONObject(i);
                                 if(!prefs.getString("kodekaryawan", "").equals(obj.getString("kode_karyawan"))) {
                                     if (!obj.getString("otoritas").equals("2")) {
-                                        panjang++;
+                                        kar=new listkaryawan();
+                                        kar.setIskar(obj.getString("id"));
+
+                                        kar.setNama(obj.getString("nama"));
+                                        kar.setJabatan(obj.getString("jabatan"));
+                                        kar.setJenis("cekgaji");
+                                        if(!obj.getString("foto").equals("")){
+                                            kar.setImagelink(generator.profileurl+obj.getString("foto"));
+                                        }
+                                        else{
+                                            kar.setImagelink("");
+                                        }
+                                        items.add(kar);
                                     }
                                 }
                             }
-                            for (int i = 0; i < pengsarray.length(); i++) {
-                                JSONObject obj = pengsarray.getJSONObject(i);
 
-                                if(!prefs.getString("kodekaryawan", "").equals(obj.getString("kode_karyawan"))) {
-                                    if (!obj.getString("otoritas").equals("2")) {
-                                        retrivegaji gaji=new retrivegaji(mainmenu_kabag.this, obj.getString("id"),panjang);
-                                        gaji.execute();
+                            final Dialog listkar = new Dialog(mainmenu_kabag.this);
+                            listkar.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+                            listkar.setContentView(R.layout.dialog_listkaryawan);
+                            listkar.setCancelable(true);
 
-                                    }
+                            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                            lp.copyFrom(listkar.getWindow().getAttributes());
+                            lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                            lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+                            ((ImageButton) listkar.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    listkar.dismiss();
                                 }
-                            }
+                            });
+
+
+                            final RecyclerView rvkar = (RecyclerView) listkar.findViewById(R.id.recyclerView);
+
+                            adapter=new AdapterListKaryawan(listkar.getContext(),items,ItemAnimation.BOTTOM_UP);
+
+                            rvkar.setLayoutManager(new LinearLayoutManager(listkar.getContext()));
+                            rvkar.setHasFixedSize(true);
+                            rvkar.setAdapter(adapter);
+                            rvkar.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    listkar.dismiss();
+                                }
+                            });
+
+
+                            listkar.show();
+                            listkar.getWindow().setAttributes(lp);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -981,6 +1024,7 @@ public class mainmenu_kabag extends AppCompatActivity
                             .build();
                     Response responses = null;
 
+                    Log.e(TAG,prefs.getString("Authorization","")+" "+id);
                     try {
                         responses = client.newCall(request).execute();
                     } catch (IOException e) {
@@ -1044,9 +1088,9 @@ public class mainmenu_kabag extends AppCompatActivity
                         JSONArray GT = obj.getJSONArray("gajiTotal");
                         JSONObject sumGB = GB.getJSONObject(0);
                         JSONObject sumGT = GT.getJSONObject(0);
-                        gaji+=Double.parseDouble(sumGB.getString("sum(`gaji_bersih`)"));
-                        potongan+=Double.parseDouble(sumGT.getString("sum(`gaji_total`)"));
-                        potongan-=Double.parseDouble(sumGB.getString("sum(`gaji_bersih`)"));
+                        gaji+=Double.parseDouble(sumGB.getString("gajiBersih"));
+                        potongan+=Double.parseDouble(sumGT.getString("gajiTotal"));
+                        potongan-=Double.parseDouble(sumGB.getString("gajiBersih"));
 
 
                         //int gaji=1000000;
