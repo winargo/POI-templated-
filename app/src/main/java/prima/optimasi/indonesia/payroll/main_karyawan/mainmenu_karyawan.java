@@ -104,7 +104,7 @@ public class mainmenu_karyawan extends AppCompatActivity
 
     ViewPager pager;
     TabLayout tabpager;
-    Double gaji;
+    Double gaji, potongan;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         loadingdata = new ProgressDialog(this);
@@ -189,6 +189,7 @@ public class mainmenu_karyawan extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 gaji=0.0d;
+                potongan=0.0d;
                 retrivegaji gajis=new retrivegaji(mainmenu_karyawan.this);
                 gajis.execute();
             }
@@ -669,14 +670,16 @@ public class mainmenu_karyawan extends AppCompatActivity
                     Log.e(TAG, "Gaji" + result.toString());
 
                     try {
-                        JSONArray pengsarray = result.getJSONArray("data");
-                        //JSONObject obj = result.getJSONObject("data");
-                        //int gaji=1000000;
-                        for(int i=0;i<pengsarray.length();i++){
-                            JSONObject obj = pengsarray.getJSONObject(i);
-                            gaji+=Double.parseDouble(obj.getString("gaji"));
-                        }
-                        showgaji("Gaji",gaji);
+                        JSONObject obj = result.getJSONObject("data");
+                        JSONArray GB = obj.getJSONArray("gajiBersih");
+                        JSONArray GT = obj.getJSONArray("gajiTotal");
+                        JSONObject sumGB = GB.getJSONObject(0);
+                        JSONObject sumGT = GT.getJSONObject(0);
+                        gaji+=Double.parseDouble(sumGB.getString("sum(`gaji_bersih`)"));
+                        potongan+=Double.parseDouble(sumGT.getString("sum(`gaji_total`)"));
+                        potongan-=Double.parseDouble(sumGB.getString("sum(`gaji_bersih`)"));
+
+                        showgaji("Gaji",gaji,potongan);
 
 
                     } catch (Exception e) {
@@ -698,7 +701,7 @@ public class mainmenu_karyawan extends AppCompatActivity
         }
     }
 
-    public void showgaji(String teks, Double Gaji){
+    public void showgaji(String teks, Double Gaji, Double Potongan){
         DecimalFormat formatter = new DecimalFormat("###,###,###.00");
 
         final Dialog gajisendiri = new Dialog(mainmenu_karyawan.this);
@@ -725,8 +728,11 @@ public class mainmenu_karyawan extends AppCompatActivity
             }
         });
 
-        final TextView gaji_sendiri = (TextView) gajisendiri.findViewById(R.id.gajisendiri);
-        gaji_sendiri.setText("RP "+formatter.format(Gaji));
+        final TextView gajibersih = (TextView) gajisendiri.findViewById(R.id.gajibersih);
+        final TextView gajipotongan = (TextView) gajisendiri.findViewById(R.id.gajipotongan);
+
+        gajibersih.setText("RP "+formatter.format(Gaji));
+        gajipotongan.setText("RP "+formatter.format(Potongan));
         gajisendiri.show();
         gajisendiri.getWindow().setAttributes(lp);
     }

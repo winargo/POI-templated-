@@ -64,8 +64,10 @@ public class ActivityListKaryawan extends AppCompatActivity {
     TextView tanggal, tidakada;
     RecyclerView recyclerView;
     AdapterListKaryawan adapter;
-    List<listkaryawan> items;
+    List<listkaryawan> items, total, hadir;
     listkaryawan kar;
+    String tanggalskrg="";
+    int totalkaryawan=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,8 +76,11 @@ public class ActivityListKaryawan extends AppCompatActivity {
         recyclerView=findViewById(R.id.recyclerView);
         tanggal=findViewById(R.id.tanggal);
         tidakada=findViewById(R.id.tidakada);
-
         Calendar c = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd");
+        tanggalskrg=format.format(c.getTime());
+        Log.e("Tanggal sekarang", tanggalskrg);
+
         c.add(Calendar.DATE,0);
         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         String formattedDate = df.format(c.getTime());
@@ -99,6 +104,11 @@ public class ActivityListKaryawan extends AppCompatActivity {
         }
         else if(getIntent().getStringExtra("keterangan").equals("telat")){
             retriveketerangan kar=new retriveketerangan(this,"telat");
+            kar.execute();
+        }
+
+        else if(getIntent().getStringExtra("keterangan").equals("absen")){
+            retrivetotal kar=new retrivetotal(this);
             kar.execute();
         }
         else{
@@ -144,9 +154,13 @@ public class ActivityListKaryawan extends AppCompatActivity {
             else if(keterangan.equals("dinas")){
                 urldata=generator.getdinashariyurl;
             }
-            else{
+            else if(keterangan.equals("telat")){
                 urldata=generator.absensitelatyurl;
             }
+            /*
+            else{
+                urldata=generator.listemployeeurl;
+            }*/
         }
 
         String TAG = getClass().getSimpleName();
@@ -267,6 +281,391 @@ public class ActivityListKaryawan extends AppCompatActivity {
                     }
 
 
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+
+            /*
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }*/
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
+    private class retrivetotal extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        ProgressDialog dialog ;
+
+        String urldata = generator.listemployeeurl;
+        String passeddata = "" ;
+        String keterangan="";
+
+        public retrivetotal(Context context)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            super.onPreExecute();
+            //this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                //this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+                Log.e(TAG, "data json result" + result.toString());
+                if (result != null) {
+                    try {
+
+                        total=new ArrayList<>();
+                        JSONArray pengsarray = result.getJSONArray("rows");
+                        totalkaryawan=pengsarray.length();
+                        for (int i=0;i<pengsarray.length();i++){
+                            JSONObject obj=pengsarray.getJSONObject(i);
+                            kar=new listkaryawan();
+                            kar.setNama(obj.getString("nama"));
+                            kar.setKode(obj.getString("kode_karyawan"));
+                            kar.setJabatan(obj.getString("jabatan"));
+                            if(!obj.getString("foto").equals("")){
+                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
+                            }
+                            else{
+                                kar.setImagelink("");
+                            }
+                            total.add(kar);
+                        }
+                        retriveabsen absen=new retriveabsen(ActivityListKaryawan.this);
+                        absen.execute();
+
+
+                    }  catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }  catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+
+            /*
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }*/
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
+    private class retriveabsen extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        JSONObject result1 = null ;
+        ProgressDialog dialog ;
+        String urldata = generator.getabsensidateurl;
+        String passeddata = "" ;
+
+        public retriveabsen(Context context)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            //dialog = new ProgressDialog(context);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            //this.dialog.show();
+            super.onPreExecute();
+            //this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                //this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    RequestBody body = new FormBody.Builder()
+                            .add("date",tanggalskrg)
+                            .build();
+
+                    Log.e(TAG, tanggalskrg);
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .post(body)
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+                /*
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result1 = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }*/
+            } catch (IOException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result2) {
+
+            try {
+                Log.e(TAG, "data json result" + result.toString());
+                if (result1 != null) {
+                    generator.servertime = result1.getString("jam");
+                }
+                if (result != null) {
+                    try {
+                        items=new ArrayList<>();
+                        hadir = new ArrayList<>();
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        JSONArray pengsarray = result.getJSONArray("rows");
+
+                        String tempcall = "";
+
+                        boolean hadir;
+                        Log.e("Total karyawan",""+totalkaryawan);
+                        for (int j = 0; j < totalkaryawan; j++) {
+                            hadir = false;
+                            for (int i = 0; i < pengsarray.length(); i++) {
+                                JSONObject obj = pengsarray.getJSONObject(i);
+                                if(total.get(j).getKode().equals(obj.getString("kode"))){
+                                    hadir=true;
+                                    break;
+                                }
+                                else if(i+1==pengsarray.length() && !hadir){
+                                    items.add(total.get(j));
+                                }
+                            }
+                        }
+
+                        /*
+                        for (int i = 0; i < pengsarray.length(); i++) {
+                            JSONObject obj = pengsarray.getJSONObject(i);
+                            kar=new listkaryawan();
+                            kar.setKode(obj.getString("kode"));
+                            hadir=false;
+                            for (int j = 0; j < totalkaryawan; j++) {
+                                if(total.get(j).getKode().equals(obj.getString("kode"))){
+                                    hadir=true;
+                                }
+                            }
+                            if(!hadir){
+                                kar=new listkaryawan();
+                                kar.setNama(total.get);
+                                kar.setKode(obj.getString("kode_karyawan"));
+                                kar.setJabatan(obj.getString("jabatan"));
+                                if(!obj.getString("foto").equals("")){
+                                    kar.setImagelink(generator.profileurl+obj.getString("foto"));
+                                }
+                                else{
+                                    kar.setImagelink("");
+                                }
+                                items.add(total.get(i));
+                            }
+
+                            //hadir.add(kar);
+                        }*/
+                        /*
+                        for(int j=0;j<totalkaryawan;j++){
+
+                            if(!total.get(posisi).getKode().equals(hadir.get(j).getKode())){
+                                items.add(total.get(j));
+                            }
+                        }*/
+                        adapter=new AdapterListKaryawan(ActivityListKaryawan.this,items, ItemAnimation.BOTTOM_UP);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(ActivityListKaryawan.this));
+                        recyclerView.setHasFixedSize(true);
+                        recyclerView.setAdapter(adapter);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
                 } else {
                     Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
                 }
