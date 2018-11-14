@@ -136,6 +136,12 @@ public class FragmentEmployee extends Fragment {
                 calender.setOnDayClickListener(new OnDayClickListener() {
                     @Override
                     public void onDayClick(EventDay eventDay) {
+
+                        if(mAdapteraktifitas!=null){
+                            itemaktifitas.clear();
+                            mAdapteraktifitas.notifyDataSetChanged();
+                        }
+
                         Calendar clickedDayCalendar = eventDay.getCalendar();
                         selecteddate = clickedDayCalendar.getTimeInMillis();
                         SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/YYYY");
@@ -187,6 +193,12 @@ public class FragmentEmployee extends Fragment {
         refreshaktifitas.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+
+                if(mAdapteraktifitas!=null){
+                    itemaktifitas.clear();
+                    mAdapteraktifitas.notifyDataSetChanged();
+                }
+
                 retriveabsensirefresh ref = new retriveabsensirefresh(getActivity());
                 ref.execute();
             }
@@ -1300,7 +1312,10 @@ public class FragmentEmployee extends Fragment {
                 Log.e(TAG, "data absensi karyawan" + result.toString());
                 if (result != null) {
                     try {
-                        itemaktifitas = new ArrayList<>();
+                        if(itemaktifitas==null){
+                            itemaktifitas = new ArrayList<>();
+                        }
+
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         JSONArray pengsarray = result.getJSONArray("rows");
 

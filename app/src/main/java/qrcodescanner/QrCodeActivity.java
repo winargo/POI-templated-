@@ -752,17 +752,6 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
                 final AlertDialog alert = new AlertDialog.Builder(ctx).setTitle(title).setMessage(result.getString("message")).setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                }).create();
-
-                alert.show();
-
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        alert.dismiss();
                         try {
                             mCaptureActivityHandler.restartPreviewAndDecode();
                         }
@@ -770,7 +759,9 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
                             e.printStackTrace();
                         }//Do something after 100ms
                     }
-                }, 2000);
+                }).create();
+
+                alert.show();
 
 
                 //JSONArray bArray= responseObject.getJSONArray("B");

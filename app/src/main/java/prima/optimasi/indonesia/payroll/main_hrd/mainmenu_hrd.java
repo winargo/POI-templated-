@@ -261,9 +261,6 @@ public class mainmenu_hrd extends AppCompatActivity
                 }else if(listDataHeader.get(groupPosition).equals("Home")){
                     pager.setCurrentItem(0);
                     drawer.closeDrawer(Gravity.START);
-                }else if(listDataHeader.get(groupPosition).equals("Profil")){
-                    pager.setCurrentItem(3);
-                    drawer.closeDrawer(Gravity.START);
                 }
                 else if(listDataHeader.get(groupPosition).equals("Absensi")){
                     drawer.closeDrawer(Gravity.START);
@@ -347,18 +344,7 @@ public class mainmenu_hrd extends AppCompatActivity
                                 childPosition), Toast.LENGTH_SHORT)
                         .show();
 
-                if(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition).equals("Karyawan")){
-                    Intent a = new Intent(mainmenu_hrd.this, cekjadwal.class);
-                    a.putExtra("cekjadwal","Karyawan");
-                    startActivity(a);
-                }
-                else if(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition).equals("Sendiri")) {
-                    Intent a = new Intent(mainmenu_hrd.this, cekjadwal.class);
-                    a.putExtra("cekjadwal","Sendiri");
-                    startActivity(a);
-                }
 
-                drawer.closeDrawer(Gravity.START);
 
                 return false;
             }
@@ -485,7 +471,6 @@ public class mainmenu_hrd extends AppCompatActivity
         listDataHeader.add("Home");
         listDataHeader.add("Pengumuman");
         listDataHeader.add("List Karyawan");
-        listDataHeader.add("Profil");
         listDataHeader.add("Cek Gaji");
         listDataHeader.add("Cek Jadwal");
         listDataHeader.add("Pengajuan");
@@ -502,9 +487,10 @@ public class mainmenu_hrd extends AppCompatActivity
         top250.add("Pinjaman");
         top250.add("Sakit");
 
-        listDataChild.put(listDataHeader.get(5), top2501);
+        listDataChild.put(listDataHeader.get(3), top2501);
+        listDataChild.put(listDataHeader.get(4), top2501);
 
-        listDataChild.put(listDataHeader.get(6), top250);
+        listDataChild.put(listDataHeader.get(5), top250);
     }
 
     public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
@@ -554,7 +540,7 @@ public class mainmenu_hrd extends AppCompatActivity
     public void closeAll(){
         searchView.closeSearch();
         tempmenu.findItem(R.id.action_search).setVisible(true);
-        tempmenu.findItem(R.id.action_add).setVisible(true);
+        tempmenu.findItem(R.id.action_add).setVisible(false);
 
     }
     public void hidesearch(){

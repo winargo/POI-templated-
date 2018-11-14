@@ -251,6 +251,11 @@ public class FragmentEmployee extends Fragment{
         refreshaktifitas.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                if(mAdapteraktifitas!=null){
+                    itemaktifitas.clear();
+                    mAdapteraktifitas.notifyDataSetChanged();
+                }
+
                 retriveabsensirefresh ref = new retriveabsensirefresh(getActivity());
                 ref.execute();
             }
@@ -1366,7 +1371,9 @@ public class FragmentEmployee extends Fragment{
                 Log.e(TAG, "data absensi karyawan" + result.toString());
                 if (result != null) {
                     try {
-                        itemaktifitas = new ArrayList<>();
+                        if(itemaktifitas==null){
+                          itemaktifitas  = new ArrayList<>();
+                        }
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         JSONArray pengsarray = result.getJSONArray("rows");
 

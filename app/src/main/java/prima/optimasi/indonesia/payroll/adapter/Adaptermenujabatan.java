@@ -141,12 +141,17 @@ public class Adaptermenujabatan extends BaseExpandableListAdapter {
                 expadingarrowdown.setVisibility(View.GONE);
             }
             else {
-                expadingarrowdown.setVisibility(View.VISIBLE);
+                expadingarrowdown.setVisibility(View.GONE);
             }
             icon.setBackgroundResource(R.drawable.baseline_monetization_on_black_24dp);
 
         }else if(headerTitle.equals("Cek Jadwal")){
-            expadingarrowdown.setVisibility(View.GONE);
+            if(_context.getSharedPreferences("poipayroll",MODE_PRIVATE).getString("level","").equals("karyawan")){
+                expadingarrowdown.setVisibility(View.GONE);
+            }
+            else {
+                expadingarrowdown.setVisibility(View.VISIBLE);
+            }
             icon.setBackgroundResource(R.drawable.ic_baseline_today_24px);
         }else if(headerTitle.equals("Profil")){
             expadingarrowdown.setVisibility(View.GONE);

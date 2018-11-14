@@ -248,13 +248,9 @@ public class mainmenu_owner extends AppCompatActivity
                     pager.setCurrentItem(3);
                     drawer.closeDrawer(Gravity.START);
                 }else if(listDataHeader.get(groupPosition).equals("Laporan")){
-                    posi = posi +1;
-                    if(posi==2){
-                        pager.setCurrentItem(2);
-                        drawer.closeDrawer(Gravity.START);
-                    }else {
+                    pager.setCurrentItem(2);
+                    drawer.closeDrawer(Gravity.START);
 
-                    }
 
 
                 }
