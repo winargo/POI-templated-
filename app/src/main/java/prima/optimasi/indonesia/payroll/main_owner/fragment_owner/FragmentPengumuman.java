@@ -220,7 +220,7 @@ public class FragmentPengumuman extends Fragment {
         protected void onPreExecute (){
             this.dialog.show();
             super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
+            this.dialog.setMessage("Getting Data...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
         }
 
@@ -228,7 +228,7 @@ public class FragmentPengumuman extends Fragment {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
 
                 try {
-                    this.dialog.setMessage("Loading Data...");
+                    //this.dialog.setMessage("Loading Data...");
 
                     JSONObject jsonObject;
 

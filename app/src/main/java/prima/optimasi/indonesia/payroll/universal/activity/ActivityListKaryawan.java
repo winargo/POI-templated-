@@ -1,8 +1,10 @@
 package prima.optimasi.indonesia.payroll.universal.activity;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -15,6 +17,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +29,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.applandeo.materialcalendarview.CalendarView;
+import com.applandeo.materialcalendarview.EventDay;
+import com.applandeo.materialcalendarview.exceptions.OutOfDateRangeException;
+import com.applandeo.materialcalendarview.listeners.OnDayClickListener;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
@@ -59,14 +66,17 @@ import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
 
 public class ActivityListKaryawan extends AppCompatActivity {
+    View lyt_selectdate;
+    long selecteddate = 0L;
     MaterialSearchView searchView;
+    ImageView selectdate;
     CoordinatorLayout parent_view;
     TextView tanggal, tidakada;
     RecyclerView recyclerView;
     AdapterListKaryawan adapter;
     List<listkaryawan> items, total, hadir;
     listkaryawan kar;
-    String tanggalskrg="";
+    String tanggalskrg="", settanggal;
     int totalkaryawan=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,11 +84,13 @@ public class ActivityListKaryawan extends AppCompatActivity {
         setContentView(R.layout.activity_list_karyawan);
         parent_view=findViewById(R.id.parent_view);
         recyclerView=findViewById(R.id.recyclerView);
+        lyt_selectdate=findViewById(R.id.lyt_selectdate);
         tanggal=findViewById(R.id.tanggal);
         tidakada=findViewById(R.id.tidakada);
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         tanggalskrg=format.format(c.getTime());
+        settanggal=tanggalskrg;
         Log.e("Tanggal sekarang", tanggalskrg);
 
         c.add(Calendar.DATE,0);
@@ -86,27 +98,83 @@ public class ActivityListKaryawan extends AppCompatActivity {
         String formattedDate = df.format(c.getTime());
         tanggal.setText(formattedDate);
 
-        if(getIntent().getStringExtra("keterangan").equals("izin")){
-            retriveketerangan kar=new retriveketerangan(this,"izin");
-            kar.execute();
-        }
-        else if(getIntent().getStringExtra("keterangan").equals("sakit")){
-            retriveketerangan kar=new retriveketerangan(this,"sakit");
-            kar.execute();
-        }
-        else if(getIntent().getStringExtra("keterangan").equals("cuti")){
-            retriveketerangan kar=new retriveketerangan(this,"cuti");
-            kar.execute();
-        }
-        else if(getIntent().getStringExtra("keterangan").equals("dinas")){
-            retriveketerangan kar=new retriveketerangan(this,"dinas");
-            kar.execute();
-        }
-        else if(getIntent().getStringExtra("keterangan").equals("telat")){
-            retriveketerangan kar=new retriveketerangan(this,"telat");
-            kar.execute();
-        }
 
+        lyt_selectdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder dialog = new AlertDialog.Builder(ActivityListKaryawan.this).setPositiveButton("Select", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        setretrive();
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                LayoutInflater inflate = LayoutInflater.from(ActivityListKaryawan.this);
+
+                View linear = inflate.inflate(R.layout.calenderview,null);
+
+                CalendarView calender = linear.findViewById(R.id.calenderviews);
+                calender.setHeaderColor(R.color.red_500);
+
+                //calender.setHeaderColor(ActivityListKaryawan.this.getResources().getColor(R.color.red_500));
+
+                Calendar cal = Calendar.getInstance();
+
+                calender.setOnDayClickListener(new OnDayClickListener() {
+                    @Override
+                    public void onDayClick(EventDay eventDay) {
+
+                        if(adapter!=null){
+                            items.clear();
+                            adapter.notifyDataSetChanged();
+                        }
+                        Calendar clickedDayCalendar = eventDay.getCalendar();
+                        selecteddate = clickedDayCalendar.getTimeInMillis();
+                        SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        settanggal=format.format(clickedDayCalendar.getTime());
+                        Log.e("Tanggal", settanggal);
+                        tanggal.setText(format1.format(clickedDayCalendar.getTime()));
+
+                    }
+                });
+                if(selecteddate!=0L){
+                    cal.setTimeInMillis(selecteddate);
+                    try {
+                        calender.setDate(cal);
+                    } catch (OutOfDateRangeException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                dialog.setView(linear);
+
+                AlertDialog dial = dialog.show();
+
+                dial.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialog) {
+
+                    }
+                });
+            }
+        });
+
+        searchView=(MaterialSearchView)findViewById(R.id.searchView);
+        setretrive();
+        initToolbar();
+    }
+    public void setretrive(){
+        if(getIntent().getStringExtra("keterangan").equals("izin") || getIntent().getStringExtra("keterangan").equals("sakit") || getIntent().getStringExtra("keterangan").equals("cuti")
+                || getIntent().getStringExtra("keterangan").equals("dinas") || getIntent().getStringExtra("keterangan").equals("telat")){
+            retriveketerangan kar=new retriveketerangan(this,getIntent().getStringExtra("keterangan"));
+            kar.execute();
+        }
         else if(getIntent().getStringExtra("keterangan").equals("absen")){
             retrivetotal kar=new retrivetotal(this);
             kar.execute();
@@ -115,10 +183,6 @@ public class ActivityListKaryawan extends AppCompatActivity {
             retrivelistkaryawan kar=new retrivelistkaryawan(this,getIntent().getStringExtra("keterangan"));
             kar.execute();
         }
-
-
-        searchView=(MaterialSearchView)findViewById(R.id.searchView);
-        initToolbar();
     }
 
     private class retriveketerangan extends AsyncTask<Void, Integer, String>
@@ -183,8 +247,10 @@ public class ActivityListKaryawan extends AppCompatActivity {
                     OkHttpClient client = new OkHttpClient();
 
                     RequestBody body = new FormBody.Builder()
+                            .add("date",settanggal)
                             .build();
 
+                    Log.e("Set Tanggal", settanggal);
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
                             .post(body)
@@ -249,9 +315,11 @@ public class ActivityListKaryawan extends AppCompatActivity {
                         items=new ArrayList<>();
                         JSONArray pengsarray = result.getJSONArray("rows");
                         if(pengsarray.length()==0){
-                            tanggal.setText("Tidak ada karyawan yang "+keterangan+" hari ini");
+                            tidakada.setVisibility(View.VISIBLE);
+                            tidakada.setText("Tidak ada karyawan yang "+keterangan);
                         }
                         else{
+                            tidakada.setVisibility(View.GONE);
                             for (int i=0;i<pengsarray.length();i++){
                                 JSONObject obj=pengsarray.getJSONObject(i);
                                 kar=new listkaryawan();
@@ -496,10 +564,10 @@ public class ActivityListKaryawan extends AppCompatActivity {
                     OkHttpClient client = new OkHttpClient();
 
                     RequestBody body = new FormBody.Builder()
-                            .add("date",tanggalskrg)
+                            .add("date",settanggal)
                             .build();
 
-                    Log.e(TAG, tanggalskrg);
+                    Log.e(TAG, settanggal);
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
@@ -728,6 +796,7 @@ public class ActivityListKaryawan extends AppCompatActivity {
 
                     RequestBody body = new FormBody.Builder()
                             .add("jabatan",jabatan)
+                            .add("date",settanggal)
                             .build();
 
                     Log.e(TAG, jabatan);
@@ -810,21 +879,23 @@ public class ActivityListKaryawan extends AppCompatActivity {
                         JSONArray pengsarray = result.getJSONArray("data");
                         if(pengsarray.length()==0){
                             tidakada.setVisibility(View.VISIBLE);
-                            tidakada.setText("Tidak ada "+jabatan+" yang hadir");
+                            tidakada.setText("Tidak ada karyawan dengan jabatan ("+jabatan+") yang hadir");
                         }
-                        for(int i=0;i<pengsarray.length();i++){
-                            JSONObject obj = pengsarray.getJSONObject(i);
-                            kar=new listkaryawan();
-                            kar.setIskar(obj.getString("id"));
-                            kar.setNama(obj.getString("nama"));
-                            kar.setJabatan(jabatan);
-                            if(!obj.getString("foto").equals("")){
-                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
+                        else {
+                            tidakada.setVisibility(View.GONE);
+                            for (int i = 0; i < pengsarray.length(); i++) {
+                                JSONObject obj = pengsarray.getJSONObject(i);
+                                kar = new listkaryawan();
+                                kar.setIskar(obj.getString("id"));
+                                kar.setNama(obj.getString("nama"));
+                                kar.setJabatan(jabatan);
+                                if (!obj.getString("foto").equals("")) {
+                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                } else {
+                                    kar.setImagelink("");
+                                }
+                                items.add(kar);
                             }
-                            else{
-                                kar.setImagelink("");
-                            }
-                            items.add(kar);
                         }
                         adapter=new AdapterListKaryawan(ActivityListKaryawan.this,items, ItemAnimation.BOTTOM_UP);
                         recyclerView.setLayoutManager(new LinearLayoutManager(ActivityListKaryawan.this));

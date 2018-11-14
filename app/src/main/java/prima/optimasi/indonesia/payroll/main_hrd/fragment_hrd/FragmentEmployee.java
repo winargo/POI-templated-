@@ -132,7 +132,7 @@ public class FragmentEmployee extends Fragment {
                 CalendarView calender = linear.findViewById(R.id.calenderviews);
 
                 Calendar cal = Calendar.getInstance();
-
+                calender.setHeaderColor(R.color.red_500);
                 calender.setOnDayClickListener(new OnDayClickListener() {
                     @Override
                     public void onDayClick(EventDay eventDay) {
@@ -311,7 +311,7 @@ public class FragmentEmployee extends Fragment {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
 
             try {
-                this.dialog.setMessage("Loading Data...");
+                //this.dialog.setMessage("Loading Data...");
 
                 JSONObject jsonObject;
 
@@ -831,7 +831,7 @@ public class FragmentEmployee extends Fragment {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
 
             try {
-                this.dialog.setMessage("Loading Data...");
+                //this.dialog.setMessage("Loading Data...");
 
                 JSONObject jsonObject;
 

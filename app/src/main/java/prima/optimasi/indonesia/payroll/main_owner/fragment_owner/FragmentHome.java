@@ -77,6 +77,7 @@ import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
 
 public class FragmentHome extends Fragment {
 
+    String tanggal="";
     private SwipeRefreshLayout refreshhome;
     View lyt_totalizin, lyt_totalsakit,lyt_totalcuti, lyt_totalabsen, lyt_totaltelat,lyt_totaldinas;
     TextView totalizin, totalsakit, totalcuti, totalabsen, totaltelat, totaldinas, totalgajibersih, totalgajiestimasi, totalgajipotongan;
@@ -215,10 +216,9 @@ public class FragmentHome extends Fragment {
 
         }
 
-
-
-
-
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        tanggal=format.format(c.getTime());
 
         recyclerView = rootView.findViewById(R.id.recyclerView);
         recyclerView2=rootView.findViewById(R.id.recyclerView2bulan);
@@ -1366,6 +1366,7 @@ public class FragmentHome extends Fragment {
 
                     RequestBody body = new FormBody.Builder()
                             .add("jabatan",jabatan)
+                            .add("date",tanggal)
                             .build();
 
                     Log.e(TAG, jabatan);
@@ -1534,6 +1535,7 @@ public class FragmentHome extends Fragment {
 
                     RequestBody body = new FormBody.Builder()
                             .add("jabatan",jabatan)
+                            .add("date",tanggal)
                             .build();
 
                     Log.e(TAG, jabatan);
@@ -1898,6 +1900,7 @@ public class FragmentHome extends Fragment {
                     OkHttpClient client = new OkHttpClient();
 
                     RequestBody body = new FormBody.Builder()
+                            .add("date",tanggal)
                             .build();
 
                     Request request = new Request.Builder()

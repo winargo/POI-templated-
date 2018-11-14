@@ -155,6 +155,8 @@ public class generator {
     public static String gajiestimasiurl="http://"+ generator.Server+":"+generator.port+"/penggajian/estimasi";
     public static String laporanpengajianurl="http://"+ generator.Server+":"+generator.port+"/penggajian/laporan";
     public static String pengajiangajikaryawanurl="http://"+ generator.Server+":"+generator.port+"/penggajian/gajitotal";
+    public static String pengajiangajibulanlalukaryawanurl="http://"+ generator.Server+":"+generator.port+"/penggajian/gajibulanlalu";
+
 
 
     public static String pengajuancutikodeurl="http://"+ generator.Server+":"+generator.port+"/cuti/kode";

@@ -675,9 +675,15 @@ public class mainmenu_karyawan extends AppCompatActivity
                         JSONArray GT = obj.getJSONArray("gajiTotal");
                         JSONObject sumGB = GB.getJSONObject(0);
                         JSONObject sumGT = GT.getJSONObject(0);
-                        gaji+=Double.parseDouble(sumGB.getString("sum(`gaji_bersih`)"));
-                        potongan+=Double.parseDouble(sumGT.getString("sum(`gaji_total`)"));
-                        potongan-=Double.parseDouble(sumGB.getString("sum(`gaji_bersih`)"));
+                        if(!sumGB.getString("gajiBersih").equals("null") || !sumGT.getString("gajiTotal").equals("null")) {
+                            gaji += Double.parseDouble(sumGB.getString("gajiBersih"));
+                            potongan += Double.parseDouble(sumGT.getString("gajiTotal"));
+                            potongan -= Double.parseDouble(sumGB.getString("gajiBersih"));
+                        }
+                        else{
+                            gaji=0.0d;
+                            potongan=0.0d;
+                        }
 
                         showgaji("Gaji",gaji,potongan);
 
