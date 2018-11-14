@@ -228,7 +228,7 @@ public class FragmentPengumuman extends Fragment {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
 
                 try {
-                    //this.dialog.setMessage("Loading Data...");
+                    this.dialog.setMessage("Loading Data...");
 
                     JSONObject jsonObject;
 
@@ -513,7 +513,7 @@ public class FragmentPengumuman extends Fragment {
         public retriveliburan(Context context, String kodeauth)
         {
             Log.e(TAG, "code: "+kodeauth );
-            dialog = new ProgressDialog(context);
+            //dialog = new ProgressDialog(context);
             passeddata = kodeauth;
             this.username = generator.username;
             this.password = generator.password;
@@ -523,7 +523,7 @@ public class FragmentPengumuman extends Fragment {
         String TAG = getClass().getSimpleName();
 
         protected void onPreExecute (){
-            this.dialog.show();
+            //this.dialog.show();
             super.onPreExecute();
             //this.dialog.setMessage("Getting Data...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
@@ -571,17 +571,17 @@ public class FragmentPengumuman extends Fragment {
                     return null;
                 }
             } catch (IOException e) {
-                this.dialog.dismiss();
+                //this.dialog.dismiss();
                 Log.e("doInBackground: ", "IO Exception" + e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Error IOException";
             } catch (NullPointerException e) {
-                this.dialog.dismiss();
+                //this.dialog.dismiss();
                 Log.e("doInBackground: ", "null data" + e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Please check Connection and Server";
             } catch (Exception e) {
-                this.dialog.dismiss();
+                //this.dialog.dismiss();
                 Log.e("doInBackground: ", e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Error Occured, PLease Contact Administrator/Support";
@@ -679,9 +679,10 @@ public class FragmentPengumuman extends Fragment {
                 Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
             }
 
+            /*
             if(this.dialog.isShowing()){
                 dialog.dismiss();
-            }
+            }*/
 
 
             Log.d(TAG + " onPostExecute", "" + result1);

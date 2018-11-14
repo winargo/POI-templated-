@@ -152,8 +152,9 @@ public class generator {
     public static String pengajuandinasurl="http://"+ generator.Server+":"+generator.port+"/dinas";
 
     public static String totalgajiurl="http://"+ generator.Server+":"+generator.port+"/penggajian/totalgaji";
+    public static String gajiestimasiurl="http://"+ generator.Server+":"+generator.port+"/penggajian/estimasi";
     public static String laporanpengajianurl="http://"+ generator.Server+":"+generator.port+"/penggajian/laporan";
-    public static String pengajiangajikaryawanurl="http://"+ generator.Server+":"+generator.port+"/penggajian/gajikaryawan";
+    public static String pengajiangajikaryawanurl="http://"+ generator.Server+":"+generator.port+"/penggajian/gajitotal";
 
 
     public static String pengajuancutikodeurl="http://"+ generator.Server+":"+generator.port+"/cuti/kode";
@@ -338,7 +339,7 @@ public class generator {
         protected void onPreExecute (){
             this.dialog.show();
             super.onPreExecute();
-            this.dialog.setMessage("Registering Device...");
+            //this.dialog.setMessage("Registering Device...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
         }
 
@@ -428,6 +429,7 @@ public class generator {
 
         protected void onPostExecute(String result1) {
             super.onPostExecute(result1);
+
             if(this.dialog.isShowing()){
                 dialog.dismiss();
             }
