@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.animation.Easing;
@@ -205,9 +206,13 @@ public class FragmentHome extends Fragment {
 
             String dt1 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-0"+c.get(Calendar.DAY_OF_MONTH);
             String dt2 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-"+c.getActualMaximum(Calendar.DAY_OF_MONTH);
+            ProgressDialog dialog = new ProgressDialog(getActivity());
 
-            retrivegajibychart gaji = new retrivegajibychart(getActivity(), dt1, dt2 ,mRealm,perios,i,monthbarbottom,count);
+            dialog.setMessage("Loading Chart Data");
+
+            retrivegajibychart gaji = new retrivegajibychart(getActivity(), dt1, dt2 ,mRealm,perios,i,monthbarbottom,count,dialog);
             gaji.execute();
+
         }
 
 
@@ -480,6 +485,9 @@ public class FragmentHome extends Fragment {
                 lyt_expand3.setVisibility(View.GONE);
                 expand3.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
 
+                ProgressDialog dialog = new ProgressDialog(getActivity());
+                dialog.setMessage("Loading Charts");
+
                 for(int i =0 ; i<monthbarbottom.size();i++) {
 
                     Calendar c = Calendar.getInstance();
@@ -493,7 +501,7 @@ public class FragmentHome extends Fragment {
                     String dt1 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-0"+c.get(Calendar.DAY_OF_MONTH);
                     String dt2 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-"+c.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-                    retrivegajibychart gaji = new retrivegajibychart(getActivity(), dt1, dt2 ,mRealm,perios,i,monthbarbottom,count);
+                    retrivegajibychart gaji = new retrivegajibychart(getActivity(), dt1, dt2 ,mRealm,perios,i,monthbarbottom,count,dialog);
                     gaji.execute();
                 }
 
@@ -2008,10 +2016,11 @@ public class FragmentHome extends Fragment {
         String finalPerios = "";
         int[] count;
 
-        public retrivegajibychart(Context context,String dt1,String dt2,Realm frealm,String periode,int postion,List<String> montbarbottom,int[] count)
+        public retrivegajibychart(Context context,String dt1,String dt2,Realm frealm,String periode,int postion,List<String> montbarbottom,int[] count,ProgressDialog dialogs)
         {
-            dialog=new ProgressDialog(context);
-            dialog.setMessage("Loading Data...");
+            dialog=dialogs;
+            dialog.setMessage("Loading Charts");
+            //dialog.setMessage("Loading Data...");
             this.count = count;
 
             Log.e("data 1 data 2",dt1+" "+dt2 );
@@ -2240,6 +2249,14 @@ public class FragmentHome extends Fragment {
 
                 } else {
                     Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+
+                if(monthbarbottom.size()==position){
+                    if(dialog!=null){
+                        if(dialog.isShowing()){
+                            dialog.dismiss();
+                        }
+                    }
                 }
             }catch (Exception E){
                 E.printStackTrace();

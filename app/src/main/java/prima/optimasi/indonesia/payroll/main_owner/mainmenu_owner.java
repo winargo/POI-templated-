@@ -276,6 +276,18 @@ public class mainmenu_owner extends AppCompatActivity
                     pager.setCurrentItem(4);
                     drawer.closeDrawer(Gravity.START);
                 }
+                else if(listDataHeader.get(groupPosition).equals("Tugas")){
+                    pager.setCurrentItem(4);
+                    drawer.closeDrawer(Gravity.START);
+                }
+                else if(listDataHeader.get(groupPosition).equals("Tugas")){
+                    pager.setCurrentItem(4);
+                    drawer.closeDrawer(Gravity.START);
+                }
+                else if(listDataHeader.get(groupPosition).equals("Tugas")){
+                    pager.setCurrentItem(4);
+                    drawer.closeDrawer(Gravity.START);
+                }
             }
         });
 
@@ -525,23 +537,6 @@ public class mainmenu_owner extends AppCompatActivity
         listDataHeader.add("Karyawan");
         listDataHeader.add("Approval");
         listDataHeader.add("Laporan");
-
-
-        List<String> top2510 = new ArrayList<String>();
-        top2510.add("Pinjaman");
-        top2510.add("Karyawan Baru");
-        top2510.add("Golongan");
-        top2510.add("Promosi");
-        top2510.add("Reward / Punish");
-
-        List<String> lapor = new ArrayList<String>();
-        lapor.add("Cuti");
-        lapor.add("Izin");
-        lapor.add("Sakit");
-        lapor.add("Pinjaman");
-        lapor.add("Pengajian");
-
-        listDataChild.put(listDataHeader.get(5), lapor);
     }
 
     public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
