@@ -347,6 +347,19 @@ public class mainmenu_hrd extends AppCompatActivity
                                 childPosition), Toast.LENGTH_SHORT)
                         .show();
 
+                if(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition).equals("Karyawan")){
+                    Intent a = new Intent(mainmenu_hrd.this, cekjadwal.class);
+                    a.putExtra("cekjadwal","Karyawan");
+                    startActivity(a);
+                }
+                else if(listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition).equals("Sendiri")) {
+                    Intent a = new Intent(mainmenu_hrd.this, cekjadwal.class);
+                    a.putExtra("cekjadwal","Sendiri");
+                    startActivity(a);
+                }
+
+                drawer.closeDrawer(Gravity.START);
+
                 return false;
             }
         });
