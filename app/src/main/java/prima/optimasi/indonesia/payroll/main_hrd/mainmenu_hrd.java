@@ -43,9 +43,8 @@ import android.widget.Toast;
 
 import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentPengajuan;
 import prima.optimasi.indonesia.payroll.main_kabag.cekjadwal;
-import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentCekGaji;
-import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
-import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
+import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentCekGaji;
+
 import qrcodescanner.QrCodeActivity;
 
 import com.applandeo.materialcalendarview.CalendarView;

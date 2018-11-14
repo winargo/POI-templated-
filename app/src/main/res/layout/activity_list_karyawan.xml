@@ -42,15 +42,51 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-        <TextView
-            android:id="@+id/tanggal"
-            android:layout_marginTop="@dimen/spacing_middle"
-            android:layout_marginBottom="@dimen/spacing_middle"
 
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Tanggal"/>
+            <android.support.v7.widget.CardView
+                android:id="@+id/lyt_selectdate"
+                android:clickable="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_middle"
+                android:layout_marginLeft="@dimen/spacing_xsmall"
+                android:layout_marginRight="@dimen/spacing_xsmall"
+                android:layout_marginTop="@dimen/spacing_middle"
+                android:visibility="visible"
+                app:cardCornerRadius="@dimen/spacing_small"
+                app:cardElevation="2dp"
+                android:layout_gravity="center"
+                app:cardBackgroundColor="@color/colorPrimary">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+                <ImageView
+                    android:background="@drawable/ic_event"
+                    android:layout_width="30sp"
+                    android:layout_marginLeft="10sp"
+                    android:layout_marginRight="10sp"
+                    android:layout_gravity="center"
+                    android:id="@+id/dateselection_karyawan"
+                    android:textSize="8pt"
+                    android:tint="@color/qr_code_white"
+                    android:layout_height="30sp" />
+                <TextView
+                    android:id="@+id/tanggal"
+                    android:layout_marginTop="@dimen/spacing_middle"
+                    android:layout_marginBottom="@dimen/spacing_middle"
+                    android:layout_marginRight="10sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30sp"
+                    android:gravity="center"
+                    android:text="Tanggal"
+                    android:textSize="16sp"
+                    android:textColor="@color/qr_code_white"/>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+
         <TextView
             android:id="@+id/tidakada"
             android:layout_marginTop="@dimen/spacing_middle"
@@ -60,6 +96,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Tidak ada karyawan yang hadir"/>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"

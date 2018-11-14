@@ -212,7 +212,6 @@ public class FragmentPengumuman extends Fragment {
         String error = "";
         String username=  "" ;
         String password = "" ;
-        SharedPreferences prefs ;
         JSONObject result = null ;
         ProgressDialog dialog ;
         String urldata = generator.pengumumanurl;
@@ -474,7 +473,7 @@ public class FragmentPengumuman extends Fragment {
                         }
 
                         refreshpengumuman.setRefreshing(false);
-                        ((mainmenu_owner) getActivity()).closesearch();
+                        ((mainmenu_hrd) getActivity()).closesearch();
 
 
                     } catch (JSONException e) {
