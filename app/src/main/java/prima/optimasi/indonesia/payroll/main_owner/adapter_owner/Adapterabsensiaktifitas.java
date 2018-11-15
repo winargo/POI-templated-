@@ -364,7 +364,7 @@ public class Adapterabsensiaktifitas extends RecyclerView.Adapter<RecyclerView.V
                                     cal.setTime(new Date());
 
                                     final int year = cal.get(Calendar.YEAR);
-                                    final int month = cal.get(Calendar.MONTH);
+                                    final int month = cal.get(Calendar.MONTH)+1;
                                     final int day = cal.get(Calendar.DAY_OF_MONTH);
                                     String[] spliter = view.txt_checkin.getText().toString().split(":");
                                     final int hour = Integer.valueOf(spliter[0]);
@@ -377,12 +377,11 @@ public class Adapterabsensiaktifitas extends RecyclerView.Adapter<RecyclerView.V
                                     date1 = format1.parse(datadate);
                                     date2 = new Date();
 
+                                    Log.e("date 1 and date 2 ",date1+" "+date2 );
 
                                     long difference = date2.getTime() - date1.getTime();
-                                    Boolean isdiffer = false;
                                     if(difference<0)
                                     {
-                                        isdiffer = true;
                                         Date dateMax = format.parse("24:00:00");
                                         Date dateMin = format.parse("00:00:00");
                                         difference=(dateMax.getTime() -date1.getTime() )+(date2.getTime()-dateMin.getTime());
@@ -390,13 +389,10 @@ public class Adapterabsensiaktifitas extends RecyclerView.Adapter<RecyclerView.V
                                     int days = (int) (difference / (1000*60*60*24));
                                     int hours = (int) ((difference - (1000*60*60*24*days)) / (1000*60*60));
                                     int min = (int) (difference - (1000*60*60*24*days) - (1000*60*60*hours)) / (1000*60);
-                                    int sec = (int) (difference - (1000*60*60*24*days) - (1000*60*60*hours) - (1000*60)) / 1000;
-                                    if(isdiffer){
+                                    //hours = hours+(days*24);
 
-                                    }
-                                    else {
-                                    }
-                                    sec = sec%60;
+                                    int sec = (int) (difference - (1000*60*60*24*days) - (1000*60*60*hours) - (1000*60*min)) / 1000;
+
                                     view.txt_totaljam.setText("Jam Kerja Sementara : " + hours + " Jam " + min +" Menit "+sec+" Detik");
 
 

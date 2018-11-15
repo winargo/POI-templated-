@@ -110,7 +110,7 @@ public class Adaptermenujabatan extends BaseExpandableListAdapter {
             expadingarrowdown.setVisibility(View.GONE);
             icon.setBackgroundResource(R.drawable.baseline_announcement_black_24dp);
         }else if(headerTitle.equals("Approval")){
-            expadingarrowdown.setVisibility(View.VISIBLE);
+            expadingarrowdown.setVisibility(View.GONE);
             icon.setBackgroundResource(R.drawable.baseline_check_circle_outline_black_24dp);
         }else if(headerTitle.equals("Chart Kehadiran")){
             expadingarrowdown.setVisibility(View.GONE);
@@ -160,7 +160,7 @@ public class Adaptermenujabatan extends BaseExpandableListAdapter {
             expadingarrowdown.setVisibility(View.VISIBLE);
             icon.setBackgroundResource(R.drawable.baseline_assignment_black_24dp);
         }else if(headerTitle.equals("Laporan")){
-            expadingarrowdown.setVisibility(View.VISIBLE);
+            expadingarrowdown.setVisibility(View.GONE);
             icon.setBackgroundResource(R.drawable.baseline_assessment_black_24dp);
         }
         else{

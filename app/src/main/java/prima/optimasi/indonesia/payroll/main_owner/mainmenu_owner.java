@@ -238,17 +238,21 @@ public class mainmenu_owner extends AppCompatActivity
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v,
                                         int groupPosition, long id) {
-                if(listDataHeader.get(groupPosition).equals("Home")){
+                if(listDataHeader.get(groupPosition).equals("Dashboard")){
                     pager.setCurrentItem(0);
                     drawer.closeDrawer(Gravity.START);
                 }else if(listDataHeader.get(groupPosition).equals("Karyawan")){
                     pager.setCurrentItem(1);
                     drawer.closeDrawer(Gravity.START);
-                }else if(listDataHeader.get(groupPosition).equals("Informasi")){
+                }else if(listDataHeader.get(groupPosition).equals("Pengumuman")){
                     pager.setCurrentItem(3);
                     drawer.closeDrawer(Gravity.START);
                 }else if(listDataHeader.get(groupPosition).equals("Laporan")){
                     pager.setCurrentItem(2);
+                    drawer.closeDrawer(Gravity.START);
+
+                }else if(listDataHeader.get(groupPosition).equals("Approval")){
+                    pager.setCurrentItem(4);
                     drawer.closeDrawer(Gravity.START);
 
 
@@ -272,16 +276,20 @@ public class mainmenu_owner extends AppCompatActivity
 
             @Override
             public void onGroupCollapse(int groupPosition) {
-                if(listDataHeader.get(groupPosition).equals("Tugas")){
-                    pager.setCurrentItem(4);
+                if(listDataHeader.get(groupPosition).equals("Dashboard")){
+                    pager.setCurrentItem(0);
                     drawer.closeDrawer(Gravity.START);
                 }
-                else if(listDataHeader.get(groupPosition).equals("Tugas")){
-                    pager.setCurrentItem(4);
+                else if(listDataHeader.get(groupPosition).equals("Karyawan")){
+                    pager.setCurrentItem(1);
                     drawer.closeDrawer(Gravity.START);
                 }
-                else if(listDataHeader.get(groupPosition).equals("Tugas")){
-                    pager.setCurrentItem(4);
+                else if(listDataHeader.get(groupPosition).equals("Laporan")){
+                    pager.setCurrentItem(2);
+                    drawer.closeDrawer(Gravity.START);
+                }
+                else if(listDataHeader.get(groupPosition).equals("Informasi")){
+                    pager.setCurrentItem(3);
                     drawer.closeDrawer(Gravity.START);
                 }
                 else if(listDataHeader.get(groupPosition).equals("Tugas")){
@@ -531,8 +539,7 @@ public class mainmenu_owner extends AppCompatActivity
         listDataChild = new HashMap<String, List<String>>();
 
         // Adding child data
-        listDataHeader.add("Chart Kehadiran");
-        listDataHeader.add("Total Gaji");
+        listDataHeader.add("Dashboard");
         listDataHeader.add("Pengumuman");
         listDataHeader.add("Karyawan");
         listDataHeader.add("Approval");

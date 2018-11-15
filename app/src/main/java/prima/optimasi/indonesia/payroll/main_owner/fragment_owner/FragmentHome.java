@@ -114,7 +114,11 @@ public class FragmentHome extends Fragment {
     public List<View> lyt_ket;
     public List<TextView> tgaji;
 
+    ProgressDialog dialog = new ProgressDialog(getActivity());
+
     String perios="";
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -122,6 +126,8 @@ public class FragmentHome extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_home, container, false);
 
+        dialog.setMessage("Loading Data..");
+        dialog.show();
 
         mRealm = Realm.getDefaultInstance();
 
@@ -207,9 +213,7 @@ public class FragmentHome extends Fragment {
 
             String dt1 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-0"+c.get(Calendar.DAY_OF_MONTH);
             String dt2 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-"+c.getActualMaximum(Calendar.DAY_OF_MONTH);
-            ProgressDialog dialog = new ProgressDialog(getActivity());
 
-            dialog.setMessage("Loading Chart Data");
 
             retrivegajibychart gaji = new retrivegajibychart(getActivity(), dt1, dt2 ,mRealm,perios,i,monthbarbottom,count,dialog);
             gaji.execute();
@@ -291,6 +295,16 @@ public class FragmentHome extends Fragment {
         for(int i=0;i<kontrak_kerja.length;i++){
             retrivekontrakkerjakar k_k=new retrivekontrakkerjakar(parent_view.getContext(),kontrak_kerja[i], kk.get(i),rv_kk.get(i),banyakkontrakkerja.get(i));
             k_k.execute();
+        }
+
+        for(int i=0;i<keterangan.length;i++){
+            retriveketerangan keterangans=new retriveketerangan(getActivity(), keterangan[i], ket.get(i), lyt_ket.get(i));
+            keterangans.execute();
+        }
+
+        for(int i=0;i<tipegaji.length;i++){
+            retrivetotalgaji kar = new retrivetotalgaji(getActivity(),tgaji.get(i),tipegaji[i]);
+            kar.execute();
         }
         retrivegetjabatan jab=new retrivegetjabatan(getActivity());
         jab.execute();
@@ -561,12 +575,6 @@ public class FragmentHome extends Fragment {
 
         String TAG = getClass().getSimpleName();
 
-        protected void onPreExecute (){
-            //this.dialog.show();
-            super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
 
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
@@ -624,11 +632,6 @@ public class FragmentHome extends Fragment {
                 response = "Error Occured, PLease Contact Administrator/Support";
             }
             return response;
-        }
-
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
         }
 
         protected void onPostExecute(String result1) {
@@ -818,12 +821,6 @@ public class FragmentHome extends Fragment {
 
         String TAG = getClass().getSimpleName();
 
-        protected void onPreExecute (){
-            //this.dialog.show();
-            super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
 
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
@@ -883,10 +880,7 @@ public class FragmentHome extends Fragment {
             return response;
         }
 
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
-        }
+        
 
         protected void onPostExecute(String result1) {
             try {
@@ -1054,12 +1048,6 @@ public class FragmentHome extends Fragment {
 
         String TAG = getClass().getSimpleName();
 
-        protected void onPreExecute (){
-            //this.dialog.show();
-            super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
 
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
@@ -1121,10 +1109,7 @@ public class FragmentHome extends Fragment {
             return response;
         }
 
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
-        }
+        
 
         protected void onPostExecute(String result1) {
 
@@ -1200,11 +1185,6 @@ public class FragmentHome extends Fragment {
 
         String TAG = getClass().getSimpleName();
 
-        protected void onPreExecute (){
-            super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
 
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
@@ -1266,10 +1246,7 @@ public class FragmentHome extends Fragment {
             return response;
         }
 
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
-        }
+        
 
         protected void onPostExecute(String result1) {
 
@@ -1347,11 +1324,6 @@ public class FragmentHome extends Fragment {
 
         String TAG = getClass().getSimpleName();
 
-        protected void onPreExecute (){
-            super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
 
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
@@ -1421,10 +1393,7 @@ public class FragmentHome extends Fragment {
             return response;
         }
 
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
-        }
+        
 
         protected void onPostExecute(String result1) {
 
@@ -1458,10 +1427,7 @@ public class FragmentHome extends Fragment {
                             absen=totalkaryawan-banyakkaryawan;
                             totalabsen.setText(String.valueOf(absen));
                             adapterabsensi.notifyDataSetChanged();
-                            for(int i=0;i<tipegaji.length;i++){
-                                retrivetotalgaji kar = new retrivetotalgaji(getActivity(),tgaji.get(i),tipegaji[i]);
-                                kar.execute();
-                            }
+
                             //getketerangan();
                         }
 
@@ -1516,11 +1482,6 @@ public class FragmentHome extends Fragment {
 
         String TAG = getClass().getSimpleName();
 
-        protected void onPreExecute (){
-            super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
 
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
@@ -1590,10 +1551,7 @@ public class FragmentHome extends Fragment {
             return response;
         }
 
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
-        }
+        
 
         protected void onPostExecute(String result1) {
 
@@ -1699,12 +1657,6 @@ public class FragmentHome extends Fragment {
 
         String TAG = getClass().getSimpleName();
 
-        protected void onPreExecute (){
-            //this.dialog.show();
-            super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
 
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
@@ -1770,10 +1722,7 @@ public class FragmentHome extends Fragment {
             return response;
         }
 
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
-        }
+        
 
         protected void onPostExecute(String result1) {
 
@@ -1807,10 +1756,7 @@ public class FragmentHome extends Fragment {
                             lyt_ket.add(lyt_totalcuti);
                             lyt_ket.add(lyt_totaldinas);
                             lyt_ket.add(lyt_totaltelat);
-                            for(int i=0;i<keterangan.length;i++){
-                                retriveketerangan keterangans=new retriveketerangan(getActivity(), keterangan[i], ket.get(i), lyt_ket.get(i));
-                                keterangans.execute();
-                            }
+
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -1882,11 +1828,6 @@ public class FragmentHome extends Fragment {
         }
         String TAG = getClass().getSimpleName();
 
-        protected void onPreExecute (){
-            super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
 
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
@@ -1951,10 +1892,7 @@ public class FragmentHome extends Fragment {
             return response;
         }
 
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
-        }
+        
 
         protected void onPostExecute(String result1) {
 
@@ -2021,10 +1959,11 @@ public class FragmentHome extends Fragment {
 
         public retrivegajibychart(Context context,String dt1,String dt2,Realm frealm,String periode,int postion,List<String> montbarbottom,int[] count,ProgressDialog dialogs)
         {
-            dialog=dialogs;
-            dialog.setMessage("Loading Charts");
+
             //dialog.setMessage("Loading Data...");
             this.count = count;
+            dialog=dialogs;
+            dialog.setMessage("Loading Charts");
 
             Log.e("data 1 data 2",dt1+" "+dt2 );
 
@@ -2046,12 +1985,6 @@ public class FragmentHome extends Fragment {
 
         String TAG = getClass().getSimpleName();
 
-        protected void onPreExecute (){
-            this.dialog.show();
-            super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
 
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
@@ -2119,10 +2052,7 @@ public class FragmentHome extends Fragment {
             return response;
         }
 
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
-        }
+        
 
         protected void onPostExecute(String result1) {
 
@@ -2250,8 +2180,9 @@ public class FragmentHome extends Fragment {
                     }
 
 
+
                 } else {
-                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi ", Snackbar.LENGTH_SHORT).show();
                 }
 
                 if(monthbarbottom.size()==position){
