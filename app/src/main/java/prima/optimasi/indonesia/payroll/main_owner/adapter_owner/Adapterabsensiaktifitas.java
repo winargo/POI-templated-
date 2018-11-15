@@ -1,11 +1,14 @@
 package prima.optimasi.indonesia.payroll.main_owner.adapter_owner;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
@@ -334,8 +339,79 @@ public class Adapterabsensiaktifitas extends RecyclerView.Adapter<RecyclerView.V
             }
             else
             {
+                Stopwatch timer = new Stopwatch();
+                final int REFRESH_RATE = 1000;
+
+
+
+                Timer T=new Timer();
+                T.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        ((Activity)ctx).runOnUiThread(new Runnable()
+                        {
+                            public void run()
+                            {
+                                SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
+
+                                Date date1=null;
+                                Date date2=null;
+
+                                try {
+
+                                    SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                                    Calendar cal = Calendar.getInstance();
+                                    cal.setTime(new Date());
+
+                                    final int year = cal.get(Calendar.YEAR);
+                                    final int month = cal.get(Calendar.MONTH);
+                                    final int day = cal.get(Calendar.DAY_OF_MONTH);
+                                    String[] spliter = view.txt_checkin.getText().toString().split(":");
+                                    final int hour = Integer.valueOf(spliter[0]);
+                                    final int minute = Integer.valueOf(spliter[1]);
+                                    final int second = Integer.valueOf(spliter[2]);
+
+                                    String datadate = year + "-"+month+"-"+day+" "+ hour+ ":"+minute+":"+second;
+                                    Log.e("data date ",datadate);
+
+                                    date1 = format1.parse(datadate);
+                                    date2 = new Date();
+
+
+                                    long difference = date2.getTime() - date1.getTime();
+                                    Boolean isdiffer = false;
+                                    if(difference<0)
+                                    {
+                                        isdiffer = true;
+                                        Date dateMax = format.parse("24:00:00");
+                                        Date dateMin = format.parse("00:00:00");
+                                        difference=(dateMax.getTime() -date1.getTime() )+(date2.getTime()-dateMin.getTime());
+                                    }
+                                    int days = (int) (difference / (1000*60*60*24));
+                                    int hours = (int) ((difference - (1000*60*60*24*days)) / (1000*60*60));
+                                    int min = (int) (difference - (1000*60*60*24*days) - (1000*60*60*hours)) / (1000*60);
+                                    int sec = (int) (difference - (1000*60*60*24*days) - (1000*60*60*hours) - (1000*60)) / 1000;
+                                    if(isdiffer){
+
+                                    }
+                                    else {
+                                    }
+                                    sec = sec%60;
+                                    view.txt_totaljam.setText("Jam Kerja Sementara : " + hours + " Jam " + min +" Menit "+sec+" Detik");
+
+
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                                //view.txt_totaljam.setText("Total Jam Kerja : " + " Total Jam Tidak Tersedia");
+                            }
+                        });
+                    }
+                }, 1000, 1000);
+
+
                 
-                view.txt_totaljam.setText("Total Jam Kerja : " + " Total Jam Tidak Tersedia");
+                //view.txt_totaljam.setText("Total Jam Kerja : " + " Total Jam Tidak Tersedia");
             }
 
            /* try{
@@ -350,6 +426,7 @@ public class Adapterabsensiaktifitas extends RecyclerView.Adapter<RecyclerView.V
             setAnimation(view.itemView, position);
         }
     }
+
 
     @Override
     public int getItemCount() {
