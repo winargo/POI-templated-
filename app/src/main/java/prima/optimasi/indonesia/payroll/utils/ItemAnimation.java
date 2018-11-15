@@ -3,6 +3,7 @@ package prima.optimasi.indonesia.payroll.utils;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.view.View;
+import android.view.animation.ScaleAnimation;
 
 public class ItemAnimation {
 
@@ -36,6 +37,7 @@ public class ItemAnimation {
             case RIGHT_LEFT:
                 animateRightLeft(view, position);
                 break;
+
         }
     }
 
@@ -95,5 +97,6 @@ public class ItemAnimation {
         animatorSet.playTogether(animatorTranslateY, animatorAlpha);
         animatorSet.start();
     }
+
 
 }

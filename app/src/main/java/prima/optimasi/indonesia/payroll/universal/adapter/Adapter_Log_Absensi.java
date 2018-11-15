@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -17,12 +19,15 @@ import java.util.List;
 
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.objects.logabsensi_karyawan;
+import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.utils.ViewAnimation;
 
-public class Adapter_Log_Absensi extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class Adapter_Log_Absensi extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 
     private List<logabsensi_karyawan> items = new ArrayList<>();
+    private List<logabsensi_karyawan> itemsfilter = new ArrayList<>();
+    private int animation_type = 0;
     //private logabsensi_karyawan items=new logabsensi_karyawan();
 
     private Context ctx;
@@ -36,9 +41,11 @@ public class Adapter_Log_Absensi extends RecyclerView.Adapter<RecyclerView.ViewH
         this.mOnItemClickListener = mItemClickListener;
     }
 
-    public Adapter_Log_Absensi(Context context, List<logabsensi_karyawan> items) {
+    public Adapter_Log_Absensi(Context context, List<logabsensi_karyawan> items, int animation_type) {
         this.items = items;
         ctx = context;
+        this.animation_type=animation_type;
+        this.itemsfilter=items;
     }
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
@@ -74,18 +81,22 @@ public class Adapter_Log_Absensi extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder vh;
+
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_absensi_karyawan, parent, false);
         vh = new OriginalViewHolder(v);
+
         return vh;
+
+
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+
         if (holder instanceof OriginalViewHolder) {
             final OriginalViewHolder view = (OriginalViewHolder) holder;
-
-            final logabsensi_karyawan p = items.get(position);
+            final logabsensi_karyawan p = itemsfilter.get(position);
             view.tanggal.setText(p.getTanggal());
 
             view.checkin.setText(p.getCheckin());
@@ -93,11 +104,11 @@ public class Adapter_Log_Absensi extends RecyclerView.Adapter<RecyclerView.ViewH
             view.breakin.setText(p.getBreakin());
             view.breakout.setText(p.getBreakout());
 
-            if(!view.checkin.getText().equals("-") && !view.checkout.getText().equals("-")){
+            if (!view.checkin.getText().equals("-") && !view.checkout.getText().equals("-")) {
                 SimpleDateFormat format = new SimpleDateFormat("hh:mm:ss");
 
-                Date date1=null;
-                Date date2=null;
+                Date date1 = null;
+                Date date2 = null;
 
                 try {
                     date1 = format.parse(view.checkin.getText().toString());
@@ -105,26 +116,23 @@ public class Adapter_Log_Absensi extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
                     long difference = date2.getTime() - date1.getTime();
-                    if(difference<0)
-                    {
+                    if (difference < 0) {
                         Date dateMax = format.parse("24:00:00");
                         Date dateMin = format.parse("00:00:00");
-                        difference=(dateMax.getTime() -date1.getTime() )+(date2.getTime()-dateMin.getTime());
+                        difference = (dateMax.getTime() - date1.getTime()) + (date2.getTime() - dateMin.getTime());
                     }
-                    int days = (int) (difference / (1000*60*60*24));
-                    int hours = (int) ((difference - (1000*60*60*24*days)) / (1000*60*60));
-                    int min = (int) (difference - (1000*60*60*24*days) - (1000*60*60*hours)) / (1000*60);
-                    hours = hours+(days*24);
-                    view.jamkerja.setText("Total Jam Kerja : " + hours + " Jam " + min +" Menit");
+                    int days = (int) (difference / (1000 * 60 * 60 * 24));
+                    int hours = (int) ((difference - (1000 * 60 * 60 * 24 * days)) / (1000 * 60 * 60));
+                    int min = (int) (difference - (1000 * 60 * 60 * 24 * days) - (1000 * 60 * 60 * hours)) / (1000 * 60);
+                    hours = hours + (days * 24);
+                    view.jamkerja.setText("Total Jam Kerja : " + hours + " Jam " + min + " Menit");
 
 
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
 
-            }
-            else
-            {
+            } else {
                 view.jamkerja.setText("Total Jam Kerja : " + " Total Jam Tidak Tersedia");
             }
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
@@ -148,10 +156,9 @@ public class Adapter_Log_Absensi extends RecyclerView.Adapter<RecyclerView.ViewH
             view.checkpos.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view1) {
-                    if(p.getCheckposss()){
+                    if (p.getCheckposss()) {
 
-                    }
-                    else {
+                    } else {
                         p.setCheckposss(true);
                         String temp = "";
                         temp = view.checkpos.getText().toString();
@@ -173,18 +180,17 @@ public class Adapter_Log_Absensi extends RecyclerView.Adapter<RecyclerView.ViewH
             view.checkin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view1) {
-                    if(p.getCheckins()){
+                    if (p.getCheckins()) {
 
-                        /*
-                        if(p.getCheckin().equals("null")){
-                            view.checkin.setText("-");
-                        }
-                        else{
-                            view.checkin.setText(p.getCheckin());
-                        }
-                        */
-                    }
-                    else {
+                /*
+                if(p.getCheckin().equals("null")){
+                    view.checkin.setText("-");
+                }
+                else{
+                    view.checkin.setText(p.getCheckin());
+                }
+                */
+                    } else {
                         p.setCheckins(true);
                         String temp = "";
                         temp = view.checkin.getText().toString();
@@ -206,17 +212,16 @@ public class Adapter_Log_Absensi extends RecyclerView.Adapter<RecyclerView.ViewH
             view.checkout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view1) {
-                    if(p.getCheckouts()){
+                    if (p.getCheckouts()) {
 
-                        /*
-                        if(p.getCheckout().equals("null")){
-                            view.checkout.setText("-");
-                        }
-                        else{
-                            view.checkout.setText(p.getCheckout());
-                        }*/
-                    }
-                    else {
+                /*
+                if(p.getCheckout().equals("null")){
+                    view.checkout.setText("-");
+                }
+                else{
+                    view.checkout.setText(p.getCheckout());
+                }*/
+                    } else {
                         p.setCheckouts(true);
                         String temp = "";
                         temp = view.checkout.getText().toString();
@@ -238,17 +243,16 @@ public class Adapter_Log_Absensi extends RecyclerView.Adapter<RecyclerView.ViewH
             view.breakin.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view1) {
-                    if(p.getBreakins()){
+                    if (p.getBreakins()) {
 
-                        /*
-                        if(p.getBreakin().equals("null")){
-                            view.breakin.setText("-");
-                        }
-                        else{
-                            view.breakin.setText(p.getBreakin());
-                        }*/
-                    }
-                    else {
+                /*
+                if(p.getBreakin().equals("null")){
+                    view.breakin.setText("-");
+                }
+                else{
+                    view.breakin.setText(p.getBreakin());
+                }*/
+                    } else {
                         p.setBreakins(true);
                         String temp = "";
                         temp = view.breakin.getText().toString();
@@ -270,17 +274,16 @@ public class Adapter_Log_Absensi extends RecyclerView.Adapter<RecyclerView.ViewH
             view.breakout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view1) {
-                    if(p.getBreakouts()){
+                    if (p.getBreakouts()) {
 
-                        /*
-                        if(p.getBreakout().equals("null")){
-                            view.breakout.setText("-");
-                        }
-                        else{
-                            view.breakout.setText(p.getBreakout());
-                        }*/
-                    }
-                    else {
+                /*
+                if(p.getBreakout().equals("null")){
+                    view.breakout.setText("-");
+                }
+                else{
+                    view.breakout.setText(p.getBreakout());
+                }*/
+                    } else {
                         p.setBreakouts(true);
                         String temp = "";
                         temp = view.breakout.getText().toString();
@@ -300,13 +303,26 @@ public class Adapter_Log_Absensi extends RecyclerView.Adapter<RecyclerView.ViewH
             });
 
             // void recycling view
-            if(p.expanded){
+            if (p.expanded) {
                 view.lyt_expand.setVisibility(View.VISIBLE);
             } else {
                 view.lyt_expand.setVisibility(View.GONE);
             }
             Tools.toggleArrow(p.expanded, view.bt_expand, false);
+            setAnimation(view.itemView, position);
 
+        }
+
+
+    }
+
+    private int lastPosition = -1;
+    private boolean on_attach = true;
+
+    private void setAnimation(View view, int position) {
+        if (position > lastPosition) {
+            ItemAnimation.animate(view, on_attach ? position : -1, animation_type);
+            lastPosition = position;
         }
     }
 
@@ -322,7 +338,63 @@ public class Adapter_Log_Absensi extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return itemsfilter.size();
+    }
+
+    public void setItems(List<logabsensi_karyawan> filteredGalaxies)
+    {
+        this.itemsfilter=filteredGalaxies;
+    }
+
+    @Override
+    public Filter getFilter() {
+        //this.itemsfilter=items;
+        return new Filter() {
+
+
+            @Override
+            protected Filter.FilterResults performFiltering(CharSequence constraint) {
+                Filter.FilterResults filterResults = new Filter.FilterResults();
+
+                if (constraint.length() > 0) {
+                    //CHANGE TO UPPER
+                    constraint = constraint.toString().toUpperCase();
+
+                    //HOLD FILTERS WE FIND
+                    List<logabsensi_karyawan> foundFilters = new ArrayList<>();
+
+                    String galaxy;
+
+                    //ITERATE CURRENT LIST
+                    for (int i = 0; i < items.size(); i++) {
+                        galaxy = items.get(i).getTanggal();
+
+                        //SEARCH
+                        if (galaxy.toUpperCase().contains(constraint)) {
+                            //ADD IF FOUND
+                            foundFilters.add(items.get(i));
+                        }
+                    }
+
+                    //SET RESULTS TO FILTER LIST
+                    filterResults.count = foundFilters.size();
+                    filterResults.values = foundFilters;
+                } else {
+                    //NO ITEM FOUND.LIST REMAINS INTACT
+                    filterResults.count = items.size();
+                    filterResults.values = items;
+                }
+
+                //RETURN RESULTS
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, Filter.FilterResults filterResults) {
+                setItems((List<logabsensi_karyawan>) filterResults.values);
+                notifyDataSetChanged();
+            }
+        };
     }
 
 }

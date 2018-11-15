@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,6 +48,7 @@ public class ActivityPengumuman extends AppCompatActivity {
     CoordinatorLayout parent_view;
     List<pengumuman> items;
     SwipeRefreshLayout refresh;
+    MaterialSearchView searchView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +57,7 @@ public class ActivityPengumuman extends AppCompatActivity {
         parent_view=findViewById(R.id.bgLayout);
         refresh = findViewById(R.id.pengswiperefresh);
         recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+        searchView=findViewById(R.id.searchView);
         prefs = ActivityPengumuman.this.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
         initToolbar();
 
@@ -394,9 +397,29 @@ public class ActivityPengumuman extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_activity_main, menu);
-        MenuItem item=menu.findItem(R.id.action_settings);
-        item.setTitle("About");
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        MenuItem item = menu.findItem(R.id.action_search);
+
+        searchView.setMenuItem(item);
+
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //Do some magic
+                mAdapter.getFilter().filter(query);
+                //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                //Do some magic
+                Log.e("Text", "newText=" + query);
+                mAdapter.getFilter().filter(query);
+                //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                return false;
+            }
+        });
         return true;
     }
     @Override
@@ -410,8 +433,22 @@ public class ActivityPengumuman extends AppCompatActivity {
         if (id == android.R.id.home) {
             finish();
         }
+        else if(id==R.id.action_search){
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if(searchView.isSearchOpen()){
+            searchView.closeSearch();
+        }
+        else{
+            super.onBackPressed();
+        }
     }
 }
 

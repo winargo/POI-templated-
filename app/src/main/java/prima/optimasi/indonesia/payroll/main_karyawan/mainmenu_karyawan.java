@@ -134,14 +134,13 @@ public class mainmenu_karyawan extends AppCompatActivity
         CircularImageView imageuser =findViewById(R.id.imageView);
 
         if(prefs.getString("profileimage","").equals(generator.profileurl)){
-
+            Picasso.get().load("http://www.racemph.com/wp-content/uploads/2016/09/profile-image-placeholder.png").transform(new CircleTransform()).into(imageuser);
         }
         else {
             Picasso.get().load(prefs.getString("profileimage","")).transform(new CircleTransform()).into(imageuser);
         }
         Log.e("picture", "ppicture: "+ prefs.getString("profileimage",""));
 
-        CoordinatorLayout parent_view=findViewById(R.id.parent_view);
         TextView username = findViewById(R.id.username);
         TextView borndate = findViewById(R.id.prof_tempat_lahir);
         TextView pengumumanteks = findViewById(R.id.pengumumanteks);

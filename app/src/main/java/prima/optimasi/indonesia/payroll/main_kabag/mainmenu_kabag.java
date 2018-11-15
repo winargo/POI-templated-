@@ -144,7 +144,7 @@ public class mainmenu_kabag extends AppCompatActivity
         CircularImageView imageuser =findViewById(R.id.imageView);
 
         if(prefs.getString("profileimage","").equals(generator.profileurl)){
-
+            Picasso.get().load("http://www.racemph.com/wp-content/uploads/2016/09/profile-image-placeholder.png").transform(new CircleTransform()).into(imageuser);
         }
         else {
             Picasso.get().load(prefs.getString("profileimage","")).transform(new CircleTransform()).into(imageuser);
@@ -228,7 +228,7 @@ public class mainmenu_kabag extends AppCompatActivity
                             gaji=0.0d;
                             potongan=0.0d;
                             posisi=0;
-                            retrivegaji gajis=new retrivegaji(mainmenu_kabag.this, prefs.getString("id",""),1);
+                            retrivegaji gajis=new retrivegaji(mainmenu_kabag.this, prefs.getString("id",""));
                             gajis.execute();
                         }
                         else {
@@ -984,7 +984,7 @@ public class mainmenu_kabag extends AppCompatActivity
         String passeddata = "" ;
         String id="";
         int p=0;
-        public retrivegaji(Context context, String id, int p)
+        public retrivegaji(Context context, String id)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
             this.username = generator.username;

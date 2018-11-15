@@ -193,7 +193,6 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
             this.password = generator.password;
             this.error = error ;
             this.id=id;
-            this.p=p;
         }
 
         String TAG = getClass().getSimpleName();

@@ -13,11 +13,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +42,7 @@ import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.main_karyawan.adapter.Adapter_absensi_karyawan;
 import prima.optimasi.indonesia.payroll.objects.logabsensi_karyawan;
 import prima.optimasi.indonesia.payroll.universal.adapter.Adapter_Log_Absensi;
+import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.widget.LineItemDecoration;
 
@@ -48,12 +52,14 @@ public class ActivityLogAbsensi extends AppCompatActivity {
     List<logabsensi_karyawan> itemabsensi;
     RecyclerView recyclerView;
     Adapter_Log_Absensi mAdapter;
+    MaterialSearchView searchView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_absensi);
         parent_view=findViewById(R.id.parent_view);
         recyclerView=findViewById(R.id.recyclerView);
+        searchView=findViewById(R.id.searchView);
         initToolbar();
         retrivelogabsensi absensi=new retrivelogabsensi(this);
         absensi.execute();
@@ -229,7 +235,7 @@ public class ActivityLogAbsensi extends AppCompatActivity {
 
                             itemabsensi.add(absensi);
                             //set data and list adapter
-                            mAdapter = new Adapter_Log_Absensi(ActivityLogAbsensi.this, itemabsensi);
+                            mAdapter = new Adapter_Log_Absensi(ActivityLogAbsensi.this, itemabsensi, ItemAnimation.LEFT_RIGHT);
                             recyclerView.setLayoutManager(new LinearLayoutManager(ActivityLogAbsensi.this));
                             recyclerView.setHasFixedSize(true);
                             recyclerView.setAdapter(mAdapter);
@@ -275,9 +281,34 @@ public class ActivityLogAbsensi extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_activity_main, menu);
-        MenuItem item=menu.findItem(R.id.action_settings);
-        item.setTitle("About");
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        MenuItem item=menu.findItem(R.id.action_search);
+        searchView.setMenuItem(item);
+
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                //Do some magic
+                mAdapter.getFilter().filter(query);
+                //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                //Do some magic
+                Log.e("Text", "newText=" + query);
+                mAdapter.getFilter().filter(query);
+                /*
+                if(mAdapter.getItemCount()==0){
+                    LayoutInflater inflater=(LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    View SubFragment=inflater.inflate(R.layout.fragment_no_item_search,parent_view,false);
+                    parent_view.addView(SubFragment);
+                }*/
+                //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                return false;
+            }
+        });
         return true;
     }
     @Override
@@ -291,7 +322,21 @@ public class ActivityLogAbsensi extends AppCompatActivity {
         if (id == android.R.id.home) {
             finish();
         }
+        else if(id==R.id.action_search){
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if(searchView.isSearchOpen()){
+            searchView.closeSearch();
+        }
+        else{
+            super.onBackPressed();
+        }
     }
 }

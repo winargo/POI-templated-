@@ -32,7 +32,6 @@
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
                 android:textColor="@android:color/white" />
 
-
         </LinearLayout>
 
     </android.support.design.widget.AppBarLayout>
