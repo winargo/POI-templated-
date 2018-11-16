@@ -1,5 +1,6 @@
 package prima.optimasi.indonesia.payroll.main_karyawan;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -7,10 +8,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -18,6 +23,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -51,6 +57,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.activity.MainMenu;
+import prima.optimasi.indonesia.payroll.main_kabag.ActivityAbsensi;
+import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
 import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentCekGaji;
 import prima.optimasi.indonesia.payroll.universal.activity.ActivityLogAbsensi;
 import prima.optimasi.indonesia.payroll.universal.activity.ActivityPengajuan;
@@ -216,9 +224,19 @@ public class mainmenu_karyawan extends AppCompatActivity
             public void onClick(View view) {
                 Log.e("Jabatan : ", prefs.getString("jabatan",""));
                 if(prefs.getString("jabatan","1").equals("4")){
-                    Intent intent=new Intent(mainmenu_karyawan.this,ActivityAbsensi.class);
-                    intent.putExtra("jabatan", "security");
-                    startActivity(intent);
+
+                    boolean permissionGranted = ActivityCompat.checkSelfPermission(mainmenu_karyawan.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
+                    if(permissionGranted) {
+                        generator.lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                        generator.location = generator.lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                        Intent intent = new Intent(mainmenu_karyawan.this, ActivityAbsensi.class);
+                        intent.putExtra("jabatan", "security");
+                        startActivity(intent);
+                    } else {
+                        ActivityCompat.requestPermissions(mainmenu_karyawan.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 4011);
+                    }
                 }
                 else {
                     LinearLayout l = (LinearLayout) LayoutInflater.from(mainmenu_karyawan.this).inflate(R.layout.layout_barcode, null);
@@ -800,66 +818,20 @@ public class mainmenu_karyawan extends AppCompatActivity
         return true;
     }
 
-    /*
-    private void preparekaryawan() {
-        listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<String>>();
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 4011: {
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    generator.lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                    generator.location = generator.lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        // Adding child data
-        listDataHeader.add("Pengumuman");
-        listDataHeader.add("Cek Gaji");
-        listDataHeader.add("Log Absensi");
-        listDataHeader.add("Pengajuan");
-        listDataHeader.add("Cek Jadwal");
-        listDataHeader.add("Absensi");
-
-        // Adding child data
-        List<String> top250 = new ArrayList<String>();
-        top250.add("Izin");
-        top250.add("Cuti");
-        top250.add("Pinjaman");
-
-        listDataChild.put(listDataHeader.get(4), top250);
-    }*/
-
-    /*
-    public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
-
-        // tab titles
-        private String[] tabTitles = new String[]{"Pengumuman", "Cek Gaji","Log Absensi","Pengajuan"};
-
-        public ExamplePagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        // overriding getPageTitle()
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return tabTitles[position];
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return new FragmentPengumuman();
-                case 1:
-                    return new FragmentCekGaji();
-                case 2:
-                    return new FragmentAbsensi();
-                case 3:
-                    return new FragmentPengajuan();
-                default:
-                    return null;
+                    Intent intent = new Intent(mainmenu_karyawan.this, ActivityAbsensi.class);
+                    intent.putExtra("jabatan", "security");
+                    startActivity(intent);
+                }
             }
         }
-
-        @Override
-        public int getCount() {
-            return tabTitles.length;
-        }
-        // ...
     }
-    */
 
 }

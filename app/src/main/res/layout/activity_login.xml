@@ -29,7 +29,17 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/spacing_medium"
-            android:text="SELAMAT DATANG!"
+            android:text="SELAMAT"
+            android:singleLine="true"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Display1"
+            android:textSize="14pt"
+            android:textColor="@android:color/white" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:text="DATANG"
             android:singleLine="true"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Display1"
             android:textSize="14pt"
@@ -41,26 +51,35 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <View
-            android:layout_width="50dp"
-            android:layout_height="3dp"
-            android:layout_gravity="center_horizontal"
-            android:background="@android:color/white" />
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/spacing_middle"
-            android:text="Log In"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-            android:textColor="@android:color/white"
-            android:textStyle="bold" />
+            android:gravity="center"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Log In"
+                android:layout_weight="1"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
+            <ImageView
+                android:id="@+id/settings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/overlay_light_90"
+                android:background="@drawable/ic_settings"/>
+
+        </LinearLayout>
+
 
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="0.5" />
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"

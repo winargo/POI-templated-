@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.Result;
+import com.wdullaer.materialdatetimepicker.time.Timepoint;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,6 +50,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
+import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
 import qrcodescanner.camera.CameraManager;
 import qrcodescanner.decode.CaptureActivityHandler;
 import qrcodescanner.decode.DecodeImageCallback;
@@ -59,6 +61,8 @@ import qrcodescanner.view.QrCodeFinderView;
 
 
 public class QrCodeActivity extends Activity implements Callback, OnClickListener {
+
+    int count=0;
 
     private static final int REQUEST_SYSTEM_PICTURE = 0;
     private static final int REQUEST_PICTURE = 1;
@@ -599,6 +603,8 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
                 this.dialog.setMessage("Loading Data...");
                 OkHttpClient client = new OkHttpClient();
 
+
+
                 RequestBody body = new FormBody.Builder()
                         .add("kode",kode)
                         .add("kode_kabag",kabag)
@@ -742,27 +748,38 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
 
 
                 String title = "";
-                if(result.getString("status").equals("true")){
-                    title = "Berhasil";
+                if(result!=null) {
+                    if (result.getString("status").equals("true")) {
+
+                        title = "Berhasil";
+
+                        double longitude = generator.location.getLongitude();
+                        double latitude = generator.location.getLatitude();
+
+                        absensithrowlocation throwdata = new absensithrowlocation(ctx, type, kode, longitude, latitude, issecurity);
+                        throwdata.execute();
+
+                    } else {
+                        title = "Gagal";
+
+                        final AlertDialog alert = new AlertDialog.Builder(ctx).setTitle(title).setMessage(result.getString("message")).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                try {
+                                    mCaptureActivityHandler.restartPreviewAndDecode();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }//Do something after 100ms
+                            }
+                        }).create();
+
+                        alert.show();
+                    }
                 }
                 else {
-                    title = "Gagal";
+                    mCaptureActivityHandler.restartPreviewAndDecode();
+                    Toast.makeText(ctx, "Kesalahan Koneksi", Toast.LENGTH_SHORT).show();
                 }
-
-                final AlertDialog alert = new AlertDialog.Builder(ctx).setTitle(title).setMessage(result.getString("message")).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            mCaptureActivityHandler.restartPreviewAndDecode();
-                        }
-                        catch (Exception e){
-                            e.printStackTrace();
-                        }//Do something after 100ms
-                    }
-                }).create();
-
-                alert.show();
-
 
                 //JSONArray bArray= responseObject.getJSONArray("B");
                 //for(int i=0;i<bArray.length();i++){
@@ -773,22 +790,296 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
             } catch (Exception e) {
                 Log.e(TAG, "onPostExecute: "+e.getMessage() );
                 e.printStackTrace();
-                if(result!=null){
-                    AlertDialog alertDialog = new AlertDialog.Builder(ctx).create();
-                    alertDialog.setTitle("Hasil");
+                AlertDialog alertDialog = new AlertDialog.Builder(ctx).create();
+                alertDialog.setTitle("Kesalahan");
 
-                    alertDialog.setMessage(e.getMessage().toString() + " "+ result.toString());
-                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                    alertDialog.show();
+                alertDialog.setMessage(e.getMessage());
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+            }
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
+    public class absensithrowlocation extends AsyncTask<Void, Integer, String>
+    {
+        Context ctx;
+        String response = "";
+        String error = "";
+        String kabag = "" ;
+        SharedPreferences prefs ;
+        JSONObject result ;
+        ProgressDialog dialog ;
+        String urldata = generator.throwlocation;
+        String kode = "" ;
+        String typeabsensi = "";
+        int type=0;
+        boolean issecurity = false;
+
+        Double longitude = 0.0d;
+        Double latitude = 0.0d;
+
+        public  absensithrowlocation(Context context,int type,String kode,Double longitude,Double latitude,boolean issecurity)
+        {
+            this.kode = kode;
+            this.longitude = longitude;
+            this.latitude = latitude;
+            this.type = type;
+            this.issecurity = issecurity;
+
+            ctx = context;
+            dialog = new ProgressDialog(context);
+
+
+            this.error = error ;
+
+            if(issecurity){
+                if(type ==1){
+                    typeabsensi = "checkpos";
+                }
+                else if(type == 2){
+                    typeabsensi="checkin";
+                }else if(type ==3){
+                    typeabsensi = "breakout";
+                }else if(type ==4){
+                    typeabsensi = "breakin";
+                }else if(type ==5){
+                    typeabsensi = "breakout";
+                }
+            }
+            else {
+                if(type == 0){
+                    typeabsensi = "checkin";
+                }else if(type ==1){
+                    typeabsensi = "breakout";
+                }else if(type ==2){
+                    typeabsensi ="breakin";
+                }else if(type ==3){
+                    typeabsensi = "checkout";
+                }else if(type ==4){
+                    typeabsensi = "extrain";
+                }else if(type ==5){
+                    typeabsensi = "extraout";
+                }
+            }
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            try{this.dialog.show();}
+            catch (Exception e){
+                e.printStackTrace();
+            }
+            super.onPreExecute();
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            int data = 0;
+
+
+
+            try {
+                this.dialog.setMessage("Loading Data...");
+                OkHttpClient client = new OkHttpClient();
+
+
+
+                RequestBody body = new FormBody.Builder()
+                        .add("longitude",longitude+"")
+                        .add("latitude",latitude+"")
+                        .add("tipe",typeabsensi)
+                        .add("kode",kode)
+                        .build();
+
+                Log.e(TAG, "doInBackground: "+kode+kabag );
+
+                Request request=null;
+
+                request = new Request.Builder()
+                        .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                        .put(body)
+                        .url(urldata)
+                        .build();
+
+                Response responses = null;
+
+
+                try {
+                    responses = client.newCall(request).execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                result = new JSONObject(responses.body().string());
+
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return null;
+            }catch (IOException e) {
+                this.dialog.setMessage("Loading Data... IOError Occured,retrying...");
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                e.printStackTrace();
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                this.dialog.setMessage("Loading Data... Internet Error Occured,retrying...");
+                this.dialog.dismiss();
+                e.printStackTrace();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                this.dialog.setMessage("Loading Data... Error Occured,retrying...");
+                this.dialog.dismiss();
+                e.printStackTrace();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+            super.onPostExecute(result1);
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }
+            try {
+                Log.e(TAG, "onPostExecute: "+result);
+                //restartbarcode();
+
+
+                String title = "";
+                if(result!=null) {
+                    if (result.getString("status").equals("true")) {
+                        title = "Berhasil";
+                        final AlertDialog alert = new AlertDialog.Builder(ctx).setTitle(title).setMessage(result.getString("message")).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                try {
+                                    prefs = ctx.getSharedPreferences("poipayroll",MODE_PRIVATE);
+
+                                    SharedPreferences.Editor edit = prefs.edit();
+
+                                    edit.putInt("absensitype" ,0);
+                                    edit.putString("absensikode","");
+                                    edit.putString("absensilongitude","");
+                                    edit.putString("absensilatitude","");
+                                    edit.putBoolean("absensisecurity",false);
+
+                                    edit.apply();
+
+                                    mCaptureActivityHandler.restartPreviewAndDecode();
+                                } catch (Exception e) {
+                                    mCaptureActivityHandler.restartPreviewAndDecode();
+                                    e.printStackTrace();
+                                }//Do something after 100ms
+                            }
+                        }).create();
+
+                        alert.show();
+                    } else {
+
+                        prefs = ctx.getSharedPreferences("poipayroll",MODE_PRIVATE);
+
+                        SharedPreferences.Editor edit = prefs.edit();
+
+                        edit.putInt("absensitype",type);
+                        edit.putString("absensikode",kode);
+                        edit.putString("absensilongitude",longitude+"");
+                        edit.putString("absensilatitude",latitude+"");
+                        edit.putBoolean("absensisecurity",issecurity);
+
+                        edit.apply();
+
+                        double longitude = generator.location.getLongitude();
+                        double latitude = generator.location.getLatitude();
+
+                        Log.e("failed send location", result.toString());
+
+                        if(count>=5){
+                            mCaptureActivityHandler.restartPreviewAndDecode();
+                        }
+                        else {
+                            absensithrowlocation throwdata = new absensithrowlocation(ctx, type, kode, longitude, latitude, issecurity);
+                            throwdata.execute();
+                            count++;
+                        }
+                    }
                 }
                 else {
 
+                    prefs = ctx.getSharedPreferences("poipayroll",MODE_PRIVATE);
+
+                    SharedPreferences.Editor edit = prefs.edit();
+
+                    edit.putInt("absensitype",type);
+                    edit.putString("absensikode",kode);
+                    edit.putString("absensilongitude",longitude+"");
+                    edit.putString("absensilatitude",latitude+"");
+                    edit.putBoolean("absensisecurity",issecurity);
+
+                    Log.e("data throw",type+" "+kode+" "+longitude+" "+latitude+" "+issecurity );
+
+                    edit.apply();
+
+
+                    if(count>=5){
+                        mCaptureActivityHandler.restartPreviewAndDecode();
+                    }
+                    else {
+                        absensithrowlocation throwdata = new absensithrowlocation(ctx, type, kode, longitude, latitude, issecurity);
+                        throwdata.execute();
+                        count++;
+                    }
+
+
+
+
+                    Toast.makeText(ctx, "Terjadi Kesalahan Koneksi", Toast.LENGTH_SHORT).show();
                 }
+
+
+                //JSONArray bArray= responseObject.getJSONArray("B");
+                //for(int i=0;i<bArray.length();i++){
+                //    JSONObject innerObject=bArray.getJSONObject(i);
+                //    String a= innerObject.getString("a");
+                //    String b= innerObject.getString("b");
+                //}
+            } catch (Exception e) {
+                Log.e(TAG, "onPostExecute error: "+e.getMessage() );
+                e.printStackTrace();
+                AlertDialog alertDialog = new AlertDialog.Builder(ctx).create();
+                alertDialog.setTitle("Kesalahan");
+
+                alertDialog.setMessage(e.getMessage());
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
             }
 
 

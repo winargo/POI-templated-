@@ -1,5 +1,6 @@
 package prima.optimasi.indonesia.payroll.main_kabag;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -7,9 +8,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -17,6 +23,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -90,6 +97,8 @@ import qrcodescanner.QrCodeActivity;
 public class mainmenu_kabag extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    int count = 0;
+
     AdapterListKaryawan adapter;
     SharedPreferences prefs;
     CoordinatorLayout parent_view;
@@ -102,17 +111,17 @@ public class mainmenu_kabag extends AppCompatActivity
     HashMap<String, List<String>> listDataChild;
     List<listkaryawan> items;
     listkaryawan kar;
-    String[] tabTitles = new String []{" Home", "  Profil", "Pengumuman","Anggota","Cek Gaji","Pengajuan"};
-    int[] iconstyle = new int[]{R.drawable.baseline_home_black_18dp,R.drawable.baseline_account_circle_black_24dp,R.drawable.baseline_announcement_black_24dp,R.drawable.ic_baseline_people_24px,R.drawable.baseline_monetization_on_black_24dp,R.drawable.baseline_assignment_black_24dp};
+    String[] tabTitles = new String[]{" Home", "  Profil", "Pengumuman", "Anggota", "Cek Gaji", "Pengajuan"};
+    int[] iconstyle = new int[]{R.drawable.baseline_home_black_18dp, R.drawable.baseline_account_circle_black_24dp, R.drawable.baseline_announcement_black_24dp, R.drawable.ic_baseline_people_24px, R.drawable.baseline_monetization_on_black_24dp, R.drawable.baseline_assignment_black_24dp};
 
 
-    Menu tempmenu ;
+    Menu tempmenu;
     String TAG = "ABSENSI";
-    Double gaji,potongan;
+    Double gaji, potongan;
     int posisi;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
 
 
         loadingdata = new ProgressDialog(this);
@@ -121,18 +130,34 @@ public class mainmenu_kabag extends AppCompatActivity
         loadingdata.show();
 
 
-        prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
+        prefs = getSharedPreferences("poipayroll", MODE_PRIVATE);
 
-        if(prefs.getInt("statustoken",0)==0){
-            generator.registertokentoserver register = new generator.registertokentoserver(this,prefs.getString("tokennotif",""));
-            register.execute();
+        if (!prefs.getString("absensikode", "").equals("")){
+            prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
 
-            FirebaseMessaging.getInstance().subscribeToTopic("kabag");
+            SharedPreferences.Editor edit = prefs.edit();
+
+
+            absensithrowlocation throwdata = new absensithrowlocation(mainmenu_kabag.this, prefs.getInt("absensitype",0),
+                    prefs.getString("absensikode",""),
+                    prefs.getString("absensilongitude",""),
+                    prefs.getString("absensilatitude",""),
+                    prefs.getBoolean("absensisecurity",false));
+            throwdata.execute();
+
+            edit.apply();
         }
+
+            if (prefs.getInt("statustoken", 0) == 0) {
+                generator.registertokentoserver register = new generator.registertokentoserver(this, prefs.getString("tokennotif", ""));
+                register.execute();
+
+                FirebaseMessaging.getInstance().subscribeToTopic("kabag");
+            }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_kabag);
 
-        Log.e("sharence status", "onCreate: " + prefs.getInt("statustoken",0) );
+        Log.e("sharence status", "onCreate: " + prefs.getInt("statustoken", 0));
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -141,17 +166,16 @@ public class mainmenu_kabag extends AppCompatActivity
         generator initializedata = new generator(mainmenu_kabag.this);
 
 
-        CircularImageView imageuser =findViewById(R.id.imageView);
+        CircularImageView imageuser = findViewById(R.id.imageView);
 
-        if(prefs.getString("profileimage","").equals(generator.profileurl)){
+        if (prefs.getString("profileimage", "").equals(generator.profileurl)) {
             Picasso.get().load("http://www.racemph.com/wp-content/uploads/2016/09/profile-image-placeholder.png").transform(new CircleTransform()).into(imageuser);
+        } else {
+            Picasso.get().load(prefs.getString("profileimage", "")).transform(new CircleTransform()).into(imageuser);
         }
-        else {
-            Picasso.get().load(prefs.getString("profileimage","")).transform(new CircleTransform()).into(imageuser);
-        }
-        Log.e("picture", "ppicture: "+ prefs.getString("profileimage",""));
+        Log.e("picture", "ppicture: " + prefs.getString("profileimage", ""));
 
-        parent_view=findViewById(R.id.parent_view);
+        parent_view = findViewById(R.id.parent_view);
         TextView username = findViewById(R.id.username);
         TextView borndate = findViewById(R.id.prof_tempat_lahir);
         TextView pengumumanteks = findViewById(R.id.pengumumanteks);
@@ -162,13 +186,13 @@ public class mainmenu_kabag extends AppCompatActivity
         TextView absensiteks = findViewById(R.id.absensiteks);
         TextView cekjadwalteks = findViewById(R.id.cekjadwalteks);
 
-        FloatingActionButton pengumuman=findViewById(R.id.pengumuman);
-        FloatingActionButton log_absensi=findViewById(R.id.log_absensi);
-        FloatingActionButton anggota=findViewById(R.id.anggota);
-        FloatingActionButton cekgaji=findViewById(R.id.cekgaji);
-        FloatingActionButton pengajuan=findViewById(R.id.pengajuan);
-        FloatingActionButton absensi=findViewById(R.id.absensi);
-        FloatingActionButton cekjadwal=findViewById(R.id.cekjadwal);
+        FloatingActionButton pengumuman = findViewById(R.id.pengumuman);
+        FloatingActionButton log_absensi = findViewById(R.id.log_absensi);
+        FloatingActionButton anggota = findViewById(R.id.anggota);
+        FloatingActionButton cekgaji = findViewById(R.id.cekgaji);
+        FloatingActionButton pengajuan = findViewById(R.id.pengajuan);
+        FloatingActionButton absensi = findViewById(R.id.absensi);
+        FloatingActionButton cekjadwal = findViewById(R.id.cekjadwal);
 
         pengumumanteks.setText("Pengumuman");
         log_absensiteks.setText("Log Absensi");
@@ -178,11 +202,11 @@ public class mainmenu_kabag extends AppCompatActivity
         absensiteks.setText("Absensi");
         cekjadwalteks.setText("Cek Jadwal");
 
-        LinearLayout linear_view=findViewById(R.id.linear_view);
+        LinearLayout linear_view = findViewById(R.id.linear_view);
         pengumuman.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(mainmenu_kabag.this,ActivityPengumuman.class);
+                Intent intent = new Intent(mainmenu_kabag.this, ActivityPengumuman.class);
                 startActivity(intent);
                 /*
                 getSupportFragmentManager().beginTransaction()
@@ -192,7 +216,7 @@ public class mainmenu_kabag extends AppCompatActivity
         log_absensi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(mainmenu_kabag.this,ActivityLogAbsensi.class);
+                Intent intent = new Intent(mainmenu_kabag.this, ActivityLogAbsensi.class);
                 startActivity(intent);
 
                 /*
@@ -203,7 +227,7 @@ public class mainmenu_kabag extends AppCompatActivity
         anggota.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(mainmenu_kabag.this,Activity_Anggota.class);
+                Intent intent = new Intent(mainmenu_kabag.this, Activity_Anggota.class);
                 startActivity(intent);
                 /*
                 getSupportFragmentManager().beginTransaction()
@@ -222,20 +246,19 @@ public class mainmenu_kabag extends AppCompatActivity
                 builder.setItems(colors, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(mainmenu_kabag.this,colors[which],Toast.LENGTH_LONG);
+                        Toast.makeText(mainmenu_kabag.this, colors[which], Toast.LENGTH_LONG);
 
-                        if(which==1) {
-                            gaji=0.0d;
-                            potongan=0.0d;
-                            posisi=0;
-                            retrivegaji gajis=new retrivegaji(mainmenu_kabag.this, prefs.getString("id",""));
+                        if (which == 1) {
+                            gaji = 0.0d;
+                            potongan = 0.0d;
+                            posisi = 0;
+                            retrivegaji gajis = new retrivegaji(mainmenu_kabag.this, prefs.getString("id", ""));
                             gajis.execute();
-                        }
-                        else {
-                            gaji=0.0d;
-                            potongan=0.0d;
-                            posisi=0;
-                            retrivekaryawan kar=new retrivekaryawan(mainmenu_kabag.this);
+                        } else {
+                            gaji = 0.0d;
+                            potongan = 0.0d;
+                            posisi = 0;
+                            retrivekaryawan kar = new retrivekaryawan(mainmenu_kabag.this);
                             kar.execute();
                         }
                     }
@@ -246,7 +269,7 @@ public class mainmenu_kabag extends AppCompatActivity
         pengajuan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(mainmenu_kabag.this,ActivityPengajuan.class);
+                Intent intent = new Intent(mainmenu_kabag.this, ActivityPengajuan.class);
                 startActivity(intent);
                 /*
                 getSupportFragmentManager().beginTransaction()
@@ -256,57 +279,22 @@ public class mainmenu_kabag extends AppCompatActivity
         absensi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(mainmenu_kabag.this,ActivityAbsensi.class);
-                intent.putExtra("jabatan","kabag");
-                startActivity(intent);
-                /*
-                String[] colors = {"Check IN", "Break OUT","Break IN","Check OUT","Extra IN","Extra OUT","Absensi","Absensi Wajah"};
 
+                boolean permissionGranted = ActivityCompat.checkSelfPermission(mainmenu_kabag.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_kabag.this);
-                builder.setTitle("Absensi");
-                builder.setItems(colors, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if(which==6) {
-                            LinearLayout l = (LinearLayout) LayoutInflater.from(mainmenu_kabag.this).inflate(R.layout.layout_barcode,null);
+                if(permissionGranted) {
+                    generator.lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                    generator.location = generator.lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-                            ImageView barcode = l.findViewById(R.id.barcodekaryawan);
-
-
-                            String text=prefs.getString("kodekaryawan","");
-                            Log.e("data json", "onClick: "+prefs.getString("kodekaryawan","") );
-                            MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
-                            try {
-                                BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE,400,400);
-                                BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
-                                Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
-                                barcode.setImageBitmap(bitmap);
-                            } catch (WriterException e) {
-                                e.printStackTrace();
-                            }
+                    Intent intent = new Intent(mainmenu_kabag.this, ActivityAbsensi.class);
+                    intent.putExtra("jabatan", "kabag");
+                    startActivity(intent);
+                } else {
+                    ActivityCompat.requestPermissions(mainmenu_kabag.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 4011);
+                }
 
 
 
-                            AlertDialog dialog1 = new AlertDialog.Builder(mainmenu_kabag.this).setTitle("Absensi").setView(l).create();
-
-                            dialog1.show();
-                        }
-                        else if(which==7) {
-                            Intent face = new Intent(mainmenu_kabag.this,facedetection.class);
-                            startActivity(face);
-                        }
-                        else {
-                            Intent a = new Intent(mainmenu_kabag.this, QrCodeActivity.class);
-                            a.putExtra("absensi",which);
-                            a.putExtra("security",0);
-                            a.putExtra("keepalive",1);
-                            startActivity(a);
-                        }
-                    }
-                });
-                builder.show();
-                */
             }
         });
         cekjadwal.setOnClickListener(new View.OnClickListener() {
@@ -321,14 +309,13 @@ public class mainmenu_kabag extends AppCompatActivity
                 builder.setItems(colors, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(which==1) {
+                        if (which == 1) {
                             Intent a = new Intent(mainmenu_kabag.this, cekjadwal.class);
-                            a.putExtra("cekjadwal",which);
+                            a.putExtra("cekjadwal", which);
                             startActivity(a);
-                        }
-                        else {
+                        } else {
                             Intent a = new Intent(mainmenu_kabag.this, cekjadwal.class);
-                            a.putExtra("cekjadwal",which);
+                            a.putExtra("cekjadwal", which);
                             startActivity(a);
                         }
                     }
@@ -337,9 +324,9 @@ public class mainmenu_kabag extends AppCompatActivity
 
             }
         });
-        ImageView icon_born=findViewById(R.id.iconborn);
-        LinearLayout show=findViewById(R.id.showbutton);
-        FloatingActionButton logout=findViewById(R.id.logout);
+        ImageView icon_born = findViewById(R.id.iconborn);
+        LinearLayout show = findViewById(R.id.showbutton);
+        FloatingActionButton logout = findViewById(R.id.logout);
 
         final CollapsingToolbarLayout collapsing_toolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         ((AppBarLayout) findViewById(R.id.app_bar_layout)).addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
@@ -359,14 +346,13 @@ public class mainmenu_kabag extends AppCompatActivity
                 //show.setScaleY(scale >= 0 ? 0 : scale*4);
 
 
-
             }
         });
 
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                generator.logout(mainmenu_kabag.this,"kabag");
+                generator.logout(mainmenu_kabag.this, "kabag");
                 /*
                 FirebaseMessaging.getInstance().unsubscribeFromTopic("kabag");
 
@@ -399,15 +385,15 @@ public class mainmenu_kabag extends AppCompatActivity
             }
         });
 
-        username.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("username",""));
+        username.setText(getSharedPreferences("poipayroll", MODE_PRIVATE).getString("username", ""));
 
-        if(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("tempatlahir","").equals("")){
+        if (getSharedPreferences("poipayroll", MODE_PRIVATE).getString("tempatlahir", "").equals("")) {
 
             borndate.setText("Not Available");
 
-        }else{
+        } else {
 
-            borndate.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("tempatlahir",""));
+            borndate.setText(getSharedPreferences("poipayroll", MODE_PRIVATE).getString("tempatlahir", ""));
 
         }
 
@@ -689,42 +675,41 @@ public class mainmenu_kabag extends AppCompatActivity
         });
 
         */
-        if(loadingdata.isShowing()){
+        if (loadingdata.isShowing()) {
             loadingdata.dismiss();
         }
     }
-    private class retrivekaryawan extends AsyncTask<Void, Integer, String>
-    {
+
+    private class retrivekaryawan extends AsyncTask<Void, Integer, String> {
         String response = "";
         String error = "";
-        String username=  "" ;
-        String password = "" ;
-        SharedPreferences prefs ;
-        JSONObject result = null ;
-        ProgressDialog dialog ;
+        String username = "";
+        String password = "";
+        SharedPreferences prefs;
+        JSONObject result = null;
+        ProgressDialog dialog;
         String urldata = generator.kabaggrupkaryawanurl;
-        String passeddata = "" ;
+        String passeddata = "";
 
-        public retrivekaryawan(Context context)
-        {
-            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+        public retrivekaryawan(Context context) {
+            prefs = context.getSharedPreferences("poipayroll", Context.MODE_PRIVATE);
             dialog = new ProgressDialog(context);
             this.username = generator.username;
             this.password = generator.password;
-            this.error = error ;
+            this.error = error;
         }
 
         String TAG = getClass().getSimpleName();
 
-        protected void onPreExecute (){
+        protected void onPreExecute() {
             this.dialog.show();
             super.onPreExecute();
             this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
+            Log.d(TAG + " PreExceute", "On pre Exceute......");
         }
 
-        protected String doInBackground(Void...arg0) {
-            Log.d(TAG + " DoINBackGround","On doInBackground...");
+        protected String doInBackground(Void... arg0) {
+            Log.d(TAG + " DoINBackGround", "On doInBackground...");
 
             try {
                 this.dialog.setMessage("Loading Data...");
@@ -735,11 +720,11 @@ public class mainmenu_kabag extends AppCompatActivity
                     OkHttpClient client = new OkHttpClient();
 
                     RequestBody body = new FormBody.Builder()
-                            .add("kode",prefs.getString("kodekaryawan", ""))
+                            .add("kode", prefs.getString("kodekaryawan", ""))
                             .build();
 
                     Request request = new Request.Builder()
-                            .header("Authorization",prefs.getString("Authorization",""))
+                            .header("Authorization", prefs.getString("Authorization", ""))
                             .post(body)
                             .url(urldata)
                             .build();
@@ -749,17 +734,16 @@ public class mainmenu_kabag extends AppCompatActivity
                         responses = client.newCall(request).execute();
                     } catch (IOException e) {
                         e.printStackTrace();
-                        jsonObject =  null;
-                    }catch (Exception e){
+                        jsonObject = null;
+                    } catch (Exception e) {
                         e.printStackTrace();
                         jsonObject = null;
                     }
 
-                    if (responses==null){
+                    if (responses == null) {
                         jsonObject = null;
                         Log.e(TAG, "NULL");
-                    }
-                    else {
+                    } else {
 
                         result = new JSONObject(responses.body().string());
                     }
@@ -788,7 +772,7 @@ public class mainmenu_kabag extends AppCompatActivity
             return response;
         }
 
-        protected void onProgressUpdate(Integer...a){
+        protected void onProgressUpdate(Integer... a) {
             super.onProgressUpdate(a);
             Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
         }
@@ -799,8 +783,8 @@ public class mainmenu_kabag extends AppCompatActivity
                 Log.e(TAG, "data json result" + result.toString());
                 if (result != null) {
                     try {
-                        boolean status=result.getBoolean("status");
-                        if(status){
+                        boolean status = result.getBoolean("status");
+                        if (status) {
                             /*
                             "data":[{
                                 "id":7, "kode_karyawan":"EMP-07", "idfp":"KRY0007", "nama":
@@ -885,23 +869,22 @@ public class mainmenu_kabag extends AppCompatActivity
                             */
                             JSONArray pengsarray = result.getJSONArray("data");
 
-                            items=new ArrayList<>();
+                            items = new ArrayList<>();
                             String tempcall = "";
-                            int panjang=0;
+                            int panjang = 0;
                             for (int i = 0; i < pengsarray.length(); i++) {
                                 JSONObject obj = pengsarray.getJSONObject(i);
-                                if(!prefs.getString("kodekaryawan", "").equals(obj.getString("kode_karyawan"))) {
+                                if (!prefs.getString("kodekaryawan", "").equals(obj.getString("kode_karyawan"))) {
                                     if (!obj.getString("otoritas").equals("2")) {
-                                        kar=new listkaryawan();
+                                        kar = new listkaryawan();
                                         kar.setIskar(obj.getString("id"));
 
                                         kar.setNama(obj.getString("nama"));
                                         kar.setJabatan(obj.getString("jabatan"));
                                         kar.setJenis("cekgaji");
-                                        if(!obj.getString("foto").equals("")){
-                                            kar.setImagelink(generator.profileurl+obj.getString("foto"));
-                                        }
-                                        else{
+                                        if (!obj.getString("foto").equals("")) {
+                                            kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                        } else {
                                             kar.setImagelink("");
                                         }
                                         items.add(kar);
@@ -929,7 +912,7 @@ public class mainmenu_kabag extends AppCompatActivity
 
                             final RecyclerView rvkar = (RecyclerView) listkar.findViewById(R.id.recyclerView);
 
-                            adapter=new AdapterListKaryawan(listkar.getContext(),items,ItemAnimation.BOTTOM_UP);
+                            adapter = new AdapterListKaryawan(listkar.getContext(), items, ItemAnimation.BOTTOM_UP);
 
                             rvkar.setLayoutManager(new LinearLayoutManager(listkar.getContext()));
                             rvkar.setHasFixedSize(true);
@@ -957,13 +940,13 @@ public class mainmenu_kabag extends AppCompatActivity
                 } else {
                     Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
                 }
-            }catch (Exception E){
+            } catch (Exception E) {
                 E.printStackTrace();
-                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
-                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+                Log.e(TAG, "onPostExecute: " + E.getMessage().toString());
+                Snackbar.make(parent_view, E.getMessage().toString(), Snackbar.LENGTH_SHORT).show();
             }
 
-            if(this.dialog.isShowing()){
+            if (this.dialog.isShowing()) {
                 dialog.dismiss();
             }
 
@@ -971,39 +954,39 @@ public class mainmenu_kabag extends AppCompatActivity
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
-    private class retrivegaji extends AsyncTask<Void, Integer, String>
-    {
+
+    private class retrivegaji extends AsyncTask<Void, Integer, String> {
         String response = "";
         String error = "";
-        String username=  "" ;
-        String password = "" ;
-        SharedPreferences prefs ;
-        JSONObject result = null ;
-        ProgressDialog dialog ;
+        String username = "";
+        String password = "";
+        SharedPreferences prefs;
+        JSONObject result = null;
+        ProgressDialog dialog;
         String urldata = generator.pengajiangajikaryawanurl;
-        String passeddata = "" ;
-        String id="";
-        int p=0;
-        public retrivegaji(Context context, String id)
-        {
-            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+        String passeddata = "";
+        String id = "";
+        int p = 0;
+
+        public retrivegaji(Context context, String id) {
+            prefs = context.getSharedPreferences("poipayroll", Context.MODE_PRIVATE);
             this.username = generator.username;
             this.password = generator.password;
-            this.error = error ;
-            this.id=id;
-            this.p=p;
+            this.error = error;
+            this.id = id;
+            this.p = p;
         }
 
         String TAG = getClass().getSimpleName();
 
-        protected void onPreExecute (){
+        protected void onPreExecute() {
             super.onPreExecute();
             //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
+            Log.d(TAG + " PreExceute", "On pre Exceute......");
         }
 
-        protected String doInBackground(Void...arg0) {
-            Log.d(TAG + " DoINBackGround","On doInBackground...");
+        protected String doInBackground(Void... arg0) {
+            Log.d(TAG + " DoINBackGround", "On doInBackground...");
 
             try {
                 //this.dialog.setMessage("Loading Data...");
@@ -1014,32 +997,31 @@ public class mainmenu_kabag extends AppCompatActivity
                     OkHttpClient client = new OkHttpClient();
 
                     RequestBody body = new FormBody.Builder()
-                            .add("id",id)
+                            .add("id", id)
                             .build();
 
                     Request request = new Request.Builder()
-                            .header("Authorization",prefs.getString("Authorization",""))
+                            .header("Authorization", prefs.getString("Authorization", ""))
                             .post(body)
                             .url(urldata)
                             .build();
                     Response responses = null;
 
-                    Log.e(TAG,prefs.getString("Authorization","")+" "+id);
+                    Log.e(TAG, prefs.getString("Authorization", "") + " " + id);
                     try {
                         responses = client.newCall(request).execute();
                     } catch (IOException e) {
                         e.printStackTrace();
-                        jsonObject =  null;
-                    }catch (Exception e){
+                        jsonObject = null;
+                    } catch (Exception e) {
                         e.printStackTrace();
                         jsonObject = null;
                     }
 
-                    if (responses==null){
+                    if (responses == null) {
                         jsonObject = null;
                         Log.e(TAG, "NULL");
-                    }
-                    else {
+                    } else {
 
                         result = new JSONObject(responses.body().string());
                     }
@@ -1068,7 +1050,7 @@ public class mainmenu_kabag extends AppCompatActivity
             return response;
         }
 
-        protected void onProgressUpdate(Integer...a){
+        protected void onProgressUpdate(Integer... a) {
             super.onProgressUpdate(a);
             Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
         }
@@ -1088,16 +1070,14 @@ public class mainmenu_kabag extends AppCompatActivity
                         JSONArray GT = obj.getJSONArray("gajiTotal");
                         JSONObject sumGB = GB.getJSONObject(0);
                         JSONObject sumGT = GT.getJSONObject(0);
-                        if(!sumGB.getString("gajiBersih").equals("null") || !sumGT.getString("gajiTotal").equals("null")) {
-                            gaji+=Double.parseDouble(sumGB.getString("gajiBersih"));
-                            potongan+=Double.parseDouble(sumGT.getString("gajiTotal"));
-                            potongan-=Double.parseDouble(sumGB.getString("gajiBersih"));
+                        if (!sumGB.getString("gajiBersih").equals("null") || !sumGT.getString("gajiTotal").equals("null")) {
+                            gaji += Double.parseDouble(sumGB.getString("gajiBersih"));
+                            potongan += Double.parseDouble(sumGT.getString("gajiTotal"));
+                            potongan -= Double.parseDouble(sumGB.getString("gajiBersih"));
+                        } else {
+                            gaji = 0.0d;
+                            potongan = 0.0d;
                         }
-                        else{
-                            gaji=0.0d;
-                            potongan=0.0d;
-                        }
-
 
 
                         //int gaji=1000000;
@@ -1109,8 +1089,8 @@ public class mainmenu_kabag extends AppCompatActivity
                             potongan+=Double.parseDouble(obj.getString("totalgaji"));
 
                         }*/
-                        if(posisi==p){
-                            showgaji("Gaji",gaji,potongan);
+                        if (posisi == p) {
+                            showgaji("Gaji", gaji, potongan);
                         }
 
                     } catch (Exception e) {
@@ -1122,17 +1102,17 @@ public class mainmenu_kabag extends AppCompatActivity
                 } else {
                     Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
                 }
-            }catch (Exception E){
+            } catch (Exception E) {
                 E.printStackTrace();
-                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
-                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+                Log.e(TAG, "onPostExecute: " + E.getMessage().toString());
+                Snackbar.make(parent_view, E.getMessage().toString(), Snackbar.LENGTH_SHORT).show();
             }
 
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
 
-    public void showgaji(String teks, Double Gaji, Double Potongan){
+    public void showgaji(String teks, Double Gaji, Double Potongan) {
         DecimalFormat formatter = new DecimalFormat("###,###,###.00");
 
         final Dialog gajisendiri = new Dialog(mainmenu_kabag.this);
@@ -1144,7 +1124,7 @@ public class mainmenu_kabag extends AppCompatActivity
         lp.copyFrom(gajisendiri.getWindow().getAttributes());
         lp.width = WindowManager.LayoutParams.MATCH_PARENT;
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        TextView gajiteks=gajisendiri.findViewById(R.id.gajiteks);
+        TextView gajiteks = gajisendiri.findViewById(R.id.gajiteks);
         gajiteks.setText(teks);
         ((ImageButton) gajisendiri.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1162,8 +1142,8 @@ public class mainmenu_kabag extends AppCompatActivity
         final TextView gajibersih = (TextView) gajisendiri.findViewById(R.id.gajibersih);
         final TextView gajipotongan = (TextView) gajisendiri.findViewById(R.id.gajipotongan);
 
-        gajibersih.setText("RP "+formatter.format(Gaji));
-        gajipotongan.setText("RP "+formatter.format(Potongan));
+        gajibersih.setText("RP " + formatter.format(Gaji));
+        gajipotongan.setText("RP " + formatter.format(Potongan));
         gajisendiri.show();
         gajisendiri.getWindow().setAttributes(lp);
     }
@@ -1183,7 +1163,7 @@ public class mainmenu_kabag extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
-        MenuItem item=menu.findItem(R.id.action_settings);
+        MenuItem item = menu.findItem(R.id.action_settings);
         item.setTitle("About");
         return true;
     }
@@ -1223,107 +1203,78 @@ public class mainmenu_kabag extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);*/
         return true;
     }
-    /*
-    private void preparekabag() {
-        listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<String>>();
 
-        // Adding child data
-        listDataHeader.add("Home");
-        listDataHeader.add("Profil");
-        listDataHeader.add("Pengumuman");
-        listDataHeader.add("Anggota");
-        listDataHeader.add("Cek Gaji");
-        listDataHeader.add("Cek Jadwal");
-        listDataHeader.add("Pengajuan");
-        listDataHeader.add("Absensi");
-
-
-        // Adding child data
-        List<String> top250 = new ArrayList<String>();
-        top250.add("Karyawan");
-        top250.add("Sendiri");
-
-        List<String> top2510 = new ArrayList<String>();
-        top2510.add("Izin");
-        top2510.add("Cuti");
-        top2510.add("Pinjaman");
-
-        listDataChild.put(listDataHeader.get(5), top250);
-        listDataChild.put(listDataHeader.get(6), top2510);
-    }
-    */
-    /*
-    public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
-
-        // tab titles
-        private String[] tabTitles = new String[]{"Home", "Profil", "Pengumuman","Anggota","Cek Gaji","Pengajuan"};
-
-        public ExamplePagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        // overriding getPageTitle()
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return tabTitles[position];
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return new FragmentHome();
-                case 1:
-                    return new FragmentProfil();
-                case 2:
-                    return new FragmentPengumuman();
-                case 3:
-                    return new FragmentEmployee();
-                case 4:
-                    return new FragmentCekGaji();
-                case 5:
-                    return new FragmentPengajuan();
-                default:
-                    return null;
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return tabTitles.length;
-        }
-        // ...
-    }
-
-    public class loginselainowner extends AsyncTask<Void, Integer, String>
+    public class absensithrowlocation extends AsyncTask<Void, Integer, String>
     {
+        Context ctx;
         String response = "";
         String error = "";
-        String username=  "" ;
-        String password = "" ;
+        String kabag = "" ;
         SharedPreferences prefs ;
         JSONObject result ;
         ProgressDialog dialog ;
-        String urldata = generator.scanloginurl;
-        String passeddata = "" ;
+        String urldata = generator.throwlocation;
+        String kode = "" ;
+        String typeabsensi = "";
+        int type=0;
+        boolean issecurity = false;
 
-        public  loginselainowner(Context context,String passed)
+        String longitude = "";
+        String latitude = "";
+
+        public  absensithrowlocation(Context context,int type,String kode,String longitude,String latitude,boolean issecurity)
         {
+            this.kode = kode;
+            this.longitude = longitude;
+            this.latitude = latitude;
+            this.type = type;
+            this.issecurity = issecurity;
+
+            ctx = context;
             dialog = new ProgressDialog(context);
-            passeddata = passed;
-            this.username = generator.username;
-            this.password = generator.password;
+
+
             this.error = error ;
+
+            if(issecurity){
+                if(type ==1){
+                    typeabsensi = "checkpos";
+                }
+                else if(type == 2){
+                    typeabsensi="checkin";
+                }else if(type ==3){
+                    typeabsensi = "breakout";
+                }else if(type ==4){
+                    typeabsensi = "breakin";
+                }else if(type ==5){
+                    typeabsensi = "breakout";
+                }
+            }
+            else {
+                if(type == 0){
+                    typeabsensi = "checkin";
+                }else if(type ==1){
+                    typeabsensi = "breakout";
+                }else if(type ==2){
+                    typeabsensi ="breakin";
+                }else if(type ==3){
+                    typeabsensi = "checkout";
+                }else if(type ==4){
+                    typeabsensi = "extrain";
+                }else if(type ==5){
+                    typeabsensi = "extraout";
+                }
+            }
         }
 
         String TAG = getClass().getSimpleName();
 
         protected void onPreExecute (){
-            this.dialog.show();
+            try{this.dialog.show();}
+            catch (Exception e){
+                e.printStackTrace();
+            }
             super.onPreExecute();
-            this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
         }
 
         protected String doInBackground(Void...arg0) {
@@ -1331,77 +1282,71 @@ public class mainmenu_kabag extends AppCompatActivity
 
             int data = 0;
 
-            while (data==0) {
+
+
+            try {
+                this.dialog.setMessage("Loading Data...");
+                OkHttpClient client = new OkHttpClient();
+
+
+
+                RequestBody body = new FormBody.Builder()
+                        .add("longitude",longitude+"")
+                        .add("latitude",latitude+"")
+                        .add("tipe",typeabsensi)
+                        .add("kode",kode)
+                        .build();
+
+                Log.e(TAG, "doInBackground: "+kode+kabag );
+
+                Request request=null;
+
+                request = new Request.Builder()
+                        .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                        .put(body)
+                        .url(urldata)
+                        .build();
+
+                Response responses = null;
+
+
                 try {
-                    this.dialog.setMessage("Loading Data...");
-
-                    JSONObject jsonObject;
-
-                    try {
-                        OkHttpClient client = new OkHttpClient();
-
-
-                        RequestBody body = new FormBody.Builder()
-                                .add("kode",passeddata)
-                                .build();
-
-                        Request request = new Request.Builder()
-                                .post(body)
-                                .url(urldata)
-                                .build();
-                        Response responses = null;
-
-                        try {
-                            responses = client.newCall(request).execute();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            jsonObject =  null;
-                        }catch (Exception e){
-                            e.printStackTrace();
-                            jsonObject = null;
-                        }
-
-                        if (responses==null){
-                            jsonObject = null;
-                        }
-                        else {
-                            jsonObject = new JSONObject(responses.body().string());
-                        }
-                        result = jsonObject;
-                        data=1;
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        return null;
-                    }
-
-
-                    break;
+                    responses = client.newCall(request).execute();
                 } catch (IOException e) {
-                    this.dialog.setMessage("Loading Data... IOError Occured,retrying...");
-                    this.dialog.dismiss();
-                    Log.e("doInBackground: ", "IO Exception" + e.getMessage());
-                    generator.jsondatalogin = null;
-                    response = "Error IOException";
-                } catch (NullPointerException e) {
-                    this.dialog.setMessage("Loading Data... Internet Error Occured,retrying...");
-                    this.dialog.dismiss();
-                    Log.e("doInBackground: ", "null data" + e.getMessage());
-                    generator.jsondatalogin = null;
-                    response = "Please check Connection and Server";
-                } catch (Exception e) {
-                    this.dialog.setMessage("Loading Data... Error Occured,retrying...");
-                    this.dialog.dismiss();
-                    Log.e("doInBackground: ", e.getMessage());
-                    generator.jsondatalogin = null;
-                    response = "Error Occured, PLease Contact Administrator/Support";
-                }
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }catch (Exception e){
                     e.printStackTrace();
                 }
+                result = new JSONObject(responses.body().string());
 
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return null;
+            }catch (IOException e) {
+                this.dialog.setMessage("Loading Data... IOError Occured,retrying...");
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                e.printStackTrace();
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                this.dialog.setMessage("Loading Data... Internet Error Occured,retrying...");
+                this.dialog.dismiss();
+                e.printStackTrace();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                this.dialog.setMessage("Loading Data... Error Occured,retrying...");
+                this.dialog.dismiss();
+                e.printStackTrace();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
             }
+
             return response;
         }
 
@@ -1416,12 +1361,93 @@ public class mainmenu_kabag extends AppCompatActivity
                 dialog.dismiss();
             }
             try {
-                if(result.getString("status").equals("true")) {
-                    JSONArray data = result.getJSONArray("data");
-                    JSONObject dataisi = data.getJSONObject(0);
-                    String declare = dataisi.getString("otoritas");
-                    String iduser = dataisi.getString("idfp");
+                Log.e(TAG, "onPostExecute: "+result);
+                //restartbarcode();
+
+
+                String title = "";
+                if(result!=null) {
+                    if (result.getString("status").equals("true")) {
+                        title = "Berhasil";
+                        final AlertDialog alert = new AlertDialog.Builder(ctx).setTitle(title).setMessage(result.getString("message")).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                try {
+                                    prefs = ctx.getSharedPreferences("poipayroll",MODE_PRIVATE);
+
+                                    SharedPreferences.Editor edit = prefs.edit();
+
+                                    edit.putInt("absensitype" ,0);
+                                    edit.putString("absensikode","");
+                                    edit.putString("absensilongitude","");
+                                    edit.putString("absensilatitude","");
+                                    edit.putBoolean("absensisecurity",false);
+
+                                    edit.apply();
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }//Do something after 100ms
+                            }
+                        }).create();
+
+                        alert.show();
+                    } else {
+
+                        prefs = ctx.getSharedPreferences("poipayroll",MODE_PRIVATE);
+
+                        SharedPreferences.Editor edit = prefs.edit();
+
+                        edit.putInt("absensitype",type);
+                        edit.putString("absensikode",kode);
+                        edit.putString("absensilongitude",longitude+"");
+                        edit.putString("absensilatitude",latitude+"");
+                        edit.putBoolean("absensisecurity",issecurity);
+
+                        edit.apply();
+
+                        Log.e("failed send location", result.toString());
+
+                        if(count>=5){
+
+                        }
+                        else {
+                            absensithrowlocation throwdata = new absensithrowlocation(ctx, type, kode, longitude, latitude, issecurity);
+                            throwdata.execute();
+                            count++;
+                        }
+                    }
                 }
+                else {
+
+                    prefs = ctx.getSharedPreferences("poipayroll",MODE_PRIVATE);
+
+                    SharedPreferences.Editor edit = prefs.edit();
+
+                    edit.putInt("absensitype",type);
+                    edit.putString("absensikode",kode);
+                    edit.putString("absensilongitude",longitude+"");
+                    edit.putString("absensilatitude",latitude+"");
+                    edit.putBoolean("absensisecurity",issecurity);
+
+                    edit.apply();
+
+                    if(count>=5){
+
+                    }
+                    else {
+                        absensithrowlocation throwdata = new absensithrowlocation(ctx, type, kode, longitude, latitude, issecurity);
+                        throwdata.execute();
+                        count++;
+                    }
+
+
+
+
+
+                    Toast.makeText(ctx, "Terjadi Kesalahan Koneksi", Toast.LENGTH_SHORT).show();
+                }
+
 
                 //JSONArray bArray= responseObject.getJSONArray("B");
                 //for(int i=0;i<bArray.length();i++){
@@ -1430,29 +1456,39 @@ public class mainmenu_kabag extends AppCompatActivity
                 //    String b= innerObject.getString("b");
                 //}
             } catch (Exception e) {
-                Log.e(TAG, "onPostExecute: "+e.getMessage() );
+                Log.e(TAG, "onPostExecute error: "+e.getMessage() );
                 e.printStackTrace();
-                if(result!=null){
-                    AlertDialog alertDialog = new AlertDialog.Builder(mainmenu_kabag.this).create();
-                    alertDialog.setTitle("Hasil");
+                AlertDialog alertDialog = new AlertDialog.Builder(ctx).create();
+                alertDialog.setTitle("Kesalahan");
 
-                    alertDialog.setMessage(e.getMessage().toString() + " "+ result.toString());
-                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                    alertDialog.show();
-                }
-                else {
-
-                }
+                alertDialog.setMessage(e.getMessage());
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
             }
 
 
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
-    */
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 4011: {
+                if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    generator.lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                    generator.location = generator.lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                    Intent intent = new Intent(mainmenu_kabag.this, ActivityAbsensi.class);
+                    intent.putExtra("jabatan", "kabag");
+                    startActivity(intent);
+                }
+            }
+        }
+    }
 }

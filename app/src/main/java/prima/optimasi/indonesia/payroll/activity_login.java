@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -62,6 +63,10 @@ public class activity_login extends FragmentActivity {
     TextView usr;
     TextView pass;
 
+    ImageView settings;
+
+    AlertDialog companydata;
+
 
 
 
@@ -72,7 +77,7 @@ public class activity_login extends FragmentActivity {
 
         Realm.init(this);
 
-
+        settings = findViewById(R.id.settings);
 
         pref = getSharedPreferences("poipayroll",MODE_PRIVATE);
 
@@ -87,6 +92,14 @@ public class activity_login extends FragmentActivity {
             register.execute();
 
         }*/
+
+        settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                companydata = new AlertDialog.Builder(activity_login.this).create();
+
+            }
+        });
 
         if(!pref.getString("level","").equals("")){
             String declare = pref.getString("level","");

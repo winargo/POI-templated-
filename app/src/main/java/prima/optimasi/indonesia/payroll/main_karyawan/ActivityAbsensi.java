@@ -71,6 +71,8 @@ public class ActivityAbsensi extends AppCompatActivity {
         absensi=findViewById(R.id.lyt_parent_absensi);
         absensiwajah=findViewById(R.id.lyt_parent_absensiwajah);
 
+        absensiwajah.setVisibility(View.GONE);
+
         TextView checkinteks=findViewById(R.id.name);
         TextView checkoutteks=findViewById(R.id.namecheckout);
         TextView breakinteks=findViewById(R.id.namebreakin);
@@ -79,6 +81,8 @@ public class ActivityAbsensi extends AppCompatActivity {
         TextView extraouteks=findViewById(R.id.nameextraout);
         TextView absensiteks=findViewById(R.id.nameabsensi);
         TextView absensiwajahteks=findViewById(R.id.nameabsensiwajah);
+
+        absensiwajahteks.setVisibility(View.GONE);
 
         checkinteks.setText("Check IN");
         checkoutteks.setText("Check OUT");

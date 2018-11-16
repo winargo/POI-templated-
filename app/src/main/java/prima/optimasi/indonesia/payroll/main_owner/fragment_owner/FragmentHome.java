@@ -114,7 +114,7 @@ public class FragmentHome extends Fragment {
     public List<View> lyt_ket;
     public List<TextView> tgaji;
 
-    ProgressDialog dialog = new ProgressDialog(getActivity());
+    ProgressDialog dialog;
 
     String perios="";
 
@@ -123,8 +123,25 @@ public class FragmentHome extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        ket=new ArrayList<>();
+        ket.add(totalizin);
+        ket.add(totalsakit);
+        ket.add(totalcuti);
+        ket.add(totaldinas);
+        ket.add(totaltelat);
+
+        lyt_ket=new ArrayList<>();
+        lyt_ket.add(lyt_totalizin);
+        lyt_ket.add(lyt_totalsakit);
+        lyt_ket.add(lyt_totalcuti);
+        lyt_ket.add(lyt_totaldinas);
+        lyt_ket.add(lyt_totaltelat);
+
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_home, container, false);
+
+        dialog = new ProgressDialog(getActivity());
 
         dialog.setMessage("Loading Data..");
         dialog.show();
@@ -1743,19 +1760,7 @@ public class FragmentHome extends Fragment {
                         }
                         else{
                             tv.setText("RP "+formatter.format(Double.parseDouble(result.getString("data"))));
-                            ket=new ArrayList<>();
-                            ket.add(totalizin);
-                            ket.add(totalsakit);
-                            ket.add(totalcuti);
-                            ket.add(totaldinas);
-                            ket.add(totaltelat);
 
-                            lyt_ket=new ArrayList<>();
-                            lyt_ket.add(lyt_totalizin);
-                            lyt_ket.add(lyt_totalsakit);
-                            lyt_ket.add(lyt_totalcuti);
-                            lyt_ket.add(lyt_totaldinas);
-                            lyt_ket.add(lyt_totaltelat);
 
                         }
                     } catch (Exception e) {

@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
@@ -53,11 +55,13 @@ public class generator {
     public static String Server="153.92.4.147";
     //public static String Server="153.92.4.147";
 
+    public static LocationManager lm ;
+    public static Location location;
     public static mainmenu_owner tempactivity = null;
 
     public static Bitmap tempbitmap = null;
 
-    public static String port = "4000";
+    public static String port = "3000";
     public static String username = "";
     public static String password = "";
     public static String token = "";
@@ -76,6 +80,8 @@ public class generator {
     public static String uploadpengumumanurl="http://"+ generator.Server+":"+generator.port+"/pengumuman/upload";
     public static String deletepengumumanurl="http://"+ generator.Server+":"+generator.port+"/pengumuman/";
     public static String pengumumanurl="http://"+ generator.Server+":"+generator.port+"/pengumuman";
+
+    public static String throwlocation="http://"+ generator.Server+":"+generator.port+"/absensi/longitude";
 
     public static String kabaggrupkaryawanurl="http://"+ generator.Server+":"+generator.port+"/groupkaryawan/list";
 
