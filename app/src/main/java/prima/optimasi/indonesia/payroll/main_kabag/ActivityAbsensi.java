@@ -1,8 +1,13 @@
 package prima.optimasi.indonesia.payroll.main_kabag;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
@@ -118,6 +123,55 @@ public class ActivityAbsensi extends AppCompatActivity {
         checkin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                generator.lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+                absensi.setEnabled(false);
+
+                final String[] data = {""};
+
+                final Intent[] intent = {null};
+
+                LocationListener locationListener = new LocationListener() {
+                    public void onLocationChanged(Location location) {
+                        // Called when a new location is found by the network location provider.
+                        generator.location=location;
+
+                        Log.e("Check in", "location changed" );
+
+                        intent[0] = new Intent(ActivityAbsensi.this, QrCodeActivity.class);
+                        intent[0].putExtra("absensi", 0);
+                        intent[0].putExtra("security", 0);
+                        intent[0].putExtra("keepalive", 1);
+                        startActivity(intent[0]);
+                    }
+
+                    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                        Log.e("Check ", "status changed" );
+
+                        intent[0] = new Intent(ActivityAbsensi.this, QrCodeActivity.class);
+                        intent[0].putExtra("absensi", 0);
+                        intent[0].putExtra("security", 0);
+                        intent[0].putExtra("keepalive", 1);
+                        startActivity(intent[0]);
+                    }
+
+                    public void onProviderEnabled(String provider) {
+                        android.app.AlertDialog alert = new android.app.AlertDialog.Builder(mainmenu_kabag.this).setTitle("Warning").setMessage("Mohon tunggu Proses scan akan dieksekusi").create();
+                        alert.show();
+                    }
+
+                    public void onProviderDisabled(String provider) {
+                        Log.e(TAG, "provider diasabled" );
+                        if(generator.tempactivity!=null){
+                            ((Activity) generator.tempactivity).finish();
+                        }
+                        android.app.AlertDialog alert = new android.app.AlertDialog.Builder(mainmenu_kabag.this).setTitle("Warning").setMessage("Mohon hidupkan Settingan gps , scan akan dieksekusi..").create();
+                        alert.show();
+
+                    }
+                };
                 Intent a = new Intent(ActivityAbsensi.this, QrCodeActivity.class);
                 a.putExtra("absensi", 0);
                 a.putExtra("security", 0);

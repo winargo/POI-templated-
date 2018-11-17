@@ -47,6 +47,7 @@ import java.util.List;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import qrcodescanner.QrCodeActivity;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -57,7 +58,7 @@ public class generator {
 
     public static LocationManager lm ;
     public static Location location;
-    public static mainmenu_owner tempactivity = null;
+    public static QrCodeActivity tempactivity = null;
 
     public static Bitmap tempbitmap = null;
 

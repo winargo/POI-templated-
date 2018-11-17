@@ -1,6 +1,7 @@
 package prima.optimasi.indonesia.payroll.main_kabag;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -11,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -120,6 +122,8 @@ public class mainmenu_kabag extends AppCompatActivity
     Double gaji, potongan;
     int posisi;
 
+    FloatingActionButton absensi;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -128,6 +132,8 @@ public class mainmenu_kabag extends AppCompatActivity
         loadingdata.setTitle("Please Wait");
         loadingdata.setMessage("Loading Data...");
         loadingdata.show();
+
+
 
 
         prefs = getSharedPreferences("poipayroll", MODE_PRIVATE);
@@ -191,7 +197,7 @@ public class mainmenu_kabag extends AppCompatActivity
         FloatingActionButton anggota = findViewById(R.id.anggota);
         FloatingActionButton cekgaji = findViewById(R.id.cekgaji);
         FloatingActionButton pengajuan = findViewById(R.id.pengajuan);
-        FloatingActionButton absensi = findViewById(R.id.absensi);
+        absensi = findViewById(R.id.absensi);
         FloatingActionButton cekjadwal = findViewById(R.id.cekjadwal);
 
         pengumumanteks.setText("Pengumuman");
@@ -283,8 +289,11 @@ public class mainmenu_kabag extends AppCompatActivity
                 boolean permissionGranted = ActivityCompat.checkSelfPermission(mainmenu_kabag.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
                 if(permissionGranted) {
-                    generator.lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                    generator.location = generator.lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+
+                    //generator.lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+                    //generator.lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                    //generator.location = generator.lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                     Intent intent = new Intent(mainmenu_kabag.this, ActivityAbsensi.class);
                     intent.putExtra("jabatan", "kabag");
@@ -1481,12 +1490,11 @@ public class mainmenu_kabag extends AppCompatActivity
         switch (requestCode) {
             case 4011: {
                 if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    generator.lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                    generator.location = generator.lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-                    Intent intent = new Intent(mainmenu_kabag.this, ActivityAbsensi.class);
-                    intent.putExtra("jabatan", "kabag");
-                    startActivity(intent);
+                            Intent intent = new Intent(mainmenu_kabag.this, ActivityAbsensi.class);
+                            intent.putExtra("jabatan", "kabag");
+                            startActivity(intent);
+
                 }
             }
         }

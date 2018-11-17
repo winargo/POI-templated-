@@ -1,5 +1,6 @@
 package qrcodescanner;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -10,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
+import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -19,6 +21,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -32,6 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.Result;
+import com.google.zxing.qrcode.encoder.QRCode;
 import com.wdullaer.materialdatetimepicker.time.Timepoint;
 
 import org.json.JSONArray;
@@ -62,7 +66,9 @@ import qrcodescanner.view.QrCodeFinderView;
 
 public class QrCodeActivity extends Activity implements Callback, OnClickListener {
 
-    int count=0;
+    int count = 0;
+
+
 
     private static final int REQUEST_SYSTEM_PICTURE = 0;
     private static final int REQUEST_PICTURE = 1;
@@ -77,7 +83,7 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
     private View mLlFlashLight;
     private final DecodeManager mDecodeManager = new DecodeManager();
 
-    private int stayscanning=0;
+    private int stayscanning = 0;
 
     private static final float BEEP_VOLUME = 0.10f;
     private static final long VIBRATE_DURATION = 200L;
@@ -114,6 +120,8 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
         initView();
         initData();
         mApplicationContext = getApplicationContext();
+
+        generator.tempactivity = this;
 
     }
 
@@ -318,16 +326,14 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.qr_code_iv_flash_light)
-        {
+        if (v.getId() == R.id.qr_code_iv_flash_light) {
             if (mNeedFlashLightOpen) {
                 turnFlashlightOn();
             } else {
                 turnFlashLightOff();
             }
 
-        }else if(v.getId() == R.id.qr_code_header_black_pic)
-        {
+        } else if (v.getId() == R.id.qr_code_header_black_pic) {
             if (!hasCameraPermission()) {
                 mDecodeManager.showPermissionDeniedDialog(this);
             } else {
@@ -370,32 +376,30 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
         } else {
 
             try {
-                if(getIntent().getIntExtra("keepalive",0)==1){
-                    SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
+                if (getIntent().getIntExtra("keepalive", 0) == 1) {
+                    SharedPreferences prefs = getSharedPreferences("poipayroll", MODE_PRIVATE);
 
                     boolean security = false;
 
-                    if(getIntent().getIntExtra("security",0)==1){
+                    if (getIntent().getIntExtra("security", 0) == 1) {
                         security = true;
                     }
 
-                    absensi abs = new absensi(QrCodeActivity.this,prefs.getString("Authorization",""),getIntent().getIntExtra("absensi",0),resultString,prefs.getString("kodekaryawan",""),security);
+                    absensi abs = new absensi(QrCodeActivity.this, prefs.getString("Authorization", ""), getIntent().getIntExtra("absensi", 0), resultString, prefs.getString("kodekaryawan", ""), security);
                     abs.execute();
-                }
-                else {
-                    Log.d(LOGTAG,"Got scan result from user loaded image :"+resultString);
+                } else {
+                    Log.d(LOGTAG, "Got scan result from user loaded image :" + resultString);
                     Intent data = new Intent();
-                    data.putExtra(GOT_RESULT,resultString);
-                    setResult(Activity.RESULT_OK,data);
+                    data.putExtra(GOT_RESULT, resultString);
+                    setResult(Activity.RESULT_OK, data);
 
                     finish();
                 }
-            }
-            catch (Exception e){
-                Log.d(LOGTAG,"Got scan result from user loaded image :"+resultString);
+            } catch (Exception e) {
+                Log.d(LOGTAG, "Got scan result from user loaded image :" + resultString);
                 Intent data = new Intent();
-                data.putExtra(GOT_RESULT,resultString);
-                setResult(Activity.RESULT_OK,data);
+                data.putExtra(GOT_RESULT, resultString);
+                setResult(Activity.RESULT_OK, data);
 
                 finish();
 
@@ -416,8 +420,7 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
             case REQUEST_SYSTEM_PICTURE:
                 Uri uri = data.getData();
                 String imgPath = getPathFromUri(uri);
-                if (imgPath!=null && !TextUtils.isEmpty(imgPath) &&null != mQrCodeExecutor)
-                {
+                if (imgPath != null && !TextUtils.isEmpty(imgPath) && null != mQrCodeExecutor) {
                     mQrCodeExecutor.execute(new DecodeImageThread(imgPath, mDecodeImageCallback));
                 }
                 break;
@@ -444,17 +447,16 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
         @Override
         public void decodeSucceed(Result result) {
             //Got scan result from scaning an image loaded by the user
-            Log.d(LOGTAG,"Decoded the image successfully :"+ result.getText());
+            Log.d(LOGTAG, "Decoded the image successfully :" + result.getText());
             Intent data = new Intent();
-            data.putExtra(GOT_RESULT,result.getText());
+            data.putExtra(GOT_RESULT, result.getText());
 
             try {
-                if(getIntent().getStringExtra("keepalive").equals("1")){
+                if (getIntent().getStringExtra("keepalive").equals("1")) {
 
                 }
-            }
-            catch (Exception e){
-                setResult(Activity.RESULT_OK,data);
+            } catch (Exception e) {
+                setResult(Activity.RESULT_OK, data);
                 finish();
             }
 
@@ -462,17 +464,16 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
 
         @Override
         public void decodeFail(int type, String reason) {
-            Log.d(LOGTAG,"Something went wrong decoding the image :"+ reason);
+            Log.d(LOGTAG, "Something went wrong decoding the image :" + reason);
             Intent data = new Intent();
-            data.putExtra(ERROR_DECODING_IMAGE,reason);
+            data.putExtra(ERROR_DECODING_IMAGE, reason);
 
             try {
-                if(getIntent().getStringExtra("keepalive").equals("1")){
+                if (getIntent().getStringExtra("keepalive").equals("1")) {
 
                 }
-            }
-            catch (Exception e){
-                setResult(Activity.RESULT_CANCELED,data);
+            } catch (Exception e) {
+                setResult(Activity.RESULT_CANCELED, data);
                 finish();
             }
 
@@ -524,22 +525,20 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
     }
 
 
-    public class absensi extends AsyncTask<Void, Integer, String>
-    {
+    public class absensi extends AsyncTask<Void, Integer, String> {
         Context ctx;
         String response = "";
         String error = "";
-        String kabag = "" ;
-        SharedPreferences prefs ;
-        JSONObject result ;
-        ProgressDialog dialog ;
+        String kabag = "";
+        SharedPreferences prefs;
+        JSONObject result;
+        ProgressDialog dialog;
         String urldata = "";
-        String kode = "" ;
-        int type=0;
+        String kode = "";
+        int type = 0;
         boolean issecurity = false;
 
-        public  absensi(Context context,String token,int type,String kodek,String kodekaba,boolean issecurity)
-        {
+        public absensi(Context context, String token, int type, String kodek, String kodekaba, boolean issecurity) {
             kode = kodek;
             this.type = type;
             kabag = kodekaba;
@@ -548,55 +547,53 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
             ctx = context;
             dialog = new ProgressDialog(context);
 
-            if(issecurity){
-                if(type ==1){
+            if (issecurity) {
+                if (type == 1) {
                     urldata = generator.scheckemployeeyurl;
-                }
-                else if(type == 2){
+                } else if (type == 2) {
                     urldata = generator.scheckinurl;
-                }else if(type ==3){
+                } else if (type == 3) {
                     urldata = generator.sbreakouturl;
-                }else if(type ==4){
+                } else if (type == 4) {
                     urldata = generator.sbreakinurl;
-                }else if(type ==5){
+                } else if (type == 5) {
                     urldata = generator.scheckouturl;
                 }
-            }
-            else {
-                if(type == 0){
+            } else {
+                if (type == 0) {
                     urldata = generator.checkinurl;
-                }else if(type ==1){
+                } else if (type == 1) {
                     urldata = generator.breakouturl;
-                }else if(type ==2){
+                } else if (type == 2) {
                     urldata = generator.breakinurl;
-                }else if(type ==3){
+                } else if (type == 3) {
                     urldata = generator.checkouturl;
-                }else if(type ==4){
+                } else if (type == 4) {
                     urldata = generator.extrainurl;
-                }else if(type ==5){
+                } else if (type == 5) {
                     urldata = generator.extraouturl;
                 }
             }
 
 
-            this.error = error ;
+            this.error = error;
         }
 
         String TAG = getClass().getSimpleName();
 
-        protected void onPreExecute (){
-            try{this.dialog.show();}
-            catch (Exception e){
+        protected void onPreExecute() {
+            try {
+                this.dialog.show();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             super.onPreExecute();
         }
 
-        protected String doInBackground(Void...arg0) {
-            Log.d(TAG + " DoINBackGround","On doInBackground...");
+        protected String doInBackground(Void... arg0) {
+            Log.d(TAG + " DoINBackGround", "On doInBackground...");
 
             int data = 0;
-
 
 
             try {
@@ -604,85 +601,82 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
                 OkHttpClient client = new OkHttpClient();
 
 
-
                 RequestBody body = new FormBody.Builder()
-                        .add("kode",kode)
-                        .add("kode_kabag",kabag)
+                        .add("kode", kode)
+                        .add("kode_kabag", kabag)
                         .build();
 
-                Log.e(TAG, "doInBackground: "+kode+kabag );
+                Log.e(TAG, "doInBackground: " + kode + kabag);
 
-                Request request=null;
-                if(issecurity){
-                    if(type ==1){
+                Request request = null;
+                if (issecurity) {
+                    if (type == 1) {
                         request = new Request.Builder()
-                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                                .header("Authorization", getSharedPreferences("poipayroll", MODE_PRIVATE).getString("Authorization", ""))
                                 .post(body)
+                                .url(urldata)
+                                .build();
+                    } else if (type == 2) {
+                        request = new Request.Builder()
+                                .header("Authorization", getSharedPreferences("poipayroll", MODE_PRIVATE).getString("Authorization", ""))
+                                .post(body)
+                                .url(urldata)
+                                .build();
+                    } else if (type == 3) {
+                        request = new Request.Builder()
+                                .header("Authorization", getSharedPreferences("poipayroll", MODE_PRIVATE).getString("Authorization", ""))
+                                .put(body)
+                                .url(urldata)
+                                .build();
+                    } else if (type == 4) {
+                        request = new Request.Builder()
+                                .header("Authorization", getSharedPreferences("poipayroll", MODE_PRIVATE).getString("Authorization", ""))
+                                .put(body)
+                                .url(urldata)
+                                .build();
+                    } else if (type == 5) {
+                        request = new Request.Builder()
+                                .header("Authorization", getSharedPreferences("poipayroll", MODE_PRIVATE).getString("Authorization", ""))
+                                .put(body)
                                 .url(urldata)
                                 .build();
                     }
-                    else if(type == 2){
-                        request = new Request.Builder()
-                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
-                                .post(body)
-                                .url(urldata)
-                                .build();
-                    }else if(type ==3){
-                        request = new Request.Builder()
-                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
-                                .put(body)
-                                .url(urldata)
-                                .build();
-                    }else if(type ==4){
-                        request = new Request.Builder()
-                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
-                                .put(body)
-                                .url(urldata)
-                                .build();
-                    }else if(type ==5){
-                        request = new Request.Builder()
-                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
-                                .put(body)
-                                .url(urldata)
-                                .build();
-                    }
 
 
-                }
-                else {
-                    if(type == 0){
+                } else {
+                    if (type == 0) {
                         request = new Request.Builder()
-                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                                .header("Authorization", getSharedPreferences("poipayroll", MODE_PRIVATE).getString("Authorization", ""))
                                 .post(body)
                                 .url(urldata)
                                 .build();
-                    }else if(type ==1){
+                    } else if (type == 1) {
                         request = new Request.Builder()
-                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                                .header("Authorization", getSharedPreferences("poipayroll", MODE_PRIVATE).getString("Authorization", ""))
                                 .put(body)
                                 .url(urldata)
                                 .build();
-                    }else if(type ==2){
+                    } else if (type == 2) {
                         request = new Request.Builder()
-                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                                .header("Authorization", getSharedPreferences("poipayroll", MODE_PRIVATE).getString("Authorization", ""))
                                 .put(body)
                                 .url(urldata)
                                 .build();
-                    }else if(type ==3){
+                    } else if (type == 3) {
                         request = new Request.Builder()
-                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                                .header("Authorization", getSharedPreferences("poipayroll", MODE_PRIVATE).getString("Authorization", ""))
                                 .put(body)
                                 .url(urldata)
                                 .build();
-                    }else if(type ==4){
+                    } else if (type == 4) {
                         request = new Request.Builder()
-                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                                .header("Authorization", getSharedPreferences("poipayroll", MODE_PRIVATE).getString("Authorization", ""))
                                 .post(body)
                                 .url(urldata)
                                 .build();
-                    }else if(type ==5){
+                    } else if (type == 5) {
                         request = new Request.Builder()
-                                .header("Authorization",getSharedPreferences("poipayroll",MODE_PRIVATE).getString("Authorization",""))
+                                .header("Authorization", getSharedPreferences("poipayroll", MODE_PRIVATE).getString("Authorization", ""))
                                 .put(body)
                                 .url(urldata)
                                 .build();
@@ -696,17 +690,16 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
                     responses = client.newCall(request).execute();
                 } catch (IOException e) {
                     e.printStackTrace();
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 result = new JSONObject(responses.body().string());
 
 
-
             } catch (JSONException e) {
                 e.printStackTrace();
                 return null;
-            }catch (IOException e) {
+            } catch (IOException e) {
                 this.dialog.setMessage("Loading Data... IOError Occured,retrying...");
                 this.dialog.dismiss();
                 Log.e("doInBackground: ", "IO Exception" + e.getMessage());
@@ -732,30 +725,50 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
             return response;
         }
 
-        protected void onProgressUpdate(Integer...a){
+        protected void onProgressUpdate(Integer... a) {
             super.onProgressUpdate(a);
             Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
         }
 
         protected void onPostExecute(String result1) {
             super.onPostExecute(result1);
-            if(this.dialog.isShowing()){
+            if (this.dialog.isShowing()) {
                 dialog.dismiss();
             }
             try {
-                Log.e(TAG, "onPostExecute: "+result);
+                Log.e(TAG, "onPostExecute: " + result);
                 //restartbarcode();
 
 
                 String title = "";
-                if(result!=null) {
+                if (result != null) {
                     if (result.getString("status").equals("true")) {
 
                         title = "Berhasil";
 
-                        double longitude = generator.location.getLongitude();
-                        double latitude = generator.location.getLatitude();
+                        double longitude = 0.0d;
+                        double latitude = 0.0d;
 
+                        if (generator.location == null) {
+
+                                if (ActivityCompat.checkSelfPermission(QrCodeActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(QrCodeActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                    generator.location = generator.lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                                    longitude = generator.location.getLongitude();
+                                    latitude = generator.location.getLatitude();
+                                }
+                                else {
+                                    generator.location = generator.lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                                    longitude = generator.location.getLongitude();
+                                    latitude = generator.location.getLatitude();
+                                    Log.d(TAG, "onPostExecute: "+"error location request");
+                                }
+
+
+                        }
+                        else {
+                            longitude = generator.location.getLongitude();
+                            latitude = generator.location.getLatitude();
+                        }
                         absensithrowlocation throwdata = new absensithrowlocation(ctx, type, kode, longitude, latitude, issecurity);
                         throwdata.execute();
 
