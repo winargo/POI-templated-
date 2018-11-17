@@ -124,19 +124,7 @@ public class FragmentHome extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        ket=new ArrayList<>();
-        ket.add(totalizin);
-        ket.add(totalsakit);
-        ket.add(totalcuti);
-        ket.add(totaldinas);
-        ket.add(totaltelat);
 
-        lyt_ket=new ArrayList<>();
-        lyt_ket.add(lyt_totalizin);
-        lyt_ket.add(lyt_totalsakit);
-        lyt_ket.add(lyt_totalcuti);
-        lyt_ket.add(lyt_totaldinas);
-        lyt_ket.add(lyt_totaltelat);
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_home, container, false);
@@ -309,6 +297,20 @@ public class FragmentHome extends Fragment {
         banyakkontrakkerja.add(banyak1bulan);
         banyakkontrakkerja.add(banyak2bulan);
         banyakkontrakkerja.add(banyak3bulan);
+
+        ket=new ArrayList<>();
+        ket.add(totalizin);
+        ket.add(totalsakit);
+        ket.add(totalcuti);
+        ket.add(totaldinas);
+        ket.add(totaltelat);
+
+        lyt_ket=new ArrayList<>();
+        lyt_ket.add(lyt_totalizin);
+        lyt_ket.add(lyt_totalsakit);
+        lyt_ket.add(lyt_totalcuti);
+        lyt_ket.add(lyt_totaldinas);
+        lyt_ket.add(lyt_totaltelat);
         for(int i=0;i<kontrak_kerja.length;i++){
             retrivekontrakkerjakar k_k=new retrivekontrakkerjakar(parent_view.getContext(),kontrak_kerja[i], kk.get(i),rv_kk.get(i),banyakkontrakkerja.get(i));
             k_k.execute();
@@ -1593,11 +1595,13 @@ public class FragmentHome extends Fragment {
                         }
 
                         if(panjang+1==list_jabatan.size()){
-                            daftarabsensi=new listkaryawandaftarabsensi();
-                            daftarabsensi.setJabatan("Total Karyawan");
-                            daftarabsensi.setBanyak(""+banyakkaryawan);
-                            daftarabsensi.setTotal(""+totalkaryawan);
-                            daftaritems.add(daftarabsensi);
+                            if(daftaritems.size()>0){
+                                daftarabsensi=new listkaryawandaftarabsensi();
+                                daftarabsensi.setJabatan("Total Karyawan");
+                                daftarabsensi.setBanyak(""+banyakkaryawan);
+                                daftarabsensi.setTotal(""+totalkaryawan);
+                                daftaritems.add(daftarabsensi);
+                            }
 
                             int absen=0;
                             absen=totalkaryawan-banyakkaryawan;
@@ -1908,7 +1912,7 @@ public class FragmentHome extends Fragment {
                         JSONArray pengsarray = result.getJSONArray("rows");
 
 
-                        tv.setText(""+pengsarray.length());
+                        tv.setText(String.valueOf(pengsarray.length()));
                         lyt.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
