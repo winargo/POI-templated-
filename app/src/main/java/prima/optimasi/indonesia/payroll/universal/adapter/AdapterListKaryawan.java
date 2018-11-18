@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.balysv.materialripple.MaterialRippleLayout;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -80,6 +81,7 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
         public ImageView image;
         public TextView jabatan, nama;
         public View lyt_parent, bt_expand, lyt_expand;
+        public MaterialRippleLayout layout;
 
         public OriginalViewHolder(View v) {
             super(v);
@@ -87,6 +89,8 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
             image =  v.findViewById(R.id.image);
             nama = (TextView) v.findViewById(R.id.nama);
             lyt_parent = (View) v.findViewById(R.id.lyt_parent);
+
+            layout = v.findViewById(R.id.layout_allkaryawan);
             //bt_expand = (View) v.findViewById(R.id.bt_expand);
             //lyt_expand = (View) v.findViewById(R.id.lyt_expand);
 
@@ -170,6 +174,19 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
             }
             Tools.toggleArrow(p.expanded, view.bt_expand, false);
             */
+
+            view.lyt_parent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    Intent viewkaryawans = new Intent(ctx,viewkaryawan.class);
+
+                    viewkaryawans.putExtra("idkaryawan",p.getIskar());
+
+                    ctx.startActivity(viewkaryawans);
+                }
+            });
+
             setAnimation(view.itemView, position);
         }
     }

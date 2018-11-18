@@ -57,7 +57,7 @@ public class owner_izin extends AppCompatActivity {
 
         pd = new ProgressDialog(this);
 
-        pd.setTitle("Loading Data Cuti");
+        pd.setTitle("Loading Data Izin");
         pd.setMessage("Please Wait...");
         pd.show();
 

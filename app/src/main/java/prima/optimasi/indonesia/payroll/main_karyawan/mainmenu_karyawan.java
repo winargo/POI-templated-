@@ -104,6 +104,8 @@ public class mainmenu_karyawan extends AppCompatActivity
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
 
+
+
     SharedPreferences prefs;
 
     String[] tabTitles = new String []{"Pengumuman", "Cek Gaji","Log Absensi","Pengajuan"};
@@ -228,12 +230,11 @@ public class mainmenu_karyawan extends AppCompatActivity
                     boolean permissionGranted = ActivityCompat.checkSelfPermission(mainmenu_karyawan.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
                     if(permissionGranted) {
-                        generator.lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                        generator.location = generator.lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                         Intent intent = new Intent(mainmenu_karyawan.this, ActivityAbsensi.class);
                         intent.putExtra("jabatan", "security");
                         startActivity(intent);
+
                     } else {
                         ActivityCompat.requestPermissions(mainmenu_karyawan.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 4011);
                     }
@@ -823,8 +824,6 @@ public class mainmenu_karyawan extends AppCompatActivity
         switch (requestCode) {
             case 4011: {
                 if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    generator.lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                    generator.location = generator.lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                     Intent intent = new Intent(mainmenu_karyawan.this, ActivityAbsensi.class);
                     intent.putExtra("jabatan", "security");
@@ -833,5 +832,7 @@ public class mainmenu_karyawan extends AppCompatActivity
             }
         }
     }
+
+
 
 }

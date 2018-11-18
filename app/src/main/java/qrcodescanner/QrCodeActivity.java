@@ -1107,4 +1107,11 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
         startActivity(a);
         finish();
     }
+
+    @Override
+    public void onBackPressed() {
+        generator.tempactivity = null;
+        generator.lm.removeUpdates(generator.listernerlocation);
+        super.onBackPressed();
+    }
 }

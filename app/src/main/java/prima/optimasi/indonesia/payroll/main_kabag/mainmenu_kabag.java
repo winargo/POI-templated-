@@ -1,7 +1,6 @@
 package prima.optimasi.indonesia.payroll.main_kabag;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -10,12 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -29,12 +23,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,11 +41,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
@@ -63,9 +50,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -75,26 +60,15 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
-import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.main_kabag.adapter.Adapterviewkaryawan;
-import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentAbsensi;
-import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentCekGaji;
-import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentEmployee;
-import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentPengajuan;
-import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentPengumuman;
-import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentHome;
-import prima.optimasi.indonesia.payroll.main_owner.report.owner_pengajian;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
-import prima.optimasi.indonesia.payroll.universal.absence.facedetection;
 import prima.optimasi.indonesia.payroll.universal.activity.ActivityLogAbsensi;
 import prima.optimasi.indonesia.payroll.universal.activity.ActivityPengajuan;
 import prima.optimasi.indonesia.payroll.universal.activity.ActivityPengumuman;
 import prima.optimasi.indonesia.payroll.universal.adapter.AdapterListKaryawan;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
-import qrcodescanner.QrCodeActivity;
 
 public class mainmenu_kabag extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {

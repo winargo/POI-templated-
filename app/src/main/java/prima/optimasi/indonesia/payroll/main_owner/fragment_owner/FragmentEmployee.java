@@ -529,7 +529,7 @@ public class FragmentEmployee extends Fragment{
                                         tempcall = obj.getString("otoritas");
                                         items.add(kar);
                                     }
-                                }
+                                }*/
                                 listkaryawan kar = new listkaryawan();
                                 kar.setSection(false);
                                 kar.setJabatan("HRD");
@@ -540,7 +540,7 @@ public class FragmentEmployee extends Fragment{
 
                                 kar.setNama(obj.getString("nama"));
                                 kar.setDesc(obj.getString("jabatan"));
-                                items.add(kar);*/
+                                itemskabag.add(kar);
                             }
 
                         }

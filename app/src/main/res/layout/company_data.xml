@@ -1,14 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_marginTop="50sp"
-    android:layout_height="match_parent">
-    <EditText
-        android:layout_width="0sp"
-        android:layout_weight="1"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+        <EditText
+            android:layout_width="0sp"
+            android:background="@drawable/edit_text_round_bg_outline"
+            android:layout_margin="10sp"
+            android:id="@+id/enteredcode"
+            android:hint="Scan &amp; Input"
+            android:layout_weight="1"
+            android:layout_height="40sp" />
+        <ImageView
+            android:layout_width="30sp"
+            android:layout_gravity="center"
+            android:id="@+id/scanbarcode"
+            android:src="@drawable/ic_scan"
+            android:layout_margin="8sp"
+            android:layout_height="30sp" />
+        <ImageView
+            android:id="@+id/correcttext"
+            android:layout_width="30sp"
+            android:layout_gravity="center"
+            android:layout_margin="8sp"
+            android:background="@drawable/acceptgreen"
+            android:layout_height="30sp" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:textSize="8pt"
+        android:text="Not selected"
+        android:layout_margin="10sp"
+        android:textAlignment="center"
+        android:layout_gravity="center"
+        android:id="@+id/selectedcompany"
         android:layout_height="wrap_content" />
-    <ImageView
-        android:layout_width="40sp"
-        android:src="@drawable/ic_scan"
-        android:layout_height="40sp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/companylist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <LinearLayout
+        android:id="@+id/nodatacompany"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:padding="10sp"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="30sp"
+            android:background="@drawable/cancelred"
+            android:layout_height="30sp" />
+        <TextView
+            android:layout_width="0sp"
+            android:layout_weight="1"
+            android:textSize="8pt"
+            android:textAlignment="center"
+            android:layout_gravity="center"
+            android:text="Tidak Ada Data Perusahaan"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
 </LinearLayout>

@@ -671,7 +671,7 @@
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".main_owner.report.owner_pengajian"
+            android:name=".main_owner.report.owner_penggajian"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />
         <activity

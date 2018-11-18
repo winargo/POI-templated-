@@ -2,12 +2,9 @@ package prima.optimasi.indonesia.payroll.adapter;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.arch.lifecycle.ReportFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatCheckBox;
-import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,12 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextClock;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,14 +23,11 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.main_owner.report.owner_cuti;
 import prima.optimasi.indonesia.payroll.main_owner.report.owner_izin;
-import prima.optimasi.indonesia.payroll.main_owner.report.owner_pengajian;
+import prima.optimasi.indonesia.payroll.main_owner.report.owner_penggajian;
 import prima.optimasi.indonesia.payroll.main_owner.report.owner_pinjaman;
 import prima.optimasi.indonesia.payroll.main_owner.report.owner_sakit;
-import prima.optimasi.indonesia.payroll.model.Event;
 import prima.optimasi.indonesia.payroll.model.People;
 import prima.optimasi.indonesia.payroll.objects.listreport;
-import prima.optimasi.indonesia.payroll.universal.activity.ActivityPengajuan;
-import prima.optimasi.indonesia.payroll.utils.Tools;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -116,7 +107,7 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
                     }else if(view.name.getText().toString().equals("Pinjaman")){
                         Intent pinjaman = new Intent(ctx,owner_pinjaman.class);
                         ctx.startActivity(pinjaman);
-                    }else if(view.name.getText().toString().equals("Pengajian")){
+                    }else if(view.name.getText().toString().equals("Penggajian")){
                         Log.e("A","Berhasil");
                         final Dialog dialog = new Dialog(ctx);
                         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
@@ -197,7 +188,7 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
                                         warn.getWindow().setAttributes(lp);
                                     } else {
                                         dialog.dismiss();
-                                        Intent pengajian = new Intent(ctx, owner_pengajian.class);
+                                        Intent pengajian = new Intent(ctx, owner_penggajian.class);
                                         SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
                                         SimpleDateFormat fomat = new SimpleDateFormat("yyyy-MM-dd");
                                         pengajian.putExtra("tanggal_masuk", fomat.format(format1.parse(tanggal_masuk1)));

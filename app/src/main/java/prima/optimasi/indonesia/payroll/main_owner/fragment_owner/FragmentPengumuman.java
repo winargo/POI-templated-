@@ -645,7 +645,7 @@ public class FragmentPengumuman extends Fragment {
                                         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialogInterface, int i) {
-                                                dialog.dismiss();
+                                                dialogInterface.dismiss();
                                             }
                                         });
                                         builder.setCancelable(false);

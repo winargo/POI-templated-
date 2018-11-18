@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.balysv.materialripple.MaterialRippleLayout;
-import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
@@ -20,14 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import prima.optimasi.indonesia.payroll.R;
-import prima.optimasi.indonesia.payroll.adapter.AdapterListBasic;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.main_owner.manage.approval;
-import prima.optimasi.indonesia.payroll.main_owner.report.owner_cuti;
-import prima.optimasi.indonesia.payroll.main_owner.report.owner_izin;
-import prima.optimasi.indonesia.payroll.main_owner.report.owner_pengajian;
-import prima.optimasi.indonesia.payroll.main_owner.report.owner_pinjaman;
-import prima.optimasi.indonesia.payroll.main_owner.report.owner_sakit;
 import prima.optimasi.indonesia.payroll.model.People;
 import prima.optimasi.indonesia.payroll.objects.listjobextension;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;

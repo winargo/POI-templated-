@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Handler;
@@ -53,16 +54,20 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class generator {
     //public static String Server="192.168.5.254";
-    public static String Server="153.92.4.147";
+    public static String Server="";
     //public static String Server="153.92.4.147";
 
     public static LocationManager lm ;
     public static Location location;
+    public static LocationListener listernerlocation;
     public static QrCodeActivity tempactivity = null;
 
     public static Bitmap tempbitmap = null;
+    public static View tempview=null;
 
-    public static String port = "4000";
+    public static TextView textcompany = null;
+
+    public static String port="";
     public static String username = "";
     public static String password = "";
     public static String token = "";
@@ -72,8 +77,9 @@ public class generator {
 
     public static int jobcount = 0 ;
 
+    public static String mainurl ="http://153.92.4.147:388/verify";
 
-    public static String keepaliveurl="http://"+ generator.Server+":"+port+"/login";
+    public static String keepaliveurl="http://"+ generator.Server+":"+generator.port+"/login";
     public static String imageurl="http://"+ generator.Server+"/poihrd/uploads/aktivitas/pengumuman/";
     public static String profileurl="http://"+ generator.Server+"/poihrd/uploads/master/karyawan/orang/";
 
@@ -859,6 +865,91 @@ public class generator {
         edit.commit();
 
         ctx.startActivity(logout);
+    }
+
+    public static void reloadurl(){
+        keepaliveurl="http://"+ generator.Server+":"+generator.port+"/login";
+        imageurl="http://"+ generator.Server+"/poihrd/uploads/aktivitas/pengumuman/";
+        profileurl="http://"+ generator.Server+"/poihrd/uploads/master/karyawan/orang/";
+        getpicpengumumanurl="http://"+ generator.Server+"/poihrd/uploads/aktivitasowner/pengumuman/";
+        uploadpengumumanurl="http://"+ generator.Server+":"+generator.port+"/pengumuman/upload";
+        deletepengumumanurl="http://"+ generator.Server+":"+generator.port+"/pengumuman/";
+        pengumumanurl="http://"+ generator.Server+":"+generator.port+"/pengumuman";
+        throwlocation="http://"+ generator.Server+":"+generator.port+"/absensi/longitude";
+        kabaggrupkaryawanurl="http://"+ generator.Server+":"+generator.port+"/groupkaryawan/list";
+        getabsensiurl="http://"+ generator.Server+":"+generator.port+"/absensi";
+        getabsensidateurl="http://"+ generator.Server+":"+generator.port+"/absensi/date";
+        ownerurl="http://"+ generator.Server+"/poihrd/uploads/pengguna/";
+        scanloginurl = "http://"+ generator.Server+":"+generator.port+"/loginScan";
+        sendtokenurl = "http://"+ generator.Server+":"+generator.port+"/postnotif";
+        listemployeeurl = "http://"+ generator.Server+":"+generator.port+"/karyawan";
+        calenderurl = "http://"+ generator.Server+":"+generator.port+"/calendar";
+        cutiurl="http://"+ generator.Server+":"+generator.port+"/laporan/cuti";
+        sakiturl="http://"+ generator.Server+":"+generator.port+"/laporan/sakit";
+        pinjamanurl = "http://"+ generator.Server+":"+generator.port+"/laporan/pinjaman";
+        izinurl = "http://"+ generator.Server+":"+generator.port+"/laporan/izin";
+        pengajianurl = "http://"+ generator.Server+":"+generator.port+"/laporan/penggajian";
+        getgajibytwodate = "http://"+ generator.Server+":"+generator.port+"/penggajian/laporan";
+        checkinurl="http://"+ generator.Server+":"+generator.port+"/absensi/checkin";
+        checkouturl="http://"+ generator.Server+":"+generator.port+"/absensi/checkout";
+        breakinurl="http://"+ generator.Server+":"+generator.port+"/absensi/breakin";
+        breakouturl="http://"+ generator.Server+":"+generator.port+"/absensi/breakout";
+        extrainurl="http://"+ generator.Server+":"+generator.port+"/absensi/extrain";
+        extraouturl="http://"+ generator.Server+":"+generator.port+"/absensi/extraout";
+        scheckinurl="http://"+ generator.Server+":"+generator.port+"/absensiSecurity/checkin";
+        scheckouturl="http://"+ generator.Server+":"+generator.port+"/absensiSecurity/checkout";
+        sbreakinurl="http://"+ generator.Server+":"+generator.port+"/absensiSecurity/breakin";
+        sbreakouturl="http://"+ generator.Server+":"+generator.port+"/absensiSecurity/breakout";
+        scheckemployeeyurl="http://"+ generator.Server+":"+generator.port+"/absensiSecurity/checkkaryawan";
+        approvaldinasyurl="http://"+ generator.Server+":"+generator.port+"/approvalDinas";
+        approvalcutiyurl="http://"+ generator.Server+":"+generator.port+"/approvalCuti";
+        approvalizinyurl="http://"+ generator.Server+":"+generator.port+"/approvalIzin";
+        approvaldirumahkanyurl="http://"+ generator.Server+":"+generator.port+"/approvalDirumahkan";
+        approvalkaryawanyurl="http://"+ generator.Server+":"+generator.port+"/approvalKaryawan";
+        approvalrewardyurl="http://"+ generator.Server+":"+generator.port+"/approvalReward";
+        approvalpunihsmentyurl="http://"+ generator.Server+":"+generator.port+"/approvalPunishment";
+        approvalpinjamanyurl="http://"+ generator.Server+":"+generator.port+"/approvalPinjaman";
+        approvalgolonganyurl="http://"+ generator.Server+":"+generator.port+"/approvalGolongan";
+        approvalpdlyurl="http://"+ generator.Server+":"+generator.port+"/approvalPdm";
+        getapprovaldinasyurl="http://"+ generator.Server+":"+generator.port+"/approvaldinas";
+        getapprovalcutiyurl="http://"+ generator.Server+":"+generator.port+"/approvalcuti";
+        getapprovalizinyurl="http://"+ generator.Server+":"+generator.port+"/approvalizin";
+        getapprovaldirumahkanyurl="http://"+ generator.Server+":"+generator.port+"/approvaldirumahkan";
+        getapprovalkaryawanyurl="http://"+ generator.Server+":"+generator.port+"/karyawan/approval/proses";
+        getapprovalrewardyurl="http://"+ generator.Server+":"+generator.port+"/approvalreward";
+        getapprovalpunihsmentyurl="http://"+ generator.Server+":"+generator.port+"/approvalpunishment";
+        getapprovalpinjamanyurl="http://"+ generator.Server+":"+generator.port+"/pinjaman/approval/proses";
+        getapprovalgolonganyurl="http://"+ generator.Server+":"+generator.port+"/approvalGolongan/proses";
+        getapprovalpdlyurl="http://"+ generator.Server+":"+generator.port+"/approvalpdm/proses";
+        getizinhariyurl="http://"+ generator.Server+":"+generator.port+"/izin/hari";
+        getcutihariyurl="http://"+ generator.Server+":"+generator.port+"/cuti/hari";
+        getsakithariyurl="http://"+ generator.Server+":"+generator.port+"/sakit/hari";
+        getdinashariyurl="http://"+ generator.Server+":"+generator.port+"/dinas/hari";
+        absensitelatyurl="http://"+ generator.Server+":"+generator.port+"/absensi/telat";
+        getabsensikaryawanurl="http://"+ generator.Server+":"+generator.port+"/logabsensi";
+        jadwalurl="http://"+ generator.Server+":"+generator.port+"/karyawan/checkjadwal";
+        servertimeurl="http://"+ generator.Server+":"+generator.port+"/setting/waktu";
+        pengajuancutiurl="http://"+ generator.Server+":"+generator.port+"/cuti";
+        pengajuanizinurl="http://"+ generator.Server+":"+generator.port+"/izin";
+        pengajuansakiturl="http://"+ generator.Server+":"+generator.port+"/sakit";
+        pengajuandinasurl="http://"+ generator.Server+":"+generator.port+"/dinas";
+        totalgajiurl="http://"+ generator.Server+":"+generator.port+"/penggajian/totalgaji";
+        gajiestimasiurl="http://"+ generator.Server+":"+generator.port+"/penggajian/estimasi";
+        laporanpengajianurl="http://"+ generator.Server+":"+generator.port+"/penggajian/laporan";
+        pengajiangajikaryawanurl="http://"+ generator.Server+":"+generator.port+"/penggajian/gajitotal";
+        pengajiangajibulanlalukaryawanurl="http://"+ generator.Server+":"+generator.port+"/penggajian/gajibulanlalu";
+        pengajuancutikodeurl="http://"+ generator.Server+":"+generator.port+"/cuti/kode";
+        pengajuanizinkodeurl="http://"+ generator.Server+":"+generator.port+"/izin/kode";
+        pengajuansakitkodeurl="http://"+ generator.Server+":"+generator.port+"/sakit/kode";
+        pengajuandinaskodeurl="http://"+ generator.Server+":"+generator.port+"/dinas/kode";
+        getdataizinbulananyurl="http://"+ generator.Server+":"+generator.port+"/izin/bulanan";
+        kontrakkerjahabisurl="http://"+ generator.Server+":"+generator.port+"/kontrak/habis";
+        kontrakkerja1bulanurl="http://"+ generator.Server+":"+generator.port+"/kontrak/1bulan";
+        kontrakkerja2bulanurl="http://"+ generator.Server+":"+generator.port+"/kontrak/2bulan";
+        kontrakkerja3bulanurl="http://"+ generator.Server+":"+generator.port+"/kontrak/3bulan";
+        daftarabsensiurl="http://"+ generator.Server+":"+generator.port+"/absensi/today";
+        jabatanurl="http://"+ generator.Server+":"+generator.port+"/jabatan";
+        karyawanjabatanurl="http://"+ generator.Server+":"+generator.port+"/karyawan/jabatan";
     }
 
 }

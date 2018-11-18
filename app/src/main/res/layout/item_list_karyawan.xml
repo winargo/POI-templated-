@@ -7,6 +7,7 @@
 
     <com.balysv.materialripple.MaterialRippleLayout xmlns:android="http://schemas.android.com/apk/res/android"
         style="@style/RippleStyleBlack"
+        android:id="@+id/layout_allkaryawan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
