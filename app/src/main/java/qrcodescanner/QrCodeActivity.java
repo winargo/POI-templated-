@@ -121,8 +121,9 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
         initData();
         mApplicationContext = getApplicationContext();
 
-        generator.tempactivity = this;
-
+        if(getIntent().getIntExtra("keepalive", 0) == 1){
+            generator.tempactivity = this;
+        }
     }
 
     private void checkPermission() {
