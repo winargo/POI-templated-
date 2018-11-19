@@ -1056,6 +1056,7 @@ public class activity_login extends FragmentActivity {
 
                     if(datacomp.size()!=0) {
                         for (int i = 0; i < datacomp.size(); i++) {
+                            Log.e(TAG, "onPostExecute: " );
                             if (obj.getString("company_name").equals(datacomp.get(i).getCompanyname())) {
                                 AlertDialog dialog = new AlertDialog.Builder(activity_login.this).setTitle("Gagal").setMessage("Data perusahaan sudah diregistrasi").setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     @Override

@@ -188,7 +188,6 @@ public class generator {
     public static String jabatanurl="http://"+ generator.Server+":"+generator.port+"/jabatan";
     public static String karyawanjabatanurl="http://"+ generator.Server+":"+generator.port+"/karyawan/jabatan";
 
-
     public static JSONObject jsondatalogin = null ;
     public static JSONObject jsondatajadwal = null ;
 
