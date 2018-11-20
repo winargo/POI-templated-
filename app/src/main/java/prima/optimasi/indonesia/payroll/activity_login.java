@@ -1061,9 +1061,37 @@ public class activity_login extends FragmentActivity {
                     JSONArray arrays = result.getJSONArray("data");
                     JSONObject obj = arrays.getJSONObject(0);
 
+<<<<<<< HEAD
                     company datatemp = dbase.getcompany(md5code);
 
                     if(datatemp==null){
+=======
+                    if(datacomp.size()!=0) {
+                        for (int i = 0; i < datacomp.size(); i++) {
+                            Log.e(TAG, "onPostExecute: " );
+                            if (obj.getString("company_name").equals(datacomp.get(i).getCompanyname())) {
+                                AlertDialog dialog = new AlertDialog.Builder(activity_login.this).setTitle("Gagal").setMessage("Data perusahaan sudah diregistrasi").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                }).create();
+
+                                dialog.show();
+                            } else {
+                                company comp = new company();
+                                comp.setCompanyid(md5code);
+                                comp.setCompanyname(obj.getString("company_name"));
+                                comp.setCompanyip(obj.getString("ip"));
+                                comp.setCompanyport(Integer.valueOf(obj.getString("port")));
+
+                                dbase.createAccount(comp, "");
+                                refesh();
+                            }
+                        }
+                    }
+                    else {
+>>>>>>> 44ba226b64a57638e05cda459c183b5e68780162
                         company comp = new company();
                         comp.setCompanyid(md5code);
                         comp.setCompanyname(obj.getString("company_name"));

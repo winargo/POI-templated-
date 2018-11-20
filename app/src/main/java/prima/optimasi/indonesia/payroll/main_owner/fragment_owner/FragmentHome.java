@@ -2071,11 +2071,16 @@ public class FragmentHome extends Fragment {
                     Log.e(TAG, "kerja 1 bulan" + result.toString());
                     try {
                         if(result.getString("status").equals("true")){
-                            JSONObject obj = result.getJSONObject("data");
+                            JSONArray obj2 = result.getJSONArray("data");
+
+                            for (int i=0 ; i<obj2.length();i++){
+                                JSONObject obj = obj2.getJSONObject(0);
+                                value = value + Double.parseDouble(obj.getString("gajiPokok").replace(",",""))+Double.parseDouble(obj.getString("reward").replace(",",""))+Double.parseDouble(obj.getString("tunjangan").replace(",",""))-Double.parseDouble(obj.getString("punishment").replace(",",""));
+                            }
 
                             DecimalFormat formattery = new DecimalFormat("###,###,###.00");
 
-                            value = Double.parseDouble(obj.getString("gajiBersih").replace(",",""));
+
                         }
                         //JSONArray pengsarray = result.getJSONArray("data");
 

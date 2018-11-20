@@ -220,6 +220,8 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                             .url(urldata)
                             .build();
 
+                    Log.e(TAG, "approvals "+urldata );
+
                     Response responses = null;
 
                     try {
@@ -658,7 +660,6 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                         Log.e( "karyawan data",result.getJSONArray("data1").toString() );
 
 
-
                         String newline = "\n";
                         String spacing = " : ";
 
@@ -667,8 +668,8 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
 
                         JSONArray arrays = result.getJSONArray("data");
                         JSONArray arrays1 = result.getJSONArray("data1");
-                        for (int i = 0; i < arrays.length(); i++) {
-                            JSONObject obj = arrays.getJSONObject(i);
+                        for (int i = 0; i < arrays1.length(); i++) {
+                            JSONObject obj1 = arrays1.getJSONObject(i);
 
                             listjobextension data = new listjobextension();
 
@@ -679,39 +680,47 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                             int index = 0 ;
 
                             Boolean isnotsame = false;
-                            for (int j = 0; j < arrays1.length(); j++) {
-                                JSONObject obj1 = arrays1.getJSONObject(j);
-                                if(obj.getString("idfp").equals(obj1.getString("idfp"))){
-                                    isnotsame = false;
+                            Boolean tambah =false;
 
-                                    passing.add(obj1.getString("id"));
 
-                                    break;
-                                }
-                                else{
-                                    isnotsame = true;
-                                    index++;
-                                }
-
+                            if(obj1.getString("info_approve").equals("tambah")){
+                                passing.add(obj1.getString("id"));
+                                tambah=true;
+                                isnotsame=true;
                             }
+                            else {
+                                index = 0;
+                                for (int j = 0; j < arrays.length(); j++) {
+                                    JSONObject obj = arrays.getJSONObject(j);
+                                    if(obj.getString("idfp").equals(obj1.getString("idfp"))){
+                                        isnotsame = false;
 
+                                        passing.add(obj1.getString("id"));
+
+                                        break;
+                                    }
+                                    else{
+                                        isnotsame = true;
+                                        index++;
+                                    }
+
+                                }
+                            }
                             if(isnotsame){
-                                data.setNamakaryawan(obj.getString("nama"));
+                                data.setNamakaryawan(obj1.getString("nama"));
                                 data.setTipe(tipe);
 
-                                if(obj.getString("foto").equals("")){
+                                if(obj1.getString("foto").equals("")){
                                     data.setProfilepicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ");
                                 }
                                 else {
-                                    data.setProfilepicture(generator.profileurl+obj.getString("foto"));
+                                    data.setProfilepicture(generator.profileurl+obj1.getString("foto"));
+
+                                    Log.e("data foto",generator.profileurl+obj1.getString("foto"));
                                 }
-
-
-
-
                                 //0,1,2,39,37,36
 
-                                for (int k = 0 ; k<obj.length();k++){
+                                for (int k = 0 ; k<obj1.length();k++){
                                     if(k==0){
 
                                     }
@@ -731,26 +740,26 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                                     }
                                     else {
                                         if(k==3){
-                                            texting = texting + karyawandetail[k]+spacing+obj.getString(karyawan[k])+newline;
+                                            texting = texting + karyawandetail[k]+spacing+obj1.getString(karyawan[k])+newline;
 
                                         }
                                         if(k==7){
-                                            texting = texting + karyawandetail[k]+spacing+obj.getString(karyawan[k])+newline;
+                                            texting = texting + karyawandetail[k]+spacing+obj1.getString(karyawan[k])+newline;
                                         }
                                     }
 
                                 }
                                 data.setKeterangan(texting);
 
-                                //listdata.add(data);
+                                listdata.add(data);
 
                             }else{
-                                if(arrays1.length()==0){
+                                if(arrays.length()==0){
 
                                 }
-
                                 else {
-                                    JSONObject obj1 = arrays1.getJSONObject(index);
+
+                                    JSONObject obj = arrays.getJSONObject(index);
 
                                     data.setNamakaryawan(obj1.getString("nama") + "(" + obj1.getString("info_approve").toUpperCase() + ")");
                                     data.setTipe(tipe);

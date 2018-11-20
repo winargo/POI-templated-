@@ -116,6 +116,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     }
 
+<<<<<<< HEAD
     public company getcompany(String companyid) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -142,6 +143,37 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             db.close();
             return null;
         }
+=======
+    public boolean company(String companyname) {
+        List<company> todos = new ArrayList<company>();
+        String selectQuery = "SELECT  * FROM " + TABLE_COMPANY + " ORDER BY " + KEY_COMPANY_NAME + " ASC";
+
+        Log.e(LOG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        try {
+            if (c.moveToFirst()) {
+                do {
+                    company td = new company();
+                    td.setCompanyid(c.getString(c.getColumnIndex(KEY_COMPANY_ID)));
+                    td.setCompanyname(c.getString(c.getColumnIndex(KEY_COMPANY_NAME)));
+                    td.setCompanyip(c.getString(c.getColumnIndex(KEY_COMPANY_IP)));
+                    td.setCompanyport(c.getInt(c.getColumnIndex(KEY_COMPANY_PORT)));
+                    // adding to todo list
+                    todos.add(td);
+                } while (c.moveToNext());
+            }
+            closeDB();
+            return todos;
+        } catch (Exception e) {
+            closeDB();
+            return null;
+        }
+
+>>>>>>> 44ba226b64a57638e05cda459c183b5e68780162
     }
 
     public void deleteaccount(String compid) {
