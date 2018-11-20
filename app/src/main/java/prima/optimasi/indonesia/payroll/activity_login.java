@@ -220,6 +220,13 @@ public class activity_login extends FragmentActivity {
             selectedcompany.setText(pref.getString("companyname",""));
             generator.reloadurl();
         }
+        if(pref.getString("codename","").equals("")){
+
+        }
+        else {
+            generator.determiner=pref.getString("codename","");
+            generator.reloadurl();
+        }
 
         Log.e( "databased",generator.Server+" data  "+generator.port );
 
@@ -1054,39 +1061,44 @@ public class activity_login extends FragmentActivity {
                     JSONArray arrays = result.getJSONArray("data");
                     JSONObject obj = arrays.getJSONObject(0);
 
-                    if(datacomp.size()!=0) {
-                        for (int i = 0; i < datacomp.size(); i++) {
-                            if (obj.getString("company_name").equals(datacomp.get(i).getCompanyname())) {
-                                AlertDialog dialog = new AlertDialog.Builder(activity_login.this).setTitle("Gagal").setMessage("Data perusahaan sudah diregistrasi").setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                }).create();
+                    company datatemp = dbase.getcompany(md5code);
 
-                                dialog.show();
-                            } else {
-                                company comp = new company();
-                                comp.setCompanyid(md5code);
-                                comp.setCompanyname(obj.getString("company_name"));
-                                comp.setCompanyip(obj.getString("ip"));
-                                comp.setCompanyport(Integer.valueOf(obj.getString("port")));
-
-                                dbase.createAccount(comp, "");
-                                refesh();
-                            }
-                        }
-                    }
-                    else {
+                    if(datatemp==null){
                         company comp = new company();
                         comp.setCompanyid(md5code);
                         comp.setCompanyname(obj.getString("company_name"));
                         comp.setCompanyip(obj.getString("ip"));
                         comp.setCompanyport(Integer.valueOf(obj.getString("port")));
+                        comp.setCompanycodename(obj.getString("codename"));
 
                         dbase.createAccount(comp,"");
                         refesh();
                     }
+                    else {
+                        if(datatemp.getCompanyid().equals(md5code)){
+                            AlertDialog dialog = new AlertDialog.Builder(activity_login.this).setTitle("Gagal").setMessage("Data perusahaan sudah diregistrasi").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            }).create();
+
+                            dialog.show();
+                        }
+                        else {
+                            company comp = new company();
+                            comp.setCompanyid(md5code);
+                            comp.setCompanyname(obj.getString("company_name"));
+                            comp.setCompanyip(obj.getString("ip"));
+                            comp.setCompanyport(Integer.valueOf(obj.getString("port")));
+                            comp.setCompanycodename(obj.getString("codename"));
+
+                            dbase.createAccount(comp,"");
+                            refesh();
+                        }
+                    }
+
+
 
                 }
                 else {

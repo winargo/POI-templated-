@@ -31,10 +31,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final String KEY_COMPANY_NAME = "company_name";
     private static final String KEY_COMPANY_IP = "company_ip";
     private static final String KEY_COMPANY_PORT = "company_port";
+    private static final String KEY_COMPANY_CODENAME = "company_codename";
 
 
     private static final String CREATE_TABLE_COMPANY= "CREATE TABLE "
-            + TABLE_COMPANY + "(" + KEY_COMPANY_ID + " TEXT," + KEY_COMPANY_NAME + " TEXT," +  KEY_COMPANY_IP + " TEXT," + KEY_COMPANY_PORT + " INTEGER )";
+            + TABLE_COMPANY + "(" + KEY_COMPANY_ID + " TEXT," + KEY_COMPANY_NAME + " TEXT," +  KEY_COMPANY_IP + " TEXT," +  KEY_COMPANY_CODENAME + " TEXT," + KEY_COMPANY_PORT + " INTEGER )";
 
     public SQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -72,6 +73,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         values.put(KEY_COMPANY_NAME, comp.getCompanyname());
         values.put(KEY_COMPANY_IP, comp.getCompanyip());
         values.put(KEY_COMPANY_PORT, comp.getCompanyport());
+        values.put(KEY_COMPANY_CODENAME, comp.getCompanycodename());
 
         // insert row
         long todo_id = db.insert(TABLE_COMPANY, null, values);
@@ -100,6 +102,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                     td.setCompanyname(c.getString(c.getColumnIndex(KEY_COMPANY_NAME)));
                     td.setCompanyip(c.getString(c.getColumnIndex(KEY_COMPANY_IP)));
                     td.setCompanyport(c.getInt(c.getColumnIndex(KEY_COMPANY_PORT)));
+                    td.setCompanycodename(c.getString(c.getColumnIndex(KEY_COMPANY_CODENAME)));
                     // adding to todo list
                     todos.add(td);
                 } while (c.moveToNext());
@@ -111,6 +114,34 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             return null;
         }
 
+    }
+
+    public company getcompany(String companyid) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectQuery = "SELECT  * FROM " + TABLE_COMPANY + " WHERE "
+                + KEY_COMPANY_ID + " = '" + companyid+"'";
+
+        Log.e(LOG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if( c != null && c.moveToFirst() ){
+
+            company td = new company();
+            td.setCompanyname(c.getString(c.getColumnIndex(KEY_COMPANY_NAME)));
+            td.setCompanyip(c.getString(c.getColumnIndex(KEY_COMPANY_IP)));
+            td.setCompanyport(Integer.valueOf(c.getString(c.getColumnIndex(KEY_COMPANY_PORT))));
+            td.setCompanyid(c.getString(c.getColumnIndex(KEY_COMPANY_ID)));
+            td.setCompanycodename(c.getString(c.getColumnIndex(KEY_COMPANY_CODENAME)));
+
+            db.close();
+            return  td;
+        }
+        else {
+            db.close();
+            return null;
+        }
     }
 
     public void deleteaccount(String compid) {

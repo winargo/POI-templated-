@@ -68,6 +68,7 @@ public class generator {
     public static TextView textcompany = null;
 
     public static String port="";
+    public static String determiner="";
     public static String username = "";
     public static String password = "";
     public static String token = "";
@@ -80,10 +81,10 @@ public class generator {
     public static String mainurl ="http://153.92.4.147:388/verify";
 
     public static String keepaliveurl="http://"+ generator.Server+":"+generator.port+"/login";
-    public static String imageurl="http://"+ generator.Server+"/poihrd/uploads/aktivitas/pengumuman/";
-    public static String profileurl="http://"+ generator.Server+"/poihrd/uploads/master/karyawan/orang/";
+    public static String imageurl="http://"+ generator.Server+"/"+determiner+"/uploads/aktivitas/pengumuman/";
+    public static String profileurl="http://"+ generator.Server+"/"+determiner+"/uploads/master/karyawan/orang/";
 
-    public static String getpicpengumumanurl="http://"+ generator.Server+"/poihrd/uploads/aktivitasowner/pengumuman/";
+    public static String getpicpengumumanurl="http://"+ generator.Server+"/"+determiner+"/uploads/aktivitasowner/pengumuman/";
     public static String uploadpengumumanurl="http://"+ generator.Server+":"+generator.port+"/pengumuman/upload";
     public static String deletepengumumanurl="http://"+ generator.Server+":"+generator.port+"/pengumuman/";
     public static String pengumumanurl="http://"+ generator.Server+":"+generator.port+"/pengumuman";
@@ -96,7 +97,7 @@ public class generator {
     public static String getabsensidateurl="http://"+ generator.Server+":"+generator.port+"/absensi/date";
 
 
-    public static String ownerurl="http://"+ generator.Server+"/poihrd/uploads/pengguna/";
+    public static String ownerurl="http://"+ generator.Server+"/"+determiner+"/uploads/pengguna/";
 
     public static String scanloginurl = "http://"+ generator.Server+":"+generator.port+"/loginScan";
     public static String sendtokenurl = "http://"+ generator.Server+":"+generator.port+"/postnotif";
@@ -869,9 +870,9 @@ public class generator {
 
     public static void reloadurl(){
         keepaliveurl="http://"+ generator.Server+":"+generator.port+"/login";
-        imageurl="http://"+ generator.Server+"/poihrd/uploads/aktivitas/pengumuman/";
-        profileurl="http://"+ generator.Server+"/poihrd/uploads/master/karyawan/orang/";
-        getpicpengumumanurl="http://"+ generator.Server+"/poihrd/uploads/aktivitasowner/pengumuman/";
+        imageurl="http://"+ generator.Server+"/"+determiner+"/uploads/aktivitas/pengumuman/";
+        profileurl="http://"+ generator.Server+"/"+determiner+"/uploads/master/karyawan/orang/";
+        getpicpengumumanurl="http://"+ generator.Server+"/"+determiner+"/uploads/aktivitasowner/pengumuman/";
         uploadpengumumanurl="http://"+ generator.Server+":"+generator.port+"/pengumuman/upload";
         deletepengumumanurl="http://"+ generator.Server+":"+generator.port+"/pengumuman/";
         pengumumanurl="http://"+ generator.Server+":"+generator.port+"/pengumuman";
@@ -879,7 +880,7 @@ public class generator {
         kabaggrupkaryawanurl="http://"+ generator.Server+":"+generator.port+"/groupkaryawan/list";
         getabsensiurl="http://"+ generator.Server+":"+generator.port+"/absensi";
         getabsensidateurl="http://"+ generator.Server+":"+generator.port+"/absensi/date";
-        ownerurl="http://"+ generator.Server+"/poihrd/uploads/pengguna/";
+        ownerurl="http://"+ generator.Server+"/"+determiner+"/uploads/pengguna/";
         scanloginurl = "http://"+ generator.Server+":"+generator.port+"/loginScan";
         sendtokenurl = "http://"+ generator.Server+":"+generator.port+"/postnotif";
         listemployeeurl = "http://"+ generator.Server+":"+generator.port+"/karyawan";

@@ -1,7 +1,7 @@
 package prima.optimasi.indonesia.payroll.objects;
 
 public class company {
-    String companyid,companyname,companyip;
+    String companyid,companyname,companyip,companycodename;
     int companyport;
 
     public void setCompanyid(String companyid) {
@@ -20,6 +20,10 @@ public class company {
         this.companyname = companyname;
     }
 
+    public void setCompanycodename(String companycodename) {
+        this.companycodename = companycodename;
+    }
+
     public String getCompanyid() {
         return companyid;
     }
@@ -30,6 +34,10 @@ public class company {
 
     public String getCompanyname() {
         return companyname;
+    }
+
+    public String getCompanycodename() {
+        return companycodename;
     }
 
     public int getCompanyport() {

@@ -42,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_xlarge"
-                android:text="Julianna Carter"
+                android:text="Nama"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
                 android:textColor="@color/grey_90" />
 
@@ -51,7 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_medium"
-                android:text="Photographer"
+                android:text="Jabatan"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 android:textColor="@color/grey_60" />
 
@@ -75,7 +75,7 @@
                     android:id="@+id/karimage"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:src="@drawable/photo_female_5"
+                    android:src="@drawable/round_person"
                     app:civ_border="true"
                     app:civ_shadow="true"
                     app:civ_shadow_radius="0"
@@ -94,6 +94,7 @@
             </LinearLayout>
 
                 <android.support.v7.widget.RecyclerView
+                    android:visibility="gone"
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -132,7 +133,7 @@
                                 android:id="@+id/karizin"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="1.5 K"
+                                android:text="-"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                                 android:textColor="@color/colorPrimary" />
 
@@ -161,7 +162,7 @@
                                 android:id="@+id/karsakit"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="17.8 K"
+                                android:text="-"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                                 android:textColor="@color/colorPrimary" />
 
@@ -190,7 +191,7 @@
                                 android:id="@+id/karabsen"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="1.3 K"
+                                android:text="-"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                                 android:textColor="@color/colorPrimary" />
 
@@ -250,7 +251,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_medium"
-                        android:text="visual-photo.me"
+                        android:text="-"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textColor="@color/grey_60" />
 
@@ -275,7 +276,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_medium"
-                        android:text="juliana.c@mail.com"
+                        android:text="-"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textColor="@color/grey_60" />
 
@@ -311,7 +312,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_medium"
-                    android:text="juliana.c@mail.com"
+                    android:text="-"
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     android:textColor="@color/grey_60" />
 
@@ -337,7 +338,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_medium"
-                        android:text="United State"
+                        android:text="-"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textColor="@color/grey_60" />
 
@@ -373,7 +374,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_medium"
-                        android:text="6525"
+                        android:text="-"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textColor="@color/grey_60" />
 
@@ -399,7 +400,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_medium"
-                        android:text="160th St, Fresh Meadows, NY, 11365"
+                        android:text="-"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textColor="@color/grey_60" />
 
@@ -434,7 +435,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_medium"
-                        android:text="6525"
+                        android:text="-"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textColor="@color/grey_60" />
 
@@ -459,7 +460,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_medium"
-                        android:text="160th S"
+                        android:text="-"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textColor="@color/grey_60" />
 
@@ -495,7 +496,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_medium"
-                        android:text="6525"
+                        android:text="-"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textColor="@color/grey_60" />
 
@@ -520,7 +521,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_medium"
-                        android:text="160th St, Fresh Meadows, NY, 11365"
+                        android:text="-"
                         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                         android:textColor="@color/grey_60" />
 

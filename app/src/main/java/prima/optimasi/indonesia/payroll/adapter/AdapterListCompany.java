@@ -100,6 +100,7 @@ public class AdapterListCompany extends RecyclerView.Adapter<RecyclerView.ViewHo
                     edit.putString("ip",p.getCompanyip());
                     edit.putString("port",String.valueOf(p.getCompanyport()));
                     edit.putString("companyname",p.getCompanyname());
+                    edit.putString("codename",p.getCompanycodename());
                     edit.apply();
 
                     Log.e("data adapter comp",p.getCompanyip()+" "+p.getCompanyport() );
@@ -108,6 +109,7 @@ public class AdapterListCompany extends RecyclerView.Adapter<RecyclerView.ViewHo
                     generator.port = String.valueOf(p.getCompanyport());
 
                     generator.textcompany.setText(p.getCompanyname());
+                    generator.determiner = p.getCompanycodename();
 
                     generator.reloadurl();
 

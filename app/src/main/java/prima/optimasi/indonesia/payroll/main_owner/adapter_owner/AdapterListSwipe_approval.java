@@ -83,6 +83,7 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
     String[] urloptions = new String[]{generator.approvalcutiyurl,generator.approvaldinasyurl,generator.approvaldirumahkanyurl,generator.approvalizinyurl,generator.approvalgolonganyurl,generator.approvalkaryawanyurl,generator.approvalpinjamanyurl,generator.approvalpdlyurl,generator.approvalpunihsmentyurl,generator.approvalrewardyurl};
 
     List<String> passed=new ArrayList<>();
+    List<List<String>> arraypass = new ArrayList<>();
 
     private Context ctx;
     private AdapterListBasicjob_extention.OnItemClickListener mOnItemClickListener;
@@ -95,11 +96,12 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
         this.mOnItemClickListener = mItemClickListener;
     }
 
-    public AdapterListSwipe_approval(Context context, List<listjobextension> items,CoordinatorLayout snakebar,List<String> pass) {
+    public AdapterListSwipe_approval(Context context, List<listjobextension> items,CoordinatorLayout snakebar,List<String> pass,List<List<String>> passedarray) {
         snake = snakebar;
         passed =pass;
         this.items = items;
         ctx = context;
+        arraypass=passedarray;
     }
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
@@ -111,6 +113,7 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
         public SparkButton sparktrue;
 
         public List<String> passed1;
+        public List<List<String>> arraypass;
 
         public Boolean spark1=false;
         public Boolean spark2=true;
@@ -155,6 +158,8 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
 
             view.passed1 = new ArrayList<>();
 
+            view.arraypass = this.arraypass;
+
             view.passed1=passed;
 
             view.spark.setOnClickListener(new View.OnClickListener() {
@@ -162,7 +167,7 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                 public void onClick(View v) {
                     view.spark.playAnimation();
                     if(view.spark.isChecked()){
-                        acceptordeny acc = new acceptordeny(ctx,p.getTipe(),p.getIddata(),0,snake,view.passed1,position);
+                        acceptordeny acc = new acceptordeny(ctx,p.getTipe(),p.getIddata(),0,snake,view.passed1,position,arraypass);
                         acc.execute();
                     }
                     else {
@@ -186,7 +191,7 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                 public void onClick(View v) {
                     view.sparktrue.playAnimation();
                     if(view.sparktrue.isChecked()){
-                        acceptordeny acc = new acceptordeny(ctx,p.getTipe(),p.getIddata(),1,snake,view.passed1,position);
+                        acceptordeny acc = new acceptordeny(ctx,p.getTipe(),p.getIddata(),1,snake,view.passed1,position,arraypass);
                         acc.execute();
                     }
                     else {
@@ -231,7 +236,12 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
             }
             else if(p.getTipe().equals(options[5])){
 
-                Picasso.get().load(p.getProfilepicture()).transform(new CircleTransform()).into(view.image);
+                if(p.getProfilepicture().equals("")){
+
+                }
+                else {
+                    Picasso.get().load(p.getProfilepicture()).transform(new CircleTransform()).into(view.image);
+                }
 
                 view.name.setText(p.getNamakaryawan());
                 //try {
@@ -322,6 +332,7 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
     }
 
     public void removeItem(int position) {
+        Log.e("removal", "removeItem: "+position );
         items.remove(position);
         // notify the item removed by position
         // to perform recycler view delete animations
@@ -358,14 +369,17 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
         CoordinatorLayout parent;
         int position;
         List<String> passs =new ArrayList<>();
+        List<List<String>> arraypasseddata =new ArrayList<>();
         //listjobextension =
 
-        public acceptordeny(Context context,String choice,String iddata,int stat, CoordinatorLayout snakebcar,List<String> passedy,int positoin)
+        public acceptordeny(Context context,String choice,String iddata,int stat, CoordinatorLayout snakebcar,List<String> passedy,int positoin,List<List<String>> paassing)
         {
+            position = positoin;
 
             passs = passedy;
             String message = "";
             dialog = new ProgressDialog(ctx);
+            arraypasseddata = paassing;
 
             dialog.setCancelable(false);
 
@@ -534,22 +548,23 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                     else if (tipe.equals("Approval Golongan") ){
                         Log.e(TAG, "doInBackground: "+"golongan" );
                         Log.e("list", passs.toString());
+
                         RequestBody body = new FormBody.Builder()
-                                .add("temp_id",passs.get(0))
-                                .add("golongan",passs.get(1))
-                                .add("keterangan",passs.get(2))
-                                .add("gaji",passs.get(3))
-                                .add("kehadiran",passs.get(4))
-                                .add("makan",passs.get(5))
-                                .add("transport",passs.get(6))
-                                .add("thr",passs.get(7))
-                                .add("tundip",passs.get(8))
-                                .add("tunjangan",passs.get(9))
-                                .add("absen",passs.get(10))
-                                .add("bjps",passs.get(11))
-                                .add("pot_lain",passs.get(12))
-                                .add("lembur",passs.get(13))
-                                .add("umk",passs.get(14))
+                                .add("temp_id",arraypasseddata.get(position).get(0))
+                                .add("golongan",arraypasseddata.get(position).get(1))
+                                .add("keterangan",arraypasseddata.get(position).get(2))
+                                .add("gaji",arraypasseddata.get(position).get(3))
+                                .add("kehadiran",arraypasseddata.get(position).get(4))
+                                .add("makan",arraypasseddata.get(position).get(5))
+                                .add("transport",arraypasseddata.get(position).get(6))
+                                .add("thr",arraypasseddata.get(position).get(7))
+                                .add("tundip",arraypasseddata.get(position).get(8))
+                                .add("tunjangan",arraypasseddata.get(position).get(9))
+                                .add("absen",arraypasseddata.get(position).get(10))
+                                .add("bjps",arraypasseddata.get(position).get(11))
+                                .add("pot_lain",arraypasseddata.get(position).get(12))
+                                .add("lembur",arraypasseddata.get(position).get(13))
+                                .add("umk",arraypasseddata.get(position).get(14))
                                 .build();
 
 
@@ -565,7 +580,7 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                     else if (tipe.equals("Approval Karyawan") ){
                         Log.e(TAG, "doInBackground: "+"karyawan" );
                         RequestBody body = new FormBody.Builder()
-                                .add("id",passs.get(0))
+                                .add("id",passs.get(position))
                                 .build();
 
                         request = new Request.Builder()
@@ -579,7 +594,7 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                     else if (tipe.equals("Approval Pinjaman") ){
 
                         RequestBody body = new FormBody.Builder()
-                                .add("id",passs.get(0))
+                                .add("id",passs.get(position))
                                 .add("status",status)
                                 .build();
 
@@ -593,17 +608,17 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                     else if (tipe.equals("Approval Pdm") ){
                         Log.e(TAG, "doInBackground: "+"pdm" );
                         RequestBody body = new FormBody.Builder()
-                                .add("id",passs.get(0))
-                                .add("id_promosi",passs.get(1))
-                                .add("id_karyawan",passs.get(2))
-                                .add("id_cabang1",passs.get(3))
-                                .add("id_departemen1",passs.get(4))
-                                .add("id_jabatan1",passs.get(5))
-                                .add("id_golongan1",passs.get(6))
-                                .add("id_grup1",passs.get(7))
-                                .add("tanggal",passs.get(8))
-                                .add("judul",passs.get(9))
-                                .add("keterangans",passs.get(10))
+                                .add("id",arraypasseddata.get(position).get(0))
+                                .add("id_promosi",arraypasseddata.get(position).get(1))
+                                .add("id_karyawan",arraypasseddata.get(position).get(2))
+                                .add("id_cabang1",arraypasseddata.get(position).get(3))
+                                .add("id_departemen1",arraypasseddata.get(position).get(4))
+                                .add("id_jabatan1",arraypasseddata.get(position).get(5))
+                                .add("id_golongan1",arraypasseddata.get(position).get(6))
+                                .add("id_grup1",arraypasseddata.get(position).get(7))
+                                .add("tanggal",arraypasseddata.get(position).get(8))
+                                .add("judul",arraypasseddata.get(position).get(9))
+                                .add("keterangans",arraypasseddata.get(position).get(10))
                                 .build();
 
                         request = new Request.Builder()
@@ -616,7 +631,7 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                     else if (tipe.equals("Approval Punishment") ){
 
                         RequestBody body = new FormBody.Builder()
-                                .add("id",passs.get(0))
+                                .add("id",passs.get(position))
                                 .add("status",status)
                                 .build();
 
@@ -631,7 +646,7 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                     else if (tipe.equals("Approval Reward") ){
 
                         RequestBody body = new FormBody.Builder()
-                                .add("id",passs.get(0))
+                                .add("id",passs.get(position))
                                 .add("status",status)
                                 .build();
 
@@ -739,9 +754,7 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                     }
                     else if (tipe.equals("Approval Golongan") ){
                         if(result.getString("status").equals("true")){
-                            for (int i=0;i<15;i++){
-                                passs.remove(position*14);
-                            }
+                            arraypass.remove(position);
                             Snackbar.make(parent,"Sukses Approval",Snackbar.LENGTH_SHORT).show();
                             removeItem(position);
                         }
@@ -761,9 +774,7 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                     }
                     else if (tipe.equals("Approval Pinjaman") ){
                         if(result.getString("status").equals("true")){
-                            for (int i=0;i<2;i++){
-                                passs.remove(position*1);
-                            }
+                            passed.remove(position);
                             Snackbar.make(parent,"Sukses Approval",Snackbar.LENGTH_SHORT).show();
                             removeItem(position);
                         }
@@ -773,9 +784,7 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                     }
                     else if (tipe.equals("Approval Pdm") ){
                         if(result.getString("status").equals("true")){
-                            for (int i=0;i<11;i++){
-                                passs.remove(position*10);
-                            }
+                            arraypass.remove(position);
                             Snackbar.make(parent,"Sukses Approval",Snackbar.LENGTH_SHORT).show();
                             removeItem(position);
                         }
@@ -785,9 +794,7 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                     }
                     else if (tipe.equals("Approval Punishment") ){
                         if(result.getString("status").equals("true")){
-                            for (int i=0;i<2;i++){
-                                passs.remove(position*1);
-                            }
+                            passed.remove(position);
                             Snackbar.make(parent,"Sukses Approval",Snackbar.LENGTH_SHORT).show();
                             removeItem(position);
                         }
@@ -797,9 +804,7 @@ public class AdapterListSwipe_approval extends RecyclerView.Adapter<RecyclerView
                     }
                     else if (tipe.equals("Approval Reward") ){
                         if(result.getString("status").equals("true")){
-                            for (int i=0;i<2;i++){
-                                passs.remove(position*1);
-                            }
+                            passed.remove(position);
                             Snackbar.make(parent,"Sukses Approval",Snackbar.LENGTH_SHORT).show();
                             removeItem(position);
                         }

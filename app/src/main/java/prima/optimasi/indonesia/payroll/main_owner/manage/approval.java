@@ -275,6 +275,7 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
             try {
                 List<listjobextension> listdata = new ArrayList<>();
                 List<String> passing= new ArrayList<>();
+                List<List<String>> arrayspass = new ArrayList<>();
                 if (result != null) {
 
                     Log.e(TAG, tipe + " " + result.toString());
@@ -437,6 +438,8 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                                     passing.add(obj1.getString("lembur"));
                                     passing.add(obj1.getString("umk"));
 
+                                    arrayspass.add(passing);
+
                                     tambah = true;
                                     isnotsame = true;
                                 } else {
@@ -461,6 +464,8 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                                             passing.add(obj1.getString("pot_lain"));
                                             passing.add(obj1.getString("lembur"));
                                             passing.add(obj1.getString("umk"));
+
+                                            arrayspass.add(passing);
 
                                             Log.e("approval glongan list", passing.toString());
 
@@ -750,10 +755,11 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                                     data.setNamakaryawan(obj1.getString("nama") + "(" + obj1.getString("info_approve").toUpperCase() + ")");
                                     data.setTipe(tipe);
 
-                                    if (obj.getString("foto").equals("")) {
+                                    if (obj1.getString("foto").equals("")) {
                                         data.setProfilepicture("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ");
                                     } else {
                                         data.setProfilepicture(generator.profileurl + obj1.getString("foto"));
+                                        Log.e(TAG, "picture data :"+ generator.profileurl + obj1.getString("foto") );
                                     }
 
 
@@ -839,7 +845,6 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                             JSONObject obj = arrays.getJSONObject(i);
 
                             passing.add(obj.getString("id_pinjaman"));
-                            passing.add(obj.getString("status"));
 
                             DecimalFormat formatter = new DecimalFormat("###,###,###");
                             listjobextension data = new listjobextension();
@@ -894,6 +899,8 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                                     passing.add(obj1.getString("judul"));
                                     passing.add(obj1.getString("keterangans"));
 
+                                    arrayspass.add(passing);
+
                                     listjobextension data = new listjobextension();
 
                                     data.setTipe(tipe);
@@ -937,7 +944,7 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                                             passing.add(obj1.getString("judul"));
                                             passing.add(obj1.getString("keterangans"));
 
-
+                                            arrayspass.add(passing);
 
 
                                         listjobextension data = new listjobextension();
@@ -1032,7 +1039,6 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                                 JSONObject obj = arrays.getJSONObject(i);
 
                                 passing.add(obj.getString("id"));
-                                passing.add(obj.getString("status"));
 
 
                                 listjobextension data = new listjobextension();
@@ -1069,7 +1075,6 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                                 JSONObject obj = arrays.getJSONObject(i);
 
                                 passing.add(obj.getString("id_rewards"));
-                                passing.add(obj.getString("status"));
 
                                 listjobextension data = new listjobextension();
                                 data.setJabatan(obj.getString("jabatan"));
@@ -1099,7 +1104,7 @@ public class approval extends AppCompatActivity implements adapterapprovalhelper
                         nothing.setVisibility(View.GONE);
                     }*/
 
-                    adapter = new AdapterListSwipe_approval(approval.this,listdata,tempcoor,passing);
+                    adapter = new AdapterListSwipe_approval(approval.this,listdata,tempcoor,passing,arrayspass);
                     adapter.notifyDataSetChanged();
 
                     RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
