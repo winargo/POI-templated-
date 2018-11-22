@@ -11,17 +11,14 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.animation.Easing;
@@ -42,14 +39,12 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -60,17 +55,12 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.main_owner.Activity_Chart;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListDaftarAbsensi;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListSectionedKontrakKerja;
-import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListSectionedsakit;
-import prima.optimasi.indonesia.payroll.main_owner.report.owner_sakit;
-import prima.optimasi.indonesia.payroll.objects.datacuti;
 import prima.optimasi.indonesia.payroll.objects.datagajiobject;
 import prima.optimasi.indonesia.payroll.objects.listkaryawandaftarabsensi;
 import prima.optimasi.indonesia.payroll.objects.listkaryawankontrakkerja;
-import prima.optimasi.indonesia.payroll.universal.activity.ActivityListKaryawan;
-import prima.optimasi.indonesia.payroll.universal.viewkaryawan;
+import prima.optimasi.indonesia.payroll.universal.ActivityListKaryawan;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
@@ -219,9 +209,115 @@ public class FragmentHome extends Fragment {
             String dt1 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-0"+c.get(Calendar.DAY_OF_MONTH);
             String dt2 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-"+c.getActualMaximum(Calendar.DAY_OF_MONTH);
 
+            List<List<Double>> thedatamentah;
+            thedatamentah = new ArrayList<>();
 
-            retrivegajibychart gaji = new retrivegajibychart(getActivity(), dt1, dt2 ,mRealm,perios,i,monthbarbottom,count,dialog);
-            gaji.execute();
+            retrivegajimentah gajim = new retrivegajimentah(getActivity(), dt1, dt2 ,value);
+            try {
+                value = gajim.execute().get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+
+            mRealm.beginTransaction();
+            datagajiobject score1 = new datagajiobject(value.floatValue(), (float) i, monthbarbottom.get(i));
+            //Log.e("replace", "/" + String.valueOf(thisYear) + " " + datesdata.get(finalI));
+            mRealm.copyToRealm(score1);
+            mRealm.commitTransaction();
+
+            barChart.invalidate();
+            barChart.getAxisLeft().setDrawGridLines(false);
+            barChart.getXAxis().setDrawGridLines(false);
+            barChart.setExtraBottomOffset(5f);
+
+            barChart.getXAxis().setLabelCount(7);
+            barChart.getXAxis().setGranularity(1f);
+
+            // no description text
+            barChart.getDescription().setEnabled(false);
+
+            // enable touch gestures
+            barChart.setTouchEnabled(true);
+
+            if (barChart instanceof BarLineChartBase) {
+
+                BarLineChartBase mChart = (BarLineChartBase) barChart;
+
+                mChart.setDrawGridBackground(false);
+
+                // enable scaling and dragging
+                mChart.setDragEnabled(true);
+                mChart.setScaleEnabled(true);
+
+                // if disabled, scaling can be done on x- and y-axis separately
+                mChart.setPinchZoom(false);
+
+                YAxis leftAxis = mChart.getAxisLeft();
+                leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
+                leftAxis.setTextSize(8f);
+                leftAxis.setTextColor(Color.BLACK);
+
+                XAxis xAxis = mChart.getXAxis();
+                xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+                xAxis.setTextSize(8f);
+                xAxis.setTextColor(Color.BLACK);
+
+                mChart.getAxisRight().setEnabled(false);
+            }
+
+            RealmResults<datagajiobject> results = mRealm.where(datagajiobject.class).findAll();
+
+            IAxisValueFormatter formatter = new IAxisValueFormatter() {
+                @Override
+                public String getFormattedValue(float value, AxisBase axis) {
+                    return monthbarbottom.get((int) value);
+                }
+            };
+            barChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
+
+            barChart.getXAxis().setValueFormatter(formatter);
+
+            // BAR-CHART
+            RealmBarDataSet<datagajiobject> barDataSet = new RealmBarDataSet<datagajiobject>(results, "ranges", "datagaji");
+
+            barDataSet.setColor(Color.BLUE);
+            if(counting==0){
+                counting = value;
+            }
+            else if(counting==value){
+                counting = value;
+                //barDataSet.setColor(Color.BLUE);
+            }
+            else if(counting<value){
+                counting = value;
+                //barDataSet.setColor(Color.GREEN);
+            }
+            else if(counting>value){
+                counting = value;
+                //barDataSet.setColor(Color.RED);
+            }
+
+            //barDataSet.setColor(generator.green);
+
+            barDataSet.setLabel("Period Gaji : " + finalPerios);
+
+            ArrayList<IBarDataSet> barDataSets = new ArrayList<IBarDataSet>();
+            barDataSets.add(barDataSet);
+
+            BarData barData = new BarData(barDataSets);
+
+            barChart.setData(barData);
+            barChart.setFitBars(true);
+            barChart.animateY(1400, Easing.EasingOption.EaseInOutQuart);
+
+            barChart.invalidate();
+
+            if (count[0] == monthbarbottom.size()) {
+                mRealm.close();
+            }
+
 
         }
 
@@ -302,15 +398,15 @@ public class FragmentHome extends Fragment {
         ket.add(totalizin);
         ket.add(totalsakit);
         ket.add(totalcuti);
-        ket.add(totaldinas);
         ket.add(totaltelat);
+        ket.add(totaldinas);
 
         lyt_ket=new ArrayList<>();
         lyt_ket.add(lyt_totalizin);
         lyt_ket.add(lyt_totalsakit);
         lyt_ket.add(lyt_totalcuti);
-        lyt_ket.add(lyt_totaldinas);
         lyt_ket.add(lyt_totaltelat);
+        lyt_ket.add(lyt_totaldinas);
         for(int i=0;i<kontrak_kerja.length;i++){
             retrivekontrakkerjakar k_k=new retrivekontrakkerjakar(parent_view.getContext(),kontrak_kerja[i], kk.get(i),rv_kk.get(i),banyakkontrakkerja.get(i));
             k_k.execute();
@@ -496,6 +592,12 @@ public class FragmentHome extends Fragment {
         refreshhome.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                if(dialog.isShowing()){
+
+                }
+                else {
+                    dialog.show();
+                }
                 banyakkaryawan=0;
                 totalkaryawan=0;
 
@@ -534,8 +636,12 @@ public class FragmentHome extends Fragment {
                     String dt1 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-0"+c.get(Calendar.DAY_OF_MONTH);
                     String dt2 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-"+c.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-                    retrivegajibychart gaji = new retrivegajibychart(getActivity(), dt1, dt2 ,mRealm,perios,i,monthbarbottom,count,dialog);
-                    gaji.execute();
+
+                    List<List<Double>> thedatamentah;
+                    thedatamentah = new ArrayList<>();
+
+                    //retrivegajimentah gaji = new retrivegajimentah(getActivity(), dt1, dt2 ,da);
+                    //gaji.execute();
                 }
 
                 for (int i = 0; i < kontrak_kerja.length; i++) {
@@ -1815,6 +1921,7 @@ public class FragmentHome extends Fragment {
             this.keterangan=keterangan;
             this.tv=tv;
             this.lyt=lyt;
+
             if(keterangan.equals("izin")){
                 urldata=generator.getizinhariyurl;
             }
@@ -1824,10 +1931,10 @@ public class FragmentHome extends Fragment {
             else if(keterangan.equals("cuti")){
                 urldata=generator.getcutihariyurl;
             }
-            else if(keterangan.equals("dinas")){
-                urldata=generator.getdinashariyurl;
-            }
             else if(keterangan.equals("telat")){
+                urldata=generator.absensitelatyurl;
+            }
+            else if(keterangan.equals("dinas")){
                 urldata=generator.absensitelatyurl;
             }
             /*
@@ -1946,7 +2053,7 @@ public class FragmentHome extends Fragment {
         }
     }
 
-    private class retrivegajibychart extends AsyncTask<Void, Integer, String>
+    private class retrivegajibychart extends AsyncTask<Void, Integer, Double >
     {
         String response = "";
         String error = "";
@@ -1955,7 +2062,7 @@ public class FragmentHome extends Fragment {
         SharedPreferences prefs ;
         JSONObject result = null ;
         ProgressDialog dialog ;
-        String urldata = generator.getgajibytwodate;
+        String urldata = generator.chartgajineedkode;
         String passeddata = "" ;
         SimpleDateFormat sdfchart = new SimpleDateFormat("yyyy-MM-dd");
         String dt1="";
@@ -1965,31 +2072,228 @@ public class FragmentHome extends Fragment {
         List<String> monthbarbottom ;
         String finalPerios = "";
         int[] count;
+        List<List<Double>> thedatamentah;
 
-        public retrivegajibychart(Context context,String dt1,String dt2,Realm frealm,String periode,int postion,List<String> montbarbottom,int[] count,ProgressDialog dialogs)
+        int current=0;
+        int last = 0;
+
+        public retrivegajibychart(Context context,String dt1,String dt2,List<List<Double>> mentah,Double value )
         {
+            this.value  = value;
+            thedatamentah = mentah;
+
+            this.current = current;
+
+            this.last = last;
 
             //dialog.setMessage("Loading Data...");
             this.count = count;
-            dialog=dialogs;
             dialog.setMessage("Loading Charts");
-
             Log.e("data 1 data 2",dt1+" "+dt2 );
 
             this.dt1 = dt1;
             this.dt2 = dt2;
-
-            finalPerios = periode;
 
             Log.e( "dt1 and 2 ",dt1+" "+dt2 );
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
             this.username = generator.username;
             this.password = generator.password;
             this.error = error ;
+        }
 
-            monthbarbottom = montbarbottom ;
+        String TAG = getClass().getSimpleName();
 
-            this.position = postion;
+
+        protected Double doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    RequestBody body = new FormBody.Builder()
+                            .add("start",dt1)
+                            .add("end",dt2)
+                            .add("kode",passeddata)
+                            .build();
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .post(body)
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return 0.0d;
+                }
+            } catch (IOException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                return 1.0d;
+            } catch (NullPointerException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                return 2.0d;
+            } catch (Exception e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                return 3.0d;
+            }
+
+
+            return 0.0d;
+        }
+
+        
+
+        protected void onPostExecute(String result1) {
+
+            try {
+
+                if (result != null) {
+                    try {
+                        if(result.getString("status").equals("true")){
+
+
+                                if(result.getDouble("data")!=0){
+                                   /* data1.add(obj.getDouble("tunjangan"));
+                                    data1.add(obj.getDouble("punishment"));
+                                    data1.add(obj.getDouble("bpjs"));
+                                    data1.add(obj.getDouble("reward"));
+                                    data1.add(obj.getDouble("potonganTelat"));
+                                    data1.add(obj.getDouble("hariKerja"));
+                                    data1.add(obj.getDouble("umk"));*/
+                                    for( int i = 0 ; i < thedatamentah.size();i++){
+                                        value = value +( thedatamentah.get(i).get(0)+ thedatamentah.get(i).get(1)+ thedatamentah.get(i).get(2)- thedatamentah.get(i).get(3)+ thedatamentah.get(i).get(4)+ (thedatamentah.get(i).get(6)/ thedatamentah.get(i).get(5) * result.getDouble("data")));
+                                    }
+                                }
+
+
+                            DecimalFormat formattery = new DecimalFormat("###,###,###.00");
+
+
+                        }
+
+
+
+                        //JSONArray pengsarray = result.getJSONArray("data");
+
+                        //int gaji=1000000;
+
+                        Log.e("gaji "+position,value+"" );
+                        Log.e("current "+current+" "+ last,value+"" );
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi ", Snackbar.LENGTH_SHORT).show();
+                }
+
+                result(value);
+
+                if(monthbarbottom.size()==position){
+                    if(dialog!=null){
+                        if(dialog.isShowing()){
+                            dialog.dismiss();
+                        }
+                    }
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+
+
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+
+        public Double result(Double res){
+            return  res;
+        }
+    }
+
+
+    private class retrivegajimentah extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        String urldata = generator.getgajibytwodate;
+        String passeddata = "" ;
+        SimpleDateFormat sdfchart = new SimpleDateFormat("yyyy-MM-dd");
+        String dt1="";
+        String dt2="";
+        int position =0;
+        Double value = 0.0d;
+        Context ctx;
+        List<String> monthbarbottom ;
+        String finalPerios = "";
+        int[] count;
+        List<List<Double>> thedatamentah;
+
+        public retrivegajimentah(Context context,String dt1,String dt2,Double value)
+        {
+
+            ctx=context;
+            this.count = count;
+
+            this.value = value;
+
+
+            Log.e("data 1 data 2",dt1+" "+dt2 );
+
+            this.dt1 = dt1;
+            this.dt2 = dt2;
+
+            Log.e( "dt1 and 2 ",dt1+" "+dt2 );
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
         }
 
         String TAG = getClass().getSimpleName();
@@ -1999,7 +2303,7 @@ public class FragmentHome extends Fragment {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
 
             try {
-                this.dialog.setMessage("Loading Data...");
+                dialog.setMessage("Loading Data...");
 
                 JSONObject jsonObject;
 
@@ -2061,129 +2365,71 @@ public class FragmentHome extends Fragment {
             return response;
         }
 
-        
+
 
         protected void onPostExecute(String result1) {
 
             try {
 
                 if (result != null) {
-                    Log.e(TAG, "kerja 1 bulan" + result.toString());
                     try {
                         if(result.getString("status").equals("true")){
+
+
+
                             JSONArray obj2 = result.getJSONArray("data");
+
+                            Log.e("data "+position, result.toString() );
+                            List<Double> data1 = new ArrayList<>();
+                            List<String> datakode = new ArrayList<>();
 
                             for (int i=0 ; i<obj2.length();i++){
                                 JSONObject obj = obj2.getJSONObject(0);
-                                value = value + Double.parseDouble(obj.getString("gajiPokok").replace(",",""))+Double.parseDouble(obj.getString("reward").replace(",",""))+Double.parseDouble(obj.getString("tunjangan").replace(",",""))-Double.parseDouble(obj.getString("punishment").replace(",",""));
+                                if(!obj.getString("umk").equals("null")){
+
+
+
+                                    data1.add(obj.getDouble("tunjangan"));
+                                    data1.add(obj.getDouble("punishment"));
+                                    data1.add(obj.getDouble("bpjs"));
+                                    data1.add(obj.getDouble("reward"));
+                                    data1.add(obj.getDouble("potonganTelat"));
+                                    data1.add(obj.getDouble("hariKerja"));
+                                    data1.add(obj.getDouble("umk"));
+                                    thedatamentah.add(data1);
+                                    datakode.add(obj.getString("kode"));
+
+                                }
+                                else{
+
+                                    data1.add(obj.getDouble("tunjangan"));
+                                    data1.add(obj.getDouble("punishment"));
+                                    data1.add(obj.getDouble("bpjs"));
+                                    data1.add(obj.getDouble("reward"));
+                                    data1.add(obj.getDouble("potonganTelat"));
+                                    data1.add(obj.getDouble("hariKerja"));
+                                    data1.add(0.0d);
+                                    thedatamentah.add(data1);
+                                    datakode.add(obj.getString("kode"));
+
+
+                                }
+
                             }
+
+                            for (int i = 0 ; i < datakode.size();i++){
+                                value = new retrivegajibychart(ctx,dt1,dt2,thedatamentah,value).execute().get();
+                            }
+
+
 
                             DecimalFormat formattery = new DecimalFormat("###,###,###.00");
 
-
+                            result(value);
                         }
                         //JSONArray pengsarray = result.getJSONArray("data");
 
                         //int gaji=1000000;
-
-                        Log.e("gaji",value+"" );
-
-                        mRealm.beginTransaction();
-                        datagajiobject score1 = new datagajiobject(value.floatValue(), (float) position, monthbarbottom.get(position));
-                        //Log.e("replace", "/" + String.valueOf(thisYear) + " " + datesdata.get(finalI));
-                        mRealm.copyToRealm(score1);
-                        mRealm.commitTransaction();
-
-                        barChart.invalidate();
-                        barChart.getAxisLeft().setDrawGridLines(false);
-                        barChart.getXAxis().setDrawGridLines(false);
-                        barChart.setExtraBottomOffset(5f);
-
-                        barChart.getXAxis().setLabelCount(7);
-                        barChart.getXAxis().setGranularity(1f);
-
-                        // no description text
-                        barChart.getDescription().setEnabled(false);
-
-                        // enable touch gestures
-                        barChart.setTouchEnabled(true);
-
-                        if (barChart instanceof BarLineChartBase) {
-
-                            BarLineChartBase mChart = (BarLineChartBase) barChart;
-
-                            mChart.setDrawGridBackground(false);
-
-                            // enable scaling and dragging
-                            mChart.setDragEnabled(true);
-                            mChart.setScaleEnabled(true);
-
-                            // if disabled, scaling can be done on x- and y-axis separately
-                            mChart.setPinchZoom(false);
-
-                            YAxis leftAxis = mChart.getAxisLeft();
-                            leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
-                            leftAxis.setTextSize(8f);
-                            leftAxis.setTextColor(Color.BLACK);
-
-                            XAxis xAxis = mChart.getXAxis();
-                            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-                            xAxis.setTextSize(8f);
-                            xAxis.setTextColor(Color.BLACK);
-
-                            mChart.getAxisRight().setEnabled(false);
-                        }
-
-                        RealmResults<datagajiobject> results = mRealm.where(datagajiobject.class).findAll();
-
-                        IAxisValueFormatter formatter = new IAxisValueFormatter() {
-                            @Override
-                            public String getFormattedValue(float value, AxisBase axis) {
-                                return monthbarbottom.get((int) value);
-                            }
-                        };
-                        barChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
-
-                        barChart.getXAxis().setValueFormatter(formatter);
-
-                        // BAR-CHART
-                        RealmBarDataSet<datagajiobject> barDataSet = new RealmBarDataSet<datagajiobject>(results, "ranges", "datagaji");
-
-                        barDataSet.setColor(Color.BLUE);
-                        if(counting==0){
-                            counting = value;
-                        }
-                        else if(counting==value){
-                            counting = value;
-                            //barDataSet.setColor(Color.BLUE);
-                        }
-                        else if(counting<value){
-                            counting = value;
-                            //barDataSet.setColor(Color.GREEN);
-                        }
-                        else if(counting>value){
-                            counting = value;
-                            //barDataSet.setColor(Color.RED);
-                        }
-
-                        //barDataSet.setColor(generator.green);
-
-                        barDataSet.setLabel("Period Gaji : " + finalPerios);
-
-                        ArrayList<IBarDataSet> barDataSets = new ArrayList<IBarDataSet>();
-                        barDataSets.add(barDataSet);
-
-                        BarData barData = new BarData(barDataSets);
-
-                        barChart.setData(barData);
-                        barChart.setFitBars(true);
-                        barChart.animateY(1400, Easing.EasingOption.EaseInOutQuart);
-
-                        barChart.invalidate();
-
-                        if (count[0] == monthbarbottom.size()) {
-                            mRealm.close();
-                        }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -2198,14 +2444,6 @@ public class FragmentHome extends Fragment {
                 } else {
                     Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi ", Snackbar.LENGTH_SHORT).show();
                 }
-
-                if(monthbarbottom.size()==position){
-                    if(dialog!=null){
-                        if(dialog.isShowing()){
-                            dialog.dismiss();
-                        }
-                    }
-                }
             }catch (Exception E){
                 E.printStackTrace();
                 Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
@@ -2213,12 +2451,10 @@ public class FragmentHome extends Fragment {
             }
 
 
-            if(this.dialog.isShowing()){
-                dialog.dismiss();
-            }
-
-
             Log.d(TAG + " onPostExecute", "" + result1);
+        }
+        private Double result(Double res){
+            return  res;
         }
     }
 

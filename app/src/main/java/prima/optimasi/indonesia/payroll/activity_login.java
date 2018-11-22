@@ -18,6 +18,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.LayoutDirection;
@@ -63,7 +64,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class activity_login extends FragmentActivity {
+public class activity_login extends AppCompatActivity {
 
     public String TAG="activity_login";
 
@@ -336,7 +337,7 @@ public class activity_login extends FragmentActivity {
                 }
             });
 
-            Tools.setSystemBarColor(this, R.color.cyan_800);
+            Tools.setSystemBarColor(this, R.color.colorPrimary);
 
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1168,6 +1169,8 @@ public class activity_login extends FragmentActivity {
             linearnodata.setVisibility(View.GONE);
             recycler.setVisibility(View.VISIBLE);
         }
+
+        codeentered.setText("");
 
         if(adapter!=null) {
             adapter.notifyDataSetChanged();

@@ -3,27 +3,18 @@ package prima.optimasi.indonesia.payroll.main_owner.adapter_owner;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.objects.listkaryawandaftarabsensi;
-import prima.optimasi.indonesia.payroll.objects.listkaryawankontrakkerja;
-import prima.optimasi.indonesia.payroll.universal.activity.ActivityListKaryawan;
-import prima.optimasi.indonesia.payroll.universal.adapter.AdapterListKaryawan;
-import prima.optimasi.indonesia.payroll.universal.viewkaryawan;
-import prima.optimasi.indonesia.payroll.utils.CircleTransform;
+import prima.optimasi.indonesia.payroll.universal.ActivityListKaryawan;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.utils.ViewAnimation;

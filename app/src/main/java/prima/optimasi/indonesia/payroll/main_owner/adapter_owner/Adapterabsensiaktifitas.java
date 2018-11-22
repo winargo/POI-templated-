@@ -372,12 +372,8 @@ public class Adapterabsensiaktifitas extends RecyclerView.Adapter<RecyclerView.V
                                     final int second = Integer.valueOf(spliter[2]);
 
                                     String datadate = year + "-"+month+"-"+day+" "+ hour+ ":"+minute+":"+second;
-                                    Log.e("data date ",datadate);
-
                                     date1 = format1.parse(datadate);
                                     date2 = new Date();
-
-                                    Log.e("date 1 and date 2 ",date1+" "+date2 );
 
                                     long difference = date2.getTime() - date1.getTime();
                                     if(difference<0)

@@ -1,8 +1,7 @@
-package prima.optimasi.indonesia.payroll.universal.activity;
+package prima.optimasi.indonesia.payroll.universal;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,13 +12,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.LinearLayout;
 
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import org.json.JSONArray;
@@ -37,14 +32,11 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
-import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.main_karyawan.adapter.Adapter_absensi_karyawan;
 import prima.optimasi.indonesia.payroll.objects.logabsensi_karyawan;
 import prima.optimasi.indonesia.payroll.universal.adapter.Adapter_Log_Absensi;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
-import prima.optimasi.indonesia.payroll.widget.LineItemDecoration;
 
 public class ActivityLogAbsensi extends AppCompatActivity {
     CoordinatorLayout parent_view;

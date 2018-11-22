@@ -76,6 +76,11 @@ public class FragmentReport extends Fragment {
         izin.setDeskripsi("Laporan Dan Statistik Penggajian Karyawan");
 
         items.add(izin);
+        izin = new listreport();
+        izin.setJudul("Karyawan Terbaik & Terburuk");
+        izin.setDeskripsi("Laporan Detail Karyawan Terbaik & Terburuk");
+
+        items.add(izin);
         //set data and list adapter
         mAdapter = new AdapterListBasic(getActivity(), items);
         recyclerView.setAdapter(mAdapter);

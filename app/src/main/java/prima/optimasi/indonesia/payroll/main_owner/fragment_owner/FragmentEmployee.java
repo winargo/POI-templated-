@@ -116,7 +116,7 @@ public class FragmentEmployee extends Fragment{
 
         bottomnac = rootView.findViewById(R.id.navigation);
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         tanggal=format.format(c.getTime());
         Log.e("Tanggal sekarang", tanggal);
         initComponent(rootView);
@@ -138,7 +138,7 @@ public class FragmentEmployee extends Fragment{
         },2000L);*/
 
         selectdate = rootView.findViewById(R.id.dateselection_karyawan);
-        SimpleDateFormat fomat = new SimpleDateFormat("dd/MM/yyyy");
+        //SimpleDateFormat fomat = new SimpleDateFormat("dd/MM/yyyy");
 
 
         selectdate.setOnClickListener(new View.OnClickListener() {
@@ -233,6 +233,16 @@ public class FragmentEmployee extends Fragment{
         refreshkabag.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+
+                if(mAdapterkabag!=null){
+                    itemskabag.clear();
+                    mAdapterkabag.notifyDataSetChanged();
+                }
+                if(mAdapterkaryawan!=null){
+                    itemskaryawan.clear();
+                    mAdapterkaryawan.notifyDataSetChanged();
+                }
+
                 nilaiall = 0;
                 retrivekaryawanrefersh ref = new retrivekaryawanrefersh(getActivity());
                 ref.execute();
@@ -242,6 +252,14 @@ public class FragmentEmployee extends Fragment{
         refreshkaryawan.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                if(mAdapterkaryawan!=null){
+                    itemskaryawan.clear();
+                    mAdapterkaryawan.notifyDataSetChanged();
+                }
+                if(mAdapterkabag!=null){
+                    itemskabag.clear();
+                    mAdapterkabag.notifyDataSetChanged();
+                }
 
                 nilaiall = 0;
                 retrivekaryawanrefersh ref = new retrivekaryawanrefersh(getActivity());
@@ -694,8 +712,12 @@ public class FragmentEmployee extends Fragment{
                 Log.e(TAG, "data json result" + result.toString());
                 if (result != null) {
                     try {
-                        itemskaryawan = new ArrayList<>();
-                        itemskabag = new ArrayList<>();
+                        if(itemskaryawan==null){
+                            itemskaryawan  = new ArrayList<>();
+                        }
+                        if(itemskabag==null){
+                            itemskabag = new ArrayList<>();
+                        }
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         JSONArray pengsarray = result.getJSONArray("rows");
 
@@ -797,6 +819,17 @@ public class FragmentEmployee extends Fragment{
                                 kar.setNama(obj.getString("nama"));
                                 kar.setDesc(obj.getString("jabatan"));
                                 items.add(kar);*/
+                                listkaryawan kar = new listkaryawan();
+                                kar.setSection(false);
+                                kar.setJabatan("HRD");
+                                kar.setIskar(obj.getString("id"));
+                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
+
+                                Log.e(TAG, "image data" + kar.getImagelink() );
+
+                                kar.setNama(obj.getString("nama"));
+                                kar.setDesc(obj.getString("jabatan"));
+                                itemskabag.add(kar);
                             }
                             /*int sect_count = 0;
                             int sect_idx = 0;
@@ -811,8 +844,11 @@ public class FragmentEmployee extends Fragment{
 
                         //mAdapter = new AdapterListSectioned(getActivity(), items, ItemAnimation.LEFT_RIGHT);
 
-                        if(mAdapteraktifitas!=null){
-                            mAdapteraktifitas.notifyDataSetChanged();
+                        if(mAdapterkabag!=null){
+                            mAdapterkabag.notifyDataSetChanged();
+                        }
+                        if(mAdapterkaryawan!=null){
+                            mAdapterkaryawan.notifyDataSetChanged();
                         }
 
                         nilaikabag = itemskabag.size();

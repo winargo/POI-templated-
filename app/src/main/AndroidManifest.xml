@@ -709,17 +709,17 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".universal.activity.ActivityPengumuman"
+            android:name=".universal.ActivityPengumuman"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".universal.activity.ActivityPengajuan"
+            android:name=".universal.ActivityPengajuan"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".universal.activity.ActivityLogAbsensi"
+            android:name=".universal.ActivityLogAbsensi"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />
 
@@ -739,7 +739,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".universal.activity.ActivityListKaryawan"
+            android:name=".universal.ActivityListKaryawan"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />
 

@@ -189,6 +189,8 @@ public class generator {
     public static String jabatanurl="http://"+ generator.Server+":"+generator.port+"/jabatan";
     public static String karyawanjabatanurl="http://"+ generator.Server+":"+generator.port+"/karyawan/jabatan";
 
+    public static String chartgajineedkode="http://"+ generator.Server+":"+generator.port+"/absensi/kode";
+
     public static JSONObject jsondatalogin = null ;
     public static JSONObject jsondatajadwal = null ;
 
@@ -507,7 +509,6 @@ public class generator {
         Context cntx;
         SharedPreferences prefs ;
         JSONObject result ;
-        ProgressDialog dialog ;
         String urldata = generator.scanloginurl;
         String passeddata = "" ;
 
@@ -516,7 +517,6 @@ public class generator {
             this.authtoken=authtoken;
             cntx = context;
             prefs = context.getSharedPreferences("poipayroll",MODE_PRIVATE);
-            dialog = new ProgressDialog(context);
             passeddata = passed;
             this.username = generator.username;
             this.password = generator.password;
@@ -526,9 +526,7 @@ public class generator {
         String TAG = getClass().getSimpleName();
 
         protected void onPreExecute (){
-            this.dialog.show();
             super.onPreExecute();
-            this.dialog.setMessage("Registering Device...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
         }
 
@@ -538,7 +536,6 @@ public class generator {
             int data = 0;
 
             try {
-                this.dialog.setMessage("Loading Data...");
 
                 JSONObject jsonObject;
 
@@ -582,20 +579,14 @@ public class generator {
                     Log.e(TAG, "sendRegistrationToServer: failed" + e.getMessage() );
                 }
             } catch (IOException e) {
-                this.dialog.setMessage("Loading Data... IOError Occured,retrying...");
-                this.dialog.dismiss();
                 Log.e("doInBackground: ", "IO Exception" + e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Error IOException";
             } catch (NullPointerException e) {
-                this.dialog.setMessage("Loading Data... Internet Error Occured,retrying...");
-                this.dialog.dismiss();
                 Log.e("doInBackground: ", "null data" + e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Please check Connection and Server";
             } catch (Exception e) {
-                this.dialog.setMessage("Loading Data... Error Occured,retrying...");
-                this.dialog.dismiss();
                 Log.e("doInBackground: ", e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Error Occured, PLease Contact Administrator/Support";
@@ -616,9 +607,6 @@ public class generator {
 
         protected void onPostExecute(String result1) {
             super.onPostExecute(result1);
-            if(this.dialog.isShowing()){
-                dialog.dismiss();
-            }
             String res = "";
 
             if(result!=null){
@@ -950,6 +938,8 @@ public class generator {
         daftarabsensiurl="http://"+ generator.Server+":"+generator.port+"/absensi/today";
         jabatanurl="http://"+ generator.Server+":"+generator.port+"/jabatan";
         karyawanjabatanurl="http://"+ generator.Server+":"+generator.port+"/karyawan/jabatan";
+        chartgajineedkode="http://"+ generator.Server+":"+generator.port+"/absensi/kode";
+
     }
 
 }
