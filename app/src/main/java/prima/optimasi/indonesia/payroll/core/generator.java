@@ -79,6 +79,7 @@ public class generator {
     public static int jobcount = 0 ;
 
     public static String mainurl ="http://153.92.4.147:388/verify";
+    //public static String mainurl ="http://192.168.5.254:4000/verify";
 
     public static String keepaliveurl="http://"+ generator.Server+":"+generator.port+"/login";
     public static String imageurl="http://"+ generator.Server+"/"+determiner+"/uploads/aktivitas/pengumuman/";

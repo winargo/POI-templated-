@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.FormBody;
@@ -346,6 +347,37 @@ public class ActivityListKaryawan extends AppCompatActivity {
                         }
                         else{
                             tidakada.setVisibility(View.GONE);
+                            /*
+                            int panjang=0;
+                            for(int i=0; i<pengsarray.length();i++){
+                                SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd");
+                                JSONObject obj=pengsarray.getJSONObject(i);
+                                String mulai=obj.getString("tgl_"+keterangan).substring(0,10);
+                                String akhir=obj.getString("tgl_"+keterangan).substring(0,10);
+                                Date mulaitgl=formatter.parse(mulai);
+                                Date datetgl=formatter.parse(settanggal);
+                                Date akhirtgl=formatter.parse(akhir);
+                                Log.e("MULAI DAN AKHIR", mulai+"__"+akhir);
+                                Log.e("Tanggal Date", settanggal);
+                                Log.e("Compare", ""+settanggal.compareTo(mulai));
+                                Log.e("Compare Date", ""+datetgl.compareTo(mulaitgl));
+                                if(datetgl.compareTo(mulaitgl)>=0 && akhirtgl.compareTo(datetgl)>=0){
+                                    kar=new listkaryawan();
+                                    kar.setNama(obj.getString("nama"));
+                                    kar.setIskar(obj.getString("id"));
+                                    kar.setJabatan(obj.getString("jabatan"));
+                                    if(!obj.getString("foto").equals("")){
+                                        kar.setImagelink(generator.profileurl+obj.getString("foto"));
+                                    }
+                                    else{
+                                        kar.setImagelink("");
+                                    }
+                                    items.add(kar);
+                                    panjang++;
+                                    Log.e("PANJANG",""+panjang);
+                                }
+                            }*/
+
                             for (int i=0;i<pengsarray.length();i++){
                                 JSONObject obj=pengsarray.getJSONObject(i);
                                 kar=new listkaryawan();

@@ -112,10 +112,356 @@ public class ActivityPengajuan extends AppCompatActivity {
         //Log.v("NEXT DATE : ", formattedDate);
 
         send=findViewById(R.id.send_pengajuan);
-        retrivegetcuti cuti=new retrivegetcuti(ActivityPengajuan.this);
-        cuti.execute();
+        retrivegetizin izin=new retrivegetizin(ActivityPengajuan.this);
+        izin.execute();
         initToolbar();
         initComponent();
+    }
+
+
+
+    private class retrivegetizin extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        ProgressDialog dialog ;
+        String urldata = generator.pengajuanizinkodeurl;
+        String passeddata = "" ;
+
+        public retrivegetizin(Context context)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            dialog = new ProgressDialog(context);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            this.dialog.show();
+            super.onPreExecute();
+            this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    RequestBody body = new FormBody.Builder()
+                            .add("id",prefs.getString("id", ""))
+
+                            .build();
+
+                    Log.e(TAG, prefs.getString("id", ""));
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .post(body)
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+                //
+                if (result != null) {
+                    try {
+                        Log.e(TAG, "data json result" + result.toString());
+                        items = new ArrayList<>();
+                        JSONArray pengsarray = result.getJSONArray("rows");
+                        Log.e(TAG, "data json result" + pengsarray.length());
+
+                        for (int i = 0; i < pengsarray.length(); i++) {
+                            JSONObject obj = pengsarray.getJSONObject(i);
+                            String tgl_izin = obj.getString("tgl_sakit").substring(0, 10);
+                            String akhir_izin = obj.getString("akhir_sakit").substring(0, 10);
+                            String status = obj.getString("status");
+                            String keterangan = obj.getString("keterangans");
+                            ajukan = new listkaryawanpengajuan();
+                            ajukan.setJenis("Izin");
+                            ajukan.setTanggal_masuk(tgl_izin);
+                            ajukan.setTanggal_keluar(akhir_izin);
+                            ajukan.setStatus(status);
+                            if (keterangan.equals("")) {
+                                Log.e(TAG, "data json result" + "KOSONG");
+                            } else {
+                                ajukan.setKeterangan(keterangan);
+                            }
+                            Log.e(TAG, "data json result" + keterangan);
+
+                            items.add(ajukan);
+                        }
+                        if(items.size()>0){
+                            pengajuan = new Adapterhistorypengajuan(ActivityPengajuan.this, items, ItemAnimation.LEFT_RIGHT);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(ActivityPengajuan.this));
+                            recyclerView.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(ActivityPengajuan.this, 3), true));
+                            recyclerView.setHasFixedSize(true);
+                            recyclerView.setAdapter(pengajuan);
+                        }
+
+                        retrivegetsakit sakit = new retrivegetsakit(ActivityPengajuan.this);
+                        sakit.execute();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            } catch (Exception E) {
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: " + E.getMessage().toString());
+                Snackbar.make(parent_view, E.getMessage().toString(), Snackbar.LENGTH_SHORT).show();
+            }
+
+            if (this.dialog.isShowing()) {
+                dialog.dismiss();
+            }
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
+    private class retrivegetsakit extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        ProgressDialog dialog ;
+        String urldata = generator.pengajuansakitkodeurl;
+        String passeddata = "" ;
+
+        public retrivegetsakit(Context context)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            dialog = new ProgressDialog(context);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            this.dialog.show();
+            super.onPreExecute();
+            this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    RequestBody body = new FormBody.Builder()
+                            .add("id",prefs.getString("id", ""))
+                            .build();
+
+                    Log.e(TAG, prefs.getString("id", ""));
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .post(body)
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+                //
+                if (result != null) {
+                    try {
+                        Log.e(TAG, "data json result" + result.toString());
+                        items = new ArrayList<>();
+                        JSONArray pengsarray = result.getJSONArray("rows");
+
+                        for (int i = 0; i < pengsarray.length(); i++) {
+                            JSONObject obj = pengsarray.getJSONObject(i);
+                            String tgl_izin=obj.getString("tgl_sakit").substring(0,10);
+                            String akhir_izin=obj.getString("akhir_sakit").substring(0,10);
+                            //String status=obj.getString("status");
+                            String status="Approved";
+
+                            String keterangan=obj.getString("keterangans");
+                            ajukan=new listkaryawanpengajuan();
+                            ajukan.setJenis("Sakit");
+                            ajukan.setTanggal_masuk(tgl_izin);
+                            ajukan.setTanggal_keluar(akhir_izin);
+                            ajukan.setStatus(status);
+                            if(keterangan.equals("")){
+                                Log.e(TAG, "data json result" + "KOSONG");
+                            }
+                            else{
+                                ajukan.setKeterangan(keterangan);
+                            }
+                            Log.e(TAG, "data json result" + keterangan);
+
+                            items.add(ajukan);
+                        }
+                        if(items.size()>0) {
+                            pengajuan = new Adapterhistorypengajuan(ActivityPengajuan.this, items, ItemAnimation.LEFT_RIGHT);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(ActivityPengajuan.this));
+                            recyclerView.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(ActivityPengajuan.this, 3), true));
+
+
+                            recyclerView.setHasFixedSize(true);
+                            recyclerView.setAdapter(pengajuan);
+                        }
+                        retrivegetcuti cuti=new retrivegetcuti(ActivityPengajuan.this);
+                        cuti.execute();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
     }
 
     private class retrivegetcuti extends AsyncTask<Void, Integer, String>
@@ -233,16 +579,20 @@ public class ActivityPengajuan extends AppCompatActivity {
 
                         for (int i = 0; i < pengsarray.length(); i++) {
                             JSONObject obj = pengsarray.getJSONObject(i);
-                            String tgl_izin=obj.getString("tgl_izin").substring(0,10);
-                            String akhir_izin=obj.getString("akhir_izin").substring(0,10);
+                            String tgl_izin=obj.getString("tgl_cuti").substring(0,10);
+                            String akhir_izin=obj.getString("akhir_cuti").substring(0,10);
                             String status=obj.getString("status");
                             String keterangan=obj.getString("keterangans");
-                            ajukan=new listkaryawanpengajuan();
                             ajukan=new listkaryawanpengajuan();
                             ajukan.setJenis("Cuti");
                             ajukan.setTanggal_masuk(tgl_izin);
                             ajukan.setTanggal_keluar(akhir_izin);
-                            ajukan.setStatus(status);
+                            if(status.equals("Ditolak")){
+                                ajukan.setStatus("Rejected");
+                            }
+                            else if(status.equals("Diterima")){
+                                ajukan.setStatus("Approved");
+                            }
                             if(keterangan.equals("")){
                                 Log.e(TAG, "data json result" + "KOSONG");
                             }
@@ -253,13 +603,18 @@ public class ActivityPengajuan extends AppCompatActivity {
 
                             items.add(ajukan);
                         }
-                        pengajuan = new Adapterhistorypengajuan(ActivityPengajuan.this, items, ItemAnimation.LEFT_RIGHT);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(ActivityPengajuan.this));
-                        recyclerView.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(ActivityPengajuan.this, 3), true));
+                        if(items.size()>0) {
+                            pengajuan = new Adapterhistorypengajuan(ActivityPengajuan.this, items, ItemAnimation.LEFT_RIGHT);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(ActivityPengajuan.this));
+                            recyclerView.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(ActivityPengajuan.this, 3), true));
 
 
-                        recyclerView.setHasFixedSize(true);
-                        recyclerView.setAdapter(pengajuan);
+                            recyclerView.setHasFixedSize(true);
+                            recyclerView.setAdapter(pengajuan);
+                        }
+
+                        retrivegetdinas dinas=new retrivegetdinas(ActivityPengajuan.this);
+                        dinas.execute();
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
@@ -287,7 +642,7 @@ public class ActivityPengajuan extends AppCompatActivity {
         }
     }
 
-    private class retrivegetizin extends AsyncTask<Void, Integer, String>
+    private class retrivegetdinas extends AsyncTask<Void, Integer, String>
     {
         String response = "";
         String error = "";
@@ -296,10 +651,10 @@ public class ActivityPengajuan extends AppCompatActivity {
         SharedPreferences prefs ;
         JSONObject result = null ;
         ProgressDialog dialog ;
-        String urldata = generator.pengajuanizinkodeurl;
+        String urldata = generator.pengajuandinaskodeurl;
         String passeddata = "" ;
 
-        public retrivegetizin(Context context)
+        public retrivegetdinas(Context context)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
             dialog = new ProgressDialog(context);
@@ -330,7 +685,6 @@ public class ActivityPengajuan extends AppCompatActivity {
 
                     RequestBody body = new FormBody.Builder()
                             .add("id",prefs.getString("id", ""))
-
                             .build();
 
                     Log.e(TAG, prefs.getString("id", ""));
@@ -397,12 +751,39 @@ public class ActivityPengajuan extends AppCompatActivity {
                 if (result != null) {
                     try {
                         Log.e(TAG, "data json result" + result.toString());
-                        boolean status=result.getBoolean("status");
-                        if(!status){
-                            Snackbar.make(parent_view, "Gagal mengajukan pengajuan izin" , Snackbar.LENGTH_SHORT).show();
+                        items = new ArrayList<>();
+                        JSONArray pengsarray = result.getJSONArray("rows");
+                        Log.e(TAG, "data json result" + pengsarray.length());
+
+                        for (int i = 0; i < pengsarray.length(); i++) {
+                            JSONObject obj = pengsarray.getJSONObject(i);
+                            String tgl_izin=obj.getString("tgl_dinas").substring(0,10);
+                            String akhir_izin=obj.getString("akhir_dinas").substring(0,10);
+                            String status=obj.getString("status");
+                            String keterangan=obj.getString("keterangans");
+                            ajukan=new listkaryawanpengajuan();
+                            ajukan.setJenis("Dinas");
+                            ajukan.setTanggal_masuk(tgl_izin);
+                            ajukan.setTanggal_keluar(akhir_izin);
+                            ajukan.setStatus(status);
+                            if(keterangan.equals("")){
+                                Log.e(TAG, "data json result" + "KOSONG");
+                            }
+                            else{
+                                ajukan.setKeterangan(keterangan);
+                            }
+                            Log.e(TAG, "data json result" + keterangan);
+
+                            items.add(ajukan);
                         }
-                        else {
-                            Snackbar.make(parent_view, "Pengajuan Izin berhasil" , Snackbar.LENGTH_SHORT).show();
+                        if(items.size()>0) {
+                            pengajuan = new Adapterhistorypengajuan(ActivityPengajuan.this, items, ItemAnimation.LEFT_RIGHT);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(ActivityPengajuan.this));
+                            recyclerView.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(ActivityPengajuan.this, 3), true));
+
+
+                            recyclerView.setHasFixedSize(true);
+                            recyclerView.setAdapter(pengajuan);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -430,7 +811,6 @@ public class ActivityPengajuan extends AppCompatActivity {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
-
 
 
     private void initComponent() {
