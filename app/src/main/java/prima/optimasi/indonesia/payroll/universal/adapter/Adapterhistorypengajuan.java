@@ -6,7 +6,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +17,7 @@ import java.util.List;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.objects.listjadwal;
 import prima.optimasi.indonesia.payroll.objects.listkaryawanpengajuan;
+import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 
 public class Adapterhistorypengajuan extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -41,13 +45,14 @@ public class Adapterhistorypengajuan extends RecyclerView.Adapter<RecyclerView.V
     }
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
-        public TextView jenis, status, tglmasuk, tglkeluar, keterangan;
+        public TextView jenis, tglmasuk, tglkeluar, keterangan;
+        public ImageView status;
         public View lyt_parent;
 
         public OriginalViewHolder(View v) {
             super(v);
             jenis = (TextView) v.findViewById(R.id.jenis);
-            status = (TextView) v.findViewById(R.id.status);
+            status = (ImageView) v.findViewById(R.id.status);
             tglmasuk = v.findViewById(R.id.tglmasuk);
             tglkeluar = v.findViewById(R.id.tglkeluar);
             keterangan= v.findViewById(R.id.keterangan);
@@ -80,7 +85,16 @@ public class Adapterhistorypengajuan extends RecyclerView.Adapter<RecyclerView.V
             OriginalViewHolder view = (OriginalViewHolder) holder;
 
             view.jenis.setText(p.getJenis());
-            view.status.setText(p.getStatus());
+            //view.status.setText(p.getStatus());
+            if(p.getStatus().equals("Approved")){
+                Picasso.get().load(R.drawable.ic_file_download).into(view.status);
+            }
+            else if(p.getStatus().equals("Rejected")){
+                Picasso.get().load(R.drawable.ic_file_download).into(view.status);
+            }
+            else if(p.getStatus().equals("Pending")){
+                Picasso.get().load(R.drawable.ic_file_download).into(view.status);
+            }
             view.tglmasuk.setText(p.getTanggal_masuk());
             view.tglkeluar.setText(p.getTanggal_keluar());
             Log.e("KETERANGAN", p.getKeterangan());

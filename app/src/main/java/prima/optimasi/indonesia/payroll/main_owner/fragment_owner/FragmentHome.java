@@ -43,6 +43,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -92,7 +93,7 @@ public class FragmentHome extends Fragment {
 
     Realm mRealm;
 
-    String[] keterangan = new String[]{"izin", "sakit", "cuti","telat","dinas"};
+    String[] keterangan = new String[]{"izin", "sakit", "cuti","dinas","telat"};
     String[] kontrak_kerja = new String[]{"habis", "1bulan", "2bulan","3bulan"};
     String[] tipegaji = new String[]{"bersih", "estimasi"};
     public List<TextView> ket;
@@ -621,7 +622,6 @@ public class FragmentHome extends Fragment {
         }
 
         String TAG = getClass().getSimpleName();
-
 
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
@@ -1941,9 +1941,37 @@ public class FragmentHome extends Fragment {
                 if (result != null) {
                     try {
                         JSONArray pengsarray = result.getJSONArray("rows");
+                        //[{"id_sakit":6,"id_karyawan":23,"tanggal":"2018-11-22T00:00:00.000Z","keterangans":"test data","tgl_sakit":"2018-12-31T00:00:00.000Z",
+                        // "akhir_sakit":"2018-12-31T00:00:00.000Z","file":"","lama":"1","id":23,"kode_karyawan":"EMP-7","idfp":"POI007","nama":"Riandy Irvan Winargo",
+                        // "alamat":"JL amplas","tempat_lahir":"Tempat Tidur","tgl_lahir":"1997-09-20T00:00:00.000Z","telepon":"081375544973","no_wali":"-",
+                        // "email":"rwinargo97@gmail.com","tgl_masuk":"2018-06-01T00:00:00.000Z","kelamin":"laki-laki","status_nikah":"Cerai-Mati","pendidikan":"SMA Sederajat",
+                        // "wn":"Indonesia","agama":"Budha","shift":"tidak","status_kerja":"aktif","ibu_kandung":"-","suami_istri":"","tanggungan":0,"npwp":"",
+                        // "gaji":2500000,"rekening":"1004938291","id_bank":17,"id_departemen":19,"id_jabatan":33,"id_grup":8,"id_golongan":32,"atas_nama":"Riandy Irvan Winargo",
+                        // "foto":"adf8809c399dbe4b613d00cb36b46347.PNG","id_cabang":8,"start_date":null,"expired_date":null,"jab_index":1,"kontrak":"tidak","file_kontrak":"",
+                        // "otoritas":2,"periode_gaji":"Bulanan","qrcode_file":"80337212a476fb0f2ca191c814dc9396.png","jabatan":"Mobile Programmer","keterangan":"-","tunjangan":0}
 
 
-                        tv.setText(String.valueOf(pengsarray.length()));
+                        int panjang=0;
+                        for(int i=0; i<pengsarray.length();i++){
+                            SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd");
+                            JSONObject obj=pengsarray.getJSONObject(i);
+                            String mulai=obj.getString("tgl_"+keterangan).substring(0,10);
+                            String akhir=obj.getString("tgl_"+keterangan).substring(0,10);
+                            Date mulaitgl=formatter.parse(mulai);
+                            Date datetgl=formatter.parse(tanggal);
+                            Date akhirtgl=formatter.parse(akhir);
+                            Log.e("MULAI DAN AKHIR", mulai+"__"+akhir);
+                            Log.e("Tanggal Date", tanggal);
+                            Log.e("Compare", ""+tanggal.compareTo(mulai));
+                            Log.e("Compare Date", ""+datetgl.compareTo(mulaitgl));
+                            if(datetgl.compareTo(mulaitgl)>=0 && akhirtgl.compareTo(datetgl)>=0){
+                                panjang++;
+                                Log.e("PANJANG",""+panjang);
+                            }
+                        }
+                        tv.setText(String.valueOf(panjang));
+
+                        //tv.setText(String.valueOf(pengsarray.length()));
                         lyt.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
