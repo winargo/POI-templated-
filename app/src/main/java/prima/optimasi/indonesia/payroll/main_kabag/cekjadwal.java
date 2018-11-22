@@ -789,5 +789,8 @@ public class cekjadwal extends AppCompatActivity {
                 super.onBackPressed();
             }
         }
+        else{
+            super.onBackPressed();
+        }
     }
 }
