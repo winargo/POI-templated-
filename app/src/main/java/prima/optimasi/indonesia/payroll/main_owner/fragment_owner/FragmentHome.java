@@ -398,15 +398,16 @@ public class FragmentHome extends Fragment {
         ket.add(totalizin);
         ket.add(totalsakit);
         ket.add(totalcuti);
-        ket.add(totaltelat);
         ket.add(totaldinas);
+        ket.add(totaltelat);
+
 
         lyt_ket=new ArrayList<>();
         lyt_ket.add(lyt_totalizin);
         lyt_ket.add(lyt_totalsakit);
         lyt_ket.add(lyt_totalcuti);
-        lyt_ket.add(lyt_totaltelat);
         lyt_ket.add(lyt_totaldinas);
+        lyt_ket.add(lyt_totaltelat);
         for(int i=0;i<kontrak_kerja.length;i++){
             retrivekontrakkerjakar k_k=new retrivekontrakkerjakar(parent_view.getContext(),kontrak_kerja[i], kk.get(i),rv_kk.get(i),banyakkontrakkerja.get(i));
             k_k.execute();
@@ -421,6 +422,8 @@ public class FragmentHome extends Fragment {
             retrivetotalgaji kar = new retrivetotalgaji(getActivity(),tgaji.get(i),tipegaji[i]);
             kar.execute();
         }
+        banyakkaryawan=0;
+        totalkaryawan=0;
         retrivegetjabatan jab=new retrivegetjabatan(getActivity());
         jab.execute();
 
@@ -648,6 +651,8 @@ public class FragmentHome extends Fragment {
                     retrivekontrakkerjakarref ref = new retrivekontrakkerjakarref(parent_view.getContext(), kontrak_kerja[i], kk.get(i), rv_kk.get(i), banyakkontrakkerja.get(i));
                     ref.execute();
                 }
+                banyakkaryawan=0;
+                totalkaryawan=0;
                 retrivegetjabatanref jab=new retrivegetjabatanref(getActivity());
                 jab.execute();
                 refreshhome.setRefreshing(false);
@@ -1383,8 +1388,7 @@ public class FragmentHome extends Fragment {
                             Log.e(TAG, "data jabatan" + result.toString());
                             list_jabatan = new ArrayList<>();
                             JSONArray pengsarray = result.getJSONArray("data");
-                            banyakkaryawan=0;
-                            totalkaryawan=0;
+
                             for (int i = 0; i < pengsarray.length(); i++) {
                                 JSONObject obj = pengsarray.getJSONObject(i);
                                 list_jabatan.add(obj.getString("jabatan"));
@@ -1551,6 +1555,7 @@ public class FragmentHome extends Fragment {
                             int absen=0;
                             absen=totalkaryawan-banyakkaryawan;
                             totalabsen.setText(String.valueOf(absen));
+                            Log.e(TAG,String.valueOf(absen));
                             adapterabsensi.notifyDataSetChanged();
 
                             //getketerangan();
@@ -1935,7 +1940,7 @@ public class FragmentHome extends Fragment {
                 urldata=generator.absensitelatyurl;
             }
             else if(keterangan.equals("dinas")){
-                urldata=generator.absensitelatyurl;
+                urldata=generator.getdinashariyurl;
             }
             /*
             else{
