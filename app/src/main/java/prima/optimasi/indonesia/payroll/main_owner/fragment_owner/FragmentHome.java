@@ -105,10 +105,14 @@ public class FragmentHome extends Fragment {
     public List<View> lyt_ket;
     public List<TextView> tgaji;
 
+    String finalPerios;
+
     ProgressDialog dialog;
 
     String perios="";
 
+    List<String> monthbarbottom;
+    List<String> dt1,dt2;
 
 
     @Override
@@ -149,18 +153,19 @@ public class FragmentHome extends Fragment {
 
 
 
-        List<String> monthbarbottom = new ArrayList<>();
+        monthbarbottom = new ArrayList<>();
+        dt1 = new ArrayList<>();
+        dt2 = new ArrayList<>();
         List<String> monthnumber = new ArrayList<>();
         List<Integer> yearnumber = new ArrayList<>();
 
-// loop adding one day in each iteration
         for(int i = 0; i< 12; i++) {
             cal.add(Calendar.MONTH, 1);
 
             monthbarbottom.add(sdf.format(cal.getTime()));
 
             //f((Calendar.MONTH+"").length()){
-                Log.e("month data",""+(cal.get(Calendar.MONTH)+1) );
+                //Log.e("month data",""+(cal.get(Calendar.MONTH)+1) );
                 monthnumber.add(""+(cal.get(Calendar.MONTH)+1));
             /*}
             else {
@@ -202,125 +207,28 @@ public class FragmentHome extends Fragment {
 
             Double value =0.0d;
 
-            Realm finalMRealm1 = mRealm;
-            String finalPerios = perios;
+            finalPerios = perios;
 
             SimpleDateFormat fomat = new SimpleDateFormat("yyyy-MM-dd");
 
-            String dt1 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-0"+c.get(Calendar.DAY_OF_MONTH);
-            String dt2 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-"+c.getActualMaximum(Calendar.DAY_OF_MONTH);
+            String dat1 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-0"+c.get(Calendar.DAY_OF_MONTH);
+            String dat2 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-"+c.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+            dt1.add(dat1);
+            dt2.add(dat2);
 
             List<List<Double>> thedatamentah;
             thedatamentah = new ArrayList<>();
 
-            retrivegajimentah gajim = new retrivegajimentah(getActivity(), dt1, dt2 ,value);
-            try {
-                value = gajim.execute().get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
 
-            mRealm.beginTransaction();
-            datagajiobject score1 = new datagajiobject(value.floatValue(), (float) i, monthbarbottom.get(i));
-            //Log.e("replace", "/" + String.valueOf(thisYear) + " " + datesdata.get(finalI));
-            mRealm.copyToRealm(score1);
-            mRealm.commitTransaction();
 
-            barChart.invalidate();
-            barChart.getAxisLeft().setDrawGridLines(false);
-            barChart.getXAxis().setDrawGridLines(false);
-            barChart.setExtraBottomOffset(5f);
-
-            barChart.getXAxis().setLabelCount(7);
-            barChart.getXAxis().setGranularity(1f);
-
-            // no description text
-            barChart.getDescription().setEnabled(false);
-
-            // enable touch gestures
-            barChart.setTouchEnabled(true);
-
-            if (barChart instanceof BarLineChartBase) {
-
-                BarLineChartBase mChart = (BarLineChartBase) barChart;
-
-                mChart.setDrawGridBackground(false);
-
-                // enable scaling and dragging
-                mChart.setDragEnabled(true);
-                mChart.setScaleEnabled(true);
-
-                // if disabled, scaling can be done on x- and y-axis separately
-                mChart.setPinchZoom(false);
-
-                YAxis leftAxis = mChart.getAxisLeft();
-                leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
-                leftAxis.setTextSize(8f);
-                leftAxis.setTextColor(Color.BLACK);
-
-                XAxis xAxis = mChart.getXAxis();
-                xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-                xAxis.setTextSize(8f);
-                xAxis.setTextColor(Color.BLACK);
-
-                mChart.getAxisRight().setEnabled(false);
-            }
-
-            RealmResults<datagajiobject> results = mRealm.where(datagajiobject.class).findAll();
-
-            IAxisValueFormatter formatter = new IAxisValueFormatter() {
-                @Override
-                public String getFormattedValue(float value, AxisBase axis) {
-                    return monthbarbottom.get((int) value);
-                }
-            };
-            barChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
-
-            barChart.getXAxis().setValueFormatter(formatter);
-
-            // BAR-CHART
-            RealmBarDataSet<datagajiobject> barDataSet = new RealmBarDataSet<datagajiobject>(results, "ranges", "datagaji");
-
-            barDataSet.setColor(Color.BLUE);
-            if(counting==0){
-                counting = value;
-            }
-            else if(counting==value){
-                counting = value;
-                //barDataSet.setColor(Color.BLUE);
-            }
-            else if(counting<value){
-                counting = value;
-                //barDataSet.setColor(Color.GREEN);
-            }
-            else if(counting>value){
-                counting = value;
-                //barDataSet.setColor(Color.RED);
-            }
-
-            //barDataSet.setColor(generator.green);
-
-            barDataSet.setLabel("Period Gaji : " + finalPerios);
-
-            ArrayList<IBarDataSet> barDataSets = new ArrayList<IBarDataSet>();
-            barDataSets.add(barDataSet);
-
-            BarData barData = new BarData(barDataSets);
-
-            barChart.setData(barData);
-            barChart.setFitBars(true);
-            barChart.animateY(1400, Easing.EasingOption.EaseInOutQuart);
-
-            barChart.invalidate();
-
-            if (count[0] == monthbarbottom.size()) {
-                mRealm.close();
-            }
+            Log.e("chart data nowdata",value.toString() );
 
 
         }
+
+        retrivegajimentah0 gajim = new retrivegajimentah0(getActivity(),0);
+        gajim.execute();
 
         Calendar c = Calendar.getInstance();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -2063,6 +1971,9 @@ public class FragmentHome extends Fragment {
                                 getActivity().startActivity(intent);
                             }
                         });
+
+
+
                     }  catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
@@ -2088,72 +1999,42 @@ public class FragmentHome extends Fragment {
         }
     }
 
-    private class retrivegajibychart extends AsyncTask<Void, Integer, Double >
+    private class retrivegajimentah0 extends AsyncTask<Void, Integer, String>
     {
         String response = "";
-        String error = "";
-        String username=  "" ;
-        String password = "" ;
         SharedPreferences prefs ;
-        JSONObject result = null ;
-        ProgressDialog dialog ;
-        String urldata = generator.chartgajineedkode;
-        String passeddata = "" ;
-        SimpleDateFormat sdfchart = new SimpleDateFormat("yyyy-MM-dd");
-        String dt1="";
-        String dt2="";
-        int position =0;
         Double value = 0.0d;
-        List<String> monthbarbottom ;
-        String finalPerios = "";
-        int[] count;
-        List<List<Double>> thedatamentah;
+        JSONObject result = null ;
+        String urldata = generator.getgajibytwodate;
+        SimpleDateFormat sdfchart = new SimpleDateFormat("yyyy-MM-dd");
+        int position;
 
-        int current=0;
-        int last = 0;
-
-        public retrivegajibychart(Context context,String dt1,String dt2,List<List<Double>> mentah,Double value )
+        public retrivegajimentah0(Context context,int position)
         {
-            this.value  = value;
-            thedatamentah = mentah;
-
-            this.current = current;
-
-            this.last = last;
-
-            //dialog.setMessage("Loading Data...");
-            this.count = count;
-            dialog.setMessage("Loading Charts");
-            Log.e("data 1 data 2",dt1+" "+dt2 );
-
-            this.dt1 = dt1;
-            this.dt2 = dt2;
-
-            Log.e( "dt1 and 2 ",dt1+" "+dt2 );
+            Log.e(TAG, "retrivegajimentah0: "+"working" );
+            this.position = position;
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
-            this.username = generator.username;
-            this.password = generator.password;
-            this.error = error ;
         }
 
         String TAG = getClass().getSimpleName();
 
 
-        protected Double doInBackground(Void...arg0) {
+        protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
 
             try {
-                this.dialog.setMessage("Loading Data...");
+                dialog.setMessage("Loading Data...");
 
                 JSONObject jsonObject;
 
                 try {
                     OkHttpClient client = new OkHttpClient();
 
+                    Log.e("gajimentah by chart",dt1.get(position)+" "+dt2.get(position) );
+
                     RequestBody body = new FormBody.Builder()
-                            .add("start",dt1)
-                            .add("end",dt2)
-                            .add("kode",passeddata)
+                            .add("start",dt1.get(position))
+                            .add("end",dt2.get(position))
                             .build();
 
                     Request request = new Request.Builder()
@@ -2180,58 +2061,454 @@ public class FragmentHome extends Fragment {
                     else {
 
                         result = new JSONObject(responses.body().string());
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    return 0.0d;
                 }
             } catch (IOException e) {
                 //this.dialog.dismiss();
                 Log.e("doInBackground: ", "IO Exception" + e.getMessage());
                 generator.jsondatalogin = null;
-                return 1.0d;
             } catch (NullPointerException e) {
                 //this.dialog.dismiss();
                 Log.e("doInBackground: ", "null data" + e.getMessage());
                 generator.jsondatalogin = null;
-                return 2.0d;
+                response = "Please check Connection and Server";
             } catch (Exception e) {
                 //this.dialog.dismiss();
                 Log.e("doInBackground: ", e.getMessage());
                 generator.jsondatalogin = null;
-                return 3.0d;
+                response = "Error Occured, PLease Contact Administrator/Support";
             }
 
 
-            return 0.0d;
+            return response;
         }
 
-        
+
+
+        protected void onPostExecute(String result1) {
+            try {
+                Log.e(TAG, "retrive gaji mentah:"+result.toString() );
+                if (result != null) {
+                    try {
+                        if(result.getString("status").equals("true")){
+
+
+
+                            JSONArray obj2 = result.getJSONArray("data");
+
+                            Log.e("data "+position, result.toString() );
+                            List<Double> data1 = new ArrayList<>();
+                            List<String> datakode = new ArrayList<>();
+                            List<List<Double>> dataall = new ArrayList<>();
+
+                            for (int i=0 ; i<obj2.length();i++){
+                                JSONObject obj = obj2.getJSONObject(i);
+                                if(!obj.getString("umk").equals("null")){
+
+
+
+                                    data1.add(obj.getDouble("tunjangan"));
+                                    data1.add(obj.getDouble("punishment"));
+                                    data1.add(obj.getDouble("bpjs"));
+                                    data1.add(obj.getDouble("reward"));
+                                    data1.add(obj.getDouble("potonganTelat"));
+                                    data1.add(obj.getDouble("hariKerja"));
+                                    data1.add(obj.getDouble("umk"));
+                                    dataall.add(data1);
+                                    datakode.add(obj.getString("kode"));
+
+                                }
+                                else{
+
+                                    data1.add(obj.getDouble("tunjangan"));
+                                    data1.add(obj.getDouble("punishment"));
+                                    data1.add(obj.getDouble("bpjs"));
+                                    data1.add(obj.getDouble("reward"));
+                                    data1.add(obj.getDouble("potonganTelat"));
+                                    data1.add(obj.getDouble("hariKerja"));
+                                    data1.add(0.0d);
+                                    dataall.add(data1);
+                                    datakode.add(obj.getString("kode"));
+                                }
+
+                            }
+
+                            for (int i = 0 ; i < datakode.size();i++){
+                                retrivegajibychart0 gaji = new retrivegajibychart0(getActivity(),data1,datakode,position,i,datakode.size()-1,dataall);
+                                gaji.execute();
+                            }
+
+                            Log.e("data1dankode", data1.size()+" "+datakode.size());
+
+
+                        }
+                        else {
+                            mRealm.beginTransaction();
+                            datagajiobject score1 = new datagajiobject(value.floatValue(), (float) position, monthbarbottom.get(position));
+                            //Log.e("replace", "/" + String.valueOf(thisYear) + " " + datesdata.get(finalI));
+                            mRealm.copyToRealm(score1);
+                            mRealm.commitTransaction();
+
+                            barChart.invalidate();
+                            barChart.getAxisLeft().setDrawGridLines(false);
+                            barChart.getXAxis().setDrawGridLines(false);
+                            barChart.setExtraBottomOffset(5f);
+
+                            barChart.getXAxis().setLabelCount(7);
+                            barChart.getXAxis().setGranularity(1f);
+
+                            // no description text
+                            barChart.getDescription().setEnabled(false);
+
+                            // enable touch gestures
+                            barChart.setTouchEnabled(true);
+
+                            if (barChart instanceof BarLineChartBase) {
+
+                                BarLineChartBase mChart = (BarLineChartBase) barChart;
+
+                                mChart.setDrawGridBackground(false);
+
+                                // enable scaling and dragging
+                                mChart.setDragEnabled(true);
+                                mChart.setScaleEnabled(true);
+
+                                // if disabled, scaling can be done on x- and y-axis separately
+                                mChart.setPinchZoom(false);
+
+                                YAxis leftAxis = mChart.getAxisLeft();
+                                leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
+                                leftAxis.setTextSize(8f);
+                                leftAxis.setTextColor(Color.BLACK);
+
+                                XAxis xAxis = mChart.getXAxis();
+                                xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+                                xAxis.setTextSize(8f);
+                                xAxis.setTextColor(Color.BLACK);
+
+                                mChart.getAxisRight().setEnabled(false);
+                            }
+
+                            RealmResults<datagajiobject> results = mRealm.where(datagajiobject.class).findAll();
+
+                            IAxisValueFormatter formatter = new IAxisValueFormatter() {
+                                @Override
+                                public String getFormattedValue(float value, AxisBase axis) {
+                                    return monthbarbottom.get((int) value);
+                                }
+                            };
+                            barChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
+
+                            barChart.getXAxis().setValueFormatter(formatter);
+
+                            // BAR-CHART
+                            RealmBarDataSet<datagajiobject> barDataSet = new RealmBarDataSet<datagajiobject>(results, "ranges", "datagaji");
+
+                            barDataSet.setColor(Color.BLUE);
+                            if(counting==0){
+                                counting = value;
+                            }
+                            else if(counting==value){
+                                counting = value;
+                                //barDataSet.setColor(Color.BLUE);
+                            }
+                            else if(counting<value){
+                                counting = value;
+                                //barDataSet.setColor(Color.GREEN);
+                            }
+                            else if(counting>value){
+                                counting = value;
+                                //barDataSet.setColor(Color.RED);
+                            }
+
+                            //barDataSet.setColor(generator.green);
+
+                            barDataSet.setLabel("Period Gaji : " + finalPerios);
+
+                            ArrayList<IBarDataSet> barDataSets = new ArrayList<IBarDataSet>();
+                            barDataSets.add(barDataSet);
+
+                            BarData barData = new BarData(barDataSets);
+
+                            barChart.setData(barData);
+                            barChart.setFitBars(true);
+                            barChart.animateY(1400, Easing.EasingOption.EaseInOutQuart);
+
+                            barChart.invalidate();
+
+                            if(position<11) {
+                                retrivegajimentah0 gajim = new retrivegajimentah0(getActivity(), position + 1);
+                                gajim.execute();
+                            }
+                            else {
+                                mRealm.close();
+                            }
+                        }
+                        Log.e("data kode",result.toString() );
+
+                        //JSONArray pengsarray = result.getJSONArray("data");
+
+                        //int gaji=1000000;
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi ", Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private class retrivegajibychart0 extends AsyncTask<Void, Integer, String >
+    {
+        String response = "";
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        ProgressDialog dialog ;
+        String urldata = generator.chartgajineedkode;
+        int position,itempos;
+        Double value = 0.0d;
+
+        List<String> datacode;
+        List<Double> datad;
+        List<List<Double>> dataall;
+
+        int[] count;
+        int current=0;
+        int last = 0;
+
+        public retrivegajibychart0(Context context,List<Double> datad , List<String> datakode,int position ,int itemposition,int lastp,List<List<Double>> dataalls)
+        {
+            dataall = dataalls;
+            current = itemposition;
+            last = lastp;
+            this.datad = datad;
+            this.datacode = datakode;
+            this.position = position;
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            this.itempos = itemposition;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    Log.e("gaji by chart "+position,dt1.get(position)+" "+dt2.get(position) + " data kode "+ datacode.get(position) );
+
+                    RequestBody body = new FormBody.Builder()
+                            .add("start",dt1.get(position))
+                            .add("end",dt2.get(position))
+                            .add("kode",datacode.get(itempos))
+                            .build();
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .post(body)
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+
+                        if(dialog.isShowing()){
+                            dialog.dismiss();
+                        }
+
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } catch (IOException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+            } catch (NullPointerException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+            } catch (Exception e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+            }
+            return  response;
+        }
+
+
 
         protected void onPostExecute(String result1) {
 
             try {
+                Log.e("valuecalculate",result.toString() );
 
                 if (result != null) {
                     try {
                         if(result.getString("status").equals("true")){
 
 
-                                if(result.getDouble("data")!=0){
-                                   /* data1.add(obj.getDouble("tunjangan"));
-                                    data1.add(obj.getDouble("punishment"));
-                                    data1.add(obj.getDouble("bpjs"));
-                                    data1.add(obj.getDouble("reward"));
-                                    data1.add(obj.getDouble("potonganTelat"));
-                                    data1.add(obj.getDouble("hariKerja"));
-                                    data1.add(obj.getDouble("umk"));*/
-                                    for( int i = 0 ; i < thedatamentah.size();i++){
-                                        value = value +( thedatamentah.get(i).get(0)+ thedatamentah.get(i).get(1)+ thedatamentah.get(i).get(2)- thedatamentah.get(i).get(3)+ thedatamentah.get(i).get(4)+ (thedatamentah.get(i).get(6)/ thedatamentah.get(i).get(5) * result.getDouble("data")));
-                                    }
+                            if(result.getDouble("data")!=0){
+                                for( int i = 0 ; i < dataall.size();i++){
+                                    value = value +( dataall.get(i).get(0)+ dataall.get(i).get(1)+ dataall.get(i).get(2)- dataall.get(i).get(3)+ dataall.get(i).get(4)+ (dataall.get(i).get(6)/ dataall.get(i).get(5) * result.getDouble("data")));
                                 }
+
+                            }
+
+                            Log.e("valuecalculate",value.toString() );
+
 
 
                             DecimalFormat formattery = new DecimalFormat("###,###,###.00");
+
+                            mRealm.beginTransaction();
+                            datagajiobject score1 = new datagajiobject(value.floatValue(), (float) position, monthbarbottom.get(position));
+                            //Log.e("replace", "/" + String.valueOf(thisYear) + " " + datesdata.get(finalI));
+                            mRealm.copyToRealm(score1);
+                            mRealm.commitTransaction();
+
+                            barChart.invalidate();
+                            barChart.getAxisLeft().setDrawGridLines(false);
+                            barChart.getXAxis().setDrawGridLines(false);
+                            barChart.setExtraBottomOffset(5f);
+
+                            barChart.getXAxis().setLabelCount(7);
+                            barChart.getXAxis().setGranularity(1f);
+
+                            // no description text
+                            barChart.getDescription().setEnabled(false);
+
+                            // enable touch gestures
+                            barChart.setTouchEnabled(true);
+
+                            if (barChart instanceof BarLineChartBase) {
+
+                                BarLineChartBase mChart = (BarLineChartBase) barChart;
+
+                                mChart.setDrawGridBackground(false);
+
+                                // enable scaling and dragging
+                                mChart.setDragEnabled(true);
+                                mChart.setScaleEnabled(true);
+
+                                // if disabled, scaling can be done on x- and y-axis separately
+                                mChart.setPinchZoom(false);
+
+                                YAxis leftAxis = mChart.getAxisLeft();
+                                leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
+                                leftAxis.setTextSize(8f);
+                                leftAxis.setTextColor(Color.BLACK);
+
+                                XAxis xAxis = mChart.getXAxis();
+                                xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+                                xAxis.setTextSize(8f);
+                                xAxis.setTextColor(Color.BLACK);
+
+                                mChart.getAxisRight().setEnabled(false);
+                            }
+
+                            RealmResults<datagajiobject> results = mRealm.where(datagajiobject.class).findAll();
+
+                            IAxisValueFormatter formatter = new IAxisValueFormatter() {
+                                @Override
+                                public String getFormattedValue(float value, AxisBase axis) {
+                                    return monthbarbottom.get((int) value);
+                                }
+                            };
+                            barChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
+
+                            barChart.getXAxis().setValueFormatter(formatter);
+
+                            // BAR-CHART
+                            RealmBarDataSet<datagajiobject> barDataSet = new RealmBarDataSet<datagajiobject>(results, "ranges", "datagaji");
+
+                            barDataSet.setColor(Color.BLUE);
+                            if(counting==0){
+                                counting = value;
+                            }
+                            else if(counting==value){
+                                counting = value;
+                                //barDataSet.setColor(Color.BLUE);
+                            }
+                            else if(counting<value){
+                                counting = value;
+                                //barDataSet.setColor(Color.GREEN);
+                            }
+                            else if(counting>value){
+                                counting = value;
+                                //barDataSet.setColor(Color.RED);
+                            }
+
+                            //barDataSet.setColor(generator.green);
+
+                            barDataSet.setLabel("Period Gaji : " + finalPerios);
+
+                            ArrayList<IBarDataSet> barDataSets = new ArrayList<IBarDataSet>();
+                            barDataSets.add(barDataSet);
+
+                            BarData barData = new BarData(barDataSets);
+
+                            barChart.setData(barData);
+                            barChart.setFitBars(true);
+                            barChart.animateY(1400, Easing.EasingOption.EaseInOutQuart);
+
+                            barChart.invalidate();
+
+                            if(current==last){
+                                if(position<11) {
+                                    retrivegajimentah0 gajim = new retrivegajimentah0(getActivity(), position + 1);
+                                    gajim.execute();
+                                }
+                                else {
+                                    mRealm.close();
+                                }
+                            }
+                            else {
+
+                            }
+
+                            //mRealm.close();
+
 
 
                         }
@@ -2259,8 +2536,6 @@ public class FragmentHome extends Fragment {
                     Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi ", Snackbar.LENGTH_SHORT).show();
                 }
 
-                result(value);
-
                 if(monthbarbottom.size()==position){
                     if(dialog!=null){
                         if(dialog.isShowing()){
@@ -2273,230 +2548,9 @@ public class FragmentHome extends Fragment {
                 Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
                 Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
             }
-
-
-            if(this.dialog.isShowing()){
-                dialog.dismiss();
-            }
-
-
-            Log.d(TAG + " onPostExecute", "" + result1);
         }
 
-        public Double result(Double res){
-            return  res;
-        }
     }
-
-
-    private class retrivegajimentah extends AsyncTask<Void, Integer, Double>
-    {
-        String response = "";
-        String error = "";
-        String username=  "" ;
-        String password = "" ;
-        SharedPreferences prefs ;
-        JSONObject result = null ;
-        String urldata = generator.getgajibytwodate;
-        String passeddata = "" ;
-        SimpleDateFormat sdfchart = new SimpleDateFormat("yyyy-MM-dd");
-        String dt1="";
-        String dt2="";
-        int position =0;
-        Double value = 0.0d;
-        Context ctx;
-        List<String> monthbarbottom ;
-        String finalPerios = "";
-        int[] count;
-        List<List<Double>> thedatamentah;
-
-        public retrivegajimentah(Context context,String dt1,String dt2,Double value)
-        {
-
-            ctx=context;
-            this.count = count;
-
-            this.value = value;
-
-
-            Log.e("data 1 data 2",dt1+" "+dt2 );
-
-            this.dt1 = dt1;
-            this.dt2 = dt2;
-
-            Log.e( "dt1 and 2 ",dt1+" "+dt2 );
-            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
-            this.username = generator.username;
-            this.password = generator.password;
-            this.error = error ;
-        }
-
-        String TAG = getClass().getSimpleName();
-
-
-        protected Double doInBackground(Void...arg0) {
-            Log.d(TAG + " DoINBackGround","On doInBackground...");
-
-            try {
-                dialog.setMessage("Loading Data...");
-
-                JSONObject jsonObject;
-
-                try {
-                    OkHttpClient client = new OkHttpClient();
-
-                    RequestBody body = new FormBody.Builder()
-                            .add("start",dt1)
-                            .add("end",dt2)
-                            .build();
-
-                    Request request = new Request.Builder()
-                            .header("Authorization",prefs.getString("Authorization",""))
-                            .post(body)
-                            .url(urldata)
-                            .build();
-                    Response responses = null;
-
-                    try {
-                        responses = client.newCall(request).execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        jsonObject =  null;
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        jsonObject = null;
-                    }
-
-                    if (responses==null){
-                        jsonObject = null;
-                        Log.e(TAG, "NULL");
-                    }
-                    else {
-
-                        result = new JSONObject(responses.body().string());
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    return 0.0d;
-                }
-            } catch (IOException e) {
-                //this.dialog.dismiss();
-                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
-                generator.jsondatalogin = null;
-                return 0.0d;
-            } catch (NullPointerException e) {
-                //this.dialog.dismiss();
-                Log.e("doInBackground: ", "null data" + e.getMessage());
-                generator.jsondatalogin = null;
-                response = "Please check Connection and Server";
-                return 1.0d;
-            } catch (Exception e) {
-                //this.dialog.dismiss();
-                Log.e("doInBackground: ", e.getMessage());
-                generator.jsondatalogin = null;
-                response = "Error Occured, PLease Contact Administrator/Support";
-                return 2.0d;
-            }
-
-
-            return 0.0d;
-        }
-
-
-
-        protected void onPostExecute(String result1) {
-
-            try {
-
-                if (result != null) {
-                    try {
-                        if(result.getString("status").equals("true")){
-
-
-
-                            JSONArray obj2 = result.getJSONArray("data");
-
-                            Log.e("data "+position, result.toString() );
-                            List<Double> data1 = new ArrayList<>();
-                            List<String> datakode = new ArrayList<>();
-
-                            for (int i=0 ; i<obj2.length();i++){
-                                JSONObject obj = obj2.getJSONObject(0);
-                                if(!obj.getString("umk").equals("null")){
-
-
-
-                                    data1.add(obj.getDouble("tunjangan"));
-                                    data1.add(obj.getDouble("punishment"));
-                                    data1.add(obj.getDouble("bpjs"));
-                                    data1.add(obj.getDouble("reward"));
-                                    data1.add(obj.getDouble("potonganTelat"));
-                                    data1.add(obj.getDouble("hariKerja"));
-                                    data1.add(obj.getDouble("umk"));
-                                    thedatamentah.add(data1);
-                                    datakode.add(obj.getString("kode"));
-
-                                }
-                                else{
-
-                                    data1.add(obj.getDouble("tunjangan"));
-                                    data1.add(obj.getDouble("punishment"));
-                                    data1.add(obj.getDouble("bpjs"));
-                                    data1.add(obj.getDouble("reward"));
-                                    data1.add(obj.getDouble("potonganTelat"));
-                                    data1.add(obj.getDouble("hariKerja"));
-                                    data1.add(0.0d);
-                                    thedatamentah.add(data1);
-                                    datakode.add(obj.getString("kode"));
-
-
-                                }
-
-                            }
-                            Log.e(TAG, "data kode"+datakode.size()+" " );
-
-                            for (int i = 0 ; i < datakode.size();i++){
-                                value = new retrivegajibychart(ctx,dt1,dt2,thedatamentah,value).execute().get();
-                                Log.e("data gaji datakode",value.toString());
-                            }
-
-
-
-                            DecimalFormat formattery = new DecimalFormat("###,###,###.00");
-
-                            result(value);
-                        }
-                        //JSONArray pengsarray = result.getJSONArray("data");
-
-                        //int gaji=1000000;
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "onPostExecute: " + e.getMessage());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "onPostExecute: " + e.getMessage());
-                    }
-
-
-
-                } else {
-                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi ", Snackbar.LENGTH_SHORT).show();
-                }
-            }catch (Exception E){
-                E.printStackTrace();
-                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
-                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
-            }
-
-
-            Log.d(TAG + " onPostExecute", "" + result1);
-        }
-        private Double result(Double res){
-            return  res;
-        }
-    }
-
-
 
 }
+
