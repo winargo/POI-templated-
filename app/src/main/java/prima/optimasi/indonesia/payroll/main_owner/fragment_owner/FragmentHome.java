@@ -94,7 +94,7 @@ public class FragmentHome extends Fragment {
 
     Realm mRealm;
 
-    String[] keterangan = new String[]{"izin", "sakit", "cuti","dinas","telat"};
+    String[] keterangan = new String[]{"izin", "sakit", "cuti","telat","dinas"};
     String[] kontrak_kerja = new String[]{"habis", "1bulan", "2bulan","3bulan"};
     String[] tipegaji = new String[]{"bersih", "estimasi"};
     public List<TextView> ket;
@@ -1927,6 +1927,8 @@ public class FragmentHome extends Fragment {
             this.tv=tv;
             this.lyt=lyt;
 
+
+
             if(keterangan.equals("izin")){
                 urldata=generator.getizinhariyurl;
             }
@@ -2423,6 +2425,7 @@ public class FragmentHome extends Fragment {
                                 }
 
                             }
+                            Log.e(TAG, "data kode"+datakode.size()+" " );
 
                             for (int i = 0 ; i < datakode.size();i++){
                                 value = new retrivegajibychart(ctx,dt1,dt2,thedatamentah,value).execute().get();

@@ -1060,33 +1060,14 @@ public class activity_login extends AppCompatActivity {
 
                     Log.e(TAG, "json data company"+result );
                     JSONArray arrays = result.getJSONArray("data");
-                    JSONObject obj = arrays.getJSONObject(0);
 
-                    company datatemp = dbase.getcompany(md5code);
+                    if(arrays.length()!=0) {
 
-                    if(datatemp==null){
-                        company comp = new company();
-                        comp.setCompanyid(md5code);
-                        comp.setCompanyname(obj.getString("company_name"));
-                        comp.setCompanyip(obj.getString("ip"));
-                        comp.setCompanyport(Integer.valueOf(obj.getString("port")));
-                        comp.setCompanycodename(obj.getString("codename"));
+                        JSONObject obj = arrays.getJSONObject(0);
 
-                        dbase.createAccount(comp,"");
-                        refesh();
-                    }
-                    else {
-                        if(datatemp.getCompanyid().equals(md5code)){
-                            AlertDialog dialog = new AlertDialog.Builder(activity_login.this).setTitle("Gagal").setMessage("Data perusahaan sudah diregistrasi").setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            }).create();
+                        company datatemp = dbase.getcompany(md5code);
 
-                            dialog.show();
-                        }
-                        else {
+                        if (datatemp == null) {
                             company comp = new company();
                             comp.setCompanyid(md5code);
                             comp.setCompanyname(obj.getString("company_name"));
@@ -1094,11 +1075,43 @@ public class activity_login extends AppCompatActivity {
                             comp.setCompanyport(Integer.valueOf(obj.getString("port")));
                             comp.setCompanycodename(obj.getString("codename"));
 
-                            dbase.createAccount(comp,"");
+                            dbase.createAccount(comp, "");
                             refesh();
+                        } else {
+                            if (datatemp.getCompanyid().equals(md5code)) {
+                                AlertDialog dialog = new AlertDialog.Builder(activity_login.this).setTitle("Gagal").setMessage("Data perusahaan sudah diregistrasi").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                }).create();
+
+                                dialog.show();
+                            } else {
+                                company comp = new company();
+                                comp.setCompanyid(md5code);
+                                comp.setCompanyname(obj.getString("company_name"));
+                                comp.setCompanyip(obj.getString("ip"));
+                                comp.setCompanyport(Integer.valueOf(obj.getString("port")));
+                                comp.setCompanycodename(obj.getString("codename"));
+
+                                dbase.createAccount(comp, "");
+                                refesh();
+                            }
                         }
                     }
+                    else {
+                        AlertDialog dialog = new AlertDialog.Builder(activity_login.this).setTitle("Gagal").setMessage("Data Tidak Terdaftar / Tidak Ada Data").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).create();
 
+                        dialog.show();
+
+                        codeentered.setText("");
+                    }
 
 
                 }
