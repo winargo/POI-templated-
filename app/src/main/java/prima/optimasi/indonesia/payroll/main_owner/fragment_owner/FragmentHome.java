@@ -2254,7 +2254,7 @@ public class FragmentHome extends Fragment {
     }
 
 
-    private class retrivegajimentah extends AsyncTask<Void, Integer, String>
+    private class retrivegajimentah extends AsyncTask<Void, Integer, Double>
     {
         String response = "";
         String error = "";
@@ -2299,7 +2299,7 @@ public class FragmentHome extends Fragment {
         String TAG = getClass().getSimpleName();
 
 
-        protected String doInBackground(Void...arg0) {
+        protected Double doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
 
             try {
@@ -2342,27 +2342,29 @@ public class FragmentHome extends Fragment {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    return null;
+                    return 0.0d;
                 }
             } catch (IOException e) {
                 //this.dialog.dismiss();
                 Log.e("doInBackground: ", "IO Exception" + e.getMessage());
                 generator.jsondatalogin = null;
-                response = "Error IOException";
+                return 0.0d;
             } catch (NullPointerException e) {
                 //this.dialog.dismiss();
                 Log.e("doInBackground: ", "null data" + e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Please check Connection and Server";
+                return 1.0d;
             } catch (Exception e) {
                 //this.dialog.dismiss();
                 Log.e("doInBackground: ", e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Error Occured, PLease Contact Administrator/Support";
+                return 2.0d;
             }
 
 
-            return response;
+            return 0.0d;
         }
 
 
@@ -2419,6 +2421,7 @@ public class FragmentHome extends Fragment {
 
                             for (int i = 0 ; i < datakode.size();i++){
                                 value = new retrivegajibychart(ctx,dt1,dt2,thedatamentah,value).execute().get();
+                                Log.e("data gaji datakode",value.toString());
                             }
 
 
