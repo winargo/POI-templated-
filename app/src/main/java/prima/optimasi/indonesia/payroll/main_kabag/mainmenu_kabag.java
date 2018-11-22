@@ -63,9 +63,16 @@ import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
+<<<<<<< HEAD
 import prima.optimasi.indonesia.payroll.universal.ActivityLogAbsensi;
 import prima.optimasi.indonesia.payroll.universal.ActivityPengajuan;
 import prima.optimasi.indonesia.payroll.universal.ActivityPengumuman;
+=======
+import prima.optimasi.indonesia.payroll.universal.activity.ActivityAbout;
+import prima.optimasi.indonesia.payroll.universal.activity.ActivityLogAbsensi;
+import prima.optimasi.indonesia.payroll.universal.activity.ActivityPengajuan;
+import prima.optimasi.indonesia.payroll.universal.activity.ActivityPengumuman;
+>>>>>>> 4e5056d9a14850d6220a748dd711b7b86a711548
 import prima.optimasi.indonesia.payroll.universal.adapter.AdapterListKaryawan;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
@@ -94,7 +101,6 @@ public class mainmenu_kabag extends AppCompatActivity
     Menu tempmenu;
     String TAG = "ABSENSI";
     Double gaji, potongan;
-    int posisi;
 
     FloatingActionButton absensi;
 
@@ -231,13 +237,11 @@ public class mainmenu_kabag extends AppCompatActivity
                         if (which == 1) {
                             gaji = 0.0d;
                             potongan = 0.0d;
-                            posisi = 0;
                             retrivegaji gajis = new retrivegaji(mainmenu_kabag.this, prefs.getString("id", ""));
                             gajis.execute();
                         } else {
                             gaji = 0.0d;
                             potongan = 0.0d;
-                            posisi = 0;
                             retrivekaryawan kar = new retrivekaryawan(mainmenu_kabag.this);
                             kar.execute();
                         }
@@ -1061,26 +1065,12 @@ public class mainmenu_kabag extends AppCompatActivity
                             gaji = 0.0d;
                             potongan = 0.0d;
                         }
-
-
-                        //int gaji=1000000;
-                        posisi++;
-                        /*
-                        for(int i=0;i<pengsarray.length();i++){
-                            JSONObject obj = pengsarray.getJSONObject(i);
-                            gaji+=Double.parseDouble(obj.getString("totalgaji"));
-                            potongan+=Double.parseDouble(obj.getString("totalgaji"));
-
-                        }*/
-                        if (posisi == p) {
-                            showgaji("Gaji", gaji, potongan);
-                        }
+                        showgaji("Gaji", gaji, potongan);
 
                     } catch (Exception e) {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
                     }
-
 
                 } else {
                     Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
@@ -1157,6 +1147,11 @@ public class mainmenu_kabag extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        if(id==R.id.action_settings){
+            Intent intent=new Intent(mainmenu_kabag.this, ActivityAbout.class);
+            startActivity(intent);
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }

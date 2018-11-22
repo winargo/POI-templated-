@@ -154,6 +154,17 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
             }
             catch(NullPointerException e){
                 Log.e(getClass().getSimpleName(),"NULL");
+                view.lyt_parent.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Intent viewkaryawans = new Intent(ctx,viewkaryawan.class);
+
+                        viewkaryawans.putExtra("idkaryawan",p.getIskar());
+
+                        ctx.startActivity(viewkaryawans);
+                    }
+                });
             }
 
             /*
@@ -175,17 +186,8 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
             Tools.toggleArrow(p.expanded, view.bt_expand, false);
             */
 
-            view.lyt_parent.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
 
-                    Intent viewkaryawans = new Intent(ctx,viewkaryawan.class);
 
-                    viewkaryawans.putExtra("idkaryawan",p.getIskar());
-
-                    ctx.startActivity(viewkaryawans);
-                }
-            });
 
             setAnimation(view.itemView, position);
         }

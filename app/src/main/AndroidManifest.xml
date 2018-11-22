@@ -32,6 +32,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+
         <!-- Add Google Map Library -->
         <uses-library android:name="com.google.android.maps" />
 
@@ -740,6 +741,11 @@
 
         <activity
             android:name=".universal.ActivityListKaryawan"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".universal.activity.ActivityAbout"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />
 

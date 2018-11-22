@@ -1,6 +1,10 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
+<<<<<<< HEAD
  * Original file: D:\\project\\POI-templated-\\openCVLibrary343\\src\\main\\aidl\\org\\opencv\\engine\\OpenCVEngineInterface.aidl
+=======
+ * Original file: /home/vincent/POI-templated-/openCVLibrary343/src/main/aidl/org/opencv/engine/OpenCVEngineInterface.aidl
+>>>>>>> 4e5056d9a14850d6220a748dd711b7b86a711548
  */
 package org.opencv.engine;
 /**

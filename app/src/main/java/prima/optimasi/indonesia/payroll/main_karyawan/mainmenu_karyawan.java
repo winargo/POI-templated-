@@ -44,10 +44,22 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.main_kabag.ActivityAbsensi;
+<<<<<<< HEAD
 import prima.optimasi.indonesia.payroll.universal.ActivityLogAbsensi;
 import prima.optimasi.indonesia.payroll.universal.ActivityPengajuan;
 import prima.optimasi.indonesia.payroll.universal.ActivityPengumuman;
 
+=======
+import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
+import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentCekGaji;
+import prima.optimasi.indonesia.payroll.universal.activity.ActivityAbout;
+import prima.optimasi.indonesia.payroll.universal.activity.ActivityLogAbsensi;
+import prima.optimasi.indonesia.payroll.universal.activity.ActivityPengajuan;
+import prima.optimasi.indonesia.payroll.universal.activity.ActivityPengumuman;
+import qrcodescanner.QrCodeActivity;
+
+import com.bumptech.glide.load.engine.Resource;
+>>>>>>> 4e5056d9a14850d6220a748dd711b7b86a711548
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
@@ -764,7 +776,11 @@ public class mainmenu_karyawan extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        if(id==R.id.action_settings){
+            Intent intent=new Intent(mainmenu_karyawan.this, ActivityAbout.class);
+            startActivity(intent);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
