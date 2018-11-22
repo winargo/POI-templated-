@@ -118,10 +118,13 @@ public class ActivityListKaryawan extends AppCompatActivity {
                 CalendarView calender = linear.findViewById(R.id.calenderviews);
                 calender.setHeaderColor(R.color.red_500);
 
+
                 //calender.setHeaderColor(ActivityListKaryawan.this.getResources().getColor(R.color.red_500));
 
                 Calendar cal = Calendar.getInstance();
-
+                if(getIntent().getStringExtra("keterangan").equals("absen") ||  getIntent().getStringExtra("keterangan").equals("telat")) {
+                    calender.setMaximumDate(cal);
+                }
                 calender.setOnDayClickListener(new OnDayClickListener() {
                     @Override
                     public void onDayClick(EventDay eventDay) {
@@ -564,13 +567,13 @@ public class ActivityListKaryawan extends AppCompatActivity {
         String urldata = generator.getabsensidateurl;
         String passeddata = "" ;
 
-        public retriveabsen(Context context,int karyawnjumlah)
+        public retriveabsen(Context context,int karyawanjumlah)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
             //dialog = new ProgressDialog(context);
             this.username = generator.username;
             this.password = generator.password;
-            karyawnjumlah=karyawnjumlah;
+            this.karyawanjumlah=karyawanjumlah;
             this.error = error ;
         }
 
@@ -689,16 +692,23 @@ public class ActivityListKaryawan extends AppCompatActivity {
                                         hadir=true;
                                         break;
                                     }
-                                    else if(i+1==pengsarray.length() && !hadir){
+                                    if(i+1==pengsarray.length() && !hadir){
                                         items.add(total.get(j));
                                     }
                                 }
                             }
 
-                            adapter=new AdapterListKaryawan(ActivityListKaryawan.this,items, ItemAnimation.BOTTOM_UP);
-                            recyclerView.setLayoutManager(new LinearLayoutManager(ActivityListKaryawan.this));
-                            recyclerView.setHasFixedSize(true);
-                            recyclerView.setAdapter(adapter);
+                            if(items.size()==0){
+                                recyclerView.setVisibility(View.GONE);
+                                tidakada.setVisibility(View.VISIBLE);
+                                tidakada.setText("Semua Karyawan Hadir");
+                            }
+                            else {
+                                adapter = new AdapterListKaryawan(ActivityListKaryawan.this, items, ItemAnimation.BOTTOM_UP);
+                                recyclerView.setLayoutManager(new LinearLayoutManager(ActivityListKaryawan.this));
+                                recyclerView.setHasFixedSize(true);
+                                recyclerView.setAdapter(adapter);
+                            }
                         }
 
 
