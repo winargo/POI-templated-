@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+<android.support.v7.widget.CardView
     android:layout_width="match_parent" android:layout_height="wrap_content"
     android:id="@+id/repcard"
     android:layout_margin="4sp"
@@ -174,6 +177,13 @@
         </LinearLayout>
 
     </LinearLayout>
-    
+    <ImageView
+        android:id="@+id/status"
+        android:layout_width="@dimen/cap_status"
+        android:layout_height="@dimen/cap_status"
+        android:src="@drawable/ic_approved"
+        android:layout_gravity="right|top"
+        android:layout_margin="@dimen/spacing_middle" />
     
 </android.support.v7.widget.CardView>
+</FrameLayout>

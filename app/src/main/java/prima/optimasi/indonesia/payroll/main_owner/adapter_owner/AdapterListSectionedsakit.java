@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
@@ -52,7 +53,7 @@ public class AdapterListSectionedsakit extends RecyclerView.Adapter<RecyclerView
         public CircularImageView image;
         public TextView name,jabatan,tglawal,tglakhir,tglawaldata,tglakhirdata,keterangandata,keterangan,hari,datahari;
         public CardView card;
-
+        public ImageView status;
         public OriginalViewHolder(View v) {
             super(v);
             tglawal = v.findViewById(R.id.repawal);
@@ -67,6 +68,8 @@ public class AdapterListSectionedsakit extends RecyclerView.Adapter<RecyclerView
             hari = v.findViewById(R.id.replama);
             datahari = v.findViewById(R.id.replamadata);
             card = v.findViewById(R.id.repcard);
+            status=v.findViewById(R.id.status);
+
         }
     }
 
@@ -109,6 +112,8 @@ public class AdapterListSectionedsakit extends RecyclerView.Adapter<RecyclerView
             view.keterangandata.setText(p.getKeterangan());
             view.hari.setText("Waktu Sakit");
             view.datahari.setText(p.getHari() +" Hari");
+            Picasso.get().load(R.drawable.approveds).into(view.status);
+
 
             if(p.getImageurl().contains(".jpg")) {
                 Picasso.get().load(p.getImageurl()).transform(new CircleTransform()).into(view.image);

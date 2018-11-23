@@ -2,56 +2,41 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/grey_5">
+    xmlns:app="http://schemas.android.com/apk/res-au to">
 
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_small"
+            android:layout_marginLeft="@dimen/spacing_middle"
+            android:layout_marginRight="@dimen/spacing_middle"
+            android:layout_marginTop="@dimen/spacing_xsmall"
+            android:visibility="visible"
 
+            app:cardCornerRadius="@dimen/spacing_small"
+            app:cardElevation="2dp">
     <LinearLayout
         android:id="@+id/lyt_parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:clickable="true"
-        android:padding="@dimen/spacing_large">
+        android:padding="@dimen/spacing_large"
+        android:background="@color/grey_3">
 
-        <LinearLayout
+
+        <TextView
+            android:id="@+id/jenis"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="@dimen/spacing_large">
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/jenis"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:text="Jenis"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                    android:textColor="@color/colorPrimary"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <ImageView
-                        android:id="@+id/status"
-                        android:layout_width="?attr/actionBarSize"
-                        android:layout_height="?attr/actionBarSize"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_approved"/>
-                </FrameLayout>
-            </LinearLayout>
-        </LinearLayout>
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Jenis"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            android:textColor="@color/colorPrimary"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -95,6 +80,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:gravity="center"
+                android:layout_marginRight="@dimen/spacing_large"
                 android:orientation="vertical">
 
                 <TextView
@@ -134,4 +120,13 @@
             android:textColor="@color/grey_60" />
 
     </LinearLayout>
+        <ImageView
+            android:id="@+id/status"
+            android:layout_width="@dimen/cap_status"
+            android:layout_height="@dimen/cap_status"
+            android:src="@drawable/ic_approved"
+            android:layout_gravity="right|top"
+            android:layout_margin="@dimen/spacing_middle" />
+        </android.support.v7.widget.CardView>
+    </FrameLayout>
 </android.support.constraint.ConstraintLayout>

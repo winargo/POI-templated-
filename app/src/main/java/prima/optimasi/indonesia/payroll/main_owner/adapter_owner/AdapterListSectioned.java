@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
@@ -54,6 +55,7 @@ public class AdapterListSectioned extends RecyclerView.Adapter<RecyclerView.View
         public CircularImageView image;
         public TextView name,jabatan,tglawal,tglakhir,tglawaldata,tglakhirdata,keterangandata,keterangan,hari,datahari;
         public CardView card;
+        public ImageView status;
 
         public OriginalViewHolder(View v) {
             super(v);
@@ -69,6 +71,8 @@ public class AdapterListSectioned extends RecyclerView.Adapter<RecyclerView.View
             hari = v.findViewById(R.id.replama);
             datahari = v.findViewById(R.id.replamadata);
             card = v.findViewById(R.id.repcard);
+            status = v.findViewById(R.id.status);
+
         }
     }
 
@@ -144,15 +148,18 @@ public class AdapterListSectioned extends RecyclerView.Adapter<RecyclerView.View
             ColorStateList myList = new ColorStateList(states, colors1);
 
             if(p.getStatus().equals("Diterima")){
-                view.card.setBackgroundTintList(myList);
+                Picasso.get().load(R.drawable.approveds).into(view.status);
+                //view.card.setBackgroundTintList(myList);
             }
             else if(p.getStatus().equals("Ditolak")){
-                myList = new ColorStateList(states, colors);
-                view.card.setBackgroundTintList(myList);
+                Picasso.get().load(R.drawable.rejects).into(view.status);
+                //myList = new ColorStateList(states, colors);
+                //view.card.setBackgroundTintList(myList);
             }
             else{
-                myList = new ColorStateList(states, colors2);
-                view.card.setBackgroundTintList(myList);
+                Picasso.get().load(R.drawable.pendings).into(view.status);
+                //myList = new ColorStateList(states, colors2);
+                //view.card.setBackgroundTintList(myList);
             }
 
             if(p.getImageurl().contains(".jpg")) {

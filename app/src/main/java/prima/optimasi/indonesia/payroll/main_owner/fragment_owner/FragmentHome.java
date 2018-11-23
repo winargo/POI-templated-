@@ -1942,6 +1942,7 @@ public class FragmentHome extends Fragment {
                         // "otoritas":2,"periode_gaji":"Bulanan","qrcode_file":"80337212a476fb0f2ca191c814dc9396.png","jabatan":"Mobile Programmer","keterangan":"-","tunjangan":0}
 
 
+                        /*
                         int panjang=0;
                         for(int i=0; i<pengsarray.length();i++){
                             SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd");
@@ -1960,9 +1961,9 @@ public class FragmentHome extends Fragment {
                                 Log.e("PANJANG",""+panjang);
                             }
                         }
-                        tv.setText(String.valueOf(panjang));
+                        tv.setText(String.valueOf(panjang));*/
 
-                        //tv.setText(String.valueOf(pengsarray.length()));
+                        tv.setText(String.valueOf(pengsarray.length()));
                         lyt.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
