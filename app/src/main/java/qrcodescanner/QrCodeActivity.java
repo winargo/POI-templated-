@@ -192,6 +192,7 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
         initBeepSound();
         mVibrate = true;
 
+
     }
 
     @Override
@@ -202,6 +203,11 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
             mCaptureActivityHandler = null;
         }
         CameraManager.get().closeDriver();
+
+        generator.tempactivity = null;
+        generator.lm.removeUpdates(generator.listernerlocation);
+        setResult(RESULT_OK);
+        finish();
     }
 
     @Override
@@ -1113,6 +1119,8 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
     public void onBackPressed() {
         generator.tempactivity = null;
         generator.lm.removeUpdates(generator.listernerlocation);
-        super.onBackPressed();
+        setResult(RESULT_OK);
+        finish();
+
     }
 }

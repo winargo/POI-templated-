@@ -2127,6 +2127,7 @@ public class FragmentHome extends Fragment {
                                     data1.add(obj.getDouble("potonganTelat"));
                                     data1.add(obj.getDouble("hariKerja"));
                                     data1.add(obj.getDouble("umk"));
+                                    data1.add(obj.getDouble("gajiHari"));
                                     dataall.add(data1);
                                     datakode.add(obj.getString("kode"));
                                 }
@@ -2642,13 +2643,15 @@ public class FragmentHome extends Fragment {
                             //data1.add(obj.getDouble("potonganTelat"));
                             //data1.add(obj.getDouble("hariKerja"));
                             //data1.add(obj.getDouble("umk"));
+                            //data1.add(obj.getDouble("gajiHari"));
                             //dataall.add(data1);
                             //datakode.add(obj.getString("kode"));
 
                             Log.e(TAG, "dataallvalues "+dataall.get(current).get(0)+" "+ dataall.get(current).get(1)+ " "+ dataall.get(current).get(2)+ " " + dataall.get(current).get(3)+" "+ dataall.get(current).get(4)+" "+dataall.get(current).get(6) +" "+ dataall.get(current).get(5)+" "+ result.getDouble("data"));
 
                             if(result.getDouble("data")!=0){
-                                    Valuechart = Valuechart +((dataall.get(current).get(6)/ dataall.get(current).get(5) * result.getDouble("data")) + dataall.get(current).get(0)-dataall.get(current).get(1)-dataall.get(current).get(2)+dataall.get(current).get(3)-dataall.get(current).get(4));
+                                //Valuechart = Valuechart +((dataall.get(current).get(6)/ dataall.get(current).get(5) * result.getDouble("data")) + dataall.get(current).get(0)-dataall.get(current).get(1)-dataall.get(current).get(2)+dataall.get(current).get(3)-dataall.get(current).get(4));
+                                Valuechart = Valuechart +((dataall.get(current).get(7) * result.getDouble("data")) + dataall.get(current).get(0)-dataall.get(current).get(1)-dataall.get(current).get(2)+dataall.get(current).get(3)-dataall.get(current).get(4));
                             }
 
                             DecimalFormat fomatter = new DecimalFormat("###,###,###.00");
@@ -2747,6 +2750,10 @@ public class FragmentHome extends Fragment {
                                 }
                                 else {
                                     mRealm.close();
+
+                                    if(dialog.isShowing()){
+                                        dialog.dismiss();
+                                    }
                                 }
                             }
 

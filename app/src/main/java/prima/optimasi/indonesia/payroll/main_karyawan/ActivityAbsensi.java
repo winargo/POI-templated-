@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -236,9 +238,42 @@ public class ActivityAbsensi extends AppCompatActivity {
     }
 
     private  void  invokegpsabsence(int issecurity, int typeabsensi, FloatingActionButton passedbutton){
+
+        checker=1;
+
         generator.lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        passedbutton.setEnabled(false);
+        int[][] states = new int[][] {
+                new int[] { android.R.attr.state_enabled}, // enabled
+                new int[] {-android.R.attr.state_enabled}, // disabled
+                new int[] {-android.R.attr.state_checked}, // unchecked
+                new int[] { android.R.attr.state_pressed}  // pressed
+        };
+
+        int[] colors = new int[] {
+                getResources().getColor(R.color.colorPrimary),
+                Color.RED,
+                Color.GREEN,
+                getResources().getColor(R.color.colorPrimary)
+        };
+
+        ColorStateList myList = new ColorStateList(states, colors);
+
+        breakin.setEnabled(false);
+        breakout.setEnabled(false);
+        checkin.setEnabled(false);
+        checkout.setEnabled(false);
+        extrain.setEnabled(false);
+        extraout.setEnabled(false);
+        absensi.setEnabled(false);
+
+        breakin.setBackgroundTintList(myList);
+        breakout.setBackgroundTintList(myList);
+        checkin.setBackgroundTintList(myList);
+        checkout.setBackgroundTintList(myList);
+        extrain.setBackgroundTintList(myList);
+        extraout.setBackgroundTintList(myList);
+        absensi.setBackgroundTintList(myList);
 
         final String[] data = {""};
 
@@ -269,7 +304,7 @@ public class ActivityAbsensi extends AppCompatActivity {
                     intent[0].putExtra("absensi", typeabsensi);
                     intent[0].putExtra("security", issecurity);
                     intent[0].putExtra("keepalive", 1);
-                    startActivity(intent[0]);
+                    startActivityForResult(intent[0],200);
                 }
                 else {
 
@@ -318,6 +353,87 @@ public class ActivityAbsensi extends AppCompatActivity {
         };
 
         generator.lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,0,0,generator.listernerlocation);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(checker==0){
+            super.onBackPressed();
+        }
+        else{
+            int[][] states = new int[][] {
+                    new int[] { android.R.attr.state_enabled}, // enabled
+                    new int[] {-android.R.attr.state_enabled}, // disabled
+                    new int[] {-android.R.attr.state_checked}, // unchecked
+                    new int[] { android.R.attr.state_pressed}  // pressed
+            };
+
+            int[] colors = new int[] {
+                    getResources().getColor(R.color.colorPrimary),
+                    Color.RED,
+                    Color.GREEN,
+                    getResources().getColor(R.color.colorPrimary)
+            };
+
+            ColorStateList myList = new ColorStateList(states, colors);
+
+            breakin.setEnabled(true);
+            breakout.setEnabled(true);
+            checkin.setEnabled(true);
+            checkout.setEnabled(true);
+            extrain.setEnabled(true);
+            extraout.setEnabled(true);
+            absensi.setEnabled(true);
+
+            breakin.setBackgroundTintList(myList);
+            breakout.setBackgroundTintList(myList);
+            checkin.setBackgroundTintList(myList);
+            checkout.setBackgroundTintList(myList);
+            extrain.setBackgroundTintList(myList);
+            extrain.setBackgroundTintList(myList);
+            checker=0;
+        }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode==200){
+            if(resultCode==RESULT_OK){
+
+                int[][] states = new int[][] {
+                        new int[] { android.R.attr.state_enabled}, // enabled
+                        new int[] {-android.R.attr.state_enabled}, // disabled
+                        new int[] {-android.R.attr.state_checked}, // unchecked
+                        new int[] { android.R.attr.state_pressed}  // pressed
+                };
+
+                int[] colors = new int[] {
+                        getResources().getColor(R.color.colorPrimary),
+                        Color.RED,
+                        Color.GREEN,
+                        getResources().getColor(R.color.colorPrimary)
+                };
+
+                ColorStateList myList = new ColorStateList(states, colors);
+
+                breakin.setEnabled(true);
+                breakout.setEnabled(true);
+                checkin.setEnabled(true);
+                checkout.setEnabled(true);
+                extrain.setEnabled(true);
+                extraout.setEnabled(true);
+                absensi.setEnabled(true);
+
+                breakin.setBackgroundTintList(myList);
+                breakout.setBackgroundTintList(myList);
+                checkin.setBackgroundTintList(myList);
+                checkout.setBackgroundTintList(myList);
+                extrain.setBackgroundTintList(myList);
+                extraout.setBackgroundTintList(myList);
+                absensi.setBackgroundTintList(myList);
+            }
+        }
     }
 
 }
