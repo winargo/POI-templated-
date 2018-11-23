@@ -347,6 +347,7 @@ public class ActivityListKaryawan extends AppCompatActivity {
                         }
                         else{
                             tidakada.setVisibility(View.GONE);
+
                             /*
                             int panjang=0;
                             for(int i=0; i<pengsarray.length();i++){
@@ -376,7 +377,11 @@ public class ActivityListKaryawan extends AppCompatActivity {
                                     panjang++;
                                     Log.e("PANJANG",""+panjang);
                                 }
+                                else{
+                                    Log.e("PANJANG","NULL");
+                                }
                             }*/
+
 
                             for (int i=0;i<pengsarray.length();i++){
                                 JSONObject obj=pengsarray.getJSONObject(i);

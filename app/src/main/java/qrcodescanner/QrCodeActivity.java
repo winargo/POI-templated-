@@ -211,7 +211,15 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
         }
 
         generator.tempactivity = null;
+<<<<<<< HEAD
 
+=======
+        if(generator.lm!=null){
+            generator.lm.removeUpdates(generator.listernerlocation);
+            setResult(RESULT_OK);
+            finish();
+        }
+>>>>>>> acc10367c3cf95e35ad22d6e9a0b3f5697c01d04
     }
 
     @Override
