@@ -2290,8 +2290,6 @@ public class FragmentHome extends Fragment {
                             Log.e("chartmonthposition",position+"" );
 
                             if(position+1==12){
-                                mRealm.close();
-
                                 dialog.setMessage("Memuat Data Summary");
 
                                 for(int i=0;i<tipegaji.length;i++){
@@ -2400,7 +2398,6 @@ public class FragmentHome extends Fragment {
                             barChart.invalidate();
 
                             if(position+1==12){
-                                mRealm.close();
 
                                 dialog.setMessage("Memuat Data Summary");
 
@@ -2461,5 +2458,10 @@ public class FragmentHome extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mRealm.close();
+    }
 }
 
