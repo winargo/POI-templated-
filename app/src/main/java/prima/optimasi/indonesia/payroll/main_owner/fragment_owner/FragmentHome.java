@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.renderscript.Sampler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -199,9 +201,10 @@ public class FragmentHome extends Fragment {
         dialog.setTitle("Memuat Dashboard");
         dialog.setMessage("Memuat Data Chart...Mohon Tunggu");
 
-
         final int[] count = {0};
         for(int i =0 ; i<monthbarbottom.size();i++) {
+
+
 
             Calendar c = Calendar.getInstance();
 
@@ -233,11 +236,12 @@ public class FragmentHome extends Fragment {
             Log.e("chart data nowdata",value.toString() );
 
 
-        }
-        dialog.setMessage("Memuat Data Chart...Mohon Tunggu");
 
-        retrivegajimentah0 gajim = new retrivegajimentah0(getActivity(),0);
-        gajim.execute();
+            retrivegajimentah0 gajim = new retrivegajimentah0(getActivity(),i);
+            gajim.execute();
+
+        }
+
 
         Calendar c = Calendar.getInstance();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -326,24 +330,13 @@ public class FragmentHome extends Fragment {
         lyt_ket.add(lyt_totalcuti);
         lyt_ket.add(lyt_totaldinas);
         lyt_ket.add(lyt_totaltelat);
-        for(int i=0;i<kontrak_kerja.length;i++){
-            retrivekontrakkerjakar k_k=new retrivekontrakkerjakar(parent_view.getContext(),kontrak_kerja[i], kk.get(i),rv_kk.get(i),banyakkontrakkerja.get(i));
-            k_k.execute();
-        }
 
-        for(int i=0;i<keterangan.length;i++){
-            retriveketerangan keterangans=new retriveketerangan(getActivity(), keterangan[i], ket.get(i), lyt_ket.get(i));
-            keterangans.execute();
-        }
 
-        for(int i=0;i<tipegaji.length;i++){
-            retrivetotalgaji kar = new retrivetotalgaji(getActivity(),tgaji.get(i),tipegaji[i]);
-            kar.execute();
-        }
+
         banyakkaryawan=0;
         totalkaryawan=0;
-        retrivegetjabatan jab=new retrivegetjabatan(getActivity());
-        jab.execute();
+
+
 
         expand.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -541,10 +534,81 @@ public class FragmentHome extends Fragment {
                 lyt_expand3.setVisibility(View.GONE);
                 expand3.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
 
-                ProgressDialog dialog = new ProgressDialog(getActivity());
-                dialog.setMessage("Loading Charts");
+                mRealm = Realm.getDefaultInstance();
 
+                barChart =rootView.findViewById(R.id.incbarchart);
+
+                mRealm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        RealmResults<datagajiobject> rows = realm.where(datagajiobject.class).findAll();
+                        rows.deleteAllFromRealm();
+                    }
+                });
+
+                Calendar calendar = Calendar.getInstance();
+
+                int thisYear = calendar.get(Calendar.YEAR);
+
+                SimpleDateFormat sdfyear = new SimpleDateFormat("MMM");
+                SimpleDateFormat sdf = new SimpleDateFormat("MMM-yy");
+                Calendar cal = Calendar.getInstance();
+
+                cal.add(Calendar.MONTH, -12);
+
+
+
+                monthbarbottom = new ArrayList<>();
+                dt1 = new ArrayList<>();
+                dt2 = new ArrayList<>();
+                List<String> monthnumber = new ArrayList<>();
+                List<Integer> yearnumber = new ArrayList<>();
+
+                dialog.setTitle("Memuat Data");
+                dialog.setMessage("Mengambil Data Bulanan");
+
+                for(int i = 0; i< 12; i++) {
+                    cal.add(Calendar.MONTH, 1);
+
+                    dialog.setMessage("Mengambil Data Bulanan "+cal.get(Calendar.MONTH)+1);
+
+                    monthbarbottom.add(sdf.format(cal.getTime()));
+
+                    //f((Calendar.MONTH+"").length()){
+                    //Log.e("month data",""+(cal.get(Calendar.MONTH)+1) );
+                    monthnumber.add(""+(cal.get(Calendar.MONTH)+1));
+            /*}
+            else {
+                Log.e("month data","0"+(cal.get(Calendar.MONTH)+1) );
+                monthnumber.add("0"+(cal.get(Calendar.MONTH)+1));
+            }*/
+
+
+                    yearnumber.add(cal.get(Calendar.YEAR));
+
+                    Log.e("Month data",(cal.get(Calendar.MONTH)+1)+" / "+cal.get(Calendar.YEAR) );
+
+
+                    if (i == 0) {
+                        perios = perios + sdf.format(cal.getTime()) + " - ";
+                    }
+                    if (i == 11) {
+                        perios = perios + sdf.format(cal.getTime());
+                    }
+
+                    System.out.println(sdf.format(cal.getTime()) + sdfyear.format(cal.getTime()));
+                    int finalI = i;
+
+
+                }
+
+                dialog.setTitle("Memuat Dashboard");
+                dialog.setMessage("Memuat Data Chart...Mohon Tunggu");
+
+                final int[] count = {0};
                 for(int i =0 ; i<monthbarbottom.size();i++) {
+
+
 
                     Calendar c = Calendar.getInstance();
 
@@ -554,15 +618,32 @@ public class FragmentHome extends Fragment {
                         e.printStackTrace();
                     }
 
-                    String dt1 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-0"+c.get(Calendar.DAY_OF_MONTH);
-                    String dt2 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-"+c.getActualMaximum(Calendar.DAY_OF_MONTH);
+                    Double value =0.0d;
 
+                    finalPerios = perios;
+
+                    SimpleDateFormat fomat = new SimpleDateFormat("yyyy-MM-dd");
+
+                    String dat1 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-0"+c.get(Calendar.DAY_OF_MONTH);
+                    String dat2 = yearnumber.get(i)+"-"+monthnumber.get(i)+"-"+c.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+                    dt1.add(dat1);
+                    dt2.add(dat2);
+
+                    dialog.setMessage(dt1.get(i)+" - "+dt2.get(i));
 
                     List<List<Double>> thedatamentah;
                     thedatamentah = new ArrayList<>();
 
-                    //retrivegajimentah gaji = new retrivegajimentah(getActivity(), dt1, dt2 ,da);
-                    //gaji.execute();
+
+
+                    Log.e("chart data nowdata",value.toString() );
+
+
+
+                    retrivegajimentah0 gajim = new retrivegajimentah0(getActivity(),i);
+                    gajim.execute();
+
                 }
 
                 for (int i = 0; i < kontrak_kerja.length; i++) {
@@ -588,7 +669,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-        ProgressDialog dialog ;
         String urldata;
         String passeddata = "" ;
         TextView tv;
@@ -833,7 +913,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-        ProgressDialog dialog ;
         String urldata;
         String passeddata = "" ;
         TextView tv;
@@ -1080,7 +1159,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-        ProgressDialog dialog ;
         String urldata = generator.jabatanurl;
         String passeddata = "" ;
 
@@ -1181,6 +1259,10 @@ public class FragmentHome extends Fragment {
                             recyclerViewdaftar.setLayoutManager(new LinearLayoutManager(getActivity()));
                             recyclerViewdaftar.setHasFixedSize(true);
                             recyclerViewdaftar.setAdapter(adapterabsensi);
+
+                            if(dialog.isShowing()){
+                                dialog.dismiss();
+                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -1218,7 +1300,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-        ProgressDialog dialog ;
         String urldata = generator.jabatanurl;
         String passeddata = "" ;
 
@@ -1352,7 +1433,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-        ProgressDialog dialog ;
         String urldata = generator.daftarabsensiurl;
         String passeddata = "" ;
         String jabatan="";
@@ -1511,7 +1591,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-        ProgressDialog dialog ;
         String urldata = generator.daftarabsensiurl;
         String passeddata = "" ;
         String jabatan="";
@@ -1642,10 +1721,7 @@ public class FragmentHome extends Fragment {
                             //refreshhome.setRefreshing(false);
 
 
-                            for(int i=0;i<tipegaji.length;i++){
-                                retrivetotalgaji kar = new retrivetotalgaji(getActivity(),tgaji.get(i),tipegaji[i]);
-                                kar.execute();
-                            }
+
 
 
                         }
@@ -1682,7 +1758,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-        ProgressDialog dialog ;
         String urldata;
         String passeddata = "" ;
         TextView tv;
@@ -1718,8 +1793,29 @@ public class FragmentHome extends Fragment {
                 try {
                     OkHttpClient client = new OkHttpClient();
 
-                    RequestBody body = new FormBody.Builder()
-                            .build();
+                    RequestBody body=null;
+
+                    Calendar cal = Calendar.getInstance();
+
+                    cal.setTime(new Date());
+
+                    cal.add(Calendar.MONTH,-1);
+
+                    String dat1 = cal.get(Calendar.YEAR)+"-"+(cal.get(Calendar.MONTH)+1)+"-01";
+                    String dat2 = cal.get(Calendar.YEAR)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+                    Log.e(TAG, "datagajitotal"+dat1+" "+dat2 );
+
+                    if(tipe.equals("bersih")){
+                        body = new FormBody.Builder()
+                                .add("start",dat1)
+                                .add("end",dat2)
+                                .build();
+                    }
+                    else{
+                        body = new FormBody.Builder()
+                                .build();
+                    }
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
@@ -1828,7 +1924,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-        ProgressDialog dialog ;
         String urldata = "";
         String passeddata = "" ;
         String keterangan="";
@@ -2014,7 +2109,7 @@ public class FragmentHome extends Fragment {
         SharedPreferences prefs ;
         Double value = 0.0d;
         JSONObject result = null ;
-        String urldata = generator.getgajibytwodate;
+        String urldata = generator.totalgajiurl;
         SimpleDateFormat sdfchart = new SimpleDateFormat("yyyy-MM-dd");
         int position;
 
@@ -2075,16 +2170,19 @@ public class FragmentHome extends Fragment {
                     e.printStackTrace();
                 }
             } catch (IOException e) {
+                e.printStackTrace();
                 //this.dialog.dismiss();
                 Log.e("doInBackground: ", "IO Exception" + e.getMessage());
                 generator.jsondatalogin = null;
             } catch (NullPointerException e) {
                 //this.dialog.dismiss();
+                e.printStackTrace();
                 Log.e("doInBackground: ", "null data" + e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Please check Connection and Server";
             } catch (Exception e) {
                 //this.dialog.dismiss();
+                e.printStackTrace();
                 Log.e("doInBackground: ", e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Error Occured, PLease Contact Administrator/Support";
@@ -2101,54 +2199,15 @@ public class FragmentHome extends Fragment {
                 Log.e(TAG, "retrive gaji mentah:"+result.toString() );
                 if (result != null) {
                     try {
-                        dialog.setMessage("Memuat Data Gaji ("+(position+1)+")");
+                        dialog.setMessage("Memuat Data Chart...("+position+1+"/12)Mohon Tunggu");
                         if(result.getString("status").equals("true")){
 
+                            JSONObject obj = result.getJSONObject("data");
 
+                            value = 0.0d;
 
-                            JSONArray obj2 = result.getJSONArray("data");
+                            value = value +obj.getDouble("gajiBersih");
 
-                            Log.e("data "+position, result.toString() );
-                            List<Double> data1 = new ArrayList<>();
-                            List<String> datakode = new ArrayList<>();
-                            List<List<Double>> dataall = new ArrayList<>();
-
-                            for (int i=0 ; i<obj2.length();i++){
-                                JSONObject obj = obj2.getJSONObject(i);
-                                if(obj.getString("umk").equals("null")){
-
-                                }
-                                else{
-
-                                    data1.add(obj.getDouble("tunjangan"));
-                                    data1.add(obj.getDouble("punishment"));
-                                    data1.add(obj.getDouble("bpjs"));
-                                    data1.add(obj.getDouble("reward"));
-                                    data1.add(obj.getDouble("potonganTelat"));
-                                    data1.add(obj.getDouble("hariKerja"));
-                                    data1.add(obj.getDouble("umk"));
-                                    data1.add(obj.getDouble("gajiHari"));
-                                    dataall.add(data1);
-                                    datakode.add(obj.getString("kode"));
-                                }
-
-                            }
-
-                            Double Valuechart = 0.0d;
-
-                            DecimalFormat fomatter = new DecimalFormat("###,###,###.00");
-
-                            dialog.setMessage("Memuat Data Gaji ("+(position+1)+")\n"+fomatter.format(value));
-
-                            retrivegajimentahrecurse gaji = new retrivegajimentahrecurse(getActivity(),data1,datakode,position,0,datakode.size()-1,dataall,Valuechart);
-                            gaji.execute();
-
-
-                            Log.e("data1dankode", data1.size()+" "+datakode.size()+" "+dataall.size());
-
-
-                        }
-                        else {
                             mRealm.beginTransaction();
                             datagajiobject score1 = new datagajiobject(value.floatValue(), (float) position, monthbarbottom.get(position));
                             //Log.e("replace", "/" + String.valueOf(thisYear) + " " + datesdata.get(finalI));
@@ -2229,166 +2288,38 @@ public class FragmentHome extends Fragment {
 
                             Log.e("chartmonthposition",position+"" );
 
-                            if(position<12) {
-                                retrivegajimentah0 gajim = new retrivegajimentah0(getActivity(), position + 1);
-                                gajim.execute();
-                            }
-                            else {
+                            if(position+1==12){
                                 mRealm.close();
-                            }
 
+                                dialog.setMessage("Memuat Data Summary");
+
+                                for(int i=0;i<tipegaji.length;i++){
+                                    retrivetotalgaji kar = new retrivetotalgaji(getActivity(),tgaji.get(i),tipegaji[i]);
+                                    kar.execute();
+                                }
+
+                                dialog.setMessage("Memuat Data Kontrak");
+
+                                for(int i=0;i<kontrak_kerja.length;i++){
+                                    retrivekontrakkerjakar k_k=new retrivekontrakkerjakar(parent_view.getContext(),kontrak_kerja[i], kk.get(i),rv_kk.get(i),banyakkontrakkerja.get(i));
+                                    k_k.execute();
+                                }
+
+                                dialog.setMessage("Memuat Data Aktifitas");
+
+                                for(int i=0;i<keterangan.length;i++){
+                                    retriveketerangan keterangans=new retriveketerangan(getActivity(), keterangan[i], ket.get(i), lyt_ket.get(i));
+                                    keterangans.execute();
+                                }
+
+                                dialog.setMessage("Memuat Data summary karyawan");
+
+                                retrivegetjabatan jab=new retrivegetjabatan(getActivity());
+                                jab.execute();
+
+                            }
                         }
-                        Log.e("data kode",result.toString() );
-
-                        //JSONArray pengsarray = result.getJSONArray("data");
-
-                        //int gaji=1000000;
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "onPostExecute: " + e.getMessage());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "onPostExecute: " + e.getMessage());
-                    }
-
-
-
-                } else {
-                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi ", Snackbar.LENGTH_SHORT).show();
-                }
-            }catch (Exception E){
-                E.printStackTrace();
-                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
-                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
-            }
-        }
-    }
-/*
-    private class retrivegajibychart0 extends AsyncTask<Void, Integer, String >
-    {
-        String response = "";
-        SharedPreferences prefs ;
-        JSONObject result = null ;
-        ProgressDialog dialog ;
-        String urldata = generator.chartgajineedkode;
-        int position,itempos;
-        Double value = 0.0d;
-
-        List<String> datacode;
-        List<Double> datad;
-        List<List<Double>> dataall;
-
-
-
-        int[] count;
-        int current=0;
-        int last = 0;
-
-        public retrivegajibychart0(Context context,List<Double> datad , List<String> datakode,int position ,int itemposition,int lastp,List<List<Double>> dataalls)
-        {
-            Log.e(TAG, "retrivegajibychart0: "+"started" );
-            dataall = dataalls;
-            current = itemposition;
-            last = lastp;
-            this.datad = datad;
-            this.datacode = datakode;
-            this.position = position;
-            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
-            this.itempos = itemposition;
-        }
-
-        String TAG = getClass().getSimpleName();
-
-
-        protected String doInBackground(Void...arg0) {
-            Log.d(TAG + " DoINBackGround","On doInBackground...");
-
-            try {
-
-                JSONObject jsonObject;
-
-                try {
-                    OkHttpClient client = new OkHttpClient();
-
-                    Log.e("gaji by chart "+position,dt1.get(position)+" "+dt2.get(position) + " data kode "+ datacode.get(position) );
-
-                    RequestBody body = new FormBody.Builder()
-                            .add("start",dt1.get(position))
-                            .add("end",dt2.get(position))
-                            .add("kode",datacode.get(itempos))
-                            .build();
-
-                    Request request = new Request.Builder()
-                            .header("Authorization",prefs.getString("Authorization",""))
-                            .post(body)
-                            .url(urldata)
-                            .build();
-                    Response responses = null;
-
-                    try {
-                        responses = client.newCall(request).execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        jsonObject =  null;
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        jsonObject = null;
-                    }
-
-                    if (responses==null){
-                        jsonObject = null;
-                        Log.e(TAG, "NULL");
-                    }
-                    else {
-
-                        result = new JSONObject(responses.body().string());
-
-
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } catch (IOException e) {
-                //this.dialog.dismiss();
-                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
-                generator.jsondatalogin = null;
-            } catch (NullPointerException e) {
-                //this.dialog.dismiss();
-                Log.e("doInBackground: ", "null data" + e.getMessage());
-                generator.jsondatalogin = null;
-            } catch (Exception e) {
-                //this.dialog.dismiss();
-                Log.e("doInBackground: ", e.getMessage());
-                generator.jsondatalogin = null;
-            }
-            return  response;
-        }
-
-
-
-        protected void onPostExecute(String result1) {
-
-            try {
-
-                if (result != null) {
-                    Log.e(TAG, "String " + result.toString());
-                    try {
-                        if(result.getString("status").equals("true")){
-
-                            if(result.getDouble("data")!=0){
-                                Valuechart = Valuechart +( dataall.get(current).get(0)+ dataall.get(current).get(1)+ dataall.get(current).get(2)- dataall.get(current).get(3)+ dataall.get(current).get(4)+ (dataall.get(current).get(6)/ dataall.get(current).get(5) * result.getDouble("data")));
-                            }
-
-                            Log.e("valuecalculate",Valuechart.toString() );
-
-                            Log.e("Currentorlast",current+" "+last);
-
-
-
-                            DecimalFormat formattery = new DecimalFormat("###,###,###.00");
-
-
+                        else {
                             mRealm.beginTransaction();
                             datagajiobject score1 = new datagajiobject(value.floatValue(), (float) position, monthbarbottom.get(position));
                             //Log.e("replace", "/" + String.valueOf(thisYear) + " " + datesdata.get(finalI));
@@ -2467,33 +2398,46 @@ public class FragmentHome extends Fragment {
 
                             barChart.invalidate();
 
-                            if(current==last){
-                                if(position<11) {
-                                    retrivegajimentah0 gajim = new retrivegajimentah0(getActivity(), position + 1);
-                                    gajim.execute();
+                            if(position+1==12){
+                                mRealm.close();
+
+                                dialog.setMessage("Memuat Data Summary");
+
+                                for(int i=0;i<tipegaji.length;i++){
+                                    retrivetotalgaji kar = new retrivetotalgaji(getActivity(),tgaji.get(i),tipegaji[i]);
+                                    kar.execute();
                                 }
-                                else {
-                                    mRealm.close();
+
+                                dialog.setMessage("Memuat Data Kontrak");
+
+                                for(int i=0;i<kontrak_kerja.length;i++){
+                                    retrivekontrakkerjakar k_k=new retrivekontrakkerjakar(parent_view.getContext(),kontrak_kerja[i], kk.get(i),rv_kk.get(i),banyakkontrakkerja.get(i));
+                                    k_k.execute();
                                 }
-                            }
-                            else {
+
+                                dialog.setMessage("Memuat Data Aktifitas");
+
+                                for(int i=0;i<keterangan.length;i++){
+                                    retriveketerangan keterangans=new retriveketerangan(getActivity(), keterangan[i], ket.get(i), lyt_ket.get(i));
+                                    keterangans.execute();
+                                }
+
+                                dialog.setMessage("Memuat Data summary karyawan");
+
+                                retrivegetjabatan jab=new retrivegetjabatan(getActivity());
+                                jab.execute();
 
                             }
-
-                            //mRealm.close();
 
 
 
                         }
-
-
+                        Log.e("chartmonthposition",position+1+"" );
+                        Log.e("data kode",result.toString() );
 
                         //JSONArray pengsarray = result.getJSONArray("data");
 
                         //int gaji=1000000;
-
-                        Log.e("gaji "+position,value+"" );
-                        Log.e("current "+current+" "+ last,value+"" );
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -2508,296 +2452,12 @@ public class FragmentHome extends Fragment {
                 } else {
                     Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi ", Snackbar.LENGTH_SHORT).show();
                 }
-
-                if(monthbarbottom.size()==position){
-                    if(dialog!=null){
-                        if(dialog.isShowing()){
-                            dialog.dismiss();
-                        }
-                    }
-                }
             }catch (Exception E){
                 E.printStackTrace();
                 Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
                 Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
             }
         }
-
-    }
-*/
-    private class retrivegajimentahrecurse extends AsyncTask<Void, Integer, String >
-    {
-        String response = "";
-        SharedPreferences prefs ;
-        JSONObject result = null ;
-        ProgressDialog dialog ;
-        String urldata = generator.chartgajineedkode;
-        int position,itempos;
-        Double value = 0.0d;
-
-        List<String> datacode;
-        List<Double> datad;
-        List<List<Double>> dataall;
-
-        int[] count;
-        int current=0;
-        Double Valuechart = 0.0d;
-        int last = 0;
-
-        public retrivegajimentahrecurse(Context context,List<Double> datad , List<String> datakode,int position ,int itemposition,int lastp,List<List<Double>> dataalls,Double valuchart)
-        {
-            Valuechart = valuchart;
-            Log.e(TAG, "retrivegajibychartmentahrecurse: "+"started" );
-            dataall = dataalls;
-            current = itemposition;
-            last = lastp;
-            this.datad = datad;
-            this.datacode = datakode;
-            this.position = position;
-            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
-            this.itempos = itemposition;
-        }
-
-        String TAG = getClass().getSimpleName();
-
-
-        protected String doInBackground(Void...arg0) {
-            Log.d(TAG + " DoINBackGround","On doInBackground...");
-
-            try {
-
-                JSONObject jsonObject;
-
-                try {
-                    OkHttpClient client = new OkHttpClient();
-
-                    Log.e("gajibychart "+position,dt1.get(position)+" "+dt2.get(position) + " data kode "+ datacode.get(itempos) );
-
-                    RequestBody body = new FormBody.Builder()
-                            .add("start",dt1.get(position))
-                            .add("end",dt2.get(position))
-                            .add("kode",datacode.get(itempos))
-                            .build();
-
-                    Request request = new Request.Builder()
-                            .header("Authorization",prefs.getString("Authorization",""))
-                            .post(body)
-                            .url(urldata)
-                            .build();
-                    Response responses = null;
-
-                    try {
-                        responses = client.newCall(request).execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        jsonObject =  null;
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        jsonObject = null;
-                    }
-
-                    if (responses==null){
-                        jsonObject = null;
-                        Log.e(TAG, "NULL");
-                    }
-                    else {
-
-                        result = new JSONObject(responses.body().string());
-
-
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } catch (IOException e) {
-                //this.dialog.dismiss();
-                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
-                generator.jsondatalogin = null;
-            } catch (NullPointerException e) {
-                //this.dialog.dismiss();
-                Log.e("doInBackground: ", "null data" + e.getMessage());
-                generator.jsondatalogin = null;
-            } catch (Exception e) {
-                //this.dialog.dismiss();
-                Log.e("doInBackground: ", e.getMessage());
-                generator.jsondatalogin = null;
-            }
-            return  response;
-        }
-
-
-
-        protected void onPostExecute(String result1) {
-
-            try {
-
-                if (result != null) {
-                    Log.e(TAG, "String " + result.toString());
-                    try {
-                        if(result.getString("status").equals("true")){
-
-                            //data1.add(obj.getDouble("tunjangan"));
-                            //data1.add(obj.getDouble("punishment"));
-                            //data1.add(obj.getDouble("bpjs"));
-                            //data1.add(obj.getDouble("reward"));
-                            //data1.add(obj.getDouble("potonganTelat"));
-                            //data1.add(obj.getDouble("hariKerja"));
-                            //data1.add(obj.getDouble("umk"));
-                            //data1.add(obj.getDouble("gajiHari"));
-                            //dataall.add(data1);
-                            //datakode.add(obj.getString("kode"));
-
-                            Log.e(TAG, "dataallvalues "+dataall.get(current).get(0)+" "+ dataall.get(current).get(1)+ " "+ dataall.get(current).get(2)+ " " + dataall.get(current).get(3)+" "+ dataall.get(current).get(4)+" "+dataall.get(current).get(6) +" "+ dataall.get(current).get(5)+" "+ result.getDouble("data"));
-
-                            if(result.getDouble("data")!=0){
-                                //Valuechart = Valuechart +((dataall.get(current).get(6)/ dataall.get(current).get(5) * result.getDouble("data")) + dataall.get(current).get(0)-dataall.get(current).get(1)-dataall.get(current).get(2)+dataall.get(current).get(3)-dataall.get(current).get(4));
-                                Valuechart = Valuechart +((dataall.get(current).get(7) * result.getDouble("data")) + dataall.get(current).get(0)-dataall.get(current).get(1)-dataall.get(current).get(2)+dataall.get(current).get(3)-dataall.get(current).get(4));
-                            }
-
-                            DecimalFormat fomatter = new DecimalFormat("###,###,###.00");
-
-
-                            Log.e("valuecalculate",Valuechart.toString() );
-
-                            Log.e("Currentorlast",current+" "+last);
-
-                            if(current<last){
-                                retrivegajimentahrecurse gaji = new retrivegajimentahrecurse(getActivity(),datad,datacode,position,current+1,datacode.size()-1,dataall,Valuechart);
-                                gaji.execute();
-                            }
-                            else {
-                                mRealm.beginTransaction();
-                                datagajiobject score1 = new datagajiobject(Valuechart.floatValue(), (float) position, monthbarbottom.get(position));
-                                //Log.e("replace", "/" + String.valueOf(thisYear) + " " + datesdata.get(finalI));
-                                mRealm.copyToRealm(score1);
-                                mRealm.commitTransaction();
-
-                                barChart.invalidate();
-                                barChart.getAxisLeft().setDrawGridLines(false);
-                                barChart.getXAxis().setDrawGridLines(false);
-                                barChart.setExtraBottomOffset(5f);
-
-                                barChart.getXAxis().setLabelCount(7);
-                                barChart.getXAxis().setGranularity(1f);
-
-                                // no description text
-                                barChart.getDescription().setEnabled(false);
-
-                                // enable touch gestures
-                                barChart.setTouchEnabled(true);
-
-                                if (barChart instanceof BarLineChartBase) {
-
-                                    BarLineChartBase mChart = (BarLineChartBase) barChart;
-
-                                    mChart.setDrawGridBackground(false);
-
-                                    // enable scaling and dragging
-                                    mChart.setDragEnabled(true);
-                                    mChart.setScaleEnabled(true);
-
-                                    // if disabled, scaling can be done on x- and y-axis separately
-                                    mChart.setPinchZoom(false);
-
-                                    YAxis leftAxis = mChart.getAxisLeft();
-                                    leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
-                                    leftAxis.setTextSize(8f);
-                                    leftAxis.setTextColor(Color.BLACK);
-
-                                    XAxis xAxis = mChart.getXAxis();
-                                    xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-                                    xAxis.setTextSize(8f);
-                                    xAxis.setTextColor(Color.BLACK);
-
-                                    mChart.getAxisRight().setEnabled(false);
-                                }
-
-                                RealmResults<datagajiobject> results = mRealm.where(datagajiobject.class).findAll();
-
-                                IAxisValueFormatter formatter = new IAxisValueFormatter() {
-                                    @Override
-                                    public String getFormattedValue(float value, AxisBase axis) {
-                                        return monthbarbottom.get((int) value);
-                                    }
-                                };
-                                barChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
-
-                                barChart.getXAxis().setValueFormatter(formatter);
-
-                                // BAR-CHART
-                                RealmBarDataSet<datagajiobject> barDataSet = new RealmBarDataSet<datagajiobject>(results, "ranges", "datagaji");
-
-                                barDataSet.setColor(Color.BLUE);
-
-                                //barDataSet.setColor(generator.green);
-
-                                barDataSet.setLabel("Period Gaji : " + finalPerios);
-
-                                ArrayList<IBarDataSet> barDataSets = new ArrayList<IBarDataSet>();
-                                barDataSets.add(barDataSet);
-
-                                BarData barData = new BarData(barDataSets);
-
-                                barChart.setData(barData);
-                                barChart.setFitBars(true);
-                                barChart.animateY(1400, Easing.EasingOption.EaseInOutQuart);
-
-                                barChart.invalidate();
-
-                                if(position<12) {
-                                    retrivegajimentah0 gajim = new retrivegajimentah0(getActivity(), position + 1);
-                                    gajim.execute();
-                                }
-                                else {
-                                    mRealm.close();
-
-                                    if(dialog.isShowing()){
-                                        dialog.dismiss();
-                                    }
-                                }
-                            }
-
-                            //mRealm.close();
-
-                        }
-
-
-
-                        //JSONArray pengsarray = result.getJSONArray("data");
-
-                        //int gaji=1000000;
-
-                        Log.e("gaji "+position,value+"" );
-                        Log.e("current "+current+" "+ last,value+"" );
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "onPostExecute: " + e.getMessage());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "onPostExecute: " + e.getMessage());
-                    }
-
-
-
-                } else {
-                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi ", Snackbar.LENGTH_SHORT).show();
-                }
-
-                if(monthbarbottom.size()==position){
-                    if(dialog!=null){
-                        if(dialog.isShowing()){
-                            dialog.dismiss();
-                        }
-                    }
-                }
-            }catch (Exception E){
-                E.printStackTrace();
-                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
-                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
-            }
-        }
-
     }
 
 }
