@@ -1,4 +1,4 @@
-package prima.optimasi.indonesia.payroll.universal.activity;
+package prima.optimasi.indonesia.payroll.universal;
 
 
 import android.app.AlertDialog;

@@ -205,9 +205,11 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
         CameraManager.get().closeDriver();
 
         generator.tempactivity = null;
-        generator.lm.removeUpdates(generator.listernerlocation);
-        setResult(RESULT_OK);
-        finish();
+        if(generator.lm!=null){
+            generator.lm.removeUpdates(generator.listernerlocation);
+            setResult(RESULT_OK);
+            finish();
+        }
     }
 
     @Override

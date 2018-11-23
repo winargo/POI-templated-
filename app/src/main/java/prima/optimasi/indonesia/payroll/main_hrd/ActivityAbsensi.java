@@ -1,4 +1,4 @@
-package prima.optimasi.indonesia.payroll.main_karyawan;
+package prima.optimasi.indonesia.payroll.main_hrd;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -37,7 +37,6 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.universal.absence.facedetection;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 import qrcodescanner.QrCodeActivity;
 
@@ -266,6 +265,7 @@ public class ActivityAbsensi extends AppCompatActivity {
         //extrain.setEnabled(false);
         //extraout.setEnabled(false);
         absensi.setEnabled(false);
+
         scan.setBackgroundTintList(myList);
         breakin.setBackgroundTintList(myList);
         breakout.setBackgroundTintList(myList);
@@ -384,7 +384,6 @@ public class ActivityAbsensi extends AppCompatActivity {
             //extrain.setEnabled(true);
             //extraout.setEnabled(true);
             absensi.setEnabled(true);
-
             scan.setBackgroundTintList(myList);
             breakin.setBackgroundTintList(myList);
             breakout.setBackgroundTintList(myList);
@@ -425,7 +424,6 @@ public class ActivityAbsensi extends AppCompatActivity {
                 //extrain.setEnabled(true);
                 //extraout.setEnabled(true);
                 absensi.setEnabled(true);
-
                 scan.setBackgroundTintList(myList);
                 breakin.setBackgroundTintList(myList);
                 breakout.setBackgroundTintList(myList);

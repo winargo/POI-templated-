@@ -43,7 +43,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import prima.optimasi.indonesia.payroll.main_kabag.ActivityAbsensi;
+import prima.optimasi.indonesia.payroll.main_karyawan.ActivityAbsensi;
+import prima.optimasi.indonesia.payroll.universal.ActivityAbout;
 import prima.optimasi.indonesia.payroll.universal.ActivityLogAbsensi;
 import prima.optimasi.indonesia.payroll.universal.ActivityPengajuan;
 import prima.optimasi.indonesia.payroll.universal.ActivityPengumuman;
@@ -183,6 +184,7 @@ public class mainmenu_karyawan extends AppCompatActivity
         pengajuan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 Intent intent=new Intent(mainmenu_karyawan.this,ActivityPengajuan.class);
                 startActivity(intent);
                 /*
@@ -765,7 +767,7 @@ public class mainmenu_karyawan extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if(id==R.id.action_settings){
-            Intent intent=new Intent(mainmenu_karyawan.this, prima.optimasi.indonesia.payroll.universal.activity.ActivityAbout.class);
+            Intent intent=new Intent(mainmenu_karyawan.this, ActivityAbout.class);
             startActivity(intent);
             return true;
         }

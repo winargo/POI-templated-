@@ -1,20 +1,15 @@
-package prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd;
+package prima.optimasi.indonesia.payroll.universal;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.GradientDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,17 +20,13 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
@@ -44,7 +35,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,11 +47,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
-import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.main_kabag.Activity_Anggota;
-import prima.optimasi.indonesia.payroll.main_kabag.adapter.Adapterviewkaryawan;
-import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListSectionedKontrakKerja;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 import prima.optimasi.indonesia.payroll.objects.listkaryawanpengajuan;
 import prima.optimasi.indonesia.payroll.universal.adapter.Adapterhistorypengajuan;
@@ -69,12 +55,11 @@ import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
 
-public class FragmentPengajuan extends Fragment {
+public class ActivityPengajuanKabag extends AppCompatActivity {
     SwipeRefreshLayout swipehome;
     CoordinatorLayout parent_view;
-    NestedScrollView nsv;
     Button send;
-    MaterialSpinner spinner;
+    MaterialSpinner spinner, spinnerkar;
     private SimpleDateFormat dateFormatter;
     TextView tglmasuk,tglkeluar;
     EditText keterangan;
@@ -86,29 +71,33 @@ public class FragmentPengajuan extends Fragment {
     Adapterhistorypengajuan pengajuan;
     List<listkaryawanpengajuan> items;
     listkaryawanpengajuan ajukan;
+    List<listkaryawan> itemskaryawan;
+    List<String> listid;
+    List<String> listnama;
+    listkaryawan kar;
     String[] kets={"Izin","Sakit","Cuti","Dinas"};
     ProgressDialog dialog;
+    String idkar="";
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(
-                R.layout.activity_pengajuan, container, false);
-        parent_view=rootView.findViewById(R.id.parent_view);
-        nsv=rootView.findViewById(R.id.nsv);
-        recyclerView=rootView.findViewById(R.id.recyclerView);
-        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
-        toolbar.setVisibility(View.GONE);
-        keterangan=rootView.findViewById(R.id.keterangan);
-        swipehome=rootView.findViewById(R.id.swipehome);
-        spinner = (MaterialSpinner) rootView.findViewById(R.id.spinner);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_pengajuan_kabag);
+
+
+        parent_view=findViewById(R.id.parent_view);
+        recyclerView=findViewById(R.id.recyclerView);
+        swipehome=findViewById(R.id.swipehome);
+
+        keterangan=findViewById(R.id.keterangan);
+
+        spinner = (MaterialSpinner) findViewById(R.id.spinner);
 
         spinner.setItems("Pilih Pengajuan","Cuti", "Izin", "Dinas", "Sakit");
         //spinner.setText("Pengajuan");
         spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
-            //boolean klik=false;
+        //boolean klik=false;
             @Override
             public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
-                Snackbar.make(view, "Clicked " + item, Snackbar.LENGTH_LONG).show();
                 /*
                 if(!klik){
                     spinner.setItems("Cuti", "Izin", "Dinas", "Dirumahkan");
@@ -116,12 +105,14 @@ public class FragmentPengajuan extends Fragment {
             }
 
         });
-        nsv.setPadding(0,0,0,0);
-        tglmasuk=rootView.findViewById(R.id.tglmasuk);
-        tglkeluar=rootView.findViewById(R.id.tglkeluar);
+
+        spinnerkar = (MaterialSpinner) findViewById(R.id.spinnerkar);
+        dialog=new ProgressDialog(ActivityPengajuanKabag.this);
+
+        tglmasuk=findViewById(R.id.tglmasuk);
+        tglkeluar=findViewById(R.id.tglkeluar);
         //tglmasuk.setText(getCurrentDate());
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE,0);
         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         String formattedDate = df.format(c.getTime());
         tglmasuk.setText(formattedDate);
@@ -137,37 +128,45 @@ public class FragmentPengajuan extends Fragment {
 
         //Log.v("NEXT DATE : ", formattedDate);
 
-        send=rootView.findViewById(R.id.send_pengajuan);
+        send=findViewById(R.id.send_pengajuan);
+        //retrivegetizin izin=new retrivegetizin(ActivityPengajuan.this);
+        //izin.execute();
+        itemskaryawan = new ArrayList<>();
+        listnama=new ArrayList<>();
+        listid=new ArrayList<>();
+        retrivekaryawan kar=new retrivekaryawan(ActivityPengajuanKabag.this, dialog);
+        kar.execute();
+
+        initToolbar();
         initComponent();
-        items = new ArrayList<>();
-        for (int i=0;i<kets.length;i++){
-            retrivegetketerangan ket=new retrivegetketerangan(getActivity(), kets[i]);
-            ket.execute();
-        }
+
         swipehome.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
 
-                dialog = new ProgressDialog(getActivity());
+                dialog = new ProgressDialog(ActivityPengajuanKabag.this);
                 dialog.setMessage("Loading ...");
                 dialog.show();
                 items.clear();
-                spinner.setSelectedIndex(0);
                 if(pengajuan!=null){
                     pengajuan.notifyDataSetChanged();
                 }
-                for (int i=0;i<kets.length;i++) {
-                    retrivegetketeranganref ketref = new retrivegetketeranganref(getActivity(), kets[i]);
-                    ketref.execute();
-                }
+                spinner.setSelectedIndex(0);
+                spinnerkar.setSelectedIndex(0);
+                itemskaryawan = new ArrayList<>();
+                listnama=new ArrayList<>();
+                listid=new ArrayList<>();
+                retrivekaryawan kar=new retrivekaryawan(ActivityPengajuanKabag.this,dialog);
+                kar.execute();
+
+
 
 
             }
         });
-        return rootView;
     }
 
-    private class retrivegetketerangan extends AsyncTask<Void, Integer, String>
+    private class retrivekaryawan extends AsyncTask<Void, Integer, String>
     {
         String response = "";
         String error = "";
@@ -176,31 +175,17 @@ public class FragmentPengajuan extends Fragment {
         SharedPreferences prefs ;
         JSONObject result = null ;
         ProgressDialog dialog ;
-        String urldata ;
+        String urldata = generator.kabaggrupkaryawanurl;
         String passeddata = "" ;
-        String keterangan="";
 
-        public retrivegetketerangan(Context context, String keterangan)
+        public retrivekaryawan(Context context, ProgressDialog dialog)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
-            dialog = new ProgressDialog(context);
+            //dialog = new ProgressDialog(context);
             this.username = generator.username;
             this.password = generator.password;
             this.error = error ;
-            this.keterangan=keterangan;
-            if(keterangan.equals("Izin")){
-                urldata= generator.pengajuanizinkodeurl;
-            }
-            else if(keterangan.equals("Sakit")){
-                urldata= generator.pengajuansakitkodeurl;
-            }
-            else if(keterangan.equals("Cuti")){
-                urldata= generator.pengajuancutikodeurl;
-            }
-            else if(keterangan.equals("Dinas")){
-                urldata= generator.pengajuandinaskodeurl;
-            }
-
+            this.dialog=dialog;
         }
 
         String TAG = getClass().getSimpleName();
@@ -224,7 +209,232 @@ public class FragmentPengajuan extends Fragment {
                     OkHttpClient client = new OkHttpClient();
 
                     RequestBody body = new FormBody.Builder()
-                            .add("id",prefs.getString("id", ""))
+                            .add("kode",prefs.getString("kodekaryawan", ""))
+                            .build();
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .post(body)
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+                Log.e(TAG, "data json result" + result.toString());
+                if (result != null) {
+                    try {
+
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        boolean status=result.getBoolean("status");
+                        if(!status){
+                            Snackbar.make(parent_view,result.getString("message"),Snackbar.LENGTH_SHORT).show();
+                        }
+                        else {
+                            JSONArray pengsarray = result.getJSONArray("data");
+
+                            String tempcall = "";
+
+                            listnama.add("Pilih Karyawan");
+                            for (int i = 0; i < pengsarray.length(); i++) {
+                                JSONObject obj = pengsarray.getJSONObject(i);
+
+                                if(!prefs.getString("kodekaryawan", "").equals(obj.getString("kode_karyawan"))) {
+                                    if (obj.getString("otoritas").equals("2")) {
+
+                                    }
+                                    else{
+                                        listkaryawan kar = new listkaryawan();
+                                        kar.setSection(false);
+                                        kar.setJabatan("Karyawan");
+                                        kar.setIskar(obj.getString("id"));
+                                        listid.add(obj.getString("id"));
+                                        if (!obj.getString("foto").equals("")) {
+                                            kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                            Log.e(TAG, "image data" + kar.getImagelink());
+                                        }
+                                        else{
+                                            kar.setImagelink("");
+                                            Log.e(TAG, "image data" + kar.getImagelink());
+                                        }
+                                        /*
+                                        else{
+                                            kar.setImagelink("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qlAqV8WwUWaqr0SDbTj5Ht9lQ");
+                                            Log.e(TAG, "image data" + kar.getImagelink());
+                                        }*/
+
+
+                                        kar.setNama(obj.getString("nama"));
+                                        listnama.add(obj.getString("nama"));
+                                        kar.setDesc("Karyawan");
+                                        itemskaryawan.add(kar);
+
+
+
+                                    }
+
+                                }
+
+                            }
+                            spinnerkar.setItems(listnama);
+
+                            //Log.e("LISTID",""+listid.size());
+                            if(!swipehome.isRefreshing()){
+                                items = new ArrayList<>();
+                                for (int i=0;i<kets.length;i++){
+                                    for (int j=0;j<listid.size();j++){
+                                        retrivegetketerangan ket=new retrivegetketerangan(ActivityPengajuanKabag.this, dialog, kets[i],listid.get(j));
+                                        ket.execute();
+                                    }
+                                }
+                            }
+                            else{
+
+                                for (int i=0;i<kets.length;i++){
+                                    for (int j=0;j<listid.size();j++){
+                                        retrivegetketeranganref ketref=new retrivegetketeranganref(ActivityPengajuanKabag.this, kets[i],listid.get(j));
+                                        ketref.execute();
+                                    }
+                                }
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+
+            /*
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }*/
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
+    private class retrivegetketerangan extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        ProgressDialog dialog ;
+        String urldata ;
+        String passeddata = "" ;
+        String keterangan="";
+        String id="";
+        public retrivegetketerangan(Context context, ProgressDialog dialog, String keterangan, String id)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            //dialog = new ProgressDialog(context);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+            this.dialog=dialog;
+            this.keterangan=keterangan;
+            this.id=id;
+            if(keterangan.equals("Izin")){
+                urldata= generator.pengajuanizinkodeurl;
+            }
+            else if(keterangan.equals("Sakit")){
+                urldata= generator.pengajuansakitkodeurl;
+            }
+            else if(keterangan.equals("Cuti")){
+                urldata= generator.pengajuancutikodeurl;
+            }
+            else if(keterangan.equals("Dinas")){
+                urldata= generator.pengajuandinaskodeurl;
+            }
+
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            //this.dialog.show();
+            super.onPreExecute();
+            //this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                //this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    RequestBody body = new FormBody.Builder()
+                            .add("id",id)
 
                             .build();
 
@@ -346,11 +556,14 @@ public class FragmentPengajuan extends Fragment {
                         }
 
                         if(items.size()>0 && keterangan.equals("Dinas")){
-                            pengajuan = new Adapterhistorypengajuan(getActivity(), items, ItemAnimation.LEFT_RIGHT);
-                            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                            recyclerView.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(getActivity(), 3), true));
+                            pengajuan = new Adapterhistorypengajuan(ActivityPengajuanKabag.this, items, ItemAnimation.LEFT_RIGHT);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(ActivityPengajuanKabag.this));
+                            //recyclerView.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(ActivityPengajuanKabag.this, 3), true));
                             recyclerView.setHasFixedSize(true);
                             recyclerView.setAdapter(pengajuan);
+                            if (this.dialog.isShowing()) {
+                                dialog.dismiss();
+                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -370,9 +583,7 @@ public class FragmentPengajuan extends Fragment {
                 Snackbar.make(parent_view, E.getMessage().toString(), Snackbar.LENGTH_SHORT).show();
             }
 
-            if (this.dialog.isShowing()) {
-                dialog.dismiss();
-            }
+
 
 
             Log.d(TAG + " onPostExecute", "" + result1);
@@ -391,8 +602,9 @@ public class FragmentPengajuan extends Fragment {
         String urldata ;
         String passeddata = "" ;
         String keterangan="";
+        String id="";
 
-        public retrivegetketeranganref(Context context, String keterangan)
+        public retrivegetketeranganref(Context context, String keterangan, String id)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
             //dialog = new ProgressDialog(context);
@@ -400,6 +612,7 @@ public class FragmentPengajuan extends Fragment {
             this.password = generator.password;
             this.error = error ;
             this.keterangan=keterangan;
+            this.id=id;
             if(keterangan.equals("Izin")){
                 urldata= generator.pengajuanizinkodeurl;
             }
@@ -436,7 +649,7 @@ public class FragmentPengajuan extends Fragment {
                     OkHttpClient client = new OkHttpClient();
 
                     RequestBody body = new FormBody.Builder()
-                            .add("id",prefs.getString("id", ""))
+                            .add("id",id)
 
                             .build();
 
@@ -602,7 +815,6 @@ public class FragmentPengajuan extends Fragment {
         }
     }
 
-
     private void initComponent() {
         tglmasuk.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -620,76 +832,96 @@ public class FragmentPengajuan extends Fragment {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("NEXT DATE : ", ""+tanggal_masuk.compareTo(tanggal_keluar));
-                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-                try{
-                    tgl_masuk=df.parse(tanggal_masuk1);
-                    tgl_keluar=df.parse(tanggal_keluar1);
-                    lama=tgl_masuk.compareTo(tgl_keluar)+1;
-                    if(!spinner.getText().equals("Pilih Pengajuan")){
-                        if(tgl_masuk.compareTo(tgl_keluar)>0) {
-                            final Dialog dialog = new Dialog(getActivity());
-                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
-                            dialog.setContentView(R.layout.dialog_warning);
-                            dialog.setCancelable(true);
 
-                            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                            lp.copyFrom(dialog.getWindow().getAttributes());
-                            lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-                            lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                            ImageView icon = dialog.findViewById(R.id.icon);
-                            TextView title = dialog.findViewById(R.id.title);
-                            TextView content = dialog.findViewById(R.id.content);
-                            icon.setVisibility(View.GONE);
-                            title.setText("Kesalahan Data Tanggal");
-                            content.setText("Tanggal keluar wajib lebih atau sama dari tanggal masuk yang diinput");
-                            ((AppCompatButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Toast.makeText(getActivity(), ((AppCompatButton) v).getText().toString() + " Clicked", Toast.LENGTH_SHORT).show();
-                                    dialog.dismiss();
-                                }
-                            });
 
-                            dialog.show();
-                            dialog.getWindow().setAttributes(lp);
-                        }else{
-                            Log.e("NEXT DATE : ", "Berhasil");
-                            if(!keterangan.getText().toString().trim().equals("")){
-                                if(spinner.getText().equals("Cuti")){
-                                    retrivepengajuancuti cuti =new retrivepengajuancuti(getActivity());
-                                    cuti.execute();
-                                }
-                                else if(spinner.getText().equals("Izin")){
-                                    retrivepengajuanizin izin =new retrivepengajuanizin(getActivity());
-                                    izin.execute();
-                                }
-                                else if(spinner.getText().equals("Dinas")){
-                                    retrivepengajuandinas dinas=new retrivepengajuandinas(getActivity());
-                                    dinas.execute();
-                                }
-                                else if(spinner.getText().equals("Sakit")){
-                                    retrivepengajuansakit sakit =new retrivepengajuansakit(getActivity());
-                                    sakit.execute();
-                                }
+                    Log.e("NEXT DATE : ", "" + tanggal_masuk.compareTo(tanggal_keluar));
+                    SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                    try {
+                        tgl_masuk = df.parse(tglmasuk.getText().toString());
+                        tgl_keluar = df.parse(tglkeluar.getText().toString());
+                        lama = tgl_masuk.compareTo(tgl_keluar) + 1;
+                        if(!spinnerkar.getText().equals("Pilih Karyawan")) {
+                            if (!spinner.getText().equals("Pilih Pengajuan")) {
+                                if (keterangan.getText().toString().trim().equals("")) {
+                                    Snackbar.make(parent_view, "Keterangan Tidak Boleh Kosong", Snackbar.LENGTH_SHORT).show();
+                                } else {
+                                    if (tgl_masuk.compareTo(tgl_keluar) > 0) {
+                                        final Dialog dialog = new Dialog(ActivityPengajuanKabag.this);
+                                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+                                        dialog.setContentView(R.layout.dialog_warning);
+                                        dialog.setCancelable(true);
 
+                                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                                        lp.copyFrom(dialog.getWindow().getAttributes());
+                                        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                                        ImageView icon = dialog.findViewById(R.id.icon);
+                                        TextView title = dialog.findViewById(R.id.title);
+                                        TextView content = dialog.findViewById(R.id.content);
+                                        icon.setVisibility(View.GONE);
+                                        title.setText("Kesalahan Data Tanggal");
+                                        content.setText("Tanggal keluar wajib lebih atau sama dari tanggal masuk yang diinput");
+                                        ((AppCompatButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+
+                                        dialog.show();
+                                        dialog.getWindow().setAttributes(lp);
+                                    } else {
+                                        Log.e("NEXT DATE : ", "Berhasil");
+
+
+                                        Log.e("NEXT DATE : ", "" + tanggal_masuk1 + " " + tanggal_keluar1);
+
+                                        if (!keterangan.getText().toString().trim().equals("")) {
+                                            for(int i=0;i<itemskaryawan.size();i++){
+                                                if(itemskaryawan.get(i).getNama().equals(spinnerkar.getText().toString())){
+                                                    idkar=itemskaryawan.get(i).getIskar();
+
+                                                }
+                                            }
+                                            if(!idkar.equals("")) {
+                                                //Snackbar.make(parent_view, idkar, Snackbar.LENGTH_SHORT).show();
+
+                                                if (spinner.getText().equals("Cuti")) {
+                                                    retrivepengajuancuti cuti = new retrivepengajuancuti(ActivityPengajuanKabag.this);
+                                                    cuti.execute();
+                                                } else if (spinner.getText().equals("Izin")) {
+                                                    retrivepengajuanizin izin = new retrivepengajuanizin(ActivityPengajuanKabag.this);
+                                                    izin.execute();
+                                                } else if (spinner.getText().equals("Dinas")) {
+                                                    retrivepengajuandinas dinas = new retrivepengajuandinas(ActivityPengajuanKabag.this);
+                                                    dinas.execute();
+                                                } else if (spinner.getText().equals("Sakit")) {
+                                                    retrivepengajuansakit sakit = new retrivepengajuansakit(ActivityPengajuanKabag.this);
+                                                    sakit.execute();
+                                                }
+                                            }
+                                            else{
+                                                Log.e("retrivekaryawan", "bermasalah");
+                                            }
+
+                                        } else {
+                                            Log.e("NEXT DATE : ", "Isi Keterangan Anda");
+                                        }
+
+                                    }
+                                }
+                            } else if (spinner.getText().equals("Pilih Pengajuan")) {
+                                Snackbar.make(parent_view, "Pilih Jenis Pengajuan", Snackbar.LENGTH_SHORT).show();
                             }
-                            else{
-                                Log.e("NEXT DATE : ", "Isi Keterangan Anda");
-                            }
-
+                        }else if (spinner.getText().equals("Pilih Karyawan")) {
+                            Snackbar.make(parent_view, "Pilih Karyawan", Snackbar.LENGTH_SHORT).show();
                         }
+
+
+                    } catch (Exception e) {
+                        Log.e("NEXT DATE : ", "" + tanggal_masuk.compareTo(tanggal_keluar));
+                        Log.e("NEXT DATE : ", "" + tanggal_masuk1 + " " + tanggal_keluar1);
                     }
-
-                    else if(spinner.getText().equals("Pilih Pengajuan")){
-                        Log.e("SPINNER : ", "Isi Jenis Pengajuan Anda");
-                    }
-
-
-                }catch(Exception e){
-                    Log.e("NEXT DATE : ", ""+tanggal_masuk.compareTo(tanggal_keluar));
-                    Log.e("NEXT DATE : ", ""+tanggal_masuk1+" "+tanggal_keluar1);
-                }
 
 
 
@@ -743,7 +975,7 @@ public class FragmentPengajuan extends Fragment {
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
                     RequestBody body = new FormBody.Builder()
-                            .add("id",prefs.getString("id", ""))
+                            .add("id",idkar)
                             .add("mulai_cuti",format.format(tgl_masuk))
                             .add("akhir_cuti",format.format(tgl_keluar))
                             .add("lama", ""+lama)
@@ -823,6 +1055,12 @@ public class FragmentPengajuan extends Fragment {
                         }
                         else {
                             Snackbar.make(parent_view, "Pengajuan Cuti berhasil" , Snackbar.LENGTH_SHORT).show();
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                public void run() {
+                                    finish();
+                                }
+                            }, 2000);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -896,7 +1134,7 @@ public class FragmentPengajuan extends Fragment {
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
                     RequestBody body = new FormBody.Builder()
-                            .add("id",prefs.getString("id", ""))
+                            .add("id",idkar)
                             .add("mulai_izin",format.format(tgl_masuk))
                             .add("akhir_izin",format.format(tgl_keluar))
                             .add("lama", ""+lama)
@@ -977,6 +1215,12 @@ public class FragmentPengajuan extends Fragment {
                         }
                         else {
                             Snackbar.make(parent_view, "Pengajuan Izin berhasil" , Snackbar.LENGTH_SHORT).show();
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                public void run() {
+                                    finish();
+                                }
+                            }, 2000);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -1050,7 +1294,7 @@ public class FragmentPengajuan extends Fragment {
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
                     RequestBody body = new FormBody.Builder()
-                            .add("id",prefs.getString("id", ""))
+                            .add("id",idkar)
                             .add("mulai_dinas",format.format(tgl_masuk))
                             .add("akhir_dinas",format.format(tgl_keluar))
                             .add("lama", ""+lama)
@@ -1131,6 +1375,12 @@ public class FragmentPengajuan extends Fragment {
                         }
                         else {
                             Snackbar.make(parent_view, "Pengajuan Dinas berhasil" , Snackbar.LENGTH_SHORT).show();
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                public void run() {
+                                    finish();
+                                }
+                            }, 2000);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -1204,14 +1454,11 @@ public class FragmentPengajuan extends Fragment {
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
                     RequestBody body = new FormBody.Builder()
-                            .add("id",prefs.getString("id", ""))
+                            .add("id",idkar)
                             .add("mulai_sakit",format.format(tgl_masuk))
                             .add("akhir_sakit",format.format(tgl_keluar))
                             .add("lama", ""+lama)
                             .add("keterangan",keterangan.getText().toString().trim())
-
-
-
 
                             .build();
 
@@ -1285,6 +1532,13 @@ public class FragmentPengajuan extends Fragment {
                         }
                         else {
                             Snackbar.make(parent_view, "Pengajuan Sakit berhasil" , Snackbar.LENGTH_SHORT).show();
+
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                public void run() {
+                                    finish();
+                                }
+                            }, 2000);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -1371,6 +1625,38 @@ public class FragmentPengajuan extends Fragment {
         datePicker.setThemeDark(true);
         datePicker.setAccentColor(getResources().getColor(R.color.colorPrimary));
         datePicker.setMinDate(cur_calender);
-        datePicker.show(getActivity().getFragmentManager(), "Datepickerdialog");
+        datePicker.show(getFragmentManager(), "Datepickerdialog");
     }
+
+
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this, R.color.colorPrimary);
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_activity_main, menu);
+        MenuItem item=menu.findItem(R.id.action_settings);
+        item.setTitle("About");
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == android.R.id.home) {
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 }

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.v13.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -53,6 +54,11 @@ import com.applandeo.materialcalendarview.exceptions.OutOfDateRangeException;
 import com.applandeo.materialcalendarview.listeners.OnDayClickListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.JsonObject;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
@@ -263,20 +269,41 @@ public class mainmenu_hrd extends AppCompatActivity
                 }
                 else if(listDataHeader.get(groupPosition).equals("Absensi")){
                     drawer.closeDrawer(Gravity.START);
-                    String[] colors = {"Check IN", "Check OUT","Break OUT","Break IN","Extra IN","Extra OUT"};
+                    boolean permissionGranted = ActivityCompat.checkSelfPermission(mainmenu_hrd.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
+                    if(permissionGranted) {
+
+                        Intent intent = new Intent(mainmenu_hrd.this, ActivityAbsensi.class);
+                        intent.putExtra("jabatan", "HRD");
+                        startActivity(intent);
+
+                    } else {
+                        ActivityCompat.requestPermissions(mainmenu_hrd.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 4011);
+                    }
+                    //String[] colors = {"Check IN", "Check OUT","Break OUT","Break IN","Extra IN","Extra OUT"};
+                    /*
+                    String[] colors = {"Scan","Check IN", "Check OUT","Break OUT","Break IN","Absensi"};
                     AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_hrd.this);
                     builder.setTitle("Absensi");
                     builder.setItems(colors, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            int type=which+1;
+                            if(which==5){
+                                selectedtype(1,type);
+                            }
+                            else{
+                                absensi();
+                            }
+
+
                             Intent a = new Intent(mainmenu_hrd.this,QrCodeActivity.class);
                             a.putExtra("absensi",which);
                             a.putExtra("keepalive",1);
                             startActivity(a);
                         }
                     });
-                    builder.show();
+                    builder.show();*/
                 }
                 else if(listDataHeader.get(groupPosition).equals("Cek Jadwal")){
                     String[] colors = {"Karyawan", "Sendiri"};
@@ -351,19 +378,7 @@ public class mainmenu_hrd extends AppCompatActivity
 
     }
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        }
-        else if(searchView.isSearchOpen()){
-            searchView.closeSearch();
-        }
-        else {
-            super.onBackPressed();
-        }
-    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -549,6 +564,21 @@ public class mainmenu_hrd extends AppCompatActivity
     public void hideAll(){
         tempmenu.findItem(R.id.action_search).setVisible(false);
         tempmenu.findItem(R.id.action_add).setVisible(false);
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
+        else if(searchView.isSearchOpen()){
+            searchView.closeSearch();
+        }
+        else {
+            super.onBackPressed();
+        }
 
     }
 }

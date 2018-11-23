@@ -63,8 +63,10 @@ import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
+import prima.optimasi.indonesia.payroll.universal.ActivityAbout;
 import prima.optimasi.indonesia.payroll.universal.ActivityLogAbsensi;
 import prima.optimasi.indonesia.payroll.universal.ActivityPengajuan;
+import prima.optimasi.indonesia.payroll.universal.ActivityPengajuanKabag;
 import prima.optimasi.indonesia.payroll.universal.ActivityPengumuman;
 import prima.optimasi.indonesia.payroll.universal.adapter.AdapterListKaryawan;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
@@ -246,8 +248,26 @@ public class mainmenu_kabag extends AppCompatActivity
         pengajuan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mainmenu_kabag.this, ActivityPengajuan.class);
-                startActivity(intent);
+                String[] colors = {"Karyawan", "Sendiri"};
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_kabag.this);
+                builder.setTitle("Pengajuan");
+                builder.setItems(colors, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            Intent intent = new Intent(mainmenu_kabag.this, ActivityPengajuanKabag.class);
+                            startActivity(intent);
+                        } else {
+                            Intent intent = new Intent(mainmenu_kabag.this, ActivityPengajuan.class);
+                            startActivity(intent);
+                        }
+                    }
+                });
+                builder.show();
+
+
                 /*
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.parent_view,new FragmentPengajuan()).addToBackStack("Home").commit();*/
@@ -1141,7 +1161,7 @@ public class mainmenu_kabag extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if(id==R.id.action_settings){
-            Intent intent=new Intent(mainmenu_kabag.this, prima.optimasi.indonesia.payroll.universal.activity.ActivityAbout.class);
+            Intent intent=new Intent(mainmenu_kabag.this, ActivityAbout.class);
             startActivity(intent);
             return true;
         }

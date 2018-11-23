@@ -745,7 +745,22 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".universal.activity.ActivityAbout"
+            android:name=".universal.ActivityAbout"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".main_hrd.ActivityAbsensi"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".main_karyawan.ActivityAbsensi"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".universal.ActivityPengajuanKabag"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />
 

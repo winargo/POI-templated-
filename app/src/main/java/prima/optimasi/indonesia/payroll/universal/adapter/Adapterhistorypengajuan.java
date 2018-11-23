@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,8 +97,15 @@ public class Adapterhistorypengajuan extends RecyclerView.Adapter<RecyclerView.V
             else if(p.getStatus().equals("Pending")){
                 Picasso.get().load(R.drawable.pendings).into(view.status);
             }
-            view.tglmasuk.setText(p.getTanggal_masuk());
-            view.tglkeluar.setText(p.getTanggal_keluar());
+            SimpleDateFormat formate = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
+            try {
+                view.tglmasuk.setText(format1.format(formate.parse(p.getTanggal_masuk())));
+                view.tglkeluar.setText(format1.format(formate.parse(p.getTanggal_keluar())));
+            }
+            catch (ParseException e) {
+                e.printStackTrace();
+            }
             Log.e("KETERANGAN", p.getKeterangan());
             view.keterangan.setText(p.getKeterangan());
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
