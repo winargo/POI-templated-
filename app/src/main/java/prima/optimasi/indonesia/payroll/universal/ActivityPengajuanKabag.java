@@ -50,7 +50,7 @@ import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 import prima.optimasi.indonesia.payroll.objects.listkaryawanpengajuan;
-import prima.optimasi.indonesia.payroll.universal.adapter.Adapterhistorypengajuan;
+import prima.optimasi.indonesia.payroll.universal.adapter.Adapterhistorypengajuankabag;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
@@ -68,7 +68,7 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
     RecyclerView recyclerView;
     Date tgl_masuk, tgl_keluar;
     int lama=0;
-    Adapterhistorypengajuan pengajuan;
+    Adapterhistorypengajuankabag pengajuan;
     List<listkaryawanpengajuan> items;
     listkaryawanpengajuan ajukan;
     List<listkaryawan> itemskaryawan;
@@ -533,6 +533,7 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                             String keterangans = obj.getString("keterangans");
                             ajukan = new listkaryawanpengajuan();
                             ajukan.setJenis(keterangan);
+                            ajukan.setNama(obj.getString("nama"));
                             ajukan.setTanggal_masuk(mulai);
                             ajukan.setTanggal_keluar(akhir);
                             if(status.equals("Ditolak")){
@@ -556,7 +557,7 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                         }
 
                         if(items.size()>0 && keterangan.equals("Dinas")){
-                            pengajuan = new Adapterhistorypengajuan(ActivityPengajuanKabag.this, items, ItemAnimation.LEFT_RIGHT);
+                            pengajuan = new Adapterhistorypengajuankabag(ActivityPengajuanKabag.this, items, ItemAnimation.LEFT_RIGHT);
                             recyclerView.setLayoutManager(new LinearLayoutManager(ActivityPengajuanKabag.this));
                             //recyclerView.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(ActivityPengajuanKabag.this, 3), true));
                             recyclerView.setHasFixedSize(true);

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 <android.support.v7.widget.CardView android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4sp"
     android:layout_marginTop="6sp"
-    android:layout_marginBottom="6sp"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_marginBottom="6sp">
 
     <com.balysv.materialripple.MaterialRippleLayout xmlns:android="http://schemas.android.com/apk/res/android"
         style="@style/RippleStyleBlack"
@@ -159,5 +161,12 @@
         </LinearLayout>
 
     </com.balysv.materialripple.MaterialRippleLayout>
-
+    <ImageView
+        android:id="@+id/status"
+        android:layout_width="@dimen/cap_status_medium"
+        android:layout_height="@dimen/cap_status_medium"
+        android:src="@drawable/ic_approved"
+        android:layout_gravity="right|top"
+        android:layout_margin="@dimen/spacing_middle" />
 </android.support.v7.widget.CardView>
+</FrameLayout>

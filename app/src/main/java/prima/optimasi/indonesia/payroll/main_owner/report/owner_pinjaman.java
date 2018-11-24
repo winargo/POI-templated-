@@ -259,7 +259,7 @@ public class owner_pinjaman extends AppCompatActivity {
                             SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
 
                             SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
-
+                            kar.setStatus(obj.getString("status"));
                             
                             //kar.setJabatan(obj.getString("jabatan"));
                             items.add(kar);

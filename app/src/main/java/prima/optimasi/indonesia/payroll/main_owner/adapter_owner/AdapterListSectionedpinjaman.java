@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
@@ -53,6 +54,7 @@ public class AdapterListSectionedpinjaman extends RecyclerView.Adapter<RecyclerV
         public CircularImageView image;
         public TextView name,jabatan,pinjaman,bayaran,sisa;
         public CardView card;
+        public ImageView status;
 
         public OriginalViewHolder(View v) {
             super(v);
@@ -62,6 +64,7 @@ public class AdapterListSectionedpinjaman extends RecyclerView.Adapter<RecyclerV
             jabatan = v.findViewById(R.id.repjab);
             image =  v.findViewById(R.id.pinimage);
             name = v.findViewById(R.id.repnama);
+            status=v.findViewById(R.id.status);
         }
     }
 
@@ -102,7 +105,21 @@ public class AdapterListSectionedpinjaman extends RecyclerView.Adapter<RecyclerV
             view.pinjaman.setText("Rp"+formatter.format(Integer.parseInt(p.getPinjaman())));
             view.bayaran.setText("Rp"+formatter.format(Integer.parseInt(p.getBayar())));
             view.sisa.setText("Rp"+formatter.format(Integer.parseInt(p.getSisa())));
+            if(p.getStatus().equals("Diterima")){
+                Picasso.get().load(R.drawable.approveds).into(view.status);
+                //view.card.setBackgroundTintList(myList);
+            }
+            else if(p.getStatus().equals("Ditolak")){
+                Picasso.get().load(R.drawable.rejects).into(view.status);
+                //myList = new ColorStateList(states, colors);
+                //view.card.setBackgroundTintList(myList);
+            }
+            else{
+                Picasso.get().load(R.drawable.pendings).into(view.status);
 
+                //myList = new ColorStateList(states, colors2);
+                //view.card.setBackgroundTintList(myList);
+            }
             if(p.getImageurl().contains(".jpg")) {
                 Picasso.get().load(p.getImageurl()).transform(new CircleTransform()).into(view.image);
             }

@@ -587,6 +587,28 @@ public class Activity_Anggota extends AppCompatActivity {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
+    //"data":[{"id_absensi":334,"kode":"EMP-4","tanggal":"2018-11-23T00:00:00.000Z","kabag":"EMP-7","masuk":"08:36:16","break_out":null,"break_in":null,"keluar":null,
+    // "ket_masuk":"Masuk ke Kabag Kerja Normal 2018-11-23 08:36:16","ket_keluar":"","jam_masuk":"08:30:00","telat":6,"durasi_break":100,"telat_break":0,"jam_keluar":null,
+    // "pulang_cepat":0,"kerja":"Normal","shift":"REGULAR","token":0,"longitudecheckin":"98.7261364","latitudecheckin":"3.6129727","longitudebreakin":"","latitudebreakin":"",
+    // "longitudebreakout":"","latitudebreakout":"","longitudecheckout":"","latitudecheckout":"","lupa_keluar_kabag":0,"nama":"Musafi'i","otoritas":1,
+    // "foto":"cfac83658c20bf988d6fd29e39aa91a1.jpg","jabatan":"Programmer"},
+
+    // {"id_absensi":329,"kode":"EMP-2","tanggal":"2018-11-23T00:00:00.000Z","kabag":"EMP-7",
+    // "masuk":"08:27:44","break_out":null,"break_in":null,"keluar":null,"ket_masuk":"Masuk ke Kabag Kerja Normal 2018-11-23 08:27:44","ket_keluar":"",
+    // "jam_masuk":"08:30:00","telat":0,"durasi_break":100,"telat_break":0,"jam_keluar":null,"pulang_cepat":0,"kerja":"Normal","shift":"REGULAR","token":0,"
+    // longitudecheckin":"98.726131","latitudecheckin":"3.6129336","longitudebreakin":"","latitudebreakin":"","longitudebreakout":"","latitudebreakout":"",
+    // "longitudecheckout":"","latitudecheckout":"","lupa_keluar_kabag":0,"nama":"Herry Wibowo","otoritas":1,"foto":"0631fa1187b16d780e242bcdf6dd9c5d.png","jabatan":"Programmer"},
+
+    // {"id_absensi":346,"kode":"EMP-9","tanggal":"2018-11-23T00:00:00.000Z","kabag":"EMP-7","masuk":"00:00:00","break_out":null,"break_in":null,"keluar":"00:00:00",
+    // "ket_masuk":"Sakit","ket_keluar":"Sakit","jam_masuk":"00:00:00","telat":0,"durasi_break":0,"telat_break":0,"jam_keluar":"00:00:00","pulang_cepat":0,"kerja":"Sakit",
+    // "shift":"","token":0,"longitudecheckin":"","latitudecheckin":"","longitudebreakin":"","latitudebreakin":"","longitudebreakout":"","latitudebreakout":"",
+    // "longitudecheckout":"","latitudecheckout":"","lupa_keluar_kabag":0,"nama":"DUM01","otoritas":4,"foto":"","jabatan":"Programmer"},
+
+    // {"id_absensi":337,"kode":"EMP-9","tanggal":"2018-11-23T00:00:00.000Z","kabag":"EMP-7","masuk":"00:00:00","break_out":null,"break_in":null,"keluar":"00:00:00",
+    // "ket_masuk":"Sakit","ket_keluar":"Sakit","jam_masuk":"00:00:00","telat":0,"durasi_break":0,"telat_break":0,"jam_keluar":"00:00:00","pulang_cepat":0,"kerja":"Sakit",
+    // "shift":"","token":0,"longitudecheckin":"","latitudecheckin":"","longitudebreakin":"","latitudebreakin":"","longitudebreakout":"","latitudebreakout":"",
+    // "longitudecheckout":"","latitudecheckout":"","lupa_keluar_kabag":0,"nama":"DUM01","otoritas":4,"foto":"","jabatan":"Programmer"},
+    // {"id_absensi":340,"kode":"EMP-9","tanggal":"2018-11-23T00:00:00.000Z","kabag":"EMP-7","masuk":"00:00:00","break_out":null,"break_in":null,"keluar":"00:00:00","ket_masuk":"Sakit","ket_keluar":"Sakit","jam_masuk":"00:00:00","telat":0,"durasi_break":0,"telat_break":0,"jam_keluar":"00:00:00","pulang_cepat":0,"kerja":"Sakit","shift":"","token":0,"longitudecheckin":"","latitudecheckin":"","longitudebreakin":"","latitudebreakin":"","longitudebreakout":"","latitudebreakout":"","longitudecheckout":"","latitudecheckout":"","lupa_keluar_kabag":0,"nama":"DUM01","otoritas":4,"foto":"","jabatan":"Programmer"},{"id_absensi":341,"kode":"EMP-9","tanggal":"2018-11-23T00:00:00.000Z","kabag":"EMP-7","masuk":"00:00:00","break_out":null,"break_in":null,"keluar":"00:00:00","ket_masuk":"Sakit","ket_keluar":"Sakit","jam_masuk":"00:00:00","telat":0,"durasi_break":0,"telat_break":0,"jam_keluar":"00:00:00","pulang_cepat":0,"kerja":"Sakit","shift":"","token":0,"longitudecheckin":"","latitudecheckin":"","longitudebreakin":"","latitudebreakin":"","longitudebreakout":"","latitudebreakout":"","longitudecheckout":"","latitudecheckout":"","lupa_keluar_kabag":0,"nama":"DUM01","otoritas":4,"foto":"","jabatan":"Programmer"},{"id_absensi":336,"kode":"EMP-9","tanggal":"2018-11-23T00:00:00.000Z","kabag":"EMP-7","masuk":"00:00:00","break_out":null,"break_in":null,"keluar":"00:00:00","ket_masuk":"Sakit","ket_keluar":"Sakit","jam_masuk":"00:
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

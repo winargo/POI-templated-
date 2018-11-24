@@ -1,10 +1,18 @@
 package prima.optimasi.indonesia.payroll.objects;
 
 public class listkaryawanpengajuan {
-    String iskar;
+    String iskar, nama;
     String kode;
     String tanggal_masuk, tanggal_keluar;
     String status, jenis, keterangan;
+
+    public String getNama() {
+        return nama;
+    }
+
+    public void setNama(String nama) {
+        this.nama = nama;
+    }
 
     public String getStatus() {
         return status;
