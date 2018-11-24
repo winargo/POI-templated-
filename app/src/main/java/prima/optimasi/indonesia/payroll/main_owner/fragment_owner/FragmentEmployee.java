@@ -560,6 +560,24 @@ public class FragmentEmployee extends Fragment{
                                 kar.setDesc(obj.getString("jabatan"));
                                 itemskabag.add(kar);
                             }
+                            else {
+                                listkaryawan kar = new listkaryawan();
+                                kar.setSection(false);
+                                kar.setJabatan("Karyawan");
+                                kar.setIskar(obj.getString("id"));
+                                if (!obj.getString("foto").equals("")) {
+                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
+                                else{
+                                    kar.setImagelink("");
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
+
+                                kar.setNama(obj.getString("nama"));
+                                kar.setDesc(obj.getString("jabatan"));
+                                itemskaryawan.add(kar);
+                            }
 
                         }
 
@@ -830,6 +848,24 @@ public class FragmentEmployee extends Fragment{
                                 kar.setNama(obj.getString("nama"));
                                 kar.setDesc(obj.getString("jabatan"));
                                 itemskabag.add(kar);
+                            }
+                            else {
+                                listkaryawan kar = new listkaryawan();
+                                kar.setSection(false);
+                                kar.setJabatan("Karyawan");
+                                kar.setIskar(obj.getString("id"));
+                                if (!obj.getString("foto").equals("")) {
+                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
+                                else{
+                                    kar.setImagelink("");
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
+
+                                kar.setNama(obj.getString("nama"));
+                                kar.setDesc(obj.getString("jabatan"));
+                                itemskaryawan.add(kar);
                             }
                             /*int sect_count = 0;
                             int sect_idx = 0;
