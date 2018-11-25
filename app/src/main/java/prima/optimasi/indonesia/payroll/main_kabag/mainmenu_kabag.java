@@ -1252,8 +1252,10 @@ public class mainmenu_kabag extends AppCompatActivity
                     typeabsensi = "checkout";
                 }else if(type ==4){
                     typeabsensi = "extrain";
+                    urldata = generator.throwlocationextra;
                 }else if(type ==5){
                     typeabsensi = "extraout";
+                    urldata = generator.throwlocationextra;
                 }
             }
         }
@@ -1316,21 +1318,18 @@ public class mainmenu_kabag extends AppCompatActivity
                 e.printStackTrace();
                 return null;
             }catch (IOException e) {
-                this.dialog.setMessage("Loading Data... IOError Occured,retrying...");
                 this.dialog.dismiss();
                 Log.e("doInBackground: ", "IO Exception" + e.getMessage());
                 generator.jsondatalogin = null;
                 e.printStackTrace();
                 response = "Error IOException";
             } catch (NullPointerException e) {
-                this.dialog.setMessage("Loading Data... Internet Error Occured,retrying...");
                 this.dialog.dismiss();
                 e.printStackTrace();
                 Log.e("doInBackground: ", "null data" + e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Please check Connection and Server";
             } catch (Exception e) {
-                this.dialog.setMessage("Loading Data... Error Occured,retrying...");
                 this.dialog.dismiss();
                 e.printStackTrace();
                 Log.e("doInBackground: ", e.getMessage());
