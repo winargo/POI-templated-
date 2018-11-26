@@ -153,6 +153,13 @@ public class FragmentPengajuan extends Fragment {
                 dialog.show();
                 items.clear();
                 spinner.setSelectedIndex(0);
+                Calendar c = Calendar.getInstance();
+                c.add(Calendar.DATE,0);
+                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                String formattedDate = df.format(c.getTime());
+                tglmasuk.setText(formattedDate);
+                tglkeluar.setText(formattedDate);
+                keterangan.setText("");
                 if(pengajuan!=null){
                     pengajuan.notifyDataSetChanged();
                 }

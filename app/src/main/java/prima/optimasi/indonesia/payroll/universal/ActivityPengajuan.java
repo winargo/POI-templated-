@@ -131,6 +131,13 @@ public class ActivityPengajuan extends AppCompatActivity {
                 dialog.show();
                 items.clear();
                 spinner.setSelectedIndex(0);
+                Calendar c = Calendar.getInstance();
+                c.add(Calendar.DATE,0);
+                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                String formattedDate = df.format(c.getTime());
+                tglmasuk.setText(formattedDate);
+                tglkeluar.setText(formattedDate);
+                keterangan.setText("");
                 if(pengajuan!=null){
                     pengajuan.notifyDataSetChanged();
                 }
@@ -597,82 +604,78 @@ public class ActivityPengajuan extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                Log.e("NEXT DATE : ", "" + tanggal_masuk.compareTo(tanggal_keluar));
+                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                try {
+                    tgl_masuk = df.parse(tglmasuk.getText().toString());
+                    tgl_keluar = df.parse(tglkeluar.getText().toString());
+                    lama = tgl_masuk.compareTo(tgl_keluar) + 1;
+                    if (!spinner.getText().equals("Pilih Pengajuan")) {
+                        if(keterangan.getText().toString().trim().equals("")){
+                            Snackbar.make(parent_view, "Keterangan Tidak Boleh Kosong" , Snackbar.LENGTH_SHORT).show();
+                        }
+                        else {
+                        if (tgl_masuk.compareTo(tgl_keluar) > 0) {
+                            final Dialog dialog = new Dialog(ActivityPengajuan.this);
+                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+                            dialog.setContentView(R.layout.dialog_warning);
+                            dialog.setCancelable(true);
 
-                    Log.e("NEXT DATE : ", "" + tanggal_masuk.compareTo(tanggal_keluar));
-                    SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-                    try {
-                        tgl_masuk = df.parse(tglmasuk.getText().toString());
-                        tgl_keluar = df.parse(tglkeluar.getText().toString());
-                        lama = tgl_masuk.compareTo(tgl_keluar) + 1;
-                        if (!spinner.getText().equals("Pilih Pengajuan")) {
-                            if(keterangan.getText().toString().trim().equals("")){
-                                Snackbar.make(parent_view, "Keterangan Tidak Boleh Kosong" , Snackbar.LENGTH_SHORT).show();
-                            }
-                            else {
-                            if (tgl_masuk.compareTo(tgl_keluar) > 0) {
-                                final Dialog dialog = new Dialog(ActivityPengajuan.this);
-                                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
-                                dialog.setContentView(R.layout.dialog_warning);
-                                dialog.setCancelable(true);
+                            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                            lp.copyFrom(dialog.getWindow().getAttributes());
+                            lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                            lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                            ImageView icon = dialog.findViewById(R.id.icon);
+                            TextView title = dialog.findViewById(R.id.title);
+                            TextView content = dialog.findViewById(R.id.content);
+                            icon.setVisibility(View.GONE);
+                            title.setText("Kesalahan Data Tanggal");
+                            content.setText("Tanggal keluar wajib lebih atau sama dari tanggal masuk yang diinput");
+                            ((AppCompatButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    dialog.dismiss();
+                                }
+                            });
 
-                                WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                                lp.copyFrom(dialog.getWindow().getAttributes());
-                                lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-                                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                                ImageView icon = dialog.findViewById(R.id.icon);
-                                TextView title = dialog.findViewById(R.id.title);
-                                TextView content = dialog.findViewById(R.id.content);
-                                icon.setVisibility(View.GONE);
-                                title.setText("Kesalahan Data Tanggal");
-                                content.setText("Tanggal keluar wajib lebih atau sama dari tanggal masuk yang diinput");
-                                ((AppCompatButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        dialog.dismiss();
-                                    }
-                                });
-
-                                dialog.show();
-                                dialog.getWindow().setAttributes(lp);
-                            } else {
-                                Log.e("NEXT DATE : ", "Berhasil");
+                            dialog.show();
+                            dialog.getWindow().setAttributes(lp);
+                        } else {
+                            Log.e("NEXT DATE : ", "Berhasil");
 
 
-                                Log.e("NEXT DATE : ", "" + tanggal_masuk1 + " " + tanggal_keluar1);
+                            Log.e("NEXT DATE : ", "" + tanggal_masuk1 + " " + tanggal_keluar1);
 
-                                if (!keterangan.getText().toString().trim().equals("")) {
-                                    if (spinner.getText().equals("Cuti")) {
-                                        retrivepengajuancuti cuti = new retrivepengajuancuti(ActivityPengajuan.this);
-                                        cuti.execute();
-                                    } else if (spinner.getText().equals("Izin")) {
-                                        retrivepengajuanizin izin = new retrivepengajuanizin(ActivityPengajuan.this);
-                                        izin.execute();
-                                    } else if (spinner.getText().equals("Dinas")) {
-                                        retrivepengajuandinas dinas = new retrivepengajuandinas(ActivityPengajuan.this);
-                                        dinas.execute();
-                                    } else if (spinner.getText().equals("Sakit")) {
-                                        retrivepengajuansakit sakit = new retrivepengajuansakit(ActivityPengajuan.this);
-                                        sakit.execute();
-                                    }
-
-                                } else {
-                                    Log.e("NEXT DATE : ", "Isi Keterangan Anda");
+                            if (!keterangan.getText().toString().trim().equals("")) {
+                                if (spinner.getText().equals("Cuti")) {
+                                    retrivepengajuancuti cuti = new retrivepengajuancuti(ActivityPengajuan.this);
+                                    cuti.execute();
+                                } else if (spinner.getText().equals("Izin")) {
+                                    retrivepengajuanizin izin = new retrivepengajuanizin(ActivityPengajuan.this);
+                                    izin.execute();
+                                } else if (spinner.getText().equals("Dinas")) {
+                                    retrivepengajuandinas dinas = new retrivepengajuandinas(ActivityPengajuan.this);
+                                    dinas.execute();
+                                } else if (spinner.getText().equals("Sakit")) {
+                                    retrivepengajuansakit sakit = new retrivepengajuansakit(ActivityPengajuan.this);
+                                    sakit.execute();
                                 }
 
+                            } else {
+                                Log.e("NEXT DATE : ", "Isi Keterangan Anda");
                             }
-                            }
-                        } else if (spinner.getText().equals("Pilih Pengajuan")) {
-                            Snackbar.make(parent_view, "Pilih Jenis Pengajuan" , Snackbar.LENGTH_SHORT).show();
+
                         }
-
-
-                    } catch (Exception e) {
-                        Log.e("NEXT DATE : ", "" + tanggal_masuk.compareTo(tanggal_keluar));
-                        Log.e("NEXT DATE : ", "" + tanggal_masuk1 + " " + tanggal_keluar1);
+                        }
+                    } else if (spinner.getText().equals("Pilih Pengajuan")) {
+                        Snackbar.make(parent_view, "Pilih Jenis Pengajuan" , Snackbar.LENGTH_SHORT).show();
                     }
 
 
-
+                } catch (Exception e) {
+                    Log.e("NEXT DATE : ", "" + tanggal_masuk.compareTo(tanggal_keluar));
+                    Log.e("NEXT DATE : ", "" + tanggal_masuk1 + " " + tanggal_keluar1);
+                }
 
             }
         });

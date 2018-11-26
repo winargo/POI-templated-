@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout android:id="@+id/report_snackbar"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_100"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+
+            <android.support.design.widget.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="@color/colorPrimary"
+                    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                    app:contentInsetStartWithNavigation="0dp"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+            </android.support.design.widget.AppBarLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_report"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </android.support.v7.widget.RecyclerView>
+            <LinearLayout
+                android:id="@+id/activatepinjaman"
+                android:visibility="gone"
+                android:background="@color/grey_100"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_marginTop="5sp"
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="horizontal"
+
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="0sp"
+                            android:layout_weight="1"
+                            android:layout_margin="4sp"
+                            android:textSize="7pt"
+                            android:textAlignment="center"
+                            android:text="Total Pinjaman"
+                            android:layout_height="wrap_content" />
+                        <TextView
+                            android:layout_width="0sp"
+                            android:layout_weight="1"
+                            android:id="@+id/ttlpinjam"
+                            android:layout_margin="4sp"
+                            android:textSize="7pt"
+                            android:textAlignment="center"
+                            android:text="Total Pinjaman"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:layout_marginTop="5sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="0sp"
+                            android:layout_weight="1"
+                            android:layout_margin="4sp"
+                            android:textSize="7pt"
+                            android:textAlignment="center"
+                            android:text="Total Bayar"
+                            android:layout_height="wrap_content" />
+                        <TextView
+                            android:layout_width="0sp"
+                            android:id="@+id/ttlbayar"
+                            android:layout_weight="1"
+                            android:layout_margin="4sp"
+                            android:textSize="7pt"
+                            android:textAlignment="center"
+                            android:text="Total Bayar"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+
+                <android.support.v7.widget.CardView
+                    android:layout_marginTop="5sp"
+                    android:layout_marginBottom="2sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="0sp"
+                            android:layout_weight="1"
+                            android:layout_margin="4sp"
+                            android:textSize="7pt"
+                            android:textAlignment="center"
+                            android:text="Total Sisa"
+                            android:layout_height="wrap_content" />
+                        <TextView
+                            android:layout_width="0sp"
+                            android:id="@+id/ttlsisa"
+                            android:layout_weight="1"
+                            android:layout_margin="4sp"
+                            android:textSize="7pt"
+                            android:textAlignment="center"
+                            android:text="Total Sisa"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end|right"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/peringkat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_smlarge"
+            android:layout_marginLeft="@dimen/spacing_smlarge"
+            android:layout_marginRight="@dimen/spacing_smlarge"
+            android:layout_marginTop="@dimen/spacing_middle"
+            android:clickable="true"
+            android:tint="@android:color/white"
+            app:fabSize="normal"
+            app:rippleColor="@android:color/white"
+            app:srcCompat="@drawable/ic_arrow_up" />
+
+    </LinearLayout>
+
+</android.support.design.widget.CoordinatorLayout>

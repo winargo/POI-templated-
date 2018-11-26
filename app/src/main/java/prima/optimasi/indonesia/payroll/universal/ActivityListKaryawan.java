@@ -123,9 +123,10 @@ public class ActivityListKaryawan extends AppCompatActivity {
                 //calender.setHeaderColor(ActivityListKaryawan.this.getResources().getColor(R.color.red_500));
 
                 Calendar cal = Calendar.getInstance();
+                /*
                 if(getIntent().getStringExtra("keterangan").equals("absen") ||  getIntent().getStringExtra("keterangan").equals("telat")) {
                     calender.setMaximumDate(cal);
-                }
+                }*/
                 calender.setOnDayClickListener(new OnDayClickListener() {
                     @Override
                     public void onDayClick(EventDay eventDay) {
