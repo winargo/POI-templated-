@@ -652,8 +652,8 @@ public class FragmentHome extends Fragment {
                 }
                 banyakkaryawan=0;
                 totalkaryawan=0;
-                retrivegetjabatanref jab=new retrivegetjabatanref(getActivity());
-                jab.execute();
+                //retrivegetjabatanref jab=new retrivegetjabatanref(getActivity());
+                //jab.execute();
                 refreshhome.setRefreshing(false);
             }
         });
@@ -1384,9 +1384,18 @@ public class FragmentHome extends Fragment {
                     try {
                         if (result.getString("status").equals("true")) {
                             Log.e(TAG, "data jabatan" + result.toString());
-                            list_jabatan = new ArrayList<>();
+                            if(list_jabatan!=null){
+                                list_jabatan.clear();
+                            }else{
+                                list_jabatan = new ArrayList<>();
+                            }
                             JSONArray pengsarray = result.getJSONArray("data");
 
+                            if(daftaritems!=null){
+                                daftaritems.clear();
+                            }else{
+                                daftaritems = new ArrayList<>();
+                            }
                             for (int i = 0; i < pengsarray.length(); i++) {
                                 JSONObject obj = pengsarray.getJSONObject(i);
                                 list_jabatan.add(obj.getString("jabatan"));
@@ -1394,7 +1403,7 @@ public class FragmentHome extends Fragment {
                                 kar.execute();
                             }
 
-                            daftaritems = new ArrayList<>();
+
 
                         }
                     } catch (JSONException e) {
@@ -2312,10 +2321,15 @@ public class FragmentHome extends Fragment {
                                 }
 
                                 dialog.setMessage("Memuat Data summary karyawan");
-
-                                retrivegetjabatan jab=new retrivegetjabatan(getActivity());
-                                jab.execute();
-
+                                if(refreshhome.isRefreshing()){
+                                    retrivegetjabatanref jab=new retrivegetjabatanref(getActivity());
+                                    jab.execute();
+                                    //refreshhome.setRefreshing(false);
+                                }
+                                else{
+                                    retrivegetjabatan jab=new retrivegetjabatan(getActivity());
+                                    jab.execute();
+                                }
                             }
                         }
                         else {
@@ -2422,8 +2436,15 @@ public class FragmentHome extends Fragment {
 
                                 dialog.setMessage("Memuat Data summary karyawan");
 
-                                retrivegetjabatan jab=new retrivegetjabatan(getActivity());
-                                jab.execute();
+                                if(refreshhome.isRefreshing()){
+                                    retrivegetjabatanref jab=new retrivegetjabatanref(getActivity());
+                                    jab.execute();
+                                    //refreshhome.setRefreshing(false);
+                                }
+                                else{
+                                    retrivegetjabatan jab=new retrivegetjabatan(getActivity());
+                                    jab.execute();
+                                }
 
                             }
 

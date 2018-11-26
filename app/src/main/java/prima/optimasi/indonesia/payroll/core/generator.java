@@ -111,6 +111,7 @@ public class generator {
     public static String pinjamanurl = "http://"+ generator.Server+":"+generator.port+"/laporan/pinjaman";
     public static String izinurl = "http://"+ generator.Server+":"+generator.port+"/laporan/izin";
     public static String pengajianurl = "http://"+ generator.Server+":"+generator.port+"/laporan/penggajian";
+    public static String peringkatkaryawanurl = "http://"+ generator.Server+":"+generator.port+"/absensi/terbaik";
 
     public static String getgajibytwodate = "http://"+ generator.Server+":"+generator.port+"/penggajian/laporan";
 
@@ -878,6 +879,7 @@ public class generator {
         pinjamanurl = "http://"+ generator.Server+":"+generator.port+"/laporan/pinjaman";
         izinurl = "http://"+ generator.Server+":"+generator.port+"/laporan/izin";
         pengajianurl = "http://"+ generator.Server+":"+generator.port+"/laporan/penggajian";
+        peringkatkaryawanurl = "http://"+ generator.Server+":"+generator.port+"/absensi/terbaik";
         getgajibytwodate = "http://"+ generator.Server+":"+generator.port+"/penggajian/laporan";
         checkinurl="http://"+ generator.Server+":"+generator.port+"/absensi/checkin";
         checkouturl="http://"+ generator.Server+":"+generator.port+"/absensi/checkout";
