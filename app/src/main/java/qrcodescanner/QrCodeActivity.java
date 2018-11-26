@@ -889,8 +889,10 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
                 }else if(type ==3){
                     typeabsensi = "checkout";
                 }else if(type ==4){
+                    urldata = generator.throwlocationextra;
                     typeabsensi = "extrain";
                 }else if(type ==5){
+                    urldata = generator.throwlocationextra;
                     typeabsensi = "extraout";
                 }
             }

@@ -91,6 +91,7 @@ public class generator {
     public static String pengumumanurl="http://"+ generator.Server+":"+generator.port+"/pengumuman";
 
     public static String throwlocation="http://"+ generator.Server+":"+generator.port+"/absensi/longitude";
+    public static String throwlocationextra="http://"+ generator.Server+":"+generator.port+"/absensi/longitudeExtra";
 
     public static String kabaggrupkaryawanurl="http://"+ generator.Server+":"+generator.port+"/groupkaryawan/list";
 
@@ -866,6 +867,7 @@ public class generator {
         deletepengumumanurl="http://"+ generator.Server+":"+generator.port+"/pengumuman/";
         pengumumanurl="http://"+ generator.Server+":"+generator.port+"/pengumuman";
         throwlocation="http://"+ generator.Server+":"+generator.port+"/absensi/longitude";
+        throwlocationextra="http://"+ generator.Server+":"+generator.port+"/absensi/longitudeExtra";
         kabaggrupkaryawanurl="http://"+ generator.Server+":"+generator.port+"/groupkaryawan/list";
         getabsensiurl="http://"+ generator.Server+":"+generator.port+"/absensi";
         getabsensidateurl="http://"+ generator.Server+":"+generator.port+"/absensi/date";

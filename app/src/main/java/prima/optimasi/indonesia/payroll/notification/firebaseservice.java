@@ -80,8 +80,6 @@ public class firebaseservice extends FirebaseMessagingService {
                 .setContentText(content)
                 .setColor(getResources().getColor(R.color.blue_500))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
-                // message for notification
-                //  .setSound(alarmSound) // set alarm sound for notification
                 .setAutoCancel(true); // clear notification after click
         Intent intent = new Intent(getApplicationContext(), activity_login.class);
         PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
