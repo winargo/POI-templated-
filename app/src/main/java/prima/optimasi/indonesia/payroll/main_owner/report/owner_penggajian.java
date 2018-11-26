@@ -100,7 +100,7 @@ public class owner_penggajian extends AppCompatActivity {
         pd.setMessage("Please Wait...");
         pd.show();
         initToolbar();
-        retrivegaji gaji = new retrivegaji(this,pd);
+        retrivegaji gaji = new retrivegaji(this,pd,msk,klr);
         gaji.execute();
     }
 
@@ -138,14 +138,17 @@ public class owner_penggajian extends AppCompatActivity {
         ProgressDialog dialog ;
         String urldata = generator.laporanpengajianurl;
         String passeddata = "" ;
+        String dt1="";
+        String dt2="";
 
-        public retrivegaji(Context context, ProgressDialog pede)
+
+
+        public retrivegaji(Context context, ProgressDialog pede,String dt1,String dt2)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
             dialog = pede;
-            this.username = generator.username;
-            this.password = generator.password;
-            this.error = error ;
+            this.dt1 = dt1;
+            this.dt2 = dt2;
         }
 
         String TAG = getClass().getSimpleName();
@@ -168,10 +171,10 @@ public class owner_penggajian extends AppCompatActivity {
                     OkHttpClient client = new OkHttpClient();
 
                     RequestBody body = new FormBody.Builder()
-                            .add("start",getIntent().getStringExtra("tanggal_masuk"))
-                            .add("end",getIntent().getStringExtra("tanggal_keluar"))
+                            .add("start",dt1)
+                            .add("end",dt2)
                             .build();
-                    Log.e("DATE : ", "" + getIntent().getStringExtra("tanggal_masuk") + " " + getIntent().getStringExtra("tanggal_keluar"));
+                    Log.e("DATE : ", "" + dt1 + " " + dt2);
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
