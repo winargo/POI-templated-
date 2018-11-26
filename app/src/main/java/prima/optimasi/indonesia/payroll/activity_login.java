@@ -337,7 +337,7 @@ public class activity_login extends AppCompatActivity {
                 }
             });
 
-            Tools.setSystemBarColor(this, R.color.colorPrimary);
+            //Tools.setSystemBarColor(this, R.color.colorPrimary);
 
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
