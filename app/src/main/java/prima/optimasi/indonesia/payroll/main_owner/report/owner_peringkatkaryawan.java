@@ -29,6 +29,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.FormBody;
@@ -225,13 +227,155 @@ public class owner_peringkatkaryawan extends AppCompatActivity {
                     try {
                         items = new ArrayList<>();
                         List<listperingkatkaryawan> itemstemp= new ArrayList<>();
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        List<String> kodek=new ArrayList<>();
+                        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
                         JSONArray pengsarray = result.getJSONArray("data");
                         String kodekar="", nama="", jabatan="";
-                        int telats=0;
+                        int telats=0, absen=0, lama=0, hadir=0;
                         List<Integer> listtelat=new ArrayList<>();
                         String tempcall = "";
+                        lama=getIntent().getStringExtra("tanggal_keluar").compareTo(getIntent().getStringExtra("tanggal_masuk"));
+                        /*
+                        Date tgl_masuk=format.parse(getIntent().getStringExtra("tanggal_masuk"));
+                        Date tgl_keluar=format.parse(getIntent().getStringExtra("tanggal_keluar"));
+                        lama=tgl_masuk.compareTo(tgl_keluar)+1;
+                        Log.e("TANGGAL",""+tgl_masuk+tgl_keluar);*/
 
+                        for (int i = 0; i < pengsarray.length(); i++) {
+                            JSONObject obj = pengsarray.getJSONObject(i);
+                            if (i + 1 != pengsarray.length()) {
+                                if (!tempcall.equals(obj.getString("kode"))) {
+                                    if (tempcall.equals("")) {
+                                        tempcall = obj.getString("kode");
+                                        kar = new listperingkatkaryawan();
+                                        if(!kodek.contains(obj.getString("kode"))) {
+                                            kodek.add(obj.getString("kode"));
+                                        }
+                                        kar.setKode(obj.getString("kode"));
+                                        kar.setNama(obj.getString("nama"));
+                                        kar.setJabatan(obj.getString("jabatan"));
+                                        if (!obj.getString("foto").equals("")) {
+                                            kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                        } else {
+                                            kar.setImagelink("");
+                                        }
+                                        telats += Integer.parseInt(obj.getString("telat"));
+                                    } else {
+                                        kar.setTelat(telats);
+                                        items.add(kar);
+                                        telats = 0;
+                                        kar = new listperingkatkaryawan();
+                                        if(!kodek.contains(obj.getString("kode"))) {
+                                            kodek.add(obj.getString("kode"));
+                                        }
+                                        kar.setKode(obj.getString("kode"));
+                                        kar.setNama(obj.getString("nama"));
+                                        kar.setJabatan(obj.getString("jabatan"));
+                                        if (!obj.getString("foto").equals("")) {
+                                            kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                        } else {
+                                            kar.setImagelink("");
+                                        }
+                                        tempcall = obj.getString("kode");
+                                        telats += Integer.parseInt(obj.getString("telat"));
+                                    }
+                                } else if (tempcall.equals(obj.getString("kode"))) {
+                                    telats += Integer.parseInt(obj.getString("telat"));
+                                }
+                            } else {
+                                if (!tempcall.equals(obj.getString("kode"))) {
+                                    if (tempcall.equals("")) {
+                                        //tempcall = obj.getString("kode");
+                                        kar = new listperingkatkaryawan();
+                                        if(!kodek.contains(obj.getString("kode"))) {
+                                            kodek.add(obj.getString("kode"));
+                                        }
+                                        kar.setKode(obj.getString("kode"));
+                                        kar.setNama(obj.getString("nama"));
+                                        kar.setJabatan(obj.getString("jabatan"));
+                                        if (!obj.getString("foto").equals("")) {
+                                            kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                        } else {
+                                            kar.setImagelink("");
+                                        }
+                                        telats += Integer.parseInt(obj.getString("telat"));
+                                        kar.setTelat(telats);
+                                        items.add(kar);
+                                    }
+                                    else {
+                                        kar.setTelat(telats);
+                                        items.add(kar);
+                                        telats = 0;
+                                        kar = new listperingkatkaryawan();
+                                        if (!kodek.contains(obj.getString("kode"))) {
+                                            kodek.add(obj.getString("kode"));
+                                        }
+                                        kar.setKode(obj.getString("kode"));
+                                        kar.setNama(obj.getString("nama"));
+                                        kar.setJabatan(obj.getString("jabatan"));
+                                        if (!obj.getString("foto").equals("")) {
+                                            kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                        } else {
+                                            kar.setImagelink("");
+                                        }
+                                        tempcall = obj.getString("kode");
+                                        telats += Integer.parseInt(obj.getString("telat"));
+                                        kar.setTelat(telats);
+                                        items.add(kar);
+                                    }
+
+                                } else if (tempcall.equals(obj.getString("kode"))) {
+                                    telats += Integer.parseInt(obj.getString("telat"));
+                                    kar.setTelat(telats);
+                                    items.add(kar);
+                                }
+                            }
+                        }
+                        Log.e("LAMA",""+lama);
+                        int j=0;
+
+                        while(j<kodek.size()){
+                            telats=0;
+                            hadir=0;
+                            kar = new listperingkatkaryawan();
+                            for (int i = 0; i < pengsarray.length(); i++) {
+                                JSONObject obj = pengsarray.getJSONObject(i);
+                                if(kodek.get(j).equals(obj.getString("kode"))){
+                                    absen--;
+                                    hadir++;
+                                    kar.setKode(obj.getString("kode"));
+                                    kar.setNama(obj.getString("nama"));
+                                    kar.setJabatan(obj.getString("jabatan"));
+                                    if (!obj.getString("foto").equals("")) {
+                                        kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                    } else {
+                                        kar.setImagelink("");
+                                    }
+                                    telats += Integer.parseInt(obj.getString("telat"));
+                                }
+                            }
+                            j++;
+                            kar.setTelat(telats);
+                            kar.setAbsen(absen);
+                            kar.setHadir(hadir);
+                            itemstemp.add(kar);
+                        }
+                        Collections.sort(itemstemp, new Comparator<listperingkatkaryawan>() {
+                            @Override
+                            public int compare(listperingkatkaryawan listperingkatkaryawan, listperingkatkaryawan t1) {
+                                //Log.e("ABSEN",""+listperingkatkaryawan.getAbsen().compareTo(t1.getAbsen()));
+                                if(listperingkatkaryawan.getHadir().compareTo(t1.getHadir())<0 || listperingkatkaryawan.getHadir().compareTo(t1.getHadir())>0){
+                                    return -listperingkatkaryawan.getHadir().compareTo(t1.getHadir());
+                                }
+                                return listperingkatkaryawan.getTelat().compareTo(t1.getTelat());
+
+
+
+                            }
+                        });
+
+
+                        /*
                         for (int i = 0; i < pengsarray.length(); i++) {
                             JSONObject obj = pengsarray.getJSONObject(i);
 
@@ -296,7 +440,7 @@ public class owner_peringkatkaryawan extends AppCompatActivity {
                                 nama=obj.getString("nama");
                                 jabatan=obj.getString("jabatan");
                                 telats+=Integer.parseInt(obj.getString("telat"));
-                            }
+                            }*/
 
                             /*
                             datapinjaman kar = new datapinjaman();
@@ -333,7 +477,7 @@ public class owner_peringkatkaryawan extends AppCompatActivity {
                                 sect_idx++;
                             }*/
 
-                        }
+
                         DecimalFormat formatter =new DecimalFormat("###,###,###");
 
                         //ttlbayar.setText("Rp"+formatter.format(bayar));

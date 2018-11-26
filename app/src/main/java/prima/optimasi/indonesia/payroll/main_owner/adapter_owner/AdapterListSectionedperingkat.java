@@ -83,9 +83,10 @@ public class AdapterListSectionedperingkat extends RecyclerView.Adapter<Recycler
             OriginalViewHolder view = (OriginalViewHolder) holder;
 
             view.name.setText(p.getNama());
-            view.jabatan.setText(p.getJabatan());
+            view.jabatan.setText(p.getJabatan()+"Telat:"+p.getTelat()+"Hadir:"+p.getHadir());
 
             DecimalFormat formatter = new DecimalFormat("###,###,###");
+
 
             if(!p.getImagelink().equals("")) {
                 Picasso.get().load(p.getImagelink()).transform(new CircleTransform()).into(view.image);
@@ -94,7 +95,7 @@ public class AdapterListSectionedperingkat extends RecyclerView.Adapter<Recycler
                 Picasso.get().load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvx08eMc0PDklJb6ZMibGD-xZVa-Ghbs5mzmRrzNB3nsXoJ9B3zA").transform(new CircleTransform()).into(view.image);
 
             }
-            Log.e("Telat",""+p.getTelat());
+            Log.e("Absen",""+p.getAbsen());
             /*view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

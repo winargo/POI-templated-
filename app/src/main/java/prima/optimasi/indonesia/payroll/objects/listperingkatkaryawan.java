@@ -12,7 +12,7 @@ public class listperingkatkaryawan {
     String kode;
     String nama;
     String imagelink;
-    int telat;
+    int telat, absen, hadir;
 
     public String getKode() {
         return kode;
@@ -64,4 +64,19 @@ public class listperingkatkaryawan {
         return telat;
     }
 
+    public Integer getAbsen() {
+        return absen;
+    }
+
+    public void setAbsen(Integer absen) {
+        this.absen = absen;
+    }
+
+    public void setHadir(Integer hadir) {
+        this.hadir = hadir;
+    }
+
+    public Integer getHadir() {
+        return hadir;
+    }
 }

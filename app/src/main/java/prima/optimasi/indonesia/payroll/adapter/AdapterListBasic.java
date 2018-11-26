@@ -209,7 +209,7 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
                         dialog.getWindow().setAttributes(lp);
 
 
-                    }else if(view.name.getText().toString().equals("Karyawan Terbaik & Terburuk")){
+                    }else if(view.name.getText().toString().equals("Kinerja Karyawan")){
                         final Dialog dialog = new Dialog(ctx);
                         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
                         dialog.setContentView(R.layout.dialog_range_tanggal);
@@ -294,6 +294,7 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
                                         Intent peringkat = new Intent(ctx, owner_peringkatkaryawan.class);
                                         SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
                                         SimpleDateFormat fomat = new SimpleDateFormat("yyyy-MM-dd");
+
                                         peringkat.putExtra("tanggal_masuk", fomat.format(format1.parse(tanggal_masuk1)));
                                         peringkat.putExtra("tanggal_keluar", fomat.format(format1.parse(tanggal_keluar1)));
                                         Log.e("DATE : ", "" + fomat.format(format1.parse(tanggal_masuk1)) + " " + fomat.format(format1.parse(tanggal_keluar1)));
@@ -343,6 +344,7 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
                         calendar.set(Calendar.YEAR,year);
                         calendar.set(Calendar.MONTH,monthOfYear);
                         calendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+
                         if(jenis.equals("masuk")){
                             tanggal_masuk(calendar.getTime());
                             tanggal_masuk1(df.format(calendar.getTime()));
@@ -364,7 +366,7 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
         //set dark light
         datePicker.setThemeDark(false);
         datePicker.setAccentColor(ctx.getResources().getColor(R.color.colorPrimary));
-
+        datePicker.setMaxDate(cur_calender);
         datePicker.show(((Activity)ctx).getFragmentManager(), "Datepickerdialog");
     }
 
