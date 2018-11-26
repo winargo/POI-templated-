@@ -103,34 +103,6 @@
                     android:minWidth="100dp"
                     android:orientation="vertical">
                     <android.support.design.widget.FloatingActionButton
-                        android:id="@+id/lyt_parent_breakin"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/spacing_smlarge"
-                        android:layout_marginRight="@dimen/spacing_smlarge"
-                        android:layout_marginTop="@dimen/spacing_middle"
-                        android:clickable="true"
-                        android:layout_gravity="center"
-                        android:tint="@android:color/white"
-                        app:fabSize="normal"
-                        app:backgroundTint="@color/colorPrimary"
-                        app:rippleColor="@color/blue_500"
-                        app:srcCompat="@drawable/ic_breakin" />
-                    <TextView
-                        android:id="@+id/namebreakin"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_medium"
-                        android:text="Break IN"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:minWidth="100dp"
-                    android:orientation="vertical">
-                    <android.support.design.widget.FloatingActionButton
                         android:id="@+id/lyt_parent_breakout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -152,6 +124,36 @@
                         android:text="Break OUT"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2" />
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:minWidth="100dp"
+                    android:orientation="vertical">
+                    <android.support.design.widget.FloatingActionButton
+                        android:id="@+id/lyt_parent_breakin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/spacing_smlarge"
+                        android:layout_marginRight="@dimen/spacing_smlarge"
+                        android:layout_marginTop="@dimen/spacing_middle"
+                        android:clickable="true"
+                        android:layout_gravity="center"
+                        android:tint="@android:color/white"
+                        app:fabSize="normal"
+                        app:backgroundTint="@color/colorPrimary"
+                        app:rippleColor="@color/blue_500"
+                        app:srcCompat="@drawable/ic_breakin" />
+                    <TextView
+                        android:id="@+id/namebreakin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_medium"
+                        android:text="Break IN"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Body2" />
+                </LinearLayout>
+
             </LinearLayout>
 
 

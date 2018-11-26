@@ -617,8 +617,8 @@ public class generator {
                     if(result.getString("status").equals("true")){
                         prefs.edit().putInt("statustoken",0).commit();
 
-                        Log.e(TAG, "onPostExecute: "+"Registered to server" );
-                        ((Activity)cntx).finish();
+                        Log.e(TAG, "onPostExecute: "+"UnRegistered to server" );
+                        //((Activity)cntx).finish();
                     }
                     else {
                         res = "Fail";
@@ -856,6 +856,7 @@ public class generator {
         edit.commit();
 
         ctx.startActivity(logout);
+        ((Activity)ctx).finish();
     }
 
     public static void reloadurl(){
