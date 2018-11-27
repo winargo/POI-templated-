@@ -182,6 +182,7 @@ public class generator {
     public static String pengajuandinaskodeurl="http://"+ generator.Server+":"+generator.port+"/dinas/kode";
 
     public static String getdataizinbulananyurl="http://"+ generator.Server+":"+generator.port+"/izin/bulanan";
+    public static String getdatasakitbulananyurl="http://"+ generator.Server+":"+generator.port+"/sakit/bulanan";
 
     public static String kontrakkerjahabisurl="http://"+ generator.Server+":"+generator.port+"/kontrak/habis";
     public static String kontrakkerja1bulanurl="http://"+ generator.Server+":"+generator.port+"/kontrak/1bulan";
@@ -937,6 +938,7 @@ public class generator {
         pengajuansakitkodeurl="http://"+ generator.Server+":"+generator.port+"/sakit/kode";
         pengajuandinaskodeurl="http://"+ generator.Server+":"+generator.port+"/dinas/kode";
         getdataizinbulananyurl="http://"+ generator.Server+":"+generator.port+"/izin/bulanan";
+        getdatasakitbulananyurl="http://"+ generator.Server+":"+generator.port+"/sakit/bulanan";
         kontrakkerjahabisurl="http://"+ generator.Server+":"+generator.port+"/kontrak/habis";
         kontrakkerja1bulanurl="http://"+ generator.Server+":"+generator.port+"/kontrak/1bulan";
         kontrakkerja2bulanurl="http://"+ generator.Server+":"+generator.port+"/kontrak/2bulan";

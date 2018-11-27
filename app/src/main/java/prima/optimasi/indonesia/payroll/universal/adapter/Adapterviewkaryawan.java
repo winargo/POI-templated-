@@ -58,7 +58,7 @@ public class Adapterviewkaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-
+    /*
     public static class SectionViewHolder extends RecyclerView.ViewHolder {
         public TextView title_section;
 
@@ -66,19 +66,19 @@ public class Adapterviewkaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
             super(v);
             title_section = (TextView) v.findViewById(R.id.title_section);
         }
-    }
+    }*/
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder vh;
-        if (viewType == VIEW_ITEM) {
+        //if (viewType == VIEW_ITEM) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_keterangan_karyawan, parent, false);
             vh = new OriginalViewHolder(v);
-
+        /*
         } else {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_section, parent, false);
             vh = new SectionViewHolder(v);
-        }
+        }*/
 
         return vh;
     }
@@ -90,19 +90,19 @@ public class Adapterviewkaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
         if (holder instanceof OriginalViewHolder) {
             OriginalViewHolder view = (OriginalViewHolder) holder;
 
-            view.tanggal.setText("Tanggal");
+            view.tanggal.setText("Tanggal"+position);
             view.izin.setText(p.getIzin());
-            view.sakit.setText("");
-            view.absen.setText("");
+            view.sakit.setText(p.getSakit());
+            view.absen.setText(p.getAbsen());
 
             setAnimation(view.itemView, position);
         }
-
+        /*
         else{
             SectionViewHolder view = (SectionViewHolder) holder;
             view.title_section.setText(p.getBulan());
             //p.setSection(false);
-        }
+        }*/
     }
 
     @Override

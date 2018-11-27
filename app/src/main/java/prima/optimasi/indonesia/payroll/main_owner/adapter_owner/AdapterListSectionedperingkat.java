@@ -3,6 +3,7 @@ package prima.optimasi.indonesia.payroll.main_owner.adapter_owner;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.CardView;
@@ -59,7 +60,7 @@ public class AdapterListSectionedperingkat extends RecyclerView.Adapter<Recycler
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
         public CircularImageView image;
-        public TextView name,jabatan;
+        public TextView name,jabatan, no;
         public CardView card;
         public View lyt_parent;
 
@@ -69,6 +70,7 @@ public class AdapterListSectionedperingkat extends RecyclerView.Adapter<Recycler
             jabatan = v.findViewById(R.id.repjab);
             image =  v.findViewById(R.id.pinimage);
             name = v.findViewById(R.id.repnama);
+            no = v.findViewById(R.id.no);
             card = v.findViewById(R.id.card);
             lyt_parent = v.findViewById(R.id.lyt_parent);
 
@@ -92,6 +94,21 @@ public class AdapterListSectionedperingkat extends RecyclerView.Adapter<Recycler
         if (holder instanceof OriginalViewHolder) {
             OriginalViewHolder view = (OriginalViewHolder) holder;
 
+            if(position==0) {
+                view.no.setText("#"+String.valueOf(position + 1));
+                view.no.setTextColor(ctx.getResources().getColor(R.color.red_700));
+            }
+            else if(position==1) {
+                view.no.setText("#"+String.valueOf(position + 1));
+                view.no.setTextColor(ctx.getResources().getColor(R.color.green_700));
+            }
+            else if(position==2) {
+                view.no.setText("#"+String.valueOf(position + 1));
+                view.no.setTextColor(ctx.getResources().getColor(R.color.blue_700));
+            }
+            else{
+                view.no.setText(String.valueOf(position + 1));
+            }
             view.name.setText(p.getNama());
             view.jabatan.setText(p.getJabatan());
 

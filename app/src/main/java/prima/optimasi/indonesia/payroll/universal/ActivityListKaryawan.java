@@ -547,6 +547,7 @@ public class ActivityListKaryawan extends AppCompatActivity {
                             for (int i=0;i<pengsarray.length();i++){
                                 JSONObject obj=pengsarray.getJSONObject(i);
                                 kar=new listkaryawan();
+                                kar.setIskar(obj.getString("id"));
                                 kar.setNama(obj.getString("nama"));
                                 kar.setKode(obj.getString("kode_karyawan"));
                                 kar.setJabatan(obj.getString("jabatan"));
