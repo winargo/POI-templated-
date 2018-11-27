@@ -51,6 +51,7 @@ import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListSectionedgaji;
 import prima.optimasi.indonesia.payroll.objects.datagajiobject;
 import prima.optimasi.indonesia.payroll.objects.datagajiperiode;
+import prima.optimasi.indonesia.payroll.objects.datalaporanpenggajian;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 
@@ -243,9 +244,8 @@ public class owner_penggajian extends AppCompatActivity {
 
                             JSONArray obj2 = result.getJSONArray("data");
 
-                            List<Double> data1 = new ArrayList<>();
                             List<String> datakode = new ArrayList<>();
-                            List<List<Double>> dataall = new ArrayList<>();
+                            List<datalaporanpenggajian> dataall = new ArrayList<>();
 
                             for (int i=0 ; i<obj2.length();i++){
                                 JSONObject obj = obj2.getJSONObject(i);
@@ -253,15 +253,17 @@ public class owner_penggajian extends AppCompatActivity {
 
                                 }
                                 else{
+                                    datalaporanpenggajian data1 = new datalaporanpenggajian();
 
-                                    data1.add(obj.getDouble("tunjangan"));
-                                    data1.add(obj.getDouble("punishment"));
-                                    data1.add(obj.getDouble("bpjs"));
-                                    data1.add(obj.getDouble("reward"));
-                                    data1.add(obj.getDouble("potonganTelat"));
-                                    data1.add(obj.getDouble("hariKerja"));
-                                    data1.add(obj.getDouble("umk"));
-                                    data1.add(obj.getDouble("gajiHari"));
+
+                                    data1.setTunjangan(obj.getDouble("tunjangan"));
+                                    data1.setPunihsment(obj.getDouble("punishment"));
+                                    data1.setBpjs(obj.getDouble("bpjs"));
+                                    data1.setReward(obj.getDouble("reward"));
+                                    data1.setPotongatelat(obj.getDouble("potonganTelat"));
+                                    data1.setHarikerja(obj.getDouble("hariKerja"));
+                                    data1.setUmk(obj.getDouble("umk"));
+                                    data1.setGajihari(obj.getDouble("gajiHari"));
                                     dataall.add(data1);
                                     datakode.add(obj.getString("kode"));
                                 }
@@ -273,9 +275,8 @@ public class owner_penggajian extends AppCompatActivity {
                             DecimalFormat fomatter = new DecimalFormat("###,###,###.00");
 
                             for (int i=0;i<dataall.size();i++){
-                                retrivegajimentahrecurse gaji = new retrivegajimentahrecurse(owner_penggajian.this,data1,datakode,i,0,datakode.size()-1,dataall,Valuechart,dt1,dt2);
+                                retrivegajimentahrecurse gaji = new retrivegajimentahrecurse(owner_penggajian.this,datakode,i,0,datakode.size()-1,dataall,Valuechart,dt1,dt2);
                                 gaji.execute();
-
                             }
 
 
@@ -320,8 +321,8 @@ public class owner_penggajian extends AppCompatActivity {
         Double value = 0.0d;
 
         List<String> datacode;
-        List<Double> datad;
-        List<List<Double>> dataall;
+        datalaporanpenggajian datad;
+        List<datalaporanpenggajian> dataall;
 
         int[] count;
         int current=0;
@@ -331,7 +332,7 @@ public class owner_penggajian extends AppCompatActivity {
         String dt1="";
         String dt2="";
 
-        public retrivegajimentahrecurse(Context context,List<Double> datad , List<String> datakode,int position ,int itemposition,int lastp,List<List<Double>> dataalls,Double valuchart,String dt1,String dt2)
+        public retrivegajimentahrecurse(Context context, List<String> datakode,int position ,int itemposition,int lastp,List<datalaporanpenggajian> dataalls,Double valuchart,String dt1,String dt2)
         {
             this.dt1 = dt1;
             this.dt2 = dt2;
@@ -341,7 +342,6 @@ public class owner_penggajian extends AppCompatActivity {
             dataall = dataalls;
             current = itemposition;
             last = lastp;
-            this.datad = datad;
             this.datacode = datakode;
             this.position = position;
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
@@ -435,21 +435,7 @@ public class owner_penggajian extends AppCompatActivity {
                             //dataall.add(data1);
                             //datakode.add(obj.getString("kode"));
 
-                            Log.e(TAG, "dataallvalues "+dataall.get(current).get(0)+" "+ dataall.get(current).get(1)+ " "+ dataall.get(current).get(2)+ " " + dataall.get(current).get(3)+" "+ dataall.get(current).get(4)+" "+dataall.get(current).get(6) +" "+ dataall.get(current).get(5)+" "+ result.getDouble("data"));
 
-                            if(result.getDouble("data")!=0){
-                                JSONArray arrays = result.getJSONArray("data1");
-                                JSONObject obj = arrays.getJSONObject(0);
-                                //Valuechart = Valuechart +((dataall.get(current).get(6)/ dataall.get(current).get(5) * result.getDouble("data")) + dataall.get(current).get(0)-dataall.get(current).get(1)-dataall.get(current).get(2)+dataall.get(current).get(3)-dataall.get(current).get(4));
-                                Valuechart = Valuechart +((dataall.get(current).get(7) * result.getDouble("data")) + dataall.get(current).get(0)-dataall.get(current).get(1)-dataall.get(current).get(2)+dataall.get(current).get(3)-dataall.get(current).get(4));
-                            }
-
-                            DecimalFormat fomatter = new DecimalFormat("###,###,###.00");
-
-
-                            Log.e("valuecalculate",Valuechart.toString() );
-
-                            Log.e("Currentorlast",current+" "+last);
 
                             if(itempos==dataall.size()-1){
                                 mAdapter = new AdapterListSectionedgaji(owner_penggajian.this, items, ItemAnimation.LEFT_RIGHT);

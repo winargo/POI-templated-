@@ -51,18 +51,19 @@ public class AdapterListSectionedgaji extends RecyclerView.Adapter<RecyclerView.
     }
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
-        public CircularImageView image;
-        public TextView name,jabatan,gajiawal, gajibersih, potongan, tanggalgajian;
+        public TextView tanggal,bpjs,potongantelat,tunjangan,nama,jabatan,reward,punishment,totalbersih,gajihari;
         public CardView card;
 
         public OriginalViewHolder(View v) {
             super(v);
-            gajiawal = v.findViewById(R.id.gajiawal);
-            gajibersih = v.findViewById(R.id.gajibersih);
-            potongan = v.findViewById(R.id.potongan);
+            tanggal = v.findViewById(R.id.tanggalproses);
+            bpjs = v.findViewById(R.id.nilaibpjs);
+            potongantelat = v.findViewById(R.id.nilaipotongan);
             jabatan = v.findViewById(R.id.repjab);
-            name = v.findViewById(R.id.repnama);
-            tanggalgajian = v.findViewById(R.id.tanggalgajian);
+            nama = v.findViewById(R.id.repnama);
+            punishment = v.findViewById(R.id.nilaipunishment);
+            totalbersih = v.findViewById(R.id.nilaigajibersih);
+            gajihari = v.findViewById(R.id.gajikerjahari);
 
         }
     }
@@ -96,19 +97,19 @@ public class AdapterListSectionedgaji extends RecyclerView.Adapter<RecyclerView.
         if (holder instanceof OriginalViewHolder) {
             OriginalViewHolder view = (OriginalViewHolder) holder;
 
-            view.name.setText(p.getNama());
+            view.nama.setText(p.getNama());
             view.jabatan.setText(p.getJabatan());
 
             DecimalFormat formatter = new DecimalFormat("###,###,###");
 
-            view.gajiawal.setText("Rp"+formatter.format(Integer.parseInt(p.getTotalgaji())));
-            view.gajibersih.setText("Rp"+formatter.format(Integer.parseInt(p.getGajibersih())));
-            view.potongan.setText("Rp"+formatter.format(Integer.parseInt(p.getPotongan())));
+            view.totalbersih.setText("Rp"+formatter.format(Integer.parseInt(p.getTotalgaji())));
+            view.gajihari.setText("Rp"+formatter.format(Integer.parseInt(p.getGajibersih())));
+            view.potongantelat.setText("Rp"+formatter.format(Integer.parseInt(p.getPotongan())));
             String gajian=p.getTanggalgajian();
             SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
             SimpleDateFormat fomat = new SimpleDateFormat("yyyy-MM-dd");
             try{
-                view.tanggalgajian.setText(format1.format((fomat.parse(gajian))));
+                view.tanggal.setText(format1.format((fomat.parse(gajian))));
 
             }catch(Exception e){
                 Log.e("DATE : ", ""+gajian);

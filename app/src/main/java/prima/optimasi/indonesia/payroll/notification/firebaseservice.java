@@ -13,6 +13,8 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.Random;
+
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
 
@@ -84,7 +86,7 @@ public class firebaseservice extends FirebaseMessagingService {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
                 .setAutoCancel(true); // clear notification after click
 
-        Intent intent;
+        Intent intent=null;
         if(kode.equals("001")) {
             intent = new Intent(getApplicationContext(), activity_login.class);
         }
@@ -100,8 +102,13 @@ public class firebaseservice extends FirebaseMessagingService {
         else if(kode.equals("005")){
             intent = new Intent(getApplicationContext(), activity_login.class);
         }
+        else {
+            intent = new Intent(getApplicationContext(), activity_login.class);
+        }
         PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(pi);
-        mNotificationManager.notify(0, mBuilder.build());
+        Random rand = new Random();
+        int value = rand.nextInt(2000000);
+        mNotificationManager.notify(value, mBuilder.build());
     }
 }
