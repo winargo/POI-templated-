@@ -863,6 +863,7 @@ public class activity_login extends AppCompatActivity {
                         pref.edit().putString("username",dataisi.getString("nama")).commit();
 
                         FirebaseMessaging.getInstance().subscribeToTopic("hrd");
+                        finish();
 
 
 
@@ -885,6 +886,8 @@ public class activity_login extends AppCompatActivity {
 
                         FirebaseMessaging.getInstance().subscribeToTopic("kabag");
 
+                        finish();
+
                     }
                     else{
 
@@ -903,6 +906,8 @@ public class activity_login extends AppCompatActivity {
                         pref.edit().putString("username",dataisi.getString("nama")).commit();
 
                         FirebaseMessaging.getInstance().subscribeToTopic("karyawan");
+
+                        finish();
 
 
                     }
