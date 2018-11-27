@@ -267,6 +267,14 @@ public class mainmenu_hrd extends AppCompatActivity
                     pager.setCurrentItem(0);
                     drawer.closeDrawer(Gravity.START);
                 }
+                else if(listDataHeader.get(groupPosition).equals("Cek Gaji")){
+                    pager.setCurrentItem(3);
+                    drawer.closeDrawer(Gravity.START);
+                }
+                else if(listDataHeader.get(groupPosition).equals("Pengajuan")){
+                    pager.setCurrentItem(4);
+                    drawer.closeDrawer(Gravity.START);
+                }
                 else if(listDataHeader.get(groupPosition).equals("Absensi")){
                     drawer.closeDrawer(Gravity.START);
                     boolean permissionGranted = ActivityCompat.checkSelfPermission(mainmenu_hrd.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
@@ -314,14 +322,14 @@ public class mainmenu_hrd extends AppCompatActivity
                     builder.setItems(colors, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            if(which==1) {
+                            if(which==0) {
                                 Intent a = new Intent(mainmenu_hrd.this, cekjadwal.class);
-                                a.putExtra("cekjadwal",which);
+                                a.putExtra("cekjadwal",2);
                                 startActivity(a);
                             }
                             else {
                                 Intent a = new Intent(mainmenu_hrd.this, cekjadwal.class);
-                                a.putExtra("cekjadwal",which);
+                                a.putExtra("cekjadwal",1);
                                 startActivity(a);
                             }
                         }
@@ -490,21 +498,23 @@ public class mainmenu_hrd extends AppCompatActivity
         listDataHeader.add("Pengajuan");
         listDataHeader.add("Absensi");
 
+        /*
         List<String> top2501 = new ArrayList<String>();
         top2501.add("Karyawan");
-        top2501.add("Sendiri");
+        top2501.add("Sendiri");*/
 
+        /*
         // Adding child data
         List<String> top250 = new ArrayList<String>();
         top250.add("Izin");
         top250.add("Cuti");
         top250.add("Pinjaman");
-        top250.add("Sakit");
+        top250.add("Sakit");*/
 
-        listDataChild.put(listDataHeader.get(3), top2501);
-        listDataChild.put(listDataHeader.get(4), top2501);
+        //listDataChild.put(listDataHeader.get(3), top2501);
+        //listDataChild.put(listDataHeader.get(4), top2501);
 
-        listDataChild.put(listDataHeader.get(5), top250);
+        //listDataChild.put(listDataHeader.get(5), top250);
     }
 
     public class ExamplePagerAdapter extends FragmentStatePagerAdapter {

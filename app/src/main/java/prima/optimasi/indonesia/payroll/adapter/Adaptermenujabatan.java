@@ -157,7 +157,7 @@ public class Adaptermenujabatan extends BaseExpandableListAdapter {
             expadingarrowdown.setVisibility(View.GONE);
             icon.setBackgroundResource(R.drawable.baseline_account_circle_black_24dp);
         }else if(headerTitle.equals("Pengajuan")){
-            expadingarrowdown.setVisibility(View.VISIBLE);
+            expadingarrowdown.setVisibility(View.GONE);
             icon.setBackgroundResource(R.drawable.baseline_assignment_black_24dp);
         }else if(headerTitle.equals("Laporan")){
             expadingarrowdown.setVisibility(View.GONE);

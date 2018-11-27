@@ -65,6 +65,8 @@ public class firebaseservice extends FirebaseMessagingService {
     }
 
     private void showNotification(String title, String content) {
+        String kode=content.substring(0,3);
+        content=content.substring(4,content.length());
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -81,7 +83,23 @@ public class firebaseservice extends FirebaseMessagingService {
                 .setColor(getResources().getColor(R.color.blue_500))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
                 .setAutoCancel(true); // clear notification after click
-        Intent intent = new Intent(getApplicationContext(), activity_login.class);
+
+        Intent intent;
+        if(kode.equals("001")) {
+            intent = new Intent(getApplicationContext(), activity_login.class);
+        }
+        else if(kode.equals("002")) {
+            intent = new Intent(getApplicationContext(), activity_login.class);
+        }
+        else if(kode.equals("003")){
+            intent = new Intent(getApplicationContext(), activity_login.class);
+        }
+        else if(kode.equals("004")){
+            intent = new Intent(getApplicationContext(), activity_login.class);
+        }
+        else if(kode.equals("005")){
+            intent = new Intent(getApplicationContext(), activity_login.class);
+        }
         PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(pi);
         mNotificationManager.notify(0, mBuilder.build());

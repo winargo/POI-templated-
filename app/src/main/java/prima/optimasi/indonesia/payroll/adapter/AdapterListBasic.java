@@ -229,6 +229,7 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
                         c.add(Calendar.DATE,0);
                         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
                         String formattedDate = df.format(c.getTime());
+
                         spn_from_date.setText(formattedDate);
                         spn_to_date.setText(formattedDate);
                         tanggal_masuk=c.getTime();
@@ -261,8 +262,12 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
                             public void onClick(View v) {
                                 SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
                                 try {
+
                                     tgl_masuk = df.parse(tanggal_masuk1);
                                     tgl_keluar = df.parse(tanggal_keluar1);
+                                    long selisih=tgl_keluar.getTime()-tgl_masuk.getTime();
+                                    int days = (int) (selisih / (1000*60*60*24))+1;
+                                    Log.e("Selisih",""+days);
                                     if (tgl_masuk.compareTo(tgl_keluar) > 0) {
                                         final Dialog warn = new Dialog(ctx);
                                         warn.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
@@ -297,6 +302,7 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
 
                                         peringkat.putExtra("tanggal_masuk", fomat.format(format1.parse(tanggal_masuk1)));
                                         peringkat.putExtra("tanggal_keluar", fomat.format(format1.parse(tanggal_keluar1)));
+                                        peringkat.putExtra("lama", String.valueOf(days));
                                         Log.e("DATE : ", "" + fomat.format(format1.parse(tanggal_masuk1)) + " " + fomat.format(format1.parse(tanggal_keluar1)));
                                         ctx.startActivity(peringkat);
                                     }

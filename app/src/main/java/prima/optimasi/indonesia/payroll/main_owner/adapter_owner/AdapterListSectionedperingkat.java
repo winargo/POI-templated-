@@ -1,13 +1,19 @@
 package prima.optimasi.indonesia.payroll.main_owner.adapter_owner;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -55,6 +61,7 @@ public class AdapterListSectionedperingkat extends RecyclerView.Adapter<Recycler
         public CircularImageView image;
         public TextView name,jabatan;
         public CardView card;
+        public View lyt_parent;
 
 
         public OriginalViewHolder(View v) {
@@ -62,6 +69,9 @@ public class AdapterListSectionedperingkat extends RecyclerView.Adapter<Recycler
             jabatan = v.findViewById(R.id.repjab);
             image =  v.findViewById(R.id.pinimage);
             name = v.findViewById(R.id.repnama);
+            card = v.findViewById(R.id.card);
+            lyt_parent = v.findViewById(R.id.lyt_parent);
+
         }
     }
 
@@ -83,7 +93,7 @@ public class AdapterListSectionedperingkat extends RecyclerView.Adapter<Recycler
             OriginalViewHolder view = (OriginalViewHolder) holder;
 
             view.name.setText(p.getNama());
-            view.jabatan.setText(p.getJabatan()+"Telat:"+p.getTelat()+"Hadir:"+p.getHadir());
+            view.jabatan.setText(p.getJabatan());
 
             DecimalFormat formatter = new DecimalFormat("###,###,###");
 
@@ -95,7 +105,38 @@ public class AdapterListSectionedperingkat extends RecyclerView.Adapter<Recycler
                 Picasso.get().load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQvx08eMc0PDklJb6ZMibGD-xZVa-Ghbs5mzmRrzNB3nsXoJ9B3zA").transform(new CircleTransform()).into(view.image);
 
             }
-            Log.e("Absen",""+p.getAbsen());
+            //Log.e("Absen",""+p.getAbsen());
+            view.lyt_parent.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final Dialog dialog = new Dialog(ctx);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+                    dialog.setContentView(R.layout.dialog_info_peringkat);
+                    dialog.setCancelable(false);
+
+                    final TextView namakar = (TextView) dialog.findViewById(R.id.namakar);
+                    final TextView hadir = (TextView) dialog.findViewById(R.id.hadir);
+                    final TextView absen = (TextView) dialog.findViewById(R.id.absen);
+                    final TextView total = (TextView) dialog.findViewById(R.id.total);
+                    final TextView telat = (TextView) dialog.findViewById(R.id.telat);
+
+                    final AppCompatButton bt_close = (AppCompatButton) dialog.findViewById(R.id.bt_close);
+
+                    bt_close.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    namakar.setText(p.getNama());
+                    hadir.setText("Hadir : "+p.getHadir()+" hari");
+                    absen.setText("Absen : "+p.getAbsen()+" hari");
+                    total.setText("Total Kerja : "+p.getTotal()+" hari");
+                    telat.setText("Telat : "+p.getTelat()+" menit");
+                    dialog.show();
+                }
+            });
             /*view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

@@ -357,6 +357,7 @@ public class owner_peringkatkaryawan extends AppCompatActivity {
                         while(j<kodek.size()){
                             telats=0;
                             hadir=0;
+                            absen=Integer.parseInt(getIntent().getStringExtra("lama"));
                             kar = new listperingkatkaryawan();
                             for (int i = 0; i < pengsarray.length(); i++) {
                                 JSONObject obj = pengsarray.getJSONObject(i);
@@ -378,6 +379,7 @@ public class owner_peringkatkaryawan extends AppCompatActivity {
                             kar.setTelat(telats);
                             kar.setAbsen(absen);
                             kar.setHadir(hadir);
+                            kar.setTotal(Integer.parseInt(getIntent().getStringExtra("lama")));
                             itemstemp.add(kar);
                         }
 
@@ -396,110 +398,6 @@ public class owner_peringkatkaryawan extends AppCompatActivity {
 
                             }
                         });
-
-
-                        /*
-                        for (int i = 0; i < pengsarray.length(); i++) {
-                            JSONObject obj = pengsarray.getJSONObject(i);
-
-                            if(!tempcall.equals(obj.getString("kode"))){
-                                if(tempcall.equals("")){
-                                    kodekar=obj.getString("kode");
-                                    nama=obj.getString("nama");
-                                    jabatan=obj.getString("jabatan");
-                                    tempcall = obj.getString("kode");
-                                    telats+=Integer.parseInt(obj.getString("telat"));
-                                }
-                                else{
-                                    kodekar=obj.getString("kode");
-                                    nama=obj.getString("nama");
-                                    jabatan=obj.getString("jabatan");
-                                    kar=new listperingkatkaryawan();
-                                    kar.setKode(kodekar);
-                                    kar.setNama(nama);
-                                    kar.setJabatan(jabatan);
-                                    kar.setTelat(telats);
-                                    if(!obj.getString("foto").equals("")){
-                                        kar.setImagelink(generator.profileurl+obj.getString("foto"));
-                                    }
-                                    else{
-                                        kar.setImagelink("");
-                                    }
-
-                                    listtelat.add(telats);
-                                    tempcall = obj.getString("kode");
-                                    kodekar="";
-                                    nama="";
-                                    jabatan="";
-                                    telats=0;
-                                    itemstemp.add(kar);
-                                }
-                            }
-                            else if(i+1==pengsarray.length()){
-                                kodekar=obj.getString("kode");
-                                nama=obj.getString("nama");
-                                jabatan=obj.getString("jabatan");
-                                kar=new listperingkatkaryawan();
-                                kar.setKode(kodekar);
-                                kar.setNama(nama);
-                                kar.setJabatan(jabatan);
-                                kar.setTelat(telats);
-                                if(!obj.getString("foto").equals("")){
-                                    kar.setImagelink(generator.profileurl+obj.getString("foto"));
-                                }
-                                else{
-                                    kar.setImagelink("");
-                                }
-                                listtelat.add(telats);
-                                tempcall = obj.getString("kode");
-                                kodekar="";
-                                nama="";
-                                jabatan="";
-                                telats=0;
-                                itemstemp.add(kar);
-                            }
-                            else{
-                                kodekar=obj.getString("kode");
-                                nama=obj.getString("nama");
-                                jabatan=obj.getString("jabatan");
-                                telats+=Integer.parseInt(obj.getString("telat"));
-                            }*/
-
-                            /*
-                            datapinjaman kar = new datapinjaman();
-                            kar.setIssection(false);
-                            //kar.setIskar(obj.getString("id"));
-                            kar.setImageurl(generator.profileurl+obj.getString("foto"));
-
-                            Log.e(TAG, "image data" + kar.getImageurl() );
-
-                            bayar = bayar + Double.parseDouble(obj.getString("bayar"));
-                            pinjam = pinjam + Double.parseDouble(obj.getString("jumlah"));
-                            sisa = sisa + Double.parseDouble(obj.getString("sisa"));
-
-                            kar.setNama(obj.getString("nama"));
-                            kar.setPinjaman(obj.getString("jumlah"));
-                            kar.setBayar(obj.getString("bayar"));
-                            kar.setSisa(obj.getString("sisa"));
-                            kar.setJabatan(obj.getString("jabatan"));
-                            kar.setImageurl(generator.profileurl+obj.getString("foto"));
-
-                            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-                            SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
-                            kar.setStatus(obj.getString("status"));
-                            
-                            //kar.setJabatan(obj.getString("jabatan"));
-                            items.add(kar);*/
-                            /*int sect_count = 0;
-                            int sect_idx = 0;
-                            List<String> months = DataGenerator.getStringsMonth(getActivity());
-                            for (int i = 0; i < items.size() / 6; i++) {
-                                items.add(sect_count, new People(months.get(sect_idx), true));
-                                sect_count = sect_count + 5;
-                                sect_idx++;
-                            }*/
-
 
                         DecimalFormat formatter =new DecimalFormat("###,###,###");
 
@@ -748,6 +646,7 @@ public class owner_peringkatkaryawan extends AppCompatActivity {
                         while(j<kodek.size()){
                             telats=0;
                             hadir=0;
+                            absen=Integer.parseInt(getIntent().getStringExtra("lama"));
                             kar = new listperingkatkaryawan();
                             for (int i = 0; i < pengsarray.length(); i++) {
                                 JSONObject obj = pengsarray.getJSONObject(i);
@@ -769,6 +668,7 @@ public class owner_peringkatkaryawan extends AppCompatActivity {
                             kar.setTelat(telats);
                             kar.setAbsen(absen);
                             kar.setHadir(hadir);
+                            kar.setTotal(Integer.parseInt(getIntent().getStringExtra("lama")));
                             itemstemp.add(kar);
                         }
                         if(sort) {

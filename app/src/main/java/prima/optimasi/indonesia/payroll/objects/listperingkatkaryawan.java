@@ -12,7 +12,7 @@ public class listperingkatkaryawan {
     String kode;
     String nama;
     String imagelink;
-    int telat, absen, hadir;
+    int telat, absen, hadir, total;
 
     public String getKode() {
         return kode;
@@ -78,5 +78,13 @@ public class listperingkatkaryawan {
 
     public Integer getHadir() {
         return hadir;
+    }
+
+    public Integer getTotal() {
+        return total;
+    }
+
+    public void setTotal(Integer total) {
+        this.total = total;
     }
 }

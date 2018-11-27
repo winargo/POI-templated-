@@ -317,7 +317,6 @@ public class Adapterabsensiaktifitas extends RecyclerView.Adapter<RecyclerView.V
                     date1 = format.parse(view.txt_checkin.getText().toString());
                     date2 = format.parse(view.txt_checkout.getText().toString());
 
-
                     long difference = date2.getTime() - date1.getTime();
                     if(difference<0)
                     {
