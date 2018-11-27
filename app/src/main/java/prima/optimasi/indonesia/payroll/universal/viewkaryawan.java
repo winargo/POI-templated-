@@ -21,6 +21,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -91,7 +93,9 @@ public class viewkaryawan extends AppCompatActivity {
     ImageButton message,phone;
     CircularImageView image;
     String[] tabTitles = new String []{"Januari", "Februari","Maret","April","Mei","Juni","Juli"};
-
+    String[] keterangan = new String []{"izin", "sakit"};
+    List<String> listizin;
+    List<String> listsakit;
     ViewPager pager;
     TabLayout tabpager;
     TabLayout indicator;
@@ -102,9 +106,9 @@ public class viewkaryawan extends AppCompatActivity {
     List<Integer> color;
     List<String> colorName;
     private TextView[] dots;
-    private RecyclerView recyclerView;
+    RecyclerView recyclerView;
     //private AdapterListSectioned mAdapter;
-    private Adapterviewkaryawan adapter;
+    Adapterviewkaryawan adapter;
     private ArrayList<Integer> ImagesArray = new ArrayList<Integer>();
 
     @Override
@@ -245,6 +249,14 @@ public class viewkaryawan extends AppCompatActivity {
 
         initToolbar();
         initComponent();
+        listizin=new ArrayList<>();
+        listsakit=new ArrayList<>();
+        items=new ArrayList<>();
+        for (int i=0;i<keterangan.length;i++){
+            retriveketerangan ket = new retriveketerangan(viewkaryawan.this,keterangan[i]);
+            ket.execute();
+        }
+
     }
 
     private void initToolbar() {
@@ -408,12 +420,17 @@ public class viewkaryawan extends AppCompatActivity {
                         scount.setText("-");
                         icount.setText("-");
                         acount.setText("-");
-
-                        Picasso.get().load(generator.profileurl+"/"+obj.getString("foto")).transform(new CircleTransform()).into(image);
-
+                        String urlpath="";
+                        if(obj.getString("foto").equals("")){
+                            urlpath="http://www.racemph.com/wp-content/uploads/2016/09/profile-image-placeholder.png";
+                        }
+                        else{
+                            urlpath=generator.profileurl+"/"+obj.getString("foto");
+                        }
+                        Picasso.get().load(urlpath).transform(new CircleTransform()).into(image);
                         final Bitmap[] bm = {null};
 
-                        Picasso.get().load(generator.profileurl+"/"+obj.getString("foto")).into(new Target() {
+                        Picasso.get().load(urlpath).into(new Target() {
                             @Override
                             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                                 bm[0] = bitmap;
@@ -446,8 +463,7 @@ public class viewkaryawan extends AppCompatActivity {
                         Log.e(TAG, "onPostExecute: "+ generator.profileurl+"/"+obj.getString("foto") );
 
 
-                        retrivekaryawanizin karizin = new retrivekaryawanizin(ctx,getIntent().getStringExtra("idkaryawan"));
-                        karizin.execute();
+
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -476,7 +492,7 @@ public class viewkaryawan extends AppCompatActivity {
         }
     }
 
-    private class retrivekaryawanizin extends AsyncTask<Void, Integer, String>
+    private class retriveketerangan extends AsyncTask<Void, Integer, String>
     {
         String response = "";
         String error = "";
@@ -486,26 +502,32 @@ public class viewkaryawan extends AppCompatActivity {
         Context ctx;
         JSONObject result = null ;
         ProgressDialog dialog ;
-        String urldata = generator.getdataizinbulananyurl;
+        String urldata;
         //String passedid = "" ;
 
-        public retrivekaryawanizin(Context context,String id)
+        public retriveketerangan(Context context,String keterangan)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
-            dialog = new ProgressDialog(context);
+            //dialog = new ProgressDialog(context);
             this.username = generator.username;
             this.password = generator.password;
             //passedid = id;
             this.error = error ;
             ctx=context;
+            if(keterangan.equals("izin")){
+                urldata=generator.getdataizinbulananyurl;
+            }
+            else{
+                urldata=generator.getdatasakitbulananyurl;
+            }
         }
 
         String TAG = getClass().getSimpleName();
 
         protected void onPreExecute (){
-            this.dialog.show();
+            //this.dialog.show();
             super.onPreExecute();
-            this.dialog.setMessage("Getting Data...");
+            //this.dialog.setMessage("Getting Data...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
         }
 
@@ -513,7 +535,7 @@ public class viewkaryawan extends AppCompatActivity {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
 
             try {
-                this.dialog.setMessage("Loading Data...");
+                //this.dialog.setMessage("Loading Data...");
 
                 JSONObject jsonObject;
 
@@ -555,17 +577,17 @@ public class viewkaryawan extends AppCompatActivity {
                     return null;
                 }
             } catch (IOException e) {
-                this.dialog.dismiss();
+                //this.dialog.dismiss();
                 Log.e("doInBackground: ", "IO Exception" + e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Error IOException";
             } catch (NullPointerException e) {
-                this.dialog.dismiss();
+                //this.dialog.dismiss();
                 Log.e("doInBackground: ", "null data" + e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Please check Connection and Server";
             } catch (Exception e) {
-                this.dialog.dismiss();
+                //this.dialog.dismiss();
                 Log.e("doInBackground: ", e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Error Occured, PLease Contact Administrator/Support";
@@ -586,24 +608,39 @@ public class viewkaryawan extends AppCompatActivity {
 
                 if (result != null) {
                     try {
-                        items=new ArrayList<>();
+
                         Log.e(TAG, "data json result" + result);
-                        kar=new listkaryawan_izincutisakit();
+
                         JSONArray pengsarray = result.getJSONArray("rows");
                         Log.e(TAG, "data json result" + pengsarray.length());
                         String tempcall="",temp="";
                         String tempbulan="";
                         int banyakizin=0;
-                        for (int i = 0; i < pengsarray.length(); i++) {
 
+                        /*
+                        if(keterangan.equals("izin")){
+                            listizin.add(""+pengsarray.length());
+                        }else{
+                            listsakit.add(""+pengsarray.length());
+                            kar=new listkaryawan_izincutisakit();
+                            kar.setIzin(listizin);
+                        }*/
+                        for (int i = 0; i <pengsarray.length(); i++) {
+                            if(keterangan.equals("sakit")) {
+                                kar = new listkaryawan_izincutisakit();
+                                kar.setIzin("Izin" + i);
+                                kar.setSakit("Sakit" + i);
+                                kar.setAbsen("Absen" + i);
+                                items.add(kar);
+                            }
+                            /*
                             JSONObject obj = pengsarray.getJSONObject(i);
                             String thn_izin=obj.getString("tgl_izin").substring(0,4);
                             String bln_izin=obj.getString("tgl_izin").substring(5,7);
                             String tgl_izin=obj.getString("tgl_izin").substring(8,10);
                             String totalizin=""+pengsarray.length();
                             Log.e(TAG, "data json result" + "Berhasil1");
-                            //kar.setIzin(""+pengsarray.length());
-                            //items.add(kar);
+
 
                             if(!tempcall.equals(obj.getString("tgl_izin").substring(5,7))){
                                 if(tempcall.equals("")){
@@ -727,8 +764,13 @@ public class viewkaryawan extends AppCompatActivity {
                             //kar.setIzin();
 
                         }
-                        adapter = new Adapterviewkaryawan(viewkaryawan.this, items, ItemAnimation.LEFT_RIGHT);
-                        recyclerView.setAdapter(adapter);
+                        if(keterangan.equals("sakit")) {
+                            adapter = new Adapterviewkaryawan(viewkaryawan.this, items, ItemAnimation.LEFT_RIGHT);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(viewkaryawan.this, LinearLayoutManager.HORIZONTAL, false));
+                            recyclerView.setAdapter(adapter);
+                            PagerSnapHelper snapHelper = new PagerSnapHelper();
+                            snapHelper.attachToRecyclerView(recyclerView);
+                        }
                         /*
                         boolean status=result.getBoolean("status");
                         if(!status){
@@ -808,10 +850,10 @@ public class viewkaryawan extends AppCompatActivity {
                 Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
                 Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
             }
-
+            /*
             if(this.dialog.isShowing()){
                 dialog.dismiss();
-            }
+            }*/
 
 
             Log.d(TAG + " onPostExecute", "" + result1);

@@ -115,7 +115,7 @@ public class FragmentEmployee extends Fragment {
                 AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity()).setPositiveButton("Select", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        retriveabsensi absensi = new retriveabsensi(getActivity());
+                        retriveabsensispecified absensi = new retriveabsensispecified(getActivity(),tanggal);
                         absensi.execute();
                     }
                 }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -178,6 +178,16 @@ public class FragmentEmployee extends Fragment {
         refreshkabag.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                if(mAdapterkabag!=null){
+                    itemskabag.clear();
+                    mAdapterkabag.notifyDataSetChanged();
+                }
+                if(mAdapterkaryawan!=null){
+                    itemskaryawan.clear();
+                    mAdapterkaryawan.notifyDataSetChanged();
+                }
+
+                nilaiall = 0;
                 retrivekaryawanrefersh ref = new retrivekaryawanrefersh(getActivity());
                 ref.execute();
             }
@@ -186,6 +196,16 @@ public class FragmentEmployee extends Fragment {
         refreshkaryawan.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                if(mAdapterkaryawan!=null){
+                    itemskaryawan.clear();
+                    mAdapterkaryawan.notifyDataSetChanged();
+                }
+                if(mAdapterkabag!=null){
+                    itemskabag.clear();
+                    mAdapterkabag.notifyDataSetChanged();
+                }
+
+                nilaiall = 0;
                 retrivekaryawanrefersh ref = new retrivekaryawanrefersh(getActivity());
                 ref.execute();
             }
@@ -451,6 +471,7 @@ public class FragmentEmployee extends Fragment {
                                     kar.setImagelink("");
                                     Log.e(TAG, "image data" + kar.getImagelink());
                                 }
+
                                 kar.setNama(obj.getString("nama"));
                                 kar.setDesc(obj.getString("jabatan"));
                                 itemskabag.add(kar);
@@ -470,7 +491,7 @@ public class FragmentEmployee extends Fragment {
                                         tempcall = obj.getString("otoritas");
                                         items.add(kar);
                                     }
-                                }
+                                }*/
                                 listkaryawan kar = new listkaryawan();
                                 kar.setSection(false);
                                 kar.setJabatan("HRD");
@@ -481,16 +502,26 @@ public class FragmentEmployee extends Fragment {
 
                                 kar.setNama(obj.getString("nama"));
                                 kar.setDesc(obj.getString("jabatan"));
-                                items.add(kar);*/
+                                itemskabag.add(kar);
                             }
-                            /*int sect_count = 0;
-                            int sect_idx = 0;
-                            List<String> months = DataGenerator.getStringsMonth(getActivity());
-                            for (int i = 0; i < items.size() / 6; i++) {
-                                items.add(sect_count, new People(months.get(sect_idx), true));
-                                sect_count = sect_count + 5;
-                                sect_idx++;
-                            }*/
+                            else {
+                                listkaryawan kar = new listkaryawan();
+                                kar.setSection(false);
+                                kar.setJabatan("Karyawan");
+                                kar.setIskar(obj.getString("id"));
+                                if (!obj.getString("foto").equals("")) {
+                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
+                                else{
+                                    kar.setImagelink("");
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
+
+                                kar.setNama(obj.getString("nama"));
+                                kar.setDesc(obj.getString("jabatan"));
+                                itemskaryawan.add(kar);
+                            }
 
                         }
                         nilaikabag = itemskabag.size();
@@ -639,8 +670,12 @@ public class FragmentEmployee extends Fragment {
                 Log.e(TAG, "data json result" + result.toString());
                 if (result != null) {
                     try {
-                        itemskaryawan = new ArrayList<>();
-                        itemskabag = new ArrayList<>();
+                        if(itemskaryawan==null){
+                            itemskaryawan  = new ArrayList<>();
+                        }
+                        if(itemskabag==null){
+                            itemskabag = new ArrayList<>();
+                        }
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         JSONArray pengsarray = result.getJSONArray("rows");
 
@@ -742,6 +777,35 @@ public class FragmentEmployee extends Fragment {
                                 kar.setNama(obj.getString("nama"));
                                 kar.setDesc(obj.getString("jabatan"));
                                 items.add(kar);*/
+                                listkaryawan kar = new listkaryawan();
+                                kar.setSection(false);
+                                kar.setJabatan("HRD");
+                                kar.setIskar(obj.getString("id"));
+                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
+
+                                Log.e(TAG, "image data" + kar.getImagelink() );
+
+                                kar.setNama(obj.getString("nama"));
+                                kar.setDesc(obj.getString("jabatan"));
+                                itemskabag.add(kar);
+                            }
+                            else {
+                                listkaryawan kar = new listkaryawan();
+                                kar.setSection(false);
+                                kar.setJabatan("Karyawan");
+                                kar.setIskar(obj.getString("id"));
+                                if (!obj.getString("foto").equals("")) {
+                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
+                                else{
+                                    kar.setImagelink("");
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+                                }
+
+                                kar.setNama(obj.getString("nama"));
+                                kar.setDesc(obj.getString("jabatan"));
+                                itemskaryawan.add(kar);
                             }
                             /*int sect_count = 0;
                             int sect_idx = 0;
@@ -756,8 +820,11 @@ public class FragmentEmployee extends Fragment {
 
                         //mAdapter = new AdapterListSectioned(getActivity(), items, ItemAnimation.LEFT_RIGHT);
 
-                        if(mAdapteraktifitas!=null){
-                            mAdapteraktifitas.notifyDataSetChanged();
+                        if(mAdapterkabag!=null){
+                            mAdapterkabag.notifyDataSetChanged();
+                        }
+                        if(mAdapterkaryawan!=null){
+                            mAdapterkaryawan.notifyDataSetChanged();
                         }
                         nilaikabag = itemskabag.size();
                         nilaikaryawan = itemskaryawan.size();
@@ -812,7 +879,7 @@ public class FragmentEmployee extends Fragment {
         {
             nilaikehadiran=0;
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
-            dialog = new ProgressDialog(context);
+            //dialog = new ProgressDialog(context);
             this.username = generator.username;
             this.password = generator.password;
             this.error = error ;
@@ -821,9 +888,9 @@ public class FragmentEmployee extends Fragment {
         String TAG = getClass().getSimpleName();
 
         protected void onPreExecute (){
-            this.dialog.show();
+            //this.dialog.show();
             super.onPreExecute();
-            this.dialog.setMessage("Getting Data...");
+            //this.dialog.setMessage("Getting Data...");
             Log.d(TAG + " PreExceute","On pre Exceute......");
         }
 
@@ -1194,9 +1261,10 @@ public class FragmentEmployee extends Fragment {
                 Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
             }
 
+            /*
             if(this.dialog.isShowing()){
                 dialog.dismiss();
-            }
+            }*/
 
 
             Log.d(TAG + " onPostExecute", "" + result1);
@@ -1581,6 +1649,367 @@ public class FragmentEmployee extends Fragment {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
+
+    private class retriveabsensispecified extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        ProgressDialog dialog ;
+        String urldata = generator.getabsensidateurl;
+        String passeddata = "" ;
+
+        public retriveabsensispecified(Context context,String dates)
+        {
+            passeddata = dates;
+            nilaikehadiran = 0;
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            dialog = new ProgressDialog(context);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            this.dialog.show();
+            super.onPreExecute();
+            //this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    RequestBody body = new FormBody.Builder()
+                            .add("date",passeddata)
+                            .build();
+
+                    Log.e(TAG, tanggal);
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .post(body)
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+                Log.e(TAG, "data absensi karyawan" + result.toString());
+                if (result != null) {
+                    try {
+                        itemaktifitas.clear();
+
+                        //mAdapteraktifitas.notifyDataSetChanged();
+
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        JSONArray pengsarray = result.getJSONArray("rows");
+
+                        String tempcall = "";
+
+                        for (int i = 0; i < pengsarray.length(); i++) {
+                            JSONObject obj = pengsarray.getJSONObject(i);
+                            if(obj.getString("otoritas").equals("1")){
+                                /*if(!tempcall.equals(obj.getString("otoritas"))){
+                                    if(tempcall.equals("")){
+                                        listkaryawan kar = new listkaryawan();
+                                        kar.setJabatan("Karyawan");
+                                        kar.setSection(true);
+                                        tempcall = obj.getString("otoritas");
+                                        items.add(kar);
+                                    }
+                                    else{
+                                        listkaryawan kar = new listkaryawan();
+                                        kar.setJabatan("Karyawan");
+                                        kar.setSection(true);
+                                        tempcall = obj.getString("otoritas");
+                                        items.add(kar);
+                                    }
+                                }*/
+                                listkaryawanaktivitas kar = new listkaryawanaktivitas();
+
+                                if(!obj.getString("masuk").equals("null")){
+                                    kar.setCheckin(obj.getString("masuk"));
+                                }
+                                else {
+                                    kar.setCheckin("-");
+                                }
+                                if(!obj.getString("keluar").equals("null")){
+                                    kar.setCheckout(obj.getString("keluar"));
+                                }
+                                else {
+                                    kar.setCheckout("-");
+                                }
+                                if(!obj.getString("break_in").equals("null")){
+                                    kar.setBreakin(obj.getString("break_in"));
+                                }
+                                else {
+                                    kar.setBreakin("-");
+                                }
+                                if(!obj.getString("break_out").equals("null")){
+                                    kar.setBreakout(obj.getString("break_out"));
+                                }
+                                else {
+                                    kar.setBreakout("-");
+                                }
+
+                                kar.setJabatan("Karyawan");
+                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
+
+                                Log.e(TAG, "image data" + kar.getImagelink() );
+
+                                kar.setNama(obj.getString("nama"));
+                                kar.setDesc(obj.getString("jabatan"));
+                                itemaktifitas.add(kar);
+                            }else if(obj.getString("otoritas").equals("2")){
+                                if(!tempcall.equals(obj.getString("otoritas"))){
+                                    /*if(tempcall.equals("")){
+                                        listkaryawan kar = new listkaryawan();
+                                        kar.setJabatan("Kepala Bagian");
+                                        kar.setSection(true);
+                                        tempcall = obj.getString("otoritas");
+                                        items.add(kar);
+                                    }
+                                    else{
+                                        listkaryawan kar = new listkaryawan();
+                                        kar.setJabatan("Kepala Bagian");
+                                        kar.setSection(true);
+                                        tempcall = obj.getString("otoritas");
+                                        items.add(kar);
+                                    }*/
+                                }
+                                listkaryawanaktivitas kar = new listkaryawanaktivitas();
+
+                                if(!obj.getString("masuk").equals("null")){
+                                    kar.setCheckin(obj.getString("masuk"));
+                                }
+                                else {
+                                    kar.setCheckin("-");
+                                }
+                                if(!obj.getString("keluar").equals("null")){
+                                    kar.setCheckout(obj.getString("keluar"));
+                                }
+                                else {
+                                    kar.setCheckout("-");
+                                }
+                                if(!obj.getString("break_in").equals("null")){
+                                    kar.setBreakin(obj.getString("break_in"));
+                                }
+                                else {
+                                    kar.setBreakin("-");
+                                }
+                                if(!obj.getString("break_out").equals("null")){
+                                    kar.setBreakout(obj.getString("break_out"));
+                                }
+                                else {
+                                    kar.setBreakout("-");
+                                }
+
+                                kar.setJabatan("Kepala Bagian");
+                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
+
+                                Log.e(TAG, "image data" + kar.getImagelink() );
+
+                                kar.setNama(obj.getString("nama"));
+                                kar.setDesc(obj.getString("jabatan"));
+                                itemaktifitas.add(kar);
+                            }else if(obj.getString("otoritas").equals("3")){
+                                /*if(!tempcall.equals(obj.getString("otoritas"))){
+                                    /*if(tempcall.equals("")){
+                                        listkaryawan kar = new listkaryawan();
+                                        kar.setJabatan("HRD");
+                                        kar.setSection(true);
+                                        tempcall = obj.getString("otoritas");
+                                        items.add(kar);
+                                    }
+                                    else{
+                                        listkaryawan kar = new listkaryawan();
+                                        kar.setJabatan("HRD");
+                                        kar.setSection(true);
+                                        tempcall = obj.getString("otoritas");
+                                        items.add(kar);
+                                    }
+                                }*/
+                                listkaryawanaktivitas kar = new listkaryawanaktivitas();
+
+                                if(!obj.getString("masuk").equals("null")){
+                                    kar.setCheckin(obj.getString("masuk"));
+                                }
+                                else {
+                                    kar.setCheckin("-");
+                                }
+                                if(!obj.getString("keluar").equals("null")){
+                                    kar.setCheckout(obj.getString("keluar"));
+                                }
+                                else {
+                                    kar.setCheckout("-");
+                                }
+                                if(!obj.getString("break_in").equals("null")){
+                                    kar.setBreakin(obj.getString("break_in"));
+                                }
+                                else {
+                                    kar.setBreakin("-");
+                                }
+                                if(!obj.getString("break_out").equals("null")){
+                                    kar.setBreakout(obj.getString("break_out"));
+                                }
+                                else {
+                                    kar.setBreakout("-");
+                                }
+                                kar.setJabatan("HRD");
+                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
+
+                                Log.e(TAG, "image data" + kar.getImagelink() );
+
+                                kar.setNama(obj.getString("nama"));
+                                kar.setDesc(obj.getString("jabatan"));
+                                itemaktifitas.add(kar);
+                            }else{
+                                listkaryawanaktivitas kar = new listkaryawanaktivitas();
+
+                                if(!obj.getString("masuk").equals("null")){
+                                    kar.setCheckin(obj.getString("masuk"));
+                                }
+                                else {
+                                    kar.setCheckin("-");
+                                }
+                                if(!obj.getString("keluar").equals("null")){
+                                    kar.setCheckout(obj.getString("keluar"));
+                                }
+                                else {
+                                    kar.setCheckout("-");
+                                }
+                                if(!obj.getString("break_in").equals("null")){
+                                    kar.setBreakin(obj.getString("break_in"));
+                                }
+                                else {
+                                    kar.setBreakin("-");
+                                }
+                                if(!obj.getString("break_out").equals("null")){
+                                    kar.setBreakout(obj.getString("break_out"));
+                                }
+                                else {
+                                    kar.setBreakout("-");
+                                }
+
+                                kar.setJabatan("Security");
+                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
+
+                                Log.e(TAG, "image data" + kar.getImagelink() );
+
+                                kar.setNama(obj.getString("nama"));
+                                kar.setDesc(obj.getString("jabatan"));
+                                itemaktifitas.add(kar);
+                            }
+                            /*int sect_count = 0;
+                            int sect_idx = 0;
+                            List<String> months = DataGenerator.getStringsMonth(getActivity());
+                            for (int i = 0; i < items.size() / 6; i++) {
+                                items.add(sect_count, new People(months.get(sect_idx), true));
+                                sect_count = sect_count + 5;
+                                sect_idx++;
+                            }*/
+
+                        }
+
+                        //mAdapter = new AdapterListSectioned(getActivity(), items, ItemAnimation.LEFT_RIGHT);
+
+                        nilaikehadiran = itemaktifitas.size();
+
+                        totalhadir.setText("Jumlah Karyawan Hadir : ("+nilaikehadiran+"/"+nilaiall+")");
+                        if(mAdapteraktifitas!=null){
+                            mAdapteraktifitas.notifyDataSetChanged();
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);

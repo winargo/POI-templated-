@@ -15,6 +15,7 @@ public class datalaporanpenggajian {
         return harikerja;
     }
 
+    public Double getPotongatelat() {
         return potongatelat;
     }
 

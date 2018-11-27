@@ -94,6 +94,8 @@ dependencies {
 
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
     implementation 'com.github.PhilJay:MPAndroidChart-Realm:v2.0.2@aar'
+
+    //implementation 'com.github.lsjwzh.RecyclerViewPager:lib:v1.2.0@aar'
 }
 
 
