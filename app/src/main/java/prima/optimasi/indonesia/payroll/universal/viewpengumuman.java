@@ -2,12 +2,9 @@ package prima.optimasi.indonesia.payroll.universal;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -34,18 +31,15 @@ public class viewpengumuman extends AppCompatActivity {
     private FloatingActionButton fab;
 
     TextView judul , brief ,isi,creator,createdate;
-
     ImageView image ,imagecreator;
-
+    boolean hide = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_medium);
-        iniComponent();
         initToolbar();
+        iniComponent();
     }
-
-    boolean hide = false;
 
     private void iniComponent() {
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -72,15 +66,10 @@ public class viewpengumuman extends AppCompatActivity {
         getSupportActionBar().setTitle(null);
 
         imagecreator = findViewById(R.id.image);
-
         imagecreator.setVisibility(View.GONE);
 
         createdate = findViewById(R.id.pengtextdatecreator);
         creator = findViewById(R.id.pengtextcreator);
-
-
-
-
 
         judul = findViewById(R.id.pengtitle);
         brief = findViewById(R.id.pengbrief);
@@ -133,9 +122,6 @@ public class viewpengumuman extends AppCompatActivity {
 
         SimpleDateFormat date = new SimpleDateFormat("dd/MM/yyyy");
         brief.setText(date.format(peng.getCreatedate()) + " - Oleh " + peng.getCreated());
-
-
-
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         prima.optimasi.indonesia.payroll.utils.Tools.setSystemBarColor(this, R.color.colorPrimary);

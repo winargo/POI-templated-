@@ -1,7 +1,6 @@
 package prima.optimasi.indonesia.payroll.objects;
 
 import android.graphics.drawable.Drawable;
-import android.widget.ImageView;
 
 public class listreport {
     String judul,deskripsi;

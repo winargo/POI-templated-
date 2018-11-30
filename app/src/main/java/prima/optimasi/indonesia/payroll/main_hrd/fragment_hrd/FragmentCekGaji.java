@@ -32,7 +32,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.data.SharedPref;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 import prima.optimasi.indonesia.payroll.universal.adapter.AdapterListKaryawan;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;

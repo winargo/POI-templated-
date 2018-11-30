@@ -13,16 +13,14 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import prima.optimasi.indonesia.payroll.R;
-import prima.optimasi.indonesia.payroll.helper.FilterHelper;
-import prima.optimasi.indonesia.payroll.model.Image;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 import prima.optimasi.indonesia.payroll.universal.viewjadwalkaryawan;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Adapterkaryawan extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
 

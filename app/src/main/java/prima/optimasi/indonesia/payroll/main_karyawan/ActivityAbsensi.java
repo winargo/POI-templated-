@@ -37,7 +37,6 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.universal.absence.facedetection;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 import qrcodescanner.QrCodeActivity;
 
@@ -45,7 +44,6 @@ public class ActivityAbsensi extends AppCompatActivity {
     CoordinatorLayout parent_view;
 
     public static String jabatan="JABATAN";
-
     int checker = 0;
 
     FloatingActionButton checkin, checkout, breakin, breakout, extrain, extraout, absensi, absensiwajah, scan;
@@ -53,22 +51,19 @@ public class ActivityAbsensi extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_absensi_security);
         //prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
         Log.e("Jabatan : ", getIntent().getStringExtra("jabatan"));
 
-        setContentView(R.layout.activity_absensi_security);
-        initComponent2();
+        initToolbar();
+        initComponent();
+        initListener();
 
         //absensiwajah=findViewById(R.id.lyt_parent_absensiwajah);
-
         //absensiwajah.setVisibility(View.GONE);
-
         //TextView absensiwajahteks=findViewById(R.id.nameabsensiwajah);
-
         //absensiwajahteks.setVisibility(View.GONE);
         //recyclerView = findViewById(R.id.recyclerView);
-        parent_view= findViewById(R.id.parent_view);
-        initToolbar();
     }
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -78,7 +73,9 @@ public class ActivityAbsensi extends AppCompatActivity {
         Tools.setSystemBarColor(this, R.color.colorPrimary);
     }
 
-    private void initComponent2() {
+    private void initComponent() {
+        parent_view= findViewById(R.id.parent_view);
+
         scan=findViewById(R.id.lyt_parent);
         checkin=findViewById(R.id.lyt_parent_checkin);
         checkout=findViewById(R.id.lyt_parent_checkout);
@@ -100,7 +97,6 @@ public class ActivityAbsensi extends AppCompatActivity {
         breakoutteks.setText("Break OUT");
         absensiteks.setText("Absensi");
 
-
         /*ImageView imagescan = findViewById(R.id.image);
         ImageView image_checkin = findViewById(R.id.image_checkin);
         ImageView image_checkout = findViewById(R.id.image_checkout);
@@ -114,7 +110,9 @@ public class ActivityAbsensi extends AppCompatActivity {
         Picasso.get().load("http://www.metrochemgroup.com/wp-content/uploads/2018/04/meal-break.jpg").into(image_breakin);
         Picasso.get().load("https://www.kidcheck.com/wp-content/uploads/2016/06/time-limit-1-300x217.jpg").into(image_breakout);
         Picasso.get().load("https://d35kskn2b3gqvv.cloudfront.net/wp-content/uploads/2016/10/qrcodes.png").into(image_absensi);*/
+    }
 
+    private void initListener(){
         scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -263,16 +261,12 @@ public class ActivityAbsensi extends AppCompatActivity {
         breakout.setEnabled(false);
         checkin.setEnabled(false);
         checkout.setEnabled(false);
-        //extrain.setEnabled(false);
-        //extraout.setEnabled(false);
         absensi.setEnabled(false);
         scan.setBackgroundTintList(myList);
         breakin.setBackgroundTintList(myList);
         breakout.setBackgroundTintList(myList);
         checkin.setBackgroundTintList(myList);
         checkout.setBackgroundTintList(myList);
-        //extrain.setBackgroundTintList(myList);
-        //extraout.setBackgroundTintList(myList);
         absensi.setBackgroundTintList(myList);
 
         final String[] data = {""};
@@ -381,8 +375,6 @@ public class ActivityAbsensi extends AppCompatActivity {
             breakout.setEnabled(true);
             checkin.setEnabled(true);
             checkout.setEnabled(true);
-            //extrain.setEnabled(true);
-            //extraout.setEnabled(true);
             absensi.setEnabled(true);
 
             scan.setBackgroundTintList(myList);
@@ -390,8 +382,6 @@ public class ActivityAbsensi extends AppCompatActivity {
             breakout.setBackgroundTintList(myList);
             checkin.setBackgroundTintList(myList);
             checkout.setBackgroundTintList(myList);
-            //extrain.setBackgroundTintList(myList);
-            //extrain.setBackgroundTintList(myList);
             checker=0;
         }
 
@@ -422,8 +412,6 @@ public class ActivityAbsensi extends AppCompatActivity {
                 breakout.setEnabled(true);
                 checkin.setEnabled(true);
                 checkout.setEnabled(true);
-                //extrain.setEnabled(true);
-                //extraout.setEnabled(true);
                 absensi.setEnabled(true);
 
                 scan.setBackgroundTintList(myList);
@@ -431,8 +419,6 @@ public class ActivityAbsensi extends AppCompatActivity {
                 breakout.setBackgroundTintList(myList);
                 checkin.setBackgroundTintList(myList);
                 checkout.setBackgroundTintList(myList);
-                //extrain.setBackgroundTintList(myList);
-                //extraout.setBackgroundTintList(myList);
                 absensi.setBackgroundTintList(myList);
             }
         }

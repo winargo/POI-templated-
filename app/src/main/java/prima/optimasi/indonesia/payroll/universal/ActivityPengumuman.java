@@ -50,41 +50,13 @@ public class ActivityPengumuman extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pengumuman_karyawan);
-
-        parent_view=findViewById(R.id.bgLayout);
-        refresh = findViewById(R.id.pengswiperefresh);
-        recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
-        searchView=findViewById(R.id.searchView);
-        prefs = ActivityPengumuman.this.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
         initToolbar();
-
-        refresh.setOnRefreshListener(
-                new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        Log.i("siwped", "onRefresh called from SwipeRefreshLayout");
-
-                        // This method performs the actual data-refresh operation.
-                        // The method calls setRefreshing(false) when it's finished.
-                        if(mAdapter!=null){
-                            retrivepengumumanref peng = new retrivepengumumanref(ActivityPengumuman.this,prefs.getString("Authorization",""));
-                            peng.execute();
-                        }
-                    }
-                }
-        );
-
-
-        items = new ArrayList<>();
-
-        if(mAdapter!=null){
-
-        }
-        else {
-            retrivepengumuman peng = new retrivepengumuman(ActivityPengumuman.this,prefs.getString("Authorization",""));
-            peng.execute();
-        }
+        initComponent();
+        initListener();
+        retrivepengumuman peng = new retrivepengumuman(ActivityPengumuman.this,prefs.getString("Authorization",""));
+        peng.execute();
     }
+
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
@@ -92,6 +64,39 @@ public class ActivityPengumuman extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Tools.setSystemBarColor(this, R.color.colorPrimary);
     }
+
+    private void initComponent() {
+        parent_view=findViewById(R.id.bgLayout);
+        refresh = findViewById(R.id.pengswiperefresh);
+        recyclerView = (RecyclerView)findViewById(R.id.recyclerView);
+        searchView=findViewById(R.id.searchView);
+        prefs = ActivityPengumuman.this.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+    }
+
+    private void initListener() {
+        refresh.setOnRefreshListener(
+            new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    Log.i("siwped", "onRefresh called from SwipeRefreshLayout");
+                    // This method performs the actual data-refresh operation.
+                    // The method calls setRefreshing(false) when it's finished.
+                    if(items!=null){
+                        items.clear();
+                    }
+                    else{
+                        items=new ArrayList<>();
+                    }
+                    if(mAdapter!=null){
+                        mAdapter.notifyDataSetChanged();
+                        retrivepengumumanref peng = new retrivepengumumanref(ActivityPengumuman.this,prefs.getString("Authorization",""));
+                        peng.execute();
+                    }
+                }
+            }
+        );
+    }
+
     private class retrivepengumuman extends AsyncTask<Void, Integer, String>
     {
         String response = "";
@@ -133,8 +138,6 @@ public class ActivityPengumuman extends AppCompatActivity {
 
                 try {
                     OkHttpClient client = new OkHttpClient();
-
-
 
                     Request request = new Request.Builder()
                             .header("Authorization",passeddata)
@@ -284,8 +287,6 @@ public class ActivityPengumuman extends AppCompatActivity {
                 try {
                     OkHttpClient client = new OkHttpClient();
 
-
-
                     Request request = new Request.Builder()
                             .header("Authorization",passeddata)
                             .url(urldata)
@@ -346,7 +347,12 @@ public class ActivityPengumuman extends AppCompatActivity {
                 Log.e(TAG, "data json result" + result.toString());
                 if (result != null) {
                     try {
-                        items = new ArrayList<>();
+                        if(items!=null){
+                            items.clear();
+                        }
+                        else{
+                            items=new ArrayList<>();
+                        }
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         JSONArray pengsarray = result.getJSONArray("rows");
 
@@ -387,10 +393,10 @@ public class ActivityPengumuman extends AppCompatActivity {
                 dialog.dismiss();
             }
 
-
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -398,7 +404,6 @@ public class ActivityPengumuman extends AppCompatActivity {
         MenuItem item = menu.findItem(R.id.action_search);
 
         searchView.setMenuItem(item);
-
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -419,13 +424,13 @@ public class ActivityPengumuman extends AppCompatActivity {
         });
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
             finish();
@@ -439,7 +444,6 @@ public class ActivityPengumuman extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-
         if(searchView.isSearchOpen()){
             searchView.closeSearch();
         }

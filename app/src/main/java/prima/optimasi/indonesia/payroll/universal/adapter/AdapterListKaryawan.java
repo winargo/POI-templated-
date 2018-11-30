@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,7 +40,6 @@ import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
-import prima.optimasi.indonesia.payroll.objects.listkaryawankontrakkerja;
 import prima.optimasi.indonesia.payroll.universal.viewkaryawan;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
@@ -137,17 +135,6 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
                             potongan=0.0d;
                             retrivegaji g=new retrivegaji(ctx,p.getIskar());
                             g.execute();
-
-                    /*
-                    if (mOnItemClickListener != null) {
-
-                        Intent viewkaryawans = new Intent(ctx,viewkaryawan.class);
-
-                        viewkaryawans.putExtra("idkaryawan",p.getIskar());
-
-                        ctx.startActivity(viewkaryawans);
-
-                    }*/
                         }
                     });
                 }
@@ -175,8 +162,6 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
                     items.get(position).expanded = show;
                 }
             });
-
-
             // void recycling view
             if(p.expanded){
                 view.lyt_expand.setVisibility(View.VISIBLE);
@@ -185,10 +170,6 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
             }
             Tools.toggleArrow(p.expanded, view.bt_expand, false);
             */
-
-
-
-
             setAnimation(view.itemView, position);
         }
     }
@@ -204,7 +185,6 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
         String urldata = generator.pengajiangajikaryawanurl;
         String passeddata = "" ;
         String id="";
-        int p=0;
         public retrivegaji(Context context, String id)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
@@ -317,9 +297,7 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
                             gaji=0.0d;
                             potongan=0.0d;
                         }
-
                         showgaji("Gaji",gaji,potongan);
-
 
                     } catch (Exception e) {
                         e.printStackTrace();

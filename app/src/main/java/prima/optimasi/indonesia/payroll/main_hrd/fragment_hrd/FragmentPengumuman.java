@@ -49,7 +49,6 @@ import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.adapter.AdapterGridTwoLineLight;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.main_hrd.mainmenu_hrd;
-import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
 import prima.optimasi.indonesia.payroll.model.Image;
 import prima.optimasi.indonesia.payroll.objects.listcalendar;
 import prima.optimasi.indonesia.payroll.objects.pengumuman;

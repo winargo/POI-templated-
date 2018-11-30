@@ -219,7 +219,6 @@ public class owner_pinjaman extends AppCompatActivity {
                         JSONArray pengsarray = result.getJSONArray("row");
 
                         String tempcall = "";
-
                         for (int i = 0; i < pengsarray.length(); i++) {
                             JSONObject obj = pengsarray.getJSONObject(i);
                             if(!tempcall.equals(obj.getString("tanggal").substring(0,10))){
@@ -245,9 +244,11 @@ public class owner_pinjaman extends AppCompatActivity {
 
                             Log.e(TAG, "image data" + kar.getImageurl() );
 
-                            bayar = bayar + Double.parseDouble(obj.getString("bayar"));
-                            pinjam = pinjam + Double.parseDouble(obj.getString("jumlah"));
-                            sisa = sisa + Double.parseDouble(obj.getString("sisa"));
+                            if(!obj.getString("status").equals("Ditolak")) {
+                                bayar = bayar + Double.parseDouble(obj.getString("bayar"));
+                                pinjam = pinjam + Double.parseDouble(obj.getString("jumlah"));
+                                sisa = sisa + Double.parseDouble(obj.getString("sisa"));
+                            }
 
                             kar.setNama(obj.getString("nama"));
                             kar.setPinjaman(obj.getString("jumlah"));

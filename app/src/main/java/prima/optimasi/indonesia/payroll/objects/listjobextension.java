@@ -1,7 +1,5 @@
 package prima.optimasi.indonesia.payroll.objects;
 
-import com.mikhaellopez.circularimageview.CircularImageView;
-
 import java.util.List;
 
 public class listjobextension {

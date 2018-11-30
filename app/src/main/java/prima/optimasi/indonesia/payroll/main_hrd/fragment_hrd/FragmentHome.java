@@ -87,11 +87,18 @@ public class FragmentHome extends Fragment {
     public List<RecyclerView> rv_kk;
     public List<View> lyt_ket;
     public List<TextView> tgaji;
+    ProgressDialog dialog;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_home, container, false);
+
+        dialog = new ProgressDialog(getActivity());
+
+        dialog.setTitle("Mohon Tunggu");
+        dialog.setMessage("Loading Data..");
+        dialog.show();
 
         Calendar c = Calendar.getInstance();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -149,6 +156,20 @@ public class FragmentHome extends Fragment {
         lyt_expand3=rootView.findViewById(R.id.lyt_expand3bulan);
         lyt_expandhabis=rootView.findViewById(R.id.lyt_expandhabiskontrak);
 
+        ket=new ArrayList<>();
+        ket.add(totalizin);
+        ket.add(totalsakit);
+        ket.add(totalcuti);
+        ket.add(totaldinas);
+        ket.add(totaltelat);
+
+        lyt_ket=new ArrayList<>();
+        lyt_ket.add(lyt_totalizin);
+        lyt_ket.add(lyt_totalsakit);
+        lyt_ket.add(lyt_totalcuti);
+        lyt_ket.add(lyt_totaldinas);
+        lyt_ket.add(lyt_totaltelat);
+
         kk=new ArrayList<>();
         kk.add(sisakontrakkerjahabis);
         kk.add(sisakontrakkerja);
@@ -170,12 +191,19 @@ public class FragmentHome extends Fragment {
         banyakkontrakkerja.add(banyak1bulan);
         banyakkontrakkerja.add(banyak2bulan);
         banyakkontrakkerja.add(banyak3bulan);
+        for(int i=0;i<keterangan.length;i++){
+            retriveketerangan keterangans=new retriveketerangan(getActivity(), keterangan[i], ket.get(i), lyt_ket.get(i));
+            keterangans.execute();
+        }
         for(int i=0;i<kontrak_kerja.length;i++){
             retrivekontrakkerjakar k_k=new retrivekontrakkerjakar(parent_view.getContext(),kontrak_kerja[i], kk.get(i),rv_kk.get(i),banyakkontrakkerja.get(i));
             k_k.execute();
         }
         retrivegetjabatan jab=new retrivegetjabatan(getActivity());
         jab.execute();
+        if(dialog.isShowing()){
+            dialog.dismiss();
+        }
 
         expand.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -343,24 +371,17 @@ public class FragmentHome extends Fragment {
             }
         });
 
-        ket=new ArrayList<>();
-        ket.add(totalizin);
-        ket.add(totalsakit);
-        ket.add(totalcuti);
-        ket.add(totaldinas);
-        ket.add(totaltelat);
 
-        lyt_ket=new ArrayList<>();
-        lyt_ket.add(lyt_totalizin);
-        lyt_ket.add(lyt_totalsakit);
-        lyt_ket.add(lyt_totalcuti);
-        lyt_ket.add(lyt_totaldinas);
-        lyt_ket.add(lyt_totaltelat);
 
         refreshhome = rootView.findViewById(R.id.swipehome);
         refreshhome.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                dialog = new ProgressDialog(getActivity());
+
+                dialog.setTitle("Mohon Tunggu");
+                dialog.setMessage("Loading Data..");
+                dialog.show();
                 banyakkaryawan=0;
                 totalkaryawan=0;
 
@@ -383,13 +404,19 @@ public class FragmentHome extends Fragment {
                 lyt_expand3.setVisibility(View.GONE);
                 expand3.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
 
-
+                for(int i=0;i<keterangan.length;i++){
+                    retriveketerangan keterangans=new retriveketerangan(getActivity(), keterangan[i], ket.get(i), lyt_ket.get(i));
+                    keterangans.execute();
+                }
                 for (int i = 0; i < kontrak_kerja.length; i++) {
                     retrivekontrakkerjakarref ref = new retrivekontrakkerjakarref(parent_view.getContext(), kontrak_kerja[i], kk.get(i), rv_kk.get(i), banyakkontrakkerja.get(i));
                     ref.execute();
                 }
                 retrivegetjabatanref jab=new retrivegetjabatanref(getActivity());
                 jab.execute();
+                if(dialog.isShowing()){
+                    dialog.dismiss();
+                }
                 refreshhome.setRefreshing(false);
             }
         });
@@ -774,7 +801,12 @@ public class FragmentHome extends Fragment {
                     Log.e(TAG, kontrakskerja + result.toString());
                     try {
                         if(result.getString("status").equals("true")) {
-                            items = new ArrayList<>();
+                            if(items!=null){
+                                items.clear();
+                            }
+                            else{
+                                items = new ArrayList<>();
+                            }
                             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                             JSONArray pengsarray = result.getJSONArray("data");
                             String status = "";
@@ -1333,10 +1365,6 @@ public class FragmentHome extends Fragment {
                             absen=totalkaryawan-banyakkaryawan;
                             totalabsen.setText(String.valueOf(absen));
 
-                            for(int i=0;i<keterangan.length;i++){
-                                retriveketerangan keterangans=new retriveketerangan(getActivity(), keterangan[i], ket.get(i), lyt_ket.get(i));
-                                keterangans.execute();
-                            }
                             adapterabsensi.notifyDataSetChanged();
 
                         }
@@ -1505,10 +1533,6 @@ public class FragmentHome extends Fragment {
                             absen=totalkaryawan-banyakkaryawan;
                             totalabsen.setText(String.valueOf(absen));
 
-                            for(int i=0;i<keterangan.length;i++){
-                                retriveketerangan keterangans=new retriveketerangan(getActivity(), keterangan[i], ket.get(i), lyt_ket.get(i));
-                                keterangans.execute();
-                            }
                             if(adapterabsensi!=null){
                                 adapterabsensi.notifyDataSetChanged();
                             }
@@ -1577,10 +1601,6 @@ public class FragmentHome extends Fragment {
             else if(keterangan.equals("telat")){
                 urldata=generator.absensitelatyurl;
             }
-            /*
-            else{
-                urldata=generator.listemployeeurl;
-            }*/
         }
         String TAG = getClass().getSimpleName();
 
@@ -1666,8 +1686,7 @@ public class FragmentHome extends Fragment {
                     try {
                         JSONArray pengsarray = result.getJSONArray("rows");
 
-
-                        tv.setText(""+pengsarray.length());
+                        tv.setText(String.valueOf(pengsarray.length()));
                         lyt.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {

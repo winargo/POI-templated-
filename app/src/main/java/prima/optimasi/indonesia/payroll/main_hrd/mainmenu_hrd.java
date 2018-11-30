@@ -2,103 +2,67 @@ package prima.optimasi.indonesia.payroll.main_hrd;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.support.v13.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentActivity;
+import android.support.v13.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.Layout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentPengajuan;
-import prima.optimasi.indonesia.payroll.main_kabag.cekjadwal;
-import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentCekGaji;
-
-import qrcodescanner.QrCodeActivity;
-
-import com.applandeo.materialcalendarview.CalendarView;
-import com.applandeo.materialcalendarview.EventDay;
-import com.applandeo.materialcalendarview.exceptions.OutOfDateRangeException;
-import com.applandeo.materialcalendarview.listeners.OnDayClickListener;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.gson.JsonObject;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.journeyapps.barcodescanner.BarcodeEncoder;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.security.PrivateKey;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.zip.Inflater;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
+import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentCekGaji;
 import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentEmployee;
 import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentHome;
+import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentPengajuan;
 import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentPengumuman;
-import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentProfil;
-import prima.optimasi.indonesia.payroll.universal.absence.facecapture;
-import prima.optimasi.indonesia.payroll.universal.absence.facedetection;
+import prima.optimasi.indonesia.payroll.main_kabag.cekjadwal;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
-public class mainmenu_hrd extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class mainmenu_hrd extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     long selecteddate = 0L;
-
     MaterialSearchView searchView;
     Adaptermenujabatan listAdapter;
     ExpandableListView expListView;
-    ProgressDialog loadingdata;
+    private ProgressDialog loadingprogress=null;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
-
     Menu tempmenu;
-
     SharedPreferences prefs;
 
     String[] tabTitles = new String []{" Home", "Pengumuman","Karyawan","Cek Gaji","Pengajuan"};
@@ -106,12 +70,42 @@ public class mainmenu_hrd extends AppCompatActivity
             R.drawable.baseline_account_circle_black_24dp,R.drawable.baseline_monetization_on_black_24dp,R.drawable.baseline_assignment_black_24dp};
 
     ViewPager pager;
-    TabLayout tabpager ;
-
+    TabLayout tabpager;
+    DrawerLayout drawer;
+    RelativeLayout linear;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
+        initToolbar();
+        initComponent();
+        initListener();
+        if(loadingprogress.isShowing()){
+            loadingprogress.dismiss();
+        }
+    }
+
+    private void initToolbar(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        expListView = drawer.findViewById(R.id.lvExp);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        linear = (RelativeLayout) navigationView.getHeaderView(0);
+    }
+
+    private void initComponent(){
+        loadingprogress = new ProgressDialog(this);
+        loadingprogress.setTitle("Please Wait");
+        loadingprogress.setMessage("Loading Data...");
+        loadingprogress.show();
 
         prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
 
@@ -122,27 +116,8 @@ public class mainmenu_hrd extends AppCompatActivity
             FirebaseMessaging.getInstance().subscribeToTopic("hrd");
         }
 
-
-        loadingdata = ProgressDialog.show(this,"Please Wait","Loading Data...",false);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         searchView=findViewById(R.id.searchView);
 
-
-        generator initializedata = new generator(mainmenu_hrd.this);
-
-        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        expListView = drawer.findViewById(R.id.lvExp);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        RelativeLayout linear = (RelativeLayout) navigationView.getHeaderView(0);
         CircularImageView imageuser = linear.findViewById(R.id.imageView);
 
         if(prefs.getString("profileimage","").equals(generator.profileurl)){
@@ -156,25 +131,18 @@ public class mainmenu_hrd extends AppCompatActivity
         TextView username = linear.findViewById(R.id.username);
         TextView borndate = linear.findViewById(R.id.prof_tempat_lahir);
 
-
-
         username.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("username",""));
 
         if(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("tempatlahir","").equals("")){
-
             borndate.setText("Not Available");
-
         }else{
-
             borndate.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("tempatlahir",""));
-
         }
-
 
         tabpager = findViewById(R.id.tab_layout);
         pager = findViewById(R.id.viewpager);
 
-
+        preparehrd();
 
         ExamplePagerAdapter adapter = new ExamplePagerAdapter(getSupportFragmentManager());
 
@@ -185,10 +153,24 @@ public class mainmenu_hrd extends AppCompatActivity
 
         tabpager.setTabMode(TabLayout.MODE_SCROLLABLE);
 
+        listAdapter = new Adaptermenujabatan(this, listDataHeader, listDataChild);
+
+        // setting list adapter
+        expListView.setAdapter(listAdapter);
+
+        expListView.setGroupIndicator(null);
+        expListView.setChildIndicator(null);
+        expListView.setChildDivider(null);
+        expListView.setDivider(null);
+        expListView.setDividerHeight(0);
+    }
+
+    private void initListener(){
         tabpager.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener(){
             @Override
             public void onTabSelected(TabLayout.Tab tab){
                 int position = tab.getPosition();
+                tabpager.setSelectedTabIndicatorColor(mainmenu_hrd.this.getResources().getColor(R.color.blue_100));//set active color
                 if(position==9){
                     if(tempmenu!=null){
                         tempmenu.findItem(R.id.action_search).setVisible(true);
@@ -234,23 +216,6 @@ public class mainmenu_hrd extends AppCompatActivity
             img.setImageDrawable(getResources().getDrawable(iconstyle[i]));
             tabpager.getTabAt(i).setCustomView(v);
         }
-
-        if(loadingdata.isShowing()){
-            loadingdata.dismiss();
-        }
-
-        preparehrd();
-
-        listAdapter = new Adaptermenujabatan(this, listDataHeader, listDataChild);
-
-        // setting list adapter
-        expListView.setAdapter(listAdapter);
-
-        expListView.setGroupIndicator(null);
-        expListView.setChildIndicator(null);
-        expListView.setChildDivider(null);
-        expListView.setDivider(null);
-        expListView.setDividerHeight(0);
 
         expListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 
@@ -343,7 +308,6 @@ public class mainmenu_hrd extends AppCompatActivity
 
         // Listview Group expanded listener
         expListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-
             @Override
             public void onGroupExpand(int groupPosition) {
 
@@ -352,19 +316,17 @@ public class mainmenu_hrd extends AppCompatActivity
 
         // Listview Group collasped listener
         expListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
-
             @Override
             public void onGroupCollapse(int groupPosition) {
-              //  Toast.makeText(getApplicationContext(),
-                    //    listDataHeader.get(groupPosition) + " Collapsed",
-                     //   Toast.LENGTH_SHORT).show();
+                //  Toast.makeText(getApplicationContext(),
+                //    listDataHeader.get(groupPosition) + " Collapsed",
+                //   Toast.LENGTH_SHORT).show();
 
             }
         });
 
         // Listview on child click listener
         expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {
@@ -378,15 +340,10 @@ public class mainmenu_hrd extends AppCompatActivity
                                 childPosition), Toast.LENGTH_SHORT)
                         .show();
 
-
-
                 return false;
             }
         });
-
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -453,7 +410,6 @@ public class mainmenu_hrd extends AppCompatActivity
                 unregistertokentoserver.execute();
             }
 
-
             SharedPreferences.Editor edit = prefs.edit();
 
             edit.putString("iduser","");
@@ -466,8 +422,6 @@ public class mainmenu_hrd extends AppCompatActivity
             edit.putString("Authorization","");
 
             edit.commit();
-
-
 
             startActivity(logout);
 
@@ -518,7 +472,6 @@ public class mainmenu_hrd extends AppCompatActivity
     }
 
     public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
-
         // tab titles
         private String[] tabTitles = new String[]{"Home", "Pengumuman","Karyawan", "Cek Gaji","Pengajuan"};
 
@@ -587,8 +540,12 @@ public class mainmenu_hrd extends AppCompatActivity
             searchView.closeSearch();
         }
         else {
-            super.onBackPressed();
+            if(pager.getCurrentItem()!=0){
+                pager.setCurrentItem(pager.getCurrentItem()-1);
+            }
+            else{
+                super.onBackPressed();
+            }
         }
-
     }
 }
