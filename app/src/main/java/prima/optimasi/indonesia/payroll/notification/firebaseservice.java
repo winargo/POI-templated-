@@ -15,11 +15,6 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Random;
-<<<<<<< HEAD
-=======
-
-import java.util.Calendar;
->>>>>>> 8e245f040a972defb97781897bcfa0567adeba33
 
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
@@ -74,124 +69,139 @@ public class firebaseservice extends FirebaseMessagingService {
     }
 
     private void showNotification(String title, String content) {
-        String kode=content.substring(0,3);
-        content=content.substring(4,content.length());
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("default",
-                    "Prima Optimasi",
-                    NotificationManager.IMPORTANCE_DEFAULT);
-            channel.setDescription("Shopeefakedata");
-            mNotificationManager.createNotificationChannel(channel);
-        }
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "default")
-                .setSmallIcon(R.drawable.logobolong) // notification icon
-                .setContentTitle(title) // title for notification
-                .setContentText(content)
-                .setColor(getResources().getColor(R.color.blue_500))
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
-                .setAutoCancel(true); // clear notification after click
 
-        Intent intent=null;
-        if(kode.equals("001")) {
-            intent = new Intent(getApplicationContext(), activity_login.class);
-        }
-        else if(kode.equals("002")) {
-            intent = new Intent(getApplicationContext(),approval.class);
-            intent.putExtra("tipe","Approval Cuti");
-        }
-        else if(kode.equals("003")){
-            intent = new Intent(getApplicationContext(),approval.class);
-            intent.putExtra("tipe","Approval Dinas");
-        }
-        else if(kode.equals("004")){
-            intent = new Intent(getApplicationContext(),approval.class);
-            intent.putExtra("tipe","Approval Pinjaman");
-        }
-        else if(kode.equals("005")){
-            intent = new Intent(getApplicationContext(),approval.class);
-            intent.putExtra("tipe","Approval Golongan");
-            
-        }
-        else if(kode.equals("006")){
-            intent = new Intent(getApplicationContext(),approval.class);
-            intent.putExtra("tipe","Approval Golongan");
-            
-        }
-        else if(kode.equals("007")){
-            intent = new Intent(getApplicationContext(),approval.class);
-            intent.putExtra("tipe","Approval Golongan");
-            
-        }
-        else if(kode.equals("008")){
-            intent = new Intent(getApplicationContext(),approval.class);
-            intent.putExtra("tipe","Approval Karyawan");
-            
-        }
-        else if(kode.equals("009")){
-            intent = new Intent(getApplicationContext(),approval.class);
-            intent.putExtra("tipe","Approval Karyawan");
-            
-        }
-        else if(kode.equals("010")){
-            intent = new Intent(getApplicationContext(),approval.class);
-            intent.putExtra("tipe","Approval Karyawan");
-            
-        }
-        else if(kode.equals("011")){
-            intent = new Intent(getApplicationContext(),approval.class);
-            intent.putExtra("tipe","Approval Pdm");
-            
-        }
-        else if(kode.equals("012")){
-            intent = new Intent(getApplicationContext(),approval.class);
-            intent.putExtra("tipe","Approval Punishment");
-            
-        }
-        else if(kode.equals("013")){
-            intent = new Intent(getApplicationContext(),approval.class);
-            intent.putExtra("tipe","Approval Reward");
-            
-        }
-        else if(kode.equals("014")){
-            intent = new Intent(getApplicationContext(), activity_login.class);
-        }
-        else if(kode.equals("015")){
-            intent = new Intent(getApplicationContext(), activity_login.class);
-        }
-        else if(kode.equals("016")){
-            intent = new Intent(getApplicationContext(), activity_login.class);
-        }
-        else if(kode.equals("017")){
-            intent = new Intent(getApplicationContext(), activity_login.class);
-        }
-        else if(kode.equals("018")){
-            intent = new Intent(getApplicationContext(), activity_login.class);
-        }
-        else if(kode.equals("019")){
-            intent = new Intent(getApplicationContext(), activity_login.class);
-        }
-        else if(kode.equals("020")){
-            intent = new Intent(getApplicationContext(), activity_login.class);
-        }
-        else if(kode.equals("021")){
-            intent = new Intent(getApplicationContext(), activity_login.class);
-        }
-        else if(kode.equals("022")){
-            intent = new Intent(getApplicationContext(), activity_login.class);
+        if(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("port","").equals("")){
+
         }
         else {
-            intent = new Intent(getApplicationContext(), activity_login.class);
-        }
-<<<<<<< HEAD
-=======
+            if(title.contains("#"+getSharedPreferences("poipayroll",MODE_PRIVATE).getString("port",""))){
+                String[] titlesplit = title.split("#"+getSharedPreferences("poipayroll",MODE_PRIVATE).getString("port",""));
 
->>>>>>> 8e245f040a972defb97781897bcfa0567adeba33
-        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        mBuilder.setContentIntent(pi);
-        Random rand = new Random();
-        int value = rand.nextInt(2000000);
-        mNotificationManager.notify(value, mBuilder.build());
+                if(content.contains("#"+getSharedPreferences("poipayroll",MODE_PRIVATE).getString("port",""))){
+                    String[] contentsplit = title.split("#"+getSharedPreferences("poipayroll",MODE_PRIVATE).getString("port",""));
+                    content=titlesplit[0];
+                    NotificationManager mNotificationManager =
+                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                        NotificationChannel channel = new NotificationChannel("default",
+                                "Prima Optimasi",
+                                NotificationManager.IMPORTANCE_DEFAULT);
+                        channel.setDescription("Prima Optimasi Indonesia");
+                        mNotificationManager.createNotificationChannel(channel);
+                    }
+                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "default")
+                            .setSmallIcon(R.drawable.logobolong) // notification icon
+                            .setContentTitle(titlesplit[0]) // title for notification
+                            .setContentText(contentsplit[0])
+                            .setColor(getResources().getColor(R.color.blue_500))
+                            .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
+                            .setAutoCancel(true); // clear notification after click
+
+                    Intent intent=null;
+
+                    if(contentsplit[1].equals("001")) {
+                        intent = new Intent(getApplicationContext(), activity_login.class);
+                    }
+                    else if(contentsplit[1].equals("002")) {
+                        intent = new Intent(getApplicationContext(),approval.class);
+                        intent.putExtra("tipe","Approval Cuti");
+                    }
+                    else if(contentsplit[1].equals("003")){
+                        intent = new Intent(getApplicationContext(),approval.class);
+                        intent.putExtra("tipe","Approval Dinas");
+                    }
+                    else if(contentsplit[1].equals("004")){
+                        intent = new Intent(getApplicationContext(),approval.class);
+                        intent.putExtra("tipe","Approval Pinjaman");
+                    }
+                    else if(contentsplit[1].equals("005")){
+                        intent = new Intent(getApplicationContext(),approval.class);
+                        intent.putExtra("tipe","Approval Golongan");
+
+                    }
+                    else if(contentsplit[1].equals("006")){
+                        intent = new Intent(getApplicationContext(),approval.class);
+                        intent.putExtra("tipe","Approval Golongan");
+
+                    }
+                    else if(contentsplit[1].equals("007")){
+                        intent = new Intent(getApplicationContext(),approval.class);
+                        intent.putExtra("tipe","Approval Golongan");
+
+                    }
+                    else if(contentsplit[1].equals("008")){
+                        intent = new Intent(getApplicationContext(),approval.class);
+                        intent.putExtra("tipe","Approval Karyawan");
+
+                    }
+                    else if(contentsplit[1].equals("009")){
+                        intent = new Intent(getApplicationContext(),approval.class);
+                        intent.putExtra("tipe","Approval Karyawan");
+
+                    }
+                    else if(contentsplit[1].equals("010")){
+                        intent = new Intent(getApplicationContext(),approval.class);
+                        intent.putExtra("tipe","Approval Karyawan");
+
+                    }
+                    else if(contentsplit[1].equals("011")){
+                        intent = new Intent(getApplicationContext(),approval.class);
+                        intent.putExtra("tipe","Approval Pdm");
+
+                    }
+                    else if(contentsplit[1].equals("012")){
+                        intent = new Intent(getApplicationContext(),approval.class);
+                        intent.putExtra("tipe","Approval Punishment");
+
+                    }
+                    else if(contentsplit[1].equals("013")){
+                        intent = new Intent(getApplicationContext(),approval.class);
+                        intent.putExtra("tipe","Approval Reward");
+
+                    }
+                    else if(contentsplit[1].equals("014")){
+                        intent = new Intent(getApplicationContext(), activity_login.class);
+                    }
+                    else if(contentsplit[1].equals("015")){
+                        intent = new Intent(getApplicationContext(), activity_login.class);
+                    }
+                    else if(contentsplit[1].equals("016")){
+                        intent = new Intent(getApplicationContext(), activity_login.class);
+                    }
+                    else if(contentsplit[1].equals("017")){
+                        intent = new Intent(getApplicationContext(), activity_login.class);
+                    }
+                    else if(contentsplit[1].equals("018")){
+                        intent = new Intent(getApplicationContext(), activity_login.class);
+                    }
+                    else if(contentsplit[1].equals("019")){
+                        intent = new Intent(getApplicationContext(), activity_login.class);
+                    }
+                    else if(contentsplit[1].equals("020")){
+                        intent = new Intent(getApplicationContext(), activity_login.class);
+                    }
+                    else if(contentsplit[1].equals("021")){
+                        intent = new Intent(getApplicationContext(), activity_login.class);
+                    }
+                    else if(contentsplit[1].equals("022")){
+                        intent = new Intent(getApplicationContext(), activity_login.class);
+                    }
+                    else {
+                        intent = new Intent(getApplicationContext(), activity_login.class);
+                    }
+                    PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    mBuilder.setContentIntent(pi);
+                    Random rand = new Random();
+                    int value = rand.nextInt(2000000);
+                    mNotificationManager.notify(value, mBuilder.build());
+
+                }else{
+                    
+                }
+            }else{
+
+            }
+        }
     }
 }
+/**/
