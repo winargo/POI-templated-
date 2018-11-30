@@ -14,11 +14,7 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-<<<<<<< HEAD
 import java.util.Random;
-=======
-import java.util.Calendar;
->>>>>>> 21403d0c23b95f4b0e478b98930348a0bc215f51
 
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
@@ -178,9 +174,6 @@ public class firebaseservice extends FirebaseMessagingService {
             intent = new Intent(getApplicationContext(), activity_login.class);
         }
         else if(kode.equals("022")){
-            intent = new Intent(getApplicationContext(), activity_login.class);
-        }
-        else {
             intent = new Intent(getApplicationContext(), activity_login.class);
         }
         else {
