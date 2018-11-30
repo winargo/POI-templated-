@@ -17,7 +17,6 @@ import java.util.List;
 
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.objects.logabsensi_karyawan;
-import prima.optimasi.indonesia.payroll.model.Social;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.utils.ViewAnimation;
 

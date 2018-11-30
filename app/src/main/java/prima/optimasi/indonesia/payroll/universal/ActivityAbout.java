@@ -1,31 +1,21 @@
 package prima.optimasi.indonesia.payroll.universal;
 
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-
-import android.os.Handler;
-import android.os.ResultReceiver;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 import com.google.android.gms.maps.GoogleMap;
 
 import prima.optimasi.indonesia.payroll.R;
-
 import prima.optimasi.indonesia.payroll.utils.Tools;
-
-
 
 public class ActivityAbout extends AppCompatActivity{
     LinearLayout parent_view;
@@ -34,16 +24,31 @@ public class ActivityAbout extends AppCompatActivity{
     GoogleMap mMap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
+        initToolbar();
+        initComponent();
+        initListener();
+    }
+    //3.612974, 98.726138
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Tools.setSystemBarColor(this, R.color.colorPrimary);
+    }
+
+    private void initComponent() {
         parent_view=findViewById(R.id.parent_view);
         lyt_email=findViewById(R.id.lyt_email);
         lyt_contact=findViewById(R.id.lyt_contact);
         lyt_location=findViewById(R.id.lyt_location);
         lyt_web=findViewById(R.id.lyt_web);
         lokasi=findViewById(R.id.lokasi);
-        initToolbar();
+    }
+
+    private void initListener() {
         lyt_email.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,8 +63,6 @@ public class ActivityAbout extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 String[] colors = {"SMS +62 819 219 0366", "SMS +62 813 6203 1232", "Call +62 819 219 0366", "Call +62 813 6203 1232"};
-
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(ActivityAbout.this);
                 builder.setTitle("Contact");
                 builder.setItems(colors, new DialogInterface.OnClickListener() {
@@ -138,22 +141,12 @@ public class ActivityAbout extends AppCompatActivity{
         });
     }
 
-    //3.612974, 98.726138
-    private void initToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        Tools.setSystemBarColor(this, R.color.colorPrimary);
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
             finish();

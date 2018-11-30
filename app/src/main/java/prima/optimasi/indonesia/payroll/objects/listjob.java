@@ -1,7 +1,5 @@
 package prima.optimasi.indonesia.payroll.objects;
 
-import android.graphics.drawable.Drawable;
-
 public class listjob {
     String sectionname;
     Boolean section;

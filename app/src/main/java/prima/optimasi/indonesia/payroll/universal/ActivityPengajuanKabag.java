@@ -16,7 +16,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,7 +52,6 @@ import prima.optimasi.indonesia.payroll.objects.listkaryawanpengajuan;
 import prima.optimasi.indonesia.payroll.universal.adapter.Adapterhistorypengajuankabag;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
-import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
 
 public class ActivityPengajuanKabag extends AppCompatActivity {
     SwipeRefreshLayout swipehome;
@@ -82,88 +80,11 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pengajuan_kabag);
-
-
-        parent_view=findViewById(R.id.parent_view);
-        recyclerView=findViewById(R.id.recyclerView);
-        swipehome=findViewById(R.id.swipehome);
-
-        keterangan=findViewById(R.id.keterangan);
-
-        spinner = (MaterialSpinner) findViewById(R.id.spinner);
-
-        spinner.setItems("Pilih Pengajuan","Cuti", "Izin", "Dinas", "Sakit");
-        //spinner.setText("Pengajuan");
-        spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
-        //boolean klik=false;
-            @Override
-            public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
-                /*
-                if(!klik){
-                    spinner.setItems("Cuti", "Izin", "Dinas", "Dirumahkan");
-                }*/
-            }
-
-        });
-
-        spinnerkar = (MaterialSpinner) findViewById(R.id.spinnerkar);
-        dialog=new ProgressDialog(ActivityPengajuanKabag.this);
-
-        tglmasuk=findViewById(R.id.tglmasuk);
-        tglkeluar=findViewById(R.id.tglkeluar);
-        //tglmasuk.setText(getCurrentDate());
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-        String formattedDate = df.format(c.getTime());
-        tglmasuk.setText(formattedDate);
-        tglkeluar.setText(formattedDate);
-        tanggal_masuk=c.getTime();
-        tanggal_keluar=c.getTime();
-        tanggal_masuk1=formattedDate;
-        tanggal_keluar1=formattedDate;
-        //tglkeluar.setText(getNextDate());
-        //c.add(Calendar.DATE, 1);
-
-        //formattedDate = df.format(c.getTime());
-
-        //Log.v("NEXT DATE : ", formattedDate);
-
-        send=findViewById(R.id.send_pengajuan);
-        //retrivegetizin izin=new retrivegetizin(ActivityPengajuan.this);
-        //izin.execute();
-        itemskaryawan = new ArrayList<>();
-        listnama=new ArrayList<>();
-        listid=new ArrayList<>();
-        retrivekaryawan kar=new retrivekaryawan(ActivityPengajuanKabag.this, dialog);
-        kar.execute();
-
         initToolbar();
         initComponent();
-
-        swipehome.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-
-                dialog = new ProgressDialog(ActivityPengajuanKabag.this);
-                dialog.setMessage("Loading ...");
-                dialog.show();
-                items.clear();
-                if(pengajuan!=null){
-                    pengajuan.notifyDataSetChanged();
-                }
-                spinner.setSelectedIndex(0);
-                spinnerkar.setSelectedIndex(0);
-                itemskaryawan = new ArrayList<>();
-                listnama=new ArrayList<>();
-                listid=new ArrayList<>();
-                retrivekaryawan kar=new retrivekaryawan(ActivityPengajuanKabag.this,dialog);
-                kar.execute();
-
-
-
-
-            }
-        });
+        initListener();
+        retrivekaryawan kar=new retrivekaryawan(ActivityPengajuanKabag.this, dialog);
+        kar.execute();
     }
 
     private class retrivekaryawan extends AsyncTask<Void, Integer, String>
@@ -189,7 +110,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         }
 
         String TAG = getClass().getSimpleName();
-
         protected void onPreExecute (){
             this.dialog.show();
             super.onPreExecute();
@@ -268,7 +188,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         }
 
         protected void onPostExecute(String result1) {
-
             try {
                 Log.e(TAG, "data json result" + result.toString());
                 if (result != null) {
@@ -312,22 +231,15 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                                             Log.e(TAG, "image data" + kar.getImagelink());
                                         }*/
 
-
                                         kar.setNama(obj.getString("nama"));
                                         listnama.add(obj.getString("nama"));
                                         kar.setDesc("Karyawan");
                                         itemskaryawan.add(kar);
 
-
-
                                     }
-
                                 }
-
                             }
                             spinnerkar.setItems(listnama);
-
-                            //Log.e("LISTID",""+listid.size());
                             if(!swipehome.isRefreshing()){
                                 items = new ArrayList<>();
                                 for (int i=0;i<kets.length;i++){
@@ -338,7 +250,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                                 }
                             }
                             else{
-
                                 for (int i=0;i<kets.length;i++){
                                     for (int j=0;j<listid.size();j++){
                                         retrivegetketeranganref ketref=new retrivegetketeranganref(ActivityPengajuanKabag.this, kets[i],listid.get(j));
@@ -369,7 +280,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
             if(this.dialog.isShowing()){
                 dialog.dismiss();
             }*/
-
 
             Log.d(TAG + " onPostExecute", "" + result1);
         }
@@ -817,6 +727,39 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
     }
 
     private void initComponent() {
+        parent_view=findViewById(R.id.parent_view);
+        recyclerView=findViewById(R.id.recyclerView);
+        swipehome=findViewById(R.id.swipehome);
+
+        keterangan=findViewById(R.id.keterangan);
+
+        spinner = (MaterialSpinner) findViewById(R.id.spinner);
+
+        spinner.setItems("Pilih Pengajuan","Cuti", "Izin", "Dinas", "Sakit");
+
+        spinnerkar = (MaterialSpinner) findViewById(R.id.spinnerkar);
+        dialog=new ProgressDialog(ActivityPengajuanKabag.this);
+
+        tglmasuk=findViewById(R.id.tglmasuk);
+        tglkeluar=findViewById(R.id.tglkeluar);
+        //tglmasuk.setText(getCurrentDate());
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        String formattedDate = df.format(c.getTime());
+        tglmasuk.setText(formattedDate);
+        tglkeluar.setText(formattedDate);
+        tanggal_masuk=c.getTime();
+        tanggal_keluar=c.getTime();
+        tanggal_masuk1=formattedDate;
+        tanggal_keluar1=formattedDate;
+
+        send=findViewById(R.id.send_pengajuan);
+        itemskaryawan = new ArrayList<>();
+        listnama=new ArrayList<>();
+        listid=new ArrayList<>();
+    }
+
+    private void initListener(){
         tglmasuk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -833,100 +776,120 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.e("NEXT DATE : ", "" + tanggal_masuk.compareTo(tanggal_keluar));
+                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                try {
+                    tgl_masuk = df.parse(tglmasuk.getText().toString());
+                    tgl_keluar = df.parse(tglkeluar.getText().toString());
+                    lama = tgl_masuk.compareTo(tgl_keluar) + 1;
+                    if(!spinnerkar.getText().equals("Pilih Karyawan")) {
+                        if (!spinner.getText().equals("Pilih Pengajuan")) {
+                            if (keterangan.getText().toString().trim().equals("")) {
+                                Snackbar.make(parent_view, "Keterangan Tidak Boleh Kosong", Snackbar.LENGTH_SHORT).show();
+                            } else {
+                                if (tgl_masuk.compareTo(tgl_keluar) > 0) {
+                                    final Dialog dialog = new Dialog(ActivityPengajuanKabag.this);
+                                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+                                    dialog.setContentView(R.layout.dialog_warning);
+                                    dialog.setCancelable(true);
 
+                                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                                    lp.copyFrom(dialog.getWindow().getAttributes());
+                                    lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                                    ImageView icon = dialog.findViewById(R.id.icon);
+                                    TextView title = dialog.findViewById(R.id.title);
+                                    TextView content = dialog.findViewById(R.id.content);
+                                    icon.setVisibility(View.GONE);
+                                    title.setText("Kesalahan Data Tanggal");
+                                    content.setText("Tanggal keluar wajib lebih atau sama dari tanggal masuk yang diinput");
+                                    ((AppCompatButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            dialog.dismiss();
+                                        }
+                                    });
 
-                    Log.e("NEXT DATE : ", "" + tanggal_masuk.compareTo(tanggal_keluar));
-                    SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-                    try {
-                        tgl_masuk = df.parse(tglmasuk.getText().toString());
-                        tgl_keluar = df.parse(tglkeluar.getText().toString());
-                        lama = tgl_masuk.compareTo(tgl_keluar) + 1;
-                        if(!spinnerkar.getText().equals("Pilih Karyawan")) {
-                            if (!spinner.getText().equals("Pilih Pengajuan")) {
-                                if (keterangan.getText().toString().trim().equals("")) {
-                                    Snackbar.make(parent_view, "Keterangan Tidak Boleh Kosong", Snackbar.LENGTH_SHORT).show();
+                                    dialog.show();
+                                    dialog.getWindow().setAttributes(lp);
                                 } else {
-                                    if (tgl_masuk.compareTo(tgl_keluar) > 0) {
-                                        final Dialog dialog = new Dialog(ActivityPengajuanKabag.this);
-                                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
-                                        dialog.setContentView(R.layout.dialog_warning);
-                                        dialog.setCancelable(true);
+                                    Log.e("NEXT DATE : ", "Berhasil");
 
-                                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                                        lp.copyFrom(dialog.getWindow().getAttributes());
-                                        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-                                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                                        ImageView icon = dialog.findViewById(R.id.icon);
-                                        TextView title = dialog.findViewById(R.id.title);
-                                        TextView content = dialog.findViewById(R.id.content);
-                                        icon.setVisibility(View.GONE);
-                                        title.setText("Kesalahan Data Tanggal");
-                                        content.setText("Tanggal keluar wajib lebih atau sama dari tanggal masuk yang diinput");
-                                        ((AppCompatButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                dialog.dismiss();
+
+                                    Log.e("NEXT DATE : ", "" + tanggal_masuk1 + " " + tanggal_keluar1);
+
+                                    if (!keterangan.getText().toString().trim().equals("")) {
+                                        for(int i=0;i<itemskaryawan.size();i++){
+                                            if(itemskaryawan.get(i).getNama().equals(spinnerkar.getText().toString())){
+                                                idkar=itemskaryawan.get(i).getIskar();
+
                                             }
-                                        });
+                                        }
+                                        if(!idkar.equals("")) {
+                                            //Snackbar.make(parent_view, idkar, Snackbar.LENGTH_SHORT).show();
 
-                                        dialog.show();
-                                        dialog.getWindow().setAttributes(lp);
-                                    } else {
-                                        Log.e("NEXT DATE : ", "Berhasil");
-
-
-                                        Log.e("NEXT DATE : ", "" + tanggal_masuk1 + " " + tanggal_keluar1);
-
-                                        if (!keterangan.getText().toString().trim().equals("")) {
-                                            for(int i=0;i<itemskaryawan.size();i++){
-                                                if(itemskaryawan.get(i).getNama().equals(spinnerkar.getText().toString())){
-                                                    idkar=itemskaryawan.get(i).getIskar();
-
-                                                }
+                                            if (spinner.getText().equals("Cuti")) {
+                                                retrivepengajuancuti cuti = new retrivepengajuancuti(ActivityPengajuanKabag.this);
+                                                cuti.execute();
+                                            } else if (spinner.getText().equals("Izin")) {
+                                                retrivepengajuanizin izin = new retrivepengajuanizin(ActivityPengajuanKabag.this);
+                                                izin.execute();
+                                            } else if (spinner.getText().equals("Dinas")) {
+                                                retrivepengajuandinas dinas = new retrivepengajuandinas(ActivityPengajuanKabag.this);
+                                                dinas.execute();
+                                            } else if (spinner.getText().equals("Sakit")) {
+                                                retrivepengajuansakit sakit = new retrivepengajuansakit(ActivityPengajuanKabag.this);
+                                                sakit.execute();
                                             }
-                                            if(!idkar.equals("")) {
-                                                //Snackbar.make(parent_view, idkar, Snackbar.LENGTH_SHORT).show();
-
-                                                if (spinner.getText().equals("Cuti")) {
-                                                    retrivepengajuancuti cuti = new retrivepengajuancuti(ActivityPengajuanKabag.this);
-                                                    cuti.execute();
-                                                } else if (spinner.getText().equals("Izin")) {
-                                                    retrivepengajuanizin izin = new retrivepengajuanizin(ActivityPengajuanKabag.this);
-                                                    izin.execute();
-                                                } else if (spinner.getText().equals("Dinas")) {
-                                                    retrivepengajuandinas dinas = new retrivepengajuandinas(ActivityPengajuanKabag.this);
-                                                    dinas.execute();
-                                                } else if (spinner.getText().equals("Sakit")) {
-                                                    retrivepengajuansakit sakit = new retrivepengajuansakit(ActivityPengajuanKabag.this);
-                                                    sakit.execute();
-                                                }
-                                            }
-                                            else{
-                                                Log.e("retrivekaryawan", "bermasalah");
-                                            }
-
-                                        } else {
-                                            Log.e("NEXT DATE : ", "Isi Keterangan Anda");
+                                        }
+                                        else{
+                                            Log.e("retrivekaryawan", "bermasalah");
                                         }
 
+                                    } else {
+                                        Log.e("NEXT DATE : ", "Isi Keterangan Anda");
                                     }
+
                                 }
-                            } else if (spinner.getText().equals("Pilih Pengajuan")) {
-                                Snackbar.make(parent_view, "Pilih Jenis Pengajuan", Snackbar.LENGTH_SHORT).show();
                             }
-                        }else if (spinner.getText().equals("Pilih Karyawan")) {
-                            Snackbar.make(parent_view, "Pilih Karyawan", Snackbar.LENGTH_SHORT).show();
+                        } else if (spinner.getText().equals("Pilih Pengajuan")) {
+                            Snackbar.make(parent_view, "Pilih Jenis Pengajuan", Snackbar.LENGTH_SHORT).show();
                         }
-
-
-                    } catch (Exception e) {
-                        Log.e("NEXT DATE : ", "" + tanggal_masuk.compareTo(tanggal_keluar));
-                        Log.e("NEXT DATE : ", "" + tanggal_masuk1 + " " + tanggal_keluar1);
+                    }else if (spinner.getText().equals("Pilih Karyawan")) {
+                        Snackbar.make(parent_view, "Pilih Karyawan", Snackbar.LENGTH_SHORT).show();
                     }
 
 
+                } catch (Exception e) {
+                    Log.e("NEXT DATE : ", "" + tanggal_masuk.compareTo(tanggal_keluar));
+                    Log.e("NEXT DATE : ", "" + tanggal_masuk1 + " " + tanggal_keluar1);
+                }
+            }
+        });
 
+        swipehome.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
 
+                dialog = new ProgressDialog(ActivityPengajuanKabag.this);
+                dialog.setMessage("Loading ...");
+                dialog.show();
+                if(items!=null){
+                    items.clear();
+                }
+                else{
+                    items=new ArrayList<>();
+                }
+                if(pengajuan!=null){
+                    pengajuan.notifyDataSetChanged();
+                }
+                spinner.setSelectedIndex(0);
+                spinnerkar.setSelectedIndex(0);
+                itemskaryawan = new ArrayList<>();
+                listnama=new ArrayList<>();
+                listid=new ArrayList<>();
+                retrivekaryawan kar=new retrivekaryawan(ActivityPengajuanKabag.this,dialog);
+                kar.execute();
             }
         });
     }
@@ -981,7 +944,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                             .add("akhir_cuti",format.format(tgl_keluar))
                             .add("lama", ""+lama)
                             .add("keterangan",keterangan.getText().toString().trim())
-
                             .build();
 
                     Log.e(TAG, prefs.getString("id", "")+" "+format.format(tgl_masuk)+" "+format.format(tgl_keluar)+" "+lama+" "+keterangan.getText().toString()+" " );
@@ -1140,10 +1102,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                             .add("akhir_izin",format.format(tgl_keluar))
                             .add("lama", ""+lama)
                             .add("keterangan",keterangan.getText().toString().trim())
-
-
-
-
                             .build();
 
                     Log.e(TAG, prefs.getString("id", "")+" "+format.format(tgl_masuk)+" "+format.format(tgl_keluar)+" "+lama+" "+keterangan.getText().toString()+" " );
@@ -1300,10 +1258,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                             .add("akhir_dinas",format.format(tgl_keluar))
                             .add("lama", ""+lama)
                             .add("keterangan",keterangan.getText().toString().trim())
-
-
-
-
                             .build();
 
                     Log.e(TAG, prefs.getString("id", "")+" "+format.format(tgl_masuk)+" "+format.format(tgl_keluar)+" "+lama+" "+keterangan.getText().toString()+" " );
@@ -1460,7 +1414,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                             .add("akhir_sakit",format.format(tgl_keluar))
                             .add("lama", ""+lama)
                             .add("keterangan",keterangan.getText().toString().trim())
-
                             .build();
 
                     Log.e(TAG, prefs.getString("id", "")+" "+format.format(tgl_masuk)+" "+format.format(tgl_keluar)+" "+lama+" "+keterangan.getText().toString()+" " );
@@ -1562,46 +1515,29 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
             if(this.dialog.isShowing()){
                 dialog.dismiss();
             }
-
-
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
 
     private void tanggal_masuk(Date tanggal){
         tanggal_masuk=tanggal;
-
     }
     private void tanggal_keluar(Date tanggal){
         tanggal_keluar=tanggal;
-
     }
     private void tanggal_masuk1(String tanggal){
         tanggal_masuk1=tanggal;
-
     }
     private void tanggal_keluar1(String tanggal){
         tanggal_keluar1=tanggal;
-
     }
     private void dialogDatePickerDark(final TextView tv, String jenis) {
         Calendar cur_calender = Calendar.getInstance();
-        /*
-        String tanggal_pengajuan=tglmasuk.getText().toString();
-        String tgl_pengajuan=tanggal_pengajuan.substring(0,2);
-        String bln_pengajuan=tanggal_pengajuan.substring(3,5);
-        String thn_pengajuan=tanggal_pengajuan.substring(6,10);
-
-        cur_calender.set(Calendar.YEAR, Integer.parseInt(thn_pengajuan));
-        cur_calender.set(Calendar.MONTH,Integer.parseInt(bln_pengajuan)-1);
-        cur_calender.set(Calendar.DAY_OF_MONTH, Integer.parseInt(tgl_pengajuan));
-        */
         DatePickerDialog datePicker = DatePickerDialog.newInstance(
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
                         Calendar calendar = Calendar.getInstance();
-
                         //long date_ship_millis = calendar.getTimeInMillis();
                         //tv.setText(Tools.getFormattedDateSimple(date_ship_millis));
                         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
@@ -1629,7 +1565,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         datePicker.show(getFragmentManager(), "Datepickerdialog");
     }
 
-
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
@@ -1651,13 +1586,10 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
             finish();
         }
-
         return super.onOptionsItemSelected(item);
     }
-
 }

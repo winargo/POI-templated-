@@ -28,12 +28,6 @@ public class Adapterviewkaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
     private List<listkaryawan> items = new ArrayList<>();
     private List<listkaryawan> itemsfilter = new ArrayList<>();
 
-    //private final Object mLock = new Object();
-
-    //private ArrayFilter mFilter;
-    private ArrayList<listkaryawan> mOriginalValues;
-    //private AdapterviewkaryawanListener listener;
-
     private OnLoadMoreListener onLoadMoreListener;
     private int animation_type = 0;
 
@@ -68,13 +62,6 @@ public class Adapterviewkaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
             name = (TextView) v.findViewById(R.id.name);
             brief = (TextView) v.findViewById(R.id.brief);
             lyt_parent = (View) v.findViewById(R.id.lyt_parent);
-            /*
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    listener.onSelected(itemsfilter.get(getAdapterPosition()));
-                }
-            });*/
         }
     }
 
@@ -104,7 +91,6 @@ public class Adapterviewkaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
                 Picasso.get().load("http://www.racemph.com/wp-content/uploads/2016/09/profile-image-placeholder.png").into(view.image);
                 //Picasso.get().load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ").into(view.image);
             }
-
             else{
                 Tools.displayImageOriginal(ctx, view.image, obj.getImagelink());
             }
@@ -118,18 +104,15 @@ public class Adapterviewkaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
                 view.lyt_parent.setVisibility(View.GONE);
             }*/
 
-
-
-
             view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
-                        Intent viewkaryawans = new Intent(ctx,viewkaryawan.class);
+                    Intent viewkaryawans = new Intent(ctx,viewkaryawan.class);
 
-                        viewkaryawans.putExtra("idkaryawan",obj.getIskar());
+                    viewkaryawans.putExtra("idkaryawan",obj.getIskar());
 
-                        ctx.startActivity(viewkaryawans);
+                    ctx.startActivity(viewkaryawans);
                 }
             });
             setAnimation(view.itemView, position);

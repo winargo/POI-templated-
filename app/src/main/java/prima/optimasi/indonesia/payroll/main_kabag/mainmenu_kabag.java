@@ -72,17 +72,20 @@ import prima.optimasi.indonesia.payroll.universal.adapter.AdapterListKaryawan;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 
-public class mainmenu_kabag extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
-
+public class mainmenu_kabag extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     int count = 0;
-
     AdapterListKaryawan adapter;
     SharedPreferences prefs;
     CoordinatorLayout parent_view;
     Adaptermenujabatan listAdapter;
     ExpandableListView expListView;
     ProgressDialog loadingdata;
+    CircularImageView imageuser;
+    TextView username, borndate, pengumumanteks, log_absensiteks, anggotateks, cekgajiteks, pengajuanteks, absensiteks, cekjadwalteks;
+    FloatingActionButton pengumuman, log_absensi, anggota, cekgaji, pengajuan, absensi, cekjadwal, logout;
+    CollapsingToolbarLayout collapsing_toolbar;
+    AppBarLayout appbar;
+    ImageView icon_born;
     TabLayout tabpager;
     ViewPager pager;
     List<String> listDataHeader;
@@ -92,313 +95,21 @@ public class mainmenu_kabag extends AppCompatActivity
     String[] tabTitles = new String[]{" Home", "  Profil", "Pengumuman", "Anggota", "Cek Gaji", "Pengajuan"};
     int[] iconstyle = new int[]{R.drawable.baseline_home_black_18dp, R.drawable.baseline_account_circle_black_24dp, R.drawable.baseline_announcement_black_24dp, R.drawable.ic_baseline_people_24px, R.drawable.baseline_monetization_on_black_24dp, R.drawable.baseline_assignment_black_24dp};
 
-
     Menu tempmenu;
     String TAG = "ABSENSI";
     Double gaji, potongan;
 
-    FloatingActionButton absensi;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
-        loadingdata = new ProgressDialog(this);
-        loadingdata.setTitle("Please Wait");
-        loadingdata.setMessage("Loading Data...");
-        loadingdata.show();
-
-
-
-
-        prefs = getSharedPreferences("poipayroll", MODE_PRIVATE);
-
-        if (!prefs.getString("absensikode", "").equals("")){
-            prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
-
-            SharedPreferences.Editor edit = prefs.edit();
-
-
-            absensithrowlocation throwdata = new absensithrowlocation(mainmenu_kabag.this, prefs.getInt("absensitype",0),
-                    prefs.getString("absensikode",""),
-                    prefs.getString("absensilongitude",""),
-                    prefs.getString("absensilatitude",""),
-                    prefs.getBoolean("absensisecurity",false));
-            throwdata.execute();
-
-            edit.apply();
-        }
-
-            if (prefs.getInt("statustoken", 0) == 0) {
-                generator.registertokentoserver register = new generator.registertokentoserver(this, prefs.getString("tokennotif", ""));
-                register.execute();
-
-                FirebaseMessaging.getInstance().subscribeToTopic("kabag");
-            }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_kabag);
+        initToolbar();
+        initComponent();
+        initListener();
 
-        Log.e("sharence status", "onCreate: " + prefs.getInt("statustoken", 0));
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-
-        generator initializedata = new generator(mainmenu_kabag.this);
-
-
-        CircularImageView imageuser = findViewById(R.id.imageView);
-
-        if (prefs.getString("profileimage", "").equals(generator.profileurl)) {
-            Picasso.get().load("http://www.racemph.com/wp-content/uploads/2016/09/profile-image-placeholder.png").transform(new CircleTransform()).into(imageuser);
-        } else {
-            Picasso.get().load(prefs.getString("profileimage", "")).transform(new CircleTransform()).into(imageuser);
+        if (loadingdata.isShowing()) {
+            loadingdata.dismiss();
         }
-        Log.e("picture", "ppicture: " + prefs.getString("profileimage", ""));
-
-        parent_view = findViewById(R.id.parent_view);
-        TextView username = findViewById(R.id.username);
-        TextView borndate = findViewById(R.id.prof_tempat_lahir);
-        TextView pengumumanteks = findViewById(R.id.pengumumanteks);
-        TextView log_absensiteks = findViewById(R.id.log_absensiteks);
-        TextView anggotateks = findViewById(R.id.anggotateks);
-        TextView cekgajiteks = findViewById(R.id.cekgajiteks);
-        TextView pengajuanteks = findViewById(R.id.pengajuanteks);
-        TextView absensiteks = findViewById(R.id.absensiteks);
-        TextView cekjadwalteks = findViewById(R.id.cekjadwalteks);
-
-        FloatingActionButton pengumuman = findViewById(R.id.pengumuman);
-        FloatingActionButton log_absensi = findViewById(R.id.log_absensi);
-        FloatingActionButton anggota = findViewById(R.id.anggota);
-        FloatingActionButton cekgaji = findViewById(R.id.cekgaji);
-        FloatingActionButton pengajuan = findViewById(R.id.pengajuan);
-        absensi = findViewById(R.id.absensi);
-        FloatingActionButton cekjadwal = findViewById(R.id.cekjadwal);
-
-        pengumumanteks.setText("Pengumuman");
-        log_absensiteks.setText("Log Absensi");
-        anggotateks.setText("Anggota");
-        cekgajiteks.setText("Cek Gaji");
-        pengajuanteks.setText("Pengajuan");
-        absensiteks.setText("Absensi");
-        cekjadwalteks.setText("Cek Jadwal");
-
-        LinearLayout linear_view = findViewById(R.id.linear_view);
-        pengumuman.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(mainmenu_kabag.this, ActivityPengumuman.class);
-                startActivity(intent);
-                /*
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.parent_view,new FragmentPengumuman()).addToBackStack("Home").commit();*/
-            }
-        });
-        log_absensi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(mainmenu_kabag.this, ActivityLogAbsensi.class);
-                startActivity(intent);
-
-                /*
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.parent_view,new FragmentAbsensi()).addToBackStack("Home").commit();*/
-            }
-        });
-        anggota.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(mainmenu_kabag.this, Activity_Anggota.class);
-                startActivity(intent);
-                /*
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.parent_view,new FragmentEmployee()).addToBackStack("Home").commit();*/
-            }
-        });
-        cekgaji.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String[] colors = {"Gaji Karyawan", "Gaji Sendiri"};
-
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_kabag.this);
-                builder.setTitle("Cek Gaji");
-
-                builder.setItems(colors, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(mainmenu_kabag.this, colors[which], Toast.LENGTH_LONG);
-
-                        if (which == 1) {
-                            gaji = 0.0d;
-                            potongan = 0.0d;
-                            retrivegaji gajis = new retrivegaji(mainmenu_kabag.this, prefs.getString("id", ""));
-                            gajis.execute();
-                        } else {
-                            gaji = 0.0d;
-                            potongan = 0.0d;
-                            retrivekaryawan kar = new retrivekaryawan(mainmenu_kabag.this);
-                            kar.execute();
-                        }
-                    }
-                });
-                builder.show();
-            }
-        });
-        pengajuan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String[] colors = {"Karyawan", "Sendiri"};
-
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_kabag.this);
-                builder.setTitle("Pengajuan");
-                builder.setItems(colors, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (which == 0) {
-                            Intent intent = new Intent(mainmenu_kabag.this, ActivityPengajuanKabag.class);
-                            startActivity(intent);
-                        } else {
-                            Intent intent = new Intent(mainmenu_kabag.this, ActivityPengajuan.class);
-                            startActivity(intent);
-                        }
-                    }
-                });
-                builder.show();
-
-
-                /*
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.parent_view,new FragmentPengajuan()).addToBackStack("Home").commit();*/
-            }
-        });
-        absensi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                boolean permissionGranted = ActivityCompat.checkSelfPermission(mainmenu_kabag.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-
-                if(permissionGranted) {
-
-
-                    //generator.lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-                    //generator.lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                    //generator.location = generator.lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-                    Intent intent = new Intent(mainmenu_kabag.this, ActivityAbsensi.class);
-                    intent.putExtra("jabatan", "kabag");
-                    startActivity(intent);
-                } else {
-                    ActivityCompat.requestPermissions(mainmenu_kabag.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 4011);
-                }
-
-
-
-            }
-        });
-        cekjadwal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                String[] colors = {"Karyawan", "Sendiri"};
-
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_kabag.this);
-                builder.setTitle("Cek Jadwal");
-                builder.setItems(colors, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (which == 1) {
-                            Intent a = new Intent(mainmenu_kabag.this, cekjadwal.class);
-                            a.putExtra("cekjadwal", which);
-                            startActivity(a);
-                        } else {
-                            Intent a = new Intent(mainmenu_kabag.this, cekjadwal.class);
-                            a.putExtra("cekjadwal", which);
-                            startActivity(a);
-                        }
-                    }
-                });
-                builder.show();
-
-            }
-        });
-        ImageView icon_born = findViewById(R.id.iconborn);
-        LinearLayout show = findViewById(R.id.showbutton);
-        FloatingActionButton logout = findViewById(R.id.logout);
-
-        final CollapsingToolbarLayout collapsing_toolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        ((AppBarLayout) findViewById(R.id.app_bar_layout)).addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                int min_height = ViewCompat.getMinimumHeight(collapsing_toolbar) * 2;
-                float scale = (float) (min_height + verticalOffset) / min_height;
-                imageuser.setScaleX(scale >= 0 ? scale : 0);
-                imageuser.setScaleY(scale >= 0 ? scale : 0);
-                username.setScaleX(scale >= 0 ? scale : 0);
-                username.setScaleY(scale >= 0 ? scale : 0);
-                icon_born.setScaleX(scale >= 0 ? scale : 0);
-                icon_born.setScaleY(scale >= 0 ? scale : 0);
-                borndate.setScaleX(scale >= 0 ? scale : 0);
-                borndate.setScaleY(scale >= 0 ? scale : 0);
-                //show.setScaleX(scale >= 0 ? 0 : scale*4);
-                //show.setScaleY(scale >= 0 ? 0 : scale*4);
-
-
-            }
-        });
-
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                generator.logout(mainmenu_kabag.this, "kabag");
-                /*
-                FirebaseMessaging.getInstance().unsubscribeFromTopic("kabag");
-
-                Intent logout = new Intent(mainmenu_kabag.this,activity_login.class);
-                SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
-
-                if(prefs.getInt("statustoken",0)==0){
-
-                }
-                else {
-                    generator.unregistertokentoserver unregistertokentoserver = new generator.unregistertokentoserver(mainmenu_kabag.this,prefs.getString("tokennotif",""),prefs.getString("Authorization",""));
-                    unregistertokentoserver.execute();
-                }
-
-
-                SharedPreferences.Editor edit = prefs.edit();
-
-                edit.putString("iduser","");
-                edit.putString("username","");
-                edit.putString("jabatan","");
-                edit.putString("level","");
-                edit.putString("tempatlahir","");
-                edit.putString("profileimage","");
-                edit.putString("Authorization","");
-                edit.putString("kodekaryawan","");
-
-                edit.commit();
-
-                startActivity(logout);*/
-            }
-        });
-
-        username.setText(getSharedPreferences("poipayroll", MODE_PRIVATE).getString("username", ""));
-
-        if (getSharedPreferences("poipayroll", MODE_PRIVATE).getString("tempatlahir", "").equals("")) {
-
-            borndate.setText("Not Available");
-
-        } else {
-
-            borndate.setText(getSharedPreferences("poipayroll", MODE_PRIVATE).getString("tempatlahir", ""));
-
-        }
-
-
-
         /*
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         expListView = drawer.findViewById(R.id.lvExp);
@@ -414,32 +125,6 @@ public class mainmenu_kabag extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         RelativeLayout linear = (RelativeLayout) navigationView.getHeaderView(0);
-        CircularImageView imageuser = linear.findViewById(R.id.imageView);
-
-        if(prefs.getString("profileimage","").equals(generator.profileurl)){
-
-        }
-        else {
-            Picasso.get().load(prefs.getString("profileimage","")).transform(new CircleTransform()).into(imageuser);
-        }
-        Log.e("picture", "ppicture: "+ prefs.getString("profileimage",""));
-
-        TextView username = linear.findViewById(R.id.username);
-        TextView borndate = linear.findViewById(R.id.prof_tempat_lahir);
-
-
-
-        username.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("username",""));
-
-        if(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("tempatlahir","").equals("")){
-
-            borndate.setText("Not Available");
-
-        }else{
-
-            borndate.setText(getSharedPreferences("poipayroll",MODE_PRIVATE).getString("tempatlahir",""));
-
-        }
 
         tabpager = findViewById(R.id.tab_layout);
         pager = findViewById(R.id.viewpager);
@@ -673,11 +358,246 @@ public class mainmenu_kabag extends AppCompatActivity
                 return false;
             }
         });
-
         */
-        if (loadingdata.isShowing()) {
-            loadingdata.dismiss();
+    }
+    private void initToolbar(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        collapsing_toolbar= (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        appbar=findViewById(R.id.app_bar_layout);
+    }
+
+    private void initComponent(){
+        parent_view = findViewById(R.id.parent_view);
+        loadingdata = new ProgressDialog(this);
+        loadingdata.setTitle("Please Wait");
+        loadingdata.setMessage("Loading Data...");
+        loadingdata.show();
+
+        prefs = getSharedPreferences("poipayroll", MODE_PRIVATE);
+
+        if (!prefs.getString("absensikode", "").equals("")){
+            prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
+
+            SharedPreferences.Editor edit = prefs.edit();
+            absensithrowlocation throwdata = new absensithrowlocation(mainmenu_kabag.this, prefs.getInt("absensitype",0),
+                    prefs.getString("absensikode",""),
+                    prefs.getString("absensilongitude",""),
+                    prefs.getString("absensilatitude",""),
+                    prefs.getBoolean("absensisecurity",false));
+            throwdata.execute();
+
+            edit.apply();
         }
+        if (prefs.getInt("statustoken", 0) == 0) {
+            generator.registertokentoserver register = new generator.registertokentoserver(this, prefs.getString("tokennotif", ""));
+            register.execute();
+
+            FirebaseMessaging.getInstance().subscribeToTopic("kabag");
+        }
+        Log.e("sharence status", "onCreate: " + prefs.getInt("statustoken", 0));
+
+        imageuser = findViewById(R.id.imageView);
+
+        if (prefs.getString("profileimage", "").equals(generator.profileurl)) {
+            Picasso.get().load("http://www.racemph.com/wp-content/uploads/2016/09/profile-image-placeholder.png").transform(new CircleTransform()).into(imageuser);
+        } else {
+            Picasso.get().load(prefs.getString("profileimage", "")).transform(new CircleTransform()).into(imageuser);
+        }
+        Log.e("picture", "ppicture: " + prefs.getString("profileimage", ""));
+
+        username = findViewById(R.id.username);
+        borndate = findViewById(R.id.prof_tempat_lahir);
+        pengumumanteks = findViewById(R.id.pengumumanteks);
+        log_absensiteks = findViewById(R.id.log_absensiteks);
+        anggotateks = findViewById(R.id.anggotateks);
+        cekgajiteks = findViewById(R.id.cekgajiteks);
+        pengajuanteks = findViewById(R.id.pengajuanteks);
+        absensiteks = findViewById(R.id.absensiteks);
+        cekjadwalteks = findViewById(R.id.cekjadwalteks);
+
+        pengumuman = findViewById(R.id.pengumuman);
+        log_absensi = findViewById(R.id.log_absensi);
+        anggota = findViewById(R.id.anggota);
+        cekgaji = findViewById(R.id.cekgaji);
+        pengajuan = findViewById(R.id.pengajuan);
+        absensi = findViewById(R.id.absensi);
+        cekjadwal = findViewById(R.id.cekjadwal);
+
+        icon_born = findViewById(R.id.iconborn);
+        logout = findViewById(R.id.logout);
+        LinearLayout show = findViewById(R.id.showbutton);
+
+        pengumumanteks.setText("Pengumuman");
+        log_absensiteks.setText("Log Absensi");
+        anggotateks.setText("Anggota");
+        cekgajiteks.setText("Cek Gaji");
+        pengajuanteks.setText("Pengajuan");
+        absensiteks.setText("Absensi");
+        cekjadwalteks.setText("Cek Jadwal");
+
+        username.setText(getSharedPreferences("poipayroll", MODE_PRIVATE).getString("username", ""));
+        if (getSharedPreferences("poipayroll", MODE_PRIVATE).getString("tempatlahir", "").equals("")) {
+            borndate.setText("Not Available");
+        } else {
+            borndate.setText(getSharedPreferences("poipayroll", MODE_PRIVATE).getString("tempatlahir", ""));
+        }
+    }
+
+    private void initListener(){
+        pengumuman.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mainmenu_kabag.this, ActivityPengumuman.class);
+                startActivity(intent);
+                /*
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.parent_view,new FragmentPengumuman()).addToBackStack("Home").commit();*/
+            }
+        });
+        log_absensi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mainmenu_kabag.this, ActivityLogAbsensi.class);
+                startActivity(intent);
+
+                /*
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.parent_view,new FragmentAbsensi()).addToBackStack("Home").commit();*/
+            }
+        });
+        anggota.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mainmenu_kabag.this, Activity_Anggota.class);
+                startActivity(intent);
+                /*
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.parent_view,new FragmentEmployee()).addToBackStack("Home").commit();*/
+            }
+        });
+        cekgaji.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String[] colors = {"Gaji Karyawan", "Gaji Sendiri"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_kabag.this);
+                builder.setTitle("Cek Gaji");
+
+                builder.setItems(colors, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(mainmenu_kabag.this, colors[which], Toast.LENGTH_LONG);
+
+                        if (which == 1) {
+                            gaji = 0.0d;
+                            potongan = 0.0d;
+                            retrivegaji gajis = new retrivegaji(mainmenu_kabag.this, prefs.getString("id", ""));
+                            gajis.execute();
+                        } else {
+                            gaji = 0.0d;
+                            potongan = 0.0d;
+                            retrivekaryawan kar = new retrivekaryawan(mainmenu_kabag.this);
+                            kar.execute();
+                        }
+                    }
+                });
+                builder.show();
+            }
+        });
+        pengajuan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String[] colors = {"Karyawan", "Sendiri"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_kabag.this);
+                builder.setTitle("Pengajuan");
+                builder.setItems(colors, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0) {
+                            Intent intent = new Intent(mainmenu_kabag.this, ActivityPengajuanKabag.class);
+                            startActivity(intent);
+                        } else {
+                            Intent intent = new Intent(mainmenu_kabag.this, ActivityPengajuan.class);
+                            startActivity(intent);
+                        }
+                    }
+                });
+                builder.show();
+
+                /*
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.parent_view,new FragmentPengajuan()).addToBackStack("Home").commit();*/
+            }
+        });
+        absensi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                boolean permissionGranted = ActivityCompat.checkSelfPermission(mainmenu_kabag.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+
+                if(permissionGranted) {
+                    //generator.lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+                    //generator.lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                    //generator.location = generator.lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                    Intent intent = new Intent(mainmenu_kabag.this, ActivityAbsensi.class);
+                    intent.putExtra("jabatan", "kabag");
+                    startActivity(intent);
+                } else {
+                    ActivityCompat.requestPermissions(mainmenu_kabag.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 4011);
+                }
+
+            }
+        });
+        cekjadwal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String[] colors = {"Karyawan", "Sendiri"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_kabag.this);
+                builder.setTitle("Cek Jadwal");
+                builder.setItems(colors, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 1) {
+                            Intent a = new Intent(mainmenu_kabag.this, cekjadwal.class);
+                            a.putExtra("cekjadwal", which);
+                            startActivity(a);
+                        } else {
+                            Intent a = new Intent(mainmenu_kabag.this, cekjadwal.class);
+                            a.putExtra("cekjadwal", which);
+                            startActivity(a);
+                        }
+                    }
+                });
+                builder.show();
+            }
+        });
+
+        appbar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                int min_height = ViewCompat.getMinimumHeight(collapsing_toolbar) * 2;
+                float scale = (float) (min_height + verticalOffset) / min_height;
+                imageuser.setScaleX(scale >= 0 ? scale : 0);
+                imageuser.setScaleY(scale >= 0 ? scale : 0);
+                username.setScaleX(scale >= 0 ? scale : 0);
+                username.setScaleY(scale >= 0 ? scale : 0);
+                icon_born.setScaleX(scale >= 0 ? scale : 0);
+                icon_born.setScaleY(scale >= 0 ? scale : 0);
+                borndate.setScaleX(scale >= 0 ? scale : 0);
+                borndate.setScaleY(scale >= 0 ? scale : 0);
+            }
+        });
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                generator.logout(mainmenu_kabag.this, "kabag");
+            }
+        });
     }
 
     private class retrivekaryawan extends AsyncTask<Void, Integer, String> {
@@ -785,88 +705,6 @@ public class mainmenu_kabag extends AppCompatActivity
                     try {
                         boolean status = result.getBoolean("status");
                         if (status) {
-                            /*
-                            "data":[{
-                                "id":7, "kode_karyawan":"EMP-07", "idfp":"KRY0007", "nama":
-                                "Sparno", "alamat":"Jln.Surabaya", "tempat_lahir":"Bogor",
-                                        "tgl_lahir":"1994-07-02T00:00:00.000Z", "telepon":
-                                "000000000", "no_wali":"0000000000", "email":"modomodo@gmail.com",
-                                        "tgl_masuk":"2018-08-04T00:00:00.000Z", "kelamin":
-                                "laki-laki", "status_nikah":"Menikah", "pendidikan":"Sarjana S1",
-                                        "wn":"Indonesia", "agama":"Islam", "shift":
-                                "ya", "status_kerja":"aktif", "ibu_kandung":"Meiling", "suami_istri":
-                                "Lastri",
-                                        "tanggungan":3, "npwp":"001011101010", "gaji":0, "rekening":
-                                "00010000", "id_bank":1, "id_departemen":16, "id_jabatan":10,
-                                        "id_grup":6, "id_golongan":25, "atas_nama":"Sparno", "foto":
-                                "17a490b3ab8e38e296e3b1b18a433eb9.jpg", "id_cabang":2,
-                                        "start_date":null, "expired_date":null, "jab_index":
-                                0, "kontrak":"tidak", "file_kontrak":"", "otoritas":2,
-                                        "periode_gaji":"2-Mingguan", "qrcode_file":
-                                "4b267aa6e56888580342445702d212f3.png"
-                            },
-                            {
-                                "id":8, "kode_karyawan":"EMP-08",
-                                    "idfp":"KRY0008", "nama":"Aston", "alamat":
-                                "Jln.Melati1", "tempat_lahir":"Medan", "tgl_lahir":
-                                "1992-07-02T00:00:00.000Z",
-                                        "telepon":"000000000", "no_wali":"090909090909", "email":
-                                "gagaga@gmail.com", "tgl_masuk":"2018-07-09T00:00:00.000Z",
-                                    "kelamin":"perempuan", "status_nikah":"Menikah", "pendidikan":
-                                "Sarjana S3", "wn":"Indonesia", "agama":"Islam", "shift":"ya",
-                                    "status_kerja":"aktif", "ibu_kandung":"Lisa", "suami_istri":
-                                "sadaa", "tanggungan":2, "npwp":"0000101010101", "gaji":1,
-                                    "rekening":"0101010101011", "id_bank":1, "id_departemen":
-                                1, "id_jabatan":23, "id_grup":6, "id_golongan":60, "atas_nama":
-                                "Aston",
-                                        "foto":"abe6ae2097f676a4e7d7869a75139fb9.jpg", "id_cabang":
-                                1, "start_date":null, "expired_date":null, "jab_index":0,
-                                    "kontrak":"tidak", "file_kontrak":"", "otoritas":
-                                3, "periode_gaji":"Bulanan", "qrcode_file":""
-                            },
-                            {
-                                "id":10, "kode_karyawan":"EMP-10",
-                                    "idfp":"KYR0010", "nama":"Sulastri Ningsih", "alamat":
-                                "JLn.Bambu1", "tempat_lahir":"sadsad", "tgl_lahir":
-                                "1993-12-15T00:00:00.000Z",
-                                        "telepon":"01010101000", "no_wali":"01010000100", "email":
-                                "asdsadasdllololol@gmail.com", "tgl_masuk":
-                                "2018-07-03T00:00:00.000Z",
-                                        "kelamin":"perempuan", "status_nikah":
-                                "Menikah", "pendidikan":"Sarjana S2", "wn":"Indonesia", "agama":
-                                "Islam", "shift":"ya",
-                                    "status_kerja":"aktif", "ibu_kandung":"sad", "suami_istri":
-                                "asd", "tanggungan":1, "npwp":"2131232321", "gaji":0, "rekening":
-                                "8282888828282",
-                                        "id_bank":3, "id_departemen":1, "id_jabatan":23, "id_grup":
-                                6, "id_golongan":25, "atas_nama":"Sulastri Ningsih",
-                                    "foto":"35b234cd6919cd1dabc2c97f0af16436.jpg", "id_cabang":
-                                2, "start_date":null, "expired_date":null, "jab_index":0, "kontrak":
-                                "tidak",
-                                        "file_kontrak":"", "otoritas":1, "periode_gaji":
-                                "Bulanan", "qrcode_file":"8a28fb7a5902cc42878dfcbca26bceec.png"
-                            },
-                            {
-                                "id":28,
-                                    "kode_karyawan":"EMP-100", "idfp":"KRY0016", "nama":
-                                "Queen", "alamat":"Jln.Jambu", "tempat_lahir":"Medan", "tgl_lahir":
-                                "2018-09-04T00:00:00.000Z",
-                                        "telepon":"0001010101", "no_wali":"0020020002020", "email":
-                                "asdsadsadsakjhuguhj@gmail.com", "tgl_masuk":
-                                "2018-09-27T00:00:00.000Z",
-                                        "kelamin":"laki-laki", "status_nikah":
-                                "Menikah", "pendidikan":"Diploma 1", "wn":"Indonesia", "agama":
-                                "Islam", "shift":"ya", "status_kerja":"aktif",
-                                    "ibu_kandung":"Lastri", "suami_istri":"Suylaiman", "tanggungan":
-                                1, "npwp":"009090909", "gaji":1000, "rekening":"80000008000101000",
-                                    "id_bank":3, "id_departemen":13, "id_jabatan":27, "id_grup":
-                                6, "id_golongan":58, "atas_nama":"Queen", "foto":"", "id_cabang":
-                                1, "start_date":null,
-                                    "expired_date":null, "jab_index":1, "kontrak":
-                                "tidak", "file_kontrak":"", "otoritas":5, "periode_gaji":"Bulanan",
-                                    "qrcode_file":"00219b1037b0f71e2a32d8666cb4bee3.png"
-                            }]
-                            */
                             JSONArray pengsarray = result.getJSONArray("data");
 
                             items = new ArrayList<>();
@@ -924,7 +762,6 @@ public class mainmenu_kabag extends AppCompatActivity
                                 }
                             });
 
-
                             listkar.show();
                             listkar.getWindow().setAttributes(lp);
                         }
@@ -935,7 +772,6 @@ public class mainmenu_kabag extends AppCompatActivity
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
                     }
-
 
                 } else {
                     Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
@@ -949,7 +785,6 @@ public class mainmenu_kabag extends AppCompatActivity
             if (this.dialog.isShowing()) {
                 dialog.dismiss();
             }
-
 
             Log.d(TAG + " onPostExecute", "" + result1);
         }
@@ -966,7 +801,6 @@ public class mainmenu_kabag extends AppCompatActivity
         String urldata = generator.pengajiangajikaryawanurl;
         String passeddata = "";
         String id = "";
-        int p = 0;
 
         public retrivegaji(Context context, String id) {
             prefs = context.getSharedPreferences("poipayroll", Context.MODE_PRIVATE);
@@ -974,7 +808,6 @@ public class mainmenu_kabag extends AppCompatActivity
             this.password = generator.password;
             this.error = error;
             this.id = id;
-            this.p = p;
         }
 
         String TAG = getClass().getSimpleName();
@@ -1133,7 +966,6 @@ public class mainmenu_kabag extends AppCompatActivity
         gajisendiri.show();
         gajisendiri.getWindow().setAttributes(lp);
     }
-
 
     @Override
     public void onBackPressed() {
@@ -1426,13 +1258,8 @@ public class mainmenu_kabag extends AppCompatActivity
                         count++;
                     }
 
-
-
-
-
                     Toast.makeText(ctx, "Terjadi Kesalahan Koneksi", Toast.LENGTH_SHORT).show();
                 }
-
 
                 //JSONArray bArray= responseObject.getJSONArray("B");
                 //for(int i=0;i<bArray.length();i++){
@@ -1455,8 +1282,6 @@ public class mainmenu_kabag extends AppCompatActivity
                         });
                 alertDialog.show();
             }
-
-
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
@@ -1466,10 +1291,9 @@ public class mainmenu_kabag extends AppCompatActivity
         switch (requestCode) {
             case 4011: {
                 if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                            Intent intent = new Intent(mainmenu_kabag.this, ActivityAbsensi.class);
-                            intent.putExtra("jabatan", "kabag");
-                            startActivity(intent);
+                    Intent intent = new Intent(mainmenu_kabag.this, ActivityAbsensi.class);
+                    intent.putExtra("jabatan", "kabag");
+                    startActivity(intent);
 
                 }
             }

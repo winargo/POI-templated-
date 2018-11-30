@@ -17,9 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import prima.optimasi.indonesia.payroll.R;
-import prima.optimasi.indonesia.payroll.objects.listjadwal;
 import prima.optimasi.indonesia.payroll.objects.listkaryawanpengajuan;
-import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 
 public class Adapterhistorypengajuan extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

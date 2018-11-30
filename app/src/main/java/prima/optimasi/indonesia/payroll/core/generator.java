@@ -79,7 +79,6 @@ public class generator {
     public static int jobcount = 0 ;
 
     public static String mainurl ="http://153.92.4.147:388/verify";
-    //public static String mainurl ="http://192.168.5.254:4000/verify";
 
     public static String keepaliveurl="http://"+ generator.Server+":"+generator.port+"/login";
     public static String imageurl="http://"+ generator.Server+"/"+determiner+"/uploads/aktivitas/pengumuman/";
@@ -104,7 +103,7 @@ public class generator {
     public static String scanloginurl = "http://"+ generator.Server+":"+generator.port+"/loginScan";
     public static String sendtokenurl = "http://"+ generator.Server+":"+generator.port+"/postnotif";
     public static String listemployeeurl = "http://"+ generator.Server+":"+generator.port+"/karyawan";
-
+    public static String freezeemployeeurl = "http://"+ generator.Server+":"+generator.port+"/freeze";
     public static String calenderurl = "http://"+ generator.Server+":"+generator.port+"/calendar";
 
     public static String cutiurl="http://"+ generator.Server+":"+generator.port+"/laporan/cuti";

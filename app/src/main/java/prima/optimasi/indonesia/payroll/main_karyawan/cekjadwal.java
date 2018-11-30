@@ -9,80 +9,66 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.main_kabag.adapter.Adapterkaryawan;
 import prima.optimasi.indonesia.payroll.objects.listjadwal;
-import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 import prima.optimasi.indonesia.payroll.universal.adapter.Adapterjadwal;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 
 public class cekjadwal extends AppCompatActivity {
-    Adapterkaryawan mAdapterkaryawan;
-    RecyclerView recyclerView, recyclerView_karyawan;
+    RecyclerView recyclerView;
     Adapterjadwal adapter;
     List<listjadwal> itemjadwal;
-    List<listkaryawan> itemskaryawan;
     listjadwal lj;
-    listkaryawan kar;
     CoordinatorLayout parent_view;
-
     private SwipeRefreshLayout refreshkaryawan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cek_jadwal);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        parent_view=findViewById(R.id.parent_view);
-
-
-
         initToolbar();
+        initComponent();
     }
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Tools.setSystemBarColor(this, R.color.colorPrimary);
+    }
+
+    private void initComponent() {
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        parent_view=findViewById(R.id.parent_view);
+
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
         String kodekaryawan=prefs.getString("kodekaryawan","");
-
         getSupportActionBar().setTitle("Cek Jadwal Sendiri");
         retrivejadwal kar = new retrivejadwal(this,kodekaryawan);
         kar.execute();
-
-
         Log.e("Error", "data json result" + kodekaryawan);
-
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_activity_main, menu);

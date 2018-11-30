@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import prima.optimasi.indonesia.payroll.R;
-import prima.optimasi.indonesia.payroll.objects.listjadwal;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan_izincutisakit;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 
@@ -128,88 +127,3 @@ public class Adapterviewkaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
 }
-/*package prima.optimasi.indonesia.payroll.universal.adapter;
-
-import android.content.Context;
-import android.os.Handler;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TextView;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import prima.optimasi.indonesia.payroll.R;
-import prima.optimasi.indonesia.payroll.objects.listjadwal;
-import prima.optimasi.indonesia.payroll.objects.logabsensi_karyawan;
-import prima.optimasi.indonesia.payroll.model.Social;
-import prima.optimasi.indonesia.payroll.utils.Tools;
-import prima.optimasi.indonesia.payroll.utils.ViewAnimation;
-
-public class Adapterjadwal extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    private List<listjadwal> items = new ArrayList<>();
-    //private logabsensi_karyawan items=new logabsensi_karyawan();
-
-    private Context ctx;
-    private OnItemClickListener mOnItemClickListener;
-
-    public interface OnItemClickListener {
-        void onItemClick(View view, listjadwal obj, int position);
-    }
-
-    public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
-        this.mOnItemClickListener = mItemClickListener;
-    }
-
-    public Adapterjadwal(Context context, List<listjadwal> items) {
-        this.items = items;
-        ctx = context;
-    }
-
-    public class OriginalViewHolder extends RecyclerView.ViewHolder {
-        public TextView tanggal;
-        public TextView nama_shift;
-
-        public OriginalViewHolder(View v) {
-            super(v);
-            tanggal = (TextView) v.findViewById(R.id.tanggal);
-            nama_shift = (TextView) v.findViewById(R.id.nama_shift);
-
-
-        }
-    }
-
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        RecyclerView.ViewHolder vh;
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_jadwal, parent, false);
-        vh = new OriginalViewHolder(v);
-        return vh;
-    }
-
-    // Replace the contents of a view (invoked by the layout manager)
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        if (holder instanceof OriginalViewHolder) {
-            final OriginalViewHolder view = (OriginalViewHolder) holder;
-
-            final listjadwal p = items.get(position);
-            view.tanggal.setText(p.getTanggal());
-            view.nama_shift.setText(p.getNama_shift());
-        }
-    }
-
-
-    @Override
-    public int getItemCount() {
-        return items.size();
-    }
-
-}*/

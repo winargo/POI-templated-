@@ -91,86 +91,13 @@ public class FragmentPengajuan extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(
-                R.layout.activity_pengajuan, container, false);
-        parent_view=rootView.findViewById(R.id.parent_view);
-        nsv=rootView.findViewById(R.id.nsv);
-        recyclerView=rootView.findViewById(R.id.recyclerView);
-        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
-        toolbar.setVisibility(View.GONE);
-        keterangan=rootView.findViewById(R.id.keterangan);
-        swipehome=rootView.findViewById(R.id.swipehome);
-        spinner = (MaterialSpinner) rootView.findViewById(R.id.spinner);
-
-        spinner.setItems("Pilih Pengajuan","Cuti", "Izin", "Dinas", "Sakit");
-        //spinner.setText("Pengajuan");
-        spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
-            //boolean klik=false;
-            @Override
-            public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
-                Snackbar.make(view, "Clicked " + item, Snackbar.LENGTH_LONG).show();
-                /*
-                if(!klik){
-                    spinner.setItems("Cuti", "Izin", "Dinas", "Dirumahkan");
-                }*/
-            }
-
-        });
-        nsv.setPadding(0,0,0,0);
-        tglmasuk=rootView.findViewById(R.id.tglmasuk);
-        tglkeluar=rootView.findViewById(R.id.tglkeluar);
-        //tglmasuk.setText(getCurrentDate());
-        Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE,0);
-        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-        String formattedDate = df.format(c.getTime());
-        tglmasuk.setText(formattedDate);
-        tglkeluar.setText(formattedDate);
-        tanggal_masuk=c.getTime();
-        tanggal_keluar=c.getTime();
-        tanggal_masuk1=formattedDate;
-        tanggal_keluar1=formattedDate;
-        //tglkeluar.setText(getNextDate());
-        //c.add(Calendar.DATE, 1);
-
-        //formattedDate = df.format(c.getTime());
-
-        //Log.v("NEXT DATE : ", formattedDate);
-
-        send=rootView.findViewById(R.id.send_pengajuan);
-        initComponent();
-        items = new ArrayList<>();
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.activity_pengajuan, container, false);
+        initComponent(rootView);
+        initListener();
         for (int i=0;i<kets.length;i++){
             retrivegetketerangan ket=new retrivegetketerangan(getActivity(), kets[i]);
             ket.execute();
         }
-        swipehome.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-
-                dialog = new ProgressDialog(getActivity());
-                dialog.setMessage("Loading ...");
-                dialog.show();
-                items.clear();
-                spinner.setSelectedIndex(0);
-                Calendar c = Calendar.getInstance();
-                c.add(Calendar.DATE,0);
-                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-                String formattedDate = df.format(c.getTime());
-                tglmasuk.setText(formattedDate);
-                tglkeluar.setText(formattedDate);
-                keterangan.setText("");
-                if(pengajuan!=null){
-                    pengajuan.notifyDataSetChanged();
-                }
-                for (int i=0;i<kets.length;i++) {
-                    retrivegetketeranganref ketref = new retrivegetketeranganref(getActivity(), kets[i]);
-                    ketref.execute();
-                }
-
-
-            }
-        });
         return rootView;
     }
 
@@ -609,8 +536,47 @@ public class FragmentPengajuan extends Fragment {
         }
     }
 
+    private void initComponent(View rootView) {
+        parent_view=rootView.findViewById(R.id.parent_view);
+        nsv=rootView.findViewById(R.id.nsv);
+        recyclerView=rootView.findViewById(R.id.recyclerView);
+        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+        toolbar.setVisibility(View.GONE);
+        keterangan=rootView.findViewById(R.id.keterangan);
+        swipehome=rootView.findViewById(R.id.swipehome);
+        spinner = (MaterialSpinner) rootView.findViewById(R.id.spinner);
 
-    private void initComponent() {
+        spinner.setItems("Pilih Pengajuan","Cuti", "Izin", "Dinas", "Sakit");
+
+        nsv.setPadding(0,0,0,0);
+        tglmasuk=rootView.findViewById(R.id.tglmasuk);
+        tglkeluar=rootView.findViewById(R.id.tglkeluar);
+        //tglmasuk.setText(getCurrentDate());
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE,0);
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        String formattedDate = df.format(c.getTime());
+        tglmasuk.setText(formattedDate);
+        tglkeluar.setText(formattedDate);
+        tanggal_masuk=c.getTime();
+        tanggal_keluar=c.getTime();
+        tanggal_masuk1=formattedDate;
+        tanggal_keluar1=formattedDate;
+
+        send=rootView.findViewById(R.id.send_pengajuan);
+        items = new ArrayList<>();
+    }
+
+    private void initListener(){
+        spinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+            //boolean klik=false;
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                Snackbar.make(view, "Clicked " + item, Snackbar.LENGTH_LONG).show();
+            }
+
+        });
+
         tglmasuk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -692,15 +658,42 @@ public class FragmentPengajuan extends Fragment {
                         Log.e("SPINNER : ", "Isi Jenis Pengajuan Anda");
                     }
 
-
                 }catch(Exception e){
                     Log.e("NEXT DATE : ", ""+tanggal_masuk.compareTo(tanggal_keluar));
                     Log.e("NEXT DATE : ", ""+tanggal_masuk1+" "+tanggal_keluar1);
                 }
 
+            }
+        });
 
+        swipehome.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
 
-
+                dialog = new ProgressDialog(getActivity());
+                dialog.setMessage("Loading ...");
+                dialog.show();
+                if(items!=null){
+                    items.clear();
+                }
+                else{
+                    items=new ArrayList<>();
+                }
+                spinner.setSelectedIndex(0);
+                Calendar c = Calendar.getInstance();
+                c.add(Calendar.DATE,0);
+                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                String formattedDate = df.format(c.getTime());
+                tglmasuk.setText(formattedDate);
+                tglkeluar.setText(formattedDate);
+                keterangan.setText("");
+                if(pengajuan!=null){
+                    pengajuan.notifyDataSetChanged();
+                }
+                for (int i=0;i<kets.length;i++) {
+                    retrivegetketeranganref ketref = new retrivegetketeranganref(getActivity(), kets[i]);
+                    ketref.execute();
+                }
             }
         });
     }
@@ -1336,6 +1329,7 @@ public class FragmentPengajuan extends Fragment {
         tanggal_keluar1=tanggal;
 
     }
+
     private void dialogDatePickerDark(final TextView tv, String jenis) {
         Calendar cur_calender = Calendar.getInstance();
         /*

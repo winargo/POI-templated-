@@ -1,7 +1,5 @@
 package prima.optimasi.indonesia.payroll.main_kabag;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -20,8 +18,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
@@ -42,17 +38,11 @@ import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.main_kabag.adapter.Adapterkaryawan;
-import prima.optimasi.indonesia.payroll.main_kabag.fragment_kabag.FragmentEmployee;
-import prima.optimasi.indonesia.payroll.main_karyawan.adapter.Adapter_absensi_karyawan;
-import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterGridCaller;
 import prima.optimasi.indonesia.payroll.objects.listjadwal;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
-import prima.optimasi.indonesia.payroll.objects.logabsensi_karyawan;
 import prima.optimasi.indonesia.payroll.universal.adapter.Adapterjadwal;
-import prima.optimasi.indonesia.payroll.universal.viewkaryawan;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
-import prima.optimasi.indonesia.payroll.widget.LineItemDecoration;
 
 public class cekjadwal extends AppCompatActivity {
     MaterialSearchView searchView;
@@ -80,20 +70,19 @@ public class cekjadwal extends AppCompatActivity {
             recyclerView_karyawan = (RecyclerView) findViewById(R.id.recyclerView_karyawan);
             searchView=findViewById(R.id.searchView);
         }
-
-        parent_view=findViewById(R.id.parent_view);
-
-
-
         initToolbar();
+        initComponent();
     }
     public void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Tools.setSystemBarColor(this, R.color.colorPrimary);
+    }
+
+    private void initComponent(){
+        parent_view=findViewById(R.id.parent_view);
         SharedPreferences prefs = getApplicationContext().getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
         String kodekaryawan=prefs.getString("kodekaryawan","");
         if(cek_jadwal==0){
@@ -104,6 +93,15 @@ public class cekjadwal extends AppCompatActivity {
             refreshkaryawan.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
+                    if(itemskaryawan!=null){
+                        itemskaryawan.clear();
+                    }
+                    else{
+                        itemskaryawan = new ArrayList<>();
+                    }
+                    if(mAdapterkaryawan!=null){
+                        mAdapterkaryawan.notifyDataSetChanged();
+                    }
                     retrivekaryawanrefersh ref = new retrivekaryawanrefersh(cekjadwal.this);
                     ref.execute();
                 }
@@ -115,9 +113,17 @@ public class cekjadwal extends AppCompatActivity {
             retrivekaryawanhrd karyawan = new retrivekaryawanhrd(this);
             karyawan.execute();
             refreshkaryawan.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-
                 @Override
                 public void onRefresh() {
+                    if(itemskaryawan!=null){
+                        itemskaryawan.clear();
+                    }
+                    else{
+                        itemskaryawan = new ArrayList<>();
+                    }
+                    if(mAdapterkaryawan!=null){
+                        mAdapterkaryawan.notifyDataSetChanged();
+                    }
                     retrivekaryawanhrdref ref = new retrivekaryawanhrdref(cekjadwal.this);
                     ref.execute();
                 }
@@ -131,8 +137,8 @@ public class cekjadwal extends AppCompatActivity {
         }
 
         Log.e("Error", "data json result" + kodekaryawan);
-
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if(cek_jadwal==1){
@@ -351,6 +357,7 @@ public class cekjadwal extends AppCompatActivity {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
+
     private class retrivekaryawan extends AsyncTask<Void, Integer, String>
     {
         String response = "";
@@ -724,7 +731,6 @@ public class cekjadwal extends AppCompatActivity {
                 Log.e(TAG, "data json result" + result.toString());
                 if (result != null) {
                     try {
-                        itemskaryawan = new ArrayList<>();
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
                         boolean status=result.getBoolean("status");
@@ -767,7 +773,9 @@ public class cekjadwal extends AppCompatActivity {
                                 }
 
                             }
-
+                            if(mAdapterkaryawan!=null){
+                                mAdapterkaryawan.notifyDataSetChanged();
+                            }
                             refreshkaryawan.setRefreshing(false);
                         }
                     } catch (JSONException e) {
@@ -1066,10 +1074,6 @@ public class cekjadwal extends AppCompatActivity {
                 Log.e(TAG, "data json result" + result.toString());
                 if (result != null) {
                     try {
-                        itemskaryawan.clear();
-                        if(mAdapterkaryawan!=null){
-                            mAdapterkaryawan.notifyDataSetChanged();
-                        }
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
                         JSONArray pengsarray = result.getJSONArray("rows");
@@ -1094,13 +1098,10 @@ public class cekjadwal extends AppCompatActivity {
                                     Log.e(TAG, "image data" + kar.getImagelink());
                                 }
 
-
                                 kar.setNama(obj.getString("nama"));
                                 kar.setDesc("Karyawan");
                                 itemskaryawan.add(kar);
-
                             }
-
                         }
                         if(mAdapterkaryawan!=null){
                             mAdapterkaryawan.notifyDataSetChanged();
@@ -1129,7 +1130,6 @@ public class cekjadwal extends AppCompatActivity {
             if(this.dialog.isShowing()){
                 dialog.dismiss();
             }
-
 
             Log.d(TAG + " onPostExecute", "" + result1);
         }

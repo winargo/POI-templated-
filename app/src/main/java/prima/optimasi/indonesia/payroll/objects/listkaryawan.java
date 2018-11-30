@@ -1,7 +1,5 @@
 package prima.optimasi.indonesia.payroll.objects;
 
-import java.util.List;
-
 public class listkaryawan {
     String jabatan;
     String iskar;

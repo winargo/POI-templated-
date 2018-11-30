@@ -312,8 +312,6 @@ public class Adapter_Log_Absensi extends RecyclerView.Adapter<RecyclerView.ViewH
             setAnimation(view.itemView, position);
 
         }
-
-
     }
 
     private int lastPosition = -1;

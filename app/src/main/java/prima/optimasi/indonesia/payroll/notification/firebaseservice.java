@@ -15,6 +15,11 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Random;
+<<<<<<< HEAD
+=======
+
+import java.util.Calendar;
+>>>>>>> 8e245f040a972defb97781897bcfa0567adeba33
 
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.activity_login;
@@ -179,6 +184,10 @@ public class firebaseservice extends FirebaseMessagingService {
         else {
             intent = new Intent(getApplicationContext(), activity_login.class);
         }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8e245f040a972defb97781897bcfa0567adeba33
         PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(pi);
         Random rand = new Random();
