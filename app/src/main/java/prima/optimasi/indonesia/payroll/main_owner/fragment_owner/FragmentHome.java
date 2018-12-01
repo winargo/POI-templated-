@@ -656,7 +656,7 @@ public class FragmentHome extends Fragment {
                 totalkaryawan=0;
                 //retrivegetjabatanref jab=new retrivegetjabatanref(getActivity());
                 //jab.execute();
-                refreshhome.setRefreshing(false);
+
             }
         });
 
@@ -1724,7 +1724,12 @@ public class FragmentHome extends Fragment {
                             int absen=0;
                             absen=totalkaryawan-banyakkaryawan;
                             totalabsen.setText(String.valueOf(absen));
-
+                            if(refreshhome.isRefreshing()){
+                                refreshhome.setRefreshing(false);
+                            }
+                            if(dialog.isShowing()){
+                                dialog.dismiss();
+                            }
                             //Log.e("MASUK ADAPTER", "Berhasil"+absen+"total"+totalkaryawan);
                             if(adapterabsensi!=null){
                                 adapterabsensi.notifyDataSetChanged();
@@ -2175,12 +2180,12 @@ public class FragmentHome extends Fragment {
                 Log.e(TAG, "retrive gaji mentah:"+result.toString() );
                 if (result != null) {
                     try {
-<<<<<<< HEAD
+
                         int temp=position+1;
                         dialog.setMessage("Memuat Data Chart...("+(temp)+"/12)Mohon Tunggu");
-=======
+
                         dialog.setMessage("Memuat Data Chart...("+(position+1)+"/12)Mohon Tunggu");
->>>>>>> e9c094bbfd23d12f58fb6d5a02e47086770a17ed
+
                         if(result.getString("status").equals("true")){
 
                             JSONObject obj = result.getJSONObject("data");

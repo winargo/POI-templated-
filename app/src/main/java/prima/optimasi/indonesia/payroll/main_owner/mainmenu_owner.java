@@ -3,6 +3,7 @@ package prima.optimasi.indonesia.payroll.main_owner;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -242,11 +243,24 @@ public class mainmenu_owner extends AppCompatActivity
             }
         });
 
+        int[][] states = new int[][] {
+                new int[] { android.R.attr.state_selected}, // enabled
+                new int[] {-android.R.attr.state_selected}, // disabled
+
+        };
+
+        int[] colors = new int[] {
+                getResources().getColor(R.color.qr_code_white),
+                getResources().getColor(R.color.light_color),
+        };
+
+        ColorStateList myList = new ColorStateList(states, colors);
         for (int i = 0; i < tabpager.getTabCount(); i++) {
             //noinspection ConstantConditions
             View v = LayoutInflater.from(this).inflate(R.layout.customtablayout,null);
             TextView tv=v.findViewById(R.id.texttab);
-            tv.setTextColor(Color.WHITE);
+            //tv.setTextColor(Color.WHITE);
+            tv.setTextColor(myList);
             tv.setText(tabTitles[i]);
 
             ImageView img = v.findViewById(R.id.icontab);
@@ -537,17 +551,25 @@ public class mainmenu_owner extends AppCompatActivity
         tempmenu.findItem(R.id.action_search).setVisible(true);
 
     }
+    public void hidesearch(){
+        tempmenu.findItem(R.id.action_show).setVisible(false);
+        tempmenu.findItem(R.id.action_search).setVisible(false);
+
+    }
+
+    public void closesearchpeng(){
+        searchView.closeSearch();
+        tempmenu.findItem(R.id.action_show).setVisible(false);
+        tempmenu.findItem(R.id.action_search).setVisible(true);
+
+    }
     public void closeAll(){
         searchView.closeSearch();
         tempmenu.findItem(R.id.action_search).setVisible(true);
         tempmenu.findItem(R.id.action_add).setVisible(true);
 
     }
-    public void hidesearch(){
-        tempmenu.findItem(R.id.action_show).setVisible(false);
-        tempmenu.findItem(R.id.action_search).setVisible(false);
 
-    }
     public void hideAll(){
         tempmenu.findItem(R.id.action_show).setVisible(false);
         tempmenu.findItem(R.id.action_search).setVisible(false);
