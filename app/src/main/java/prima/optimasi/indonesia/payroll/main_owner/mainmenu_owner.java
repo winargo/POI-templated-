@@ -210,6 +210,7 @@ public class mainmenu_owner extends AppCompatActivity
                 int position = tab.getPosition();
                 if(position==3){
                     if(tempmenu!=null){
+                        tempmenu.findItem(R.id.action_show).setVisible(false);
                         tempmenu.findItem(R.id.action_search).setVisible(true);
                         tempmenu.findItem(R.id.action_add).setVisible(true);
 
@@ -217,6 +218,7 @@ public class mainmenu_owner extends AppCompatActivity
                 }
                 else if(position ==1){
                     if(tempmenu!=null){
+                        tempmenu.findItem(R.id.action_show).setVisible(true);
                         tempmenu.findItem(R.id.action_search).setVisible(true);
                         tempmenu.findItem(R.id.action_add).setVisible(false);
 
@@ -224,6 +226,7 @@ public class mainmenu_owner extends AppCompatActivity
                 }
                 else {
                     if(tempmenu!=null){
+                        tempmenu.findItem(R.id.action_show).setVisible(false);
                         tempmenu.findItem(R.id.action_search).setVisible(false);
                         tempmenu.findItem(R.id.action_add).setVisible(false);
                     }
@@ -446,6 +449,10 @@ public class mainmenu_owner extends AppCompatActivity
         else if (id == R.id.action_search) {
             return true;
         }
+        else if (id == R.id.action_show) {
+            return true;
+        }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -526,6 +533,7 @@ public class mainmenu_owner extends AppCompatActivity
     }
     public void closesearch(){
         searchView.closeSearch();
+        tempmenu.findItem(R.id.action_show).setVisible(true);
         tempmenu.findItem(R.id.action_search).setVisible(true);
 
     }
@@ -536,10 +544,12 @@ public class mainmenu_owner extends AppCompatActivity
 
     }
     public void hidesearch(){
+        tempmenu.findItem(R.id.action_show).setVisible(false);
         tempmenu.findItem(R.id.action_search).setVisible(false);
 
     }
     public void hideAll(){
+        tempmenu.findItem(R.id.action_show).setVisible(false);
         tempmenu.findItem(R.id.action_search).setVisible(false);
         tempmenu.findItem(R.id.action_add).setVisible(false);
 

@@ -170,9 +170,10 @@ public class mainmenu_hrd extends AppCompatActivity implements NavigationView.On
             @Override
             public void onTabSelected(TabLayout.Tab tab){
                 int position = tab.getPosition();
-                tabpager.setSelectedTabIndicatorColor(mainmenu_hrd.this.getResources().getColor(R.color.blue_100));//set active color
+                tabpager.setTabTextColors(R.color.overlay_dark_10,R.color.qr_code_white);//set active color
                 if(position==9){
                     if(tempmenu!=null){
+                        tempmenu.findItem(R.id.action_show).setVisible(false);
                         tempmenu.findItem(R.id.action_search).setVisible(true);
                         tempmenu.findItem(R.id.action_add).setVisible(true);
 
@@ -180,12 +181,14 @@ public class mainmenu_hrd extends AppCompatActivity implements NavigationView.On
                 }
                 else if(position ==1){
                     if(tempmenu!=null){
+                        tempmenu.findItem(R.id.action_show).setVisible(false);
                         tempmenu.findItem(R.id.action_search).setVisible(true);
                         tempmenu.findItem(R.id.action_add).setVisible(false);
                     }
                 }
                 else {
                     if(tempmenu!=null){
+                        tempmenu.findItem(R.id.action_show).setVisible(false);
                         tempmenu.findItem(R.id.action_search).setVisible(false);
                         tempmenu.findItem(R.id.action_add).setVisible(false);
 

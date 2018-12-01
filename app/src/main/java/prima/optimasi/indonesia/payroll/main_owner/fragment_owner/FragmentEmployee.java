@@ -365,7 +365,6 @@ public class FragmentEmployee extends Fragment{
 
         public retrivekaryawan(Context context)
         {
-
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
             //dialog = new ProgressDialog(context);
             this.username = generator.username;

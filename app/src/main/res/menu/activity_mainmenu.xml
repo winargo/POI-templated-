@@ -9,6 +9,13 @@
         android:iconTint="@color/mdtp_white"
         app:showAsAction="always" />
     <item
+        android:id="@+id/action_show"
+        android:icon="@drawable/ic_visibility"
+        android:visible="false"
+        android:iconTint="@color/mdtp_white"
+        android:title="Show Freeze Employee"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search"
         android:visible="false"

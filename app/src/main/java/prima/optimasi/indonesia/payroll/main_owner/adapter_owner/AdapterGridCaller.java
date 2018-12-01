@@ -226,6 +226,7 @@ public class AdapterGridCaller extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                     RequestBody body= new FormBody.Builder()
                             .add("id",id)
+                            .add("status_kerja","non_aktif")
                             .build();
 
                     Request request = new Request.Builder()

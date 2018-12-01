@@ -131,15 +131,12 @@
                         android:layout_height="40sp" />
                     <ImageView
                         android:background="@drawable/ic_event"
-                        android:backgroundTint="@android:color/black"
+                        android:backgroundTint="@color/colorPrimary"
                         android:layout_width="30sp"
                         android:layout_marginLeft="10sp"
                         android:layout_marginRight="10sp"
                         android:layout_gravity="center"
                         android:id="@+id/dateselection_karyawan"
-                        android:textSize="8pt"
-                        android:textColor="@color/overlay_light_90"
-                        android:text=""
                         android:layout_height="30sp" />
                 </LinearLayout>
 
