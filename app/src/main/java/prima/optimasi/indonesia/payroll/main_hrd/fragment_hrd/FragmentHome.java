@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -20,16 +21,33 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.BarLineChartBase;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.realm.implementation.RealmBarDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.LargeValueFormatter;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -39,6 +57,7 @@ import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListDaftarAbsensi;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListSectionedKontrakKerja;
+import prima.optimasi.indonesia.payroll.objects.datagajiobject;
 import prima.optimasi.indonesia.payroll.objects.listkaryawandaftarabsensi;
 import prima.optimasi.indonesia.payroll.objects.listkaryawankontrakkerja;
 import prima.optimasi.indonesia.payroll.universal.ActivityListKaryawan;
@@ -49,34 +68,32 @@ import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
 public class FragmentHome extends Fragment {
 
     String tanggal="";
-    LinearLayout lineartotalgaji,sectiongaji;
+
+    LinearLayout sectiongaji;
+
+    private SwipeRefreshLayout refreshhome;
     View lyt_totalizin, lyt_totalsakit,lyt_totalcuti, lyt_totalabsen, lyt_totaltelat,lyt_totaldinas;
-    TextView totalizin, totalsakit, totalcuti, totalabsen, totaltelat, totaldinas,totalgajibersih, totalgajiestimasi;
-
-    SwipeRefreshLayout refreshhome;
+    TextView totalizin, totalsakit, totalcuti, totalabsen, totaltelat, totaldinas, totalgajibersih, totalgajiestimasi, totalgajipotongan;
     ImageButton expand, expand2, expand3, expandhabis;
-
     LinearLayout lyt_parent, lyt_parent2, lyt_parent3, lyt_parenthabis;
     LinearLayout lyt_expand, lyt_expand2, lyt_expand3, lyt_expandhabis;
-
     TextView sisakontrakkerja, sisakontrakkerja2, sisakontrakkerja3, sisakontrakkerjahabis;
-
     List<listkaryawankontrakkerja> items;
     List<listkaryawandaftarabsensi> daftaritems;
     List<String> list_jabatan;
-
     CoordinatorLayout parent_view;
-
     listkaryawankontrakkerja kontrakkerja;
-    listkaryawandaftarabsensi daftarabsensi;
 
+    listkaryawandaftarabsensi daftarabsensi;
     AdapterListSectionedKontrakKerja adapter;
     AdapterListDaftarAbsensi adapterabsensi;
-
     RecyclerView recyclerView, recyclerView2, recyclerView3, recyclerViewhabis, recyclerViewdaftar;
-
     boolean expansi=false, expansi2=false, expansi3=false, expansihabis=false;
     int banyak1bulan=0, banyak2bulan=0,banyak3bulan=0, banyakhabis=0, banyakkaryawan=0, totalkaryawan=0;
+
+    BarChart barChart ;
+
+    Realm mRealm;
 
     String[] keterangan = new String[]{"izin", "sakit", "cuti","dinas","telat"};
     String[] kontrak_kerja = new String[]{"habis", "1bulan", "2bulan","3bulan"};
@@ -87,10 +104,23 @@ public class FragmentHome extends Fragment {
     public List<RecyclerView> rv_kk;
     public List<View> lyt_ket;
     public List<TextView> tgaji;
+
+    String finalPerios;
+
     ProgressDialog dialog;
+
+    String perios="";
+
+    List<String> monthbarbottom;
+    List<String> dt1,dt2;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
+
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_home, container, false);
 
@@ -100,15 +130,48 @@ public class FragmentHome extends Fragment {
         dialog.setMessage("Loading Data..");
         dialog.show();
 
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        tanggal=format.format(c.getTime());
-
         sectiongaji = rootView.findViewById(R.id.sectiongaji);
 
         sectiongaji.setVisibility(View.GONE);
 
-        recyclerView=rootView.findViewById(R.id.recyclerView);
+        mRealm = Realm.getDefaultInstance();
+
+        barChart =rootView.findViewById(R.id.incbarchart);
+
+        mRealm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<datagajiobject> rows = realm.where(datagajiobject.class).findAll();
+                rows.deleteAllFromRealm();
+            }
+        });
+
+        Calendar calendar = Calendar.getInstance();
+
+        int thisYear = calendar.get(Calendar.YEAR);
+
+        SimpleDateFormat sdfyear = new SimpleDateFormat("MMM");
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM-yy");
+        Calendar cal = Calendar.getInstance();
+
+        cal.add(Calendar.MONTH, -12);
+
+
+
+        monthbarbottom = new ArrayList<>();
+        dt1 = new ArrayList<>();
+        dt2 = new ArrayList<>();
+        List<String> monthnumber = new ArrayList<>();
+        List<Integer> yearnumber = new ArrayList<>();
+
+        dialog.setTitle("Memuat Data");
+        dialog.setMessage("Mengambil Data Bulanan");
+
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        tanggal=format.format(c.getTime());
+
+        recyclerView = rootView.findViewById(R.id.recyclerView);
         recyclerView2=rootView.findViewById(R.id.recyclerView2bulan);
         recyclerView3=rootView.findViewById(R.id.recyclerView3bulan);
         recyclerViewhabis=rootView.findViewById(R.id.recyclerViewhabiskontrak);
@@ -121,6 +184,7 @@ public class FragmentHome extends Fragment {
         totaltelat=rootView.findViewById(R.id.totaltelat);
         totaldinas=rootView.findViewById(R.id.totaldinas);
 
+
         lyt_totalizin=rootView.findViewById(R.id.lyt_totalizin);
         lyt_totalsakit=rootView.findViewById(R.id.lyt_totalsakit);
         lyt_totalcuti=rootView.findViewById(R.id.lyt_totalcuti);
@@ -128,12 +192,10 @@ public class FragmentHome extends Fragment {
         lyt_totaltelat=rootView.findViewById(R.id.lyt_totaltelat);
         lyt_totaldinas=rootView.findViewById(R.id.lyt_totaldinas);
 
-        lineartotalgaji=rootView.findViewById(R.id.lineartotalgaji);
 
-        lineartotalgaji.setVisibility(View.GONE);
-        LinearLayout chartsalary=rootView.findViewById(R.id.chartsalary);
-        chartsalary.setVisibility(View.GONE);
         totalgajibersih=rootView.findViewById(R.id.totalgajibersih);
+        totalgajiestimasi=rootView.findViewById(R.id.totalgajiestimasi);
+
 
         parent_view=rootView.findViewById(R.id.parent_view);
         lyt_parent=rootView.findViewById(R.id.lyt_parent);
@@ -156,20 +218,6 @@ public class FragmentHome extends Fragment {
         lyt_expand3=rootView.findViewById(R.id.lyt_expand3bulan);
         lyt_expandhabis=rootView.findViewById(R.id.lyt_expandhabiskontrak);
 
-        ket=new ArrayList<>();
-        ket.add(totalizin);
-        ket.add(totalsakit);
-        ket.add(totalcuti);
-        ket.add(totaldinas);
-        ket.add(totaltelat);
-
-        lyt_ket=new ArrayList<>();
-        lyt_ket.add(lyt_totalizin);
-        lyt_ket.add(lyt_totalsakit);
-        lyt_ket.add(lyt_totalcuti);
-        lyt_ket.add(lyt_totaldinas);
-        lyt_ket.add(lyt_totaltelat);
-
         kk=new ArrayList<>();
         kk.add(sisakontrakkerjahabis);
         kk.add(sisakontrakkerja);
@@ -191,19 +239,28 @@ public class FragmentHome extends Fragment {
         banyakkontrakkerja.add(banyak1bulan);
         banyakkontrakkerja.add(banyak2bulan);
         banyakkontrakkerja.add(banyak3bulan);
-        for(int i=0;i<keterangan.length;i++){
-            retriveketerangan keterangans=new retriveketerangan(getActivity(), keterangan[i], ket.get(i), lyt_ket.get(i));
-            keterangans.execute();
-        }
-        for(int i=0;i<kontrak_kerja.length;i++){
-            retrivekontrakkerjakar k_k=new retrivekontrakkerjakar(parent_view.getContext(),kontrak_kerja[i], kk.get(i),rv_kk.get(i),banyakkontrakkerja.get(i));
-            k_k.execute();
-        }
-        retrivegetjabatan jab=new retrivegetjabatan(getActivity());
-        jab.execute();
-        if(dialog.isShowing()){
-            dialog.dismiss();
-        }
+
+        ket=new ArrayList<>();
+        ket.add(totalizin);
+        ket.add(totalsakit);
+        ket.add(totalcuti);
+        ket.add(totaldinas);
+        ket.add(totaltelat);
+
+
+        lyt_ket=new ArrayList<>();
+        lyt_ket.add(lyt_totalizin);
+        lyt_ket.add(lyt_totalsakit);
+        lyt_ket.add(lyt_totalcuti);
+        lyt_ket.add(lyt_totaldinas);
+        lyt_ket.add(lyt_totaltelat);
+
+
+
+        banyakkaryawan=0;
+        totalkaryawan=0;
+
+
 
         expand.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -215,19 +272,17 @@ public class FragmentHome extends Fragment {
                     if(!expansi){
                         lyt_expand.setVisibility(View.VISIBLE);
                         expansi=true;
-                        expand.setImageResource(R.drawable.ic_collapse_arrow);
+                        expand.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_collapse_arrow));
                     }
                     else{
                         lyt_expand.setVisibility(View.GONE);
                         expansi=false;
-                        expand.setImageResource(R.drawable.ic_expand_arrow);
+                        expand.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
                     }
                 }
 
             }
         });
-
-
 
         expand2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -238,11 +293,11 @@ public class FragmentHome extends Fragment {
                     if (!expansi2) {
                         lyt_expand2.setVisibility(View.VISIBLE);
                         expansi2 = true;
-                        expand2.setImageResource(R.drawable.ic_collapse_arrow);
+                        expand2.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_collapse_arrow));
                     } else {
                         lyt_expand2.setVisibility(View.GONE);
                         expansi2 = false;
-                        expand2.setImageResource(R.drawable.ic_expand_arrow);
+                        expand2.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
                     }
                 }
             }
@@ -257,11 +312,11 @@ public class FragmentHome extends Fragment {
                     if (!expansi3) {
                         lyt_expand3.setVisibility(View.VISIBLE);
                         expansi3 = true;
-                        expand3.setImageResource(R.drawable.ic_collapse_arrow);
+                        expand3.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_collapse_arrow));
                     } else {
                         lyt_expand3.setVisibility(View.GONE);
                         expansi3 = false;
-                        expand3.setImageResource(R.drawable.ic_expand_arrow);
+                        expand3.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
                     }
                 }
             }
@@ -276,11 +331,11 @@ public class FragmentHome extends Fragment {
                     if (!expansihabis) {
                         lyt_expandhabis.setVisibility(View.VISIBLE);
                         expansihabis = true;
-                        expandhabis.setImageResource(R.drawable.ic_collapse_arrow);
+                        expandhabis.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_collapse_arrow));
                     } else {
                         lyt_expandhabis.setVisibility(View.GONE);
                         expansihabis = false;
-                        expandhabis.setImageResource(R.drawable.ic_expand_arrow);
+                        expandhabis.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
                     }
                 }
             }
@@ -295,11 +350,11 @@ public class FragmentHome extends Fragment {
                     if (!expansi) {
                         lyt_expand.setVisibility(View.VISIBLE);
                         expansi = true;
-                        expand.setImageResource(R.drawable.ic_collapse_arrow);
+                        expand.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_collapse_arrow));
                     } else {
                         lyt_expand.setVisibility(View.GONE);
                         expansi = false;
-                        expand.setImageResource(R.drawable.ic_expand_arrow);
+                        expand.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
                     }
                 }
             }
@@ -314,11 +369,11 @@ public class FragmentHome extends Fragment {
                     if (!expansi2) {
                         lyt_expand2.setVisibility(View.VISIBLE);
                         expansi2 = true;
-                        expand2.setImageResource(R.drawable.ic_collapse_arrow);
+                        expand2.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_collapse_arrow));
                     } else {
                         lyt_expand2.setVisibility(View.GONE);
                         expansi2 = false;
-                        expand2.setImageResource(R.drawable.ic_expand_arrow);
+                        expand2.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
                     }
                 }
             }
@@ -333,11 +388,11 @@ public class FragmentHome extends Fragment {
                     if (!expansi3) {
                         lyt_expand3.setVisibility(View.VISIBLE);
                         expansi3 = true;
-                        expand3.setImageResource(R.drawable.ic_collapse_arrow);
+                        expand3.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_collapse_arrow));
                     } else {
                         lyt_expand3.setVisibility(View.GONE);
                         expansi3 = false;
-                        expand3.setImageResource(R.drawable.ic_expand_arrow);
+                        expand3.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
                     }
                 }
             }
@@ -352,11 +407,11 @@ public class FragmentHome extends Fragment {
                     if (!expansihabis) {
                         lyt_expandhabis.setVisibility(View.VISIBLE);
                         expansihabis = true;
-                        expandhabis.setImageResource(R.drawable.ic_collapse_arrow);
+                        expandhabis.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_collapse_arrow));
                     } else {
                         lyt_expandhabis.setVisibility(View.GONE);
                         expansihabis = false;
-                        expandhabis.setImageResource(R.drawable.ic_expand_arrow);
+                        expandhabis.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
                     }
                 }
             }
@@ -371,17 +426,16 @@ public class FragmentHome extends Fragment {
             }
         });
 
-
-
         refreshhome = rootView.findViewById(R.id.swipehome);
         refreshhome.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                dialog = new ProgressDialog(getActivity());
+                if(dialog.isShowing()){
 
-                dialog.setTitle("Mohon Tunggu");
-                dialog.setMessage("Loading Data..");
-                dialog.show();
+                }
+                else {
+                    dialog.show();
+                }
                 banyakkaryawan=0;
                 totalkaryawan=0;
 
@@ -404,22 +458,59 @@ public class FragmentHome extends Fragment {
                 lyt_expand3.setVisibility(View.GONE);
                 expand3.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_expand_arrow));
 
-                for(int i=0;i<keterangan.length;i++){
-                    retriveketerangan keterangans=new retriveketerangan(getActivity(), keterangan[i], ket.get(i), lyt_ket.get(i));
-                    keterangans.execute();
-                }
+                mRealm = Realm.getDefaultInstance();
+
+                barChart =rootView.findViewById(R.id.incbarchart);
+
+                mRealm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        RealmResults<datagajiobject> rows = realm.where(datagajiobject.class).findAll();
+                        rows.deleteAllFromRealm();
+                    }
+                });
+
+                Calendar calendar = Calendar.getInstance();
+
+                int thisYear = calendar.get(Calendar.YEAR);
+
+                SimpleDateFormat sdfyear = new SimpleDateFormat("MMM");
+                SimpleDateFormat sdf = new SimpleDateFormat("MMM-yy");
+                Calendar cal = Calendar.getInstance();
+
+                cal.add(Calendar.MONTH, -12);
+
+
+
+                monthbarbottom = new ArrayList<>();
+                dt1 = new ArrayList<>();
+                dt2 = new ArrayList<>();
+                List<String> monthnumber = new ArrayList<>();
+                List<Integer> yearnumber = new ArrayList<>();
+
+                dialog.setTitle("Memuat Data");
+                dialog.setMessage("Mengambil Data Bulanan");
+
                 for (int i = 0; i < kontrak_kerja.length; i++) {
                     retrivekontrakkerjakarref ref = new retrivekontrakkerjakarref(parent_view.getContext(), kontrak_kerja[i], kk.get(i), rv_kk.get(i), banyakkontrakkerja.get(i));
                     ref.execute();
                 }
-                retrivegetjabatanref jab=new retrivegetjabatanref(getActivity());
-                jab.execute();
+
                 if(dialog.isShowing()){
                     dialog.dismiss();
                 }
+
+                banyakkaryawan=0;
+                totalkaryawan=0;
+                //retrivegetjabatanref jab=new retrivegetjabatanref(getActivity());
+                //jab.execute();
                 refreshhome.setRefreshing(false);
             }
         });
+
+        if(dialog.isShowing()){
+            dialog.dismiss();
+        }
 
         return rootView;
     }
@@ -432,7 +523,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-        ProgressDialog dialog ;
         String urldata;
         String passeddata = "" ;
         TextView tv;
@@ -466,13 +556,6 @@ public class FragmentHome extends Fragment {
         }
 
         String TAG = getClass().getSimpleName();
-
-        protected void onPreExecute (){
-            //this.dialog.show();
-            super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
 
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
@@ -530,11 +613,6 @@ public class FragmentHome extends Fragment {
                 response = "Error Occured, PLease Contact Administrator/Support";
             }
             return response;
-        }
-
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
         }
 
         protected void onPostExecute(String result1) {
@@ -689,7 +767,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-        ProgressDialog dialog ;
         String urldata;
         String passeddata = "" ;
         TextView tv;
@@ -724,12 +801,6 @@ public class FragmentHome extends Fragment {
 
         String TAG = getClass().getSimpleName();
 
-        protected void onPreExecute (){
-            //this.dialog.show();
-            super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
 
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
@@ -789,10 +860,7 @@ public class FragmentHome extends Fragment {
             return response;
         }
 
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
-        }
+
 
         protected void onPostExecute(String result1) {
             try {
@@ -801,12 +869,7 @@ public class FragmentHome extends Fragment {
                     Log.e(TAG, kontrakskerja + result.toString());
                     try {
                         if(result.getString("status").equals("true")) {
-                            if(items!=null){
-                                items.clear();
-                            }
-                            else{
-                                items = new ArrayList<>();
-                            }
+                            items = new ArrayList<>();
                             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                             JSONArray pengsarray = result.getJSONArray("data");
                             String status = "";
@@ -950,13 +1013,13 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-        ProgressDialog dialog ;
         String urldata = generator.jabatanurl;
         String passeddata = "" ;
 
         public retrivegetjabatan(Context context)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            //dialog=new ProgressDialog(context);
             this.username = generator.username;
             this.password = generator.password;
             this.error = error ;
@@ -964,11 +1027,6 @@ public class FragmentHome extends Fragment {
 
         String TAG = getClass().getSimpleName();
 
-        protected void onPreExecute (){
-            super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
 
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
@@ -1030,14 +1088,12 @@ public class FragmentHome extends Fragment {
             return response;
         }
 
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
-        }
+
 
         protected void onPostExecute(String result1) {
 
             try {
+
                 if (result != null) {
                     try {
                         if (result.getString("status").equals("true")) {
@@ -1057,6 +1113,10 @@ public class FragmentHome extends Fragment {
                             recyclerViewdaftar.setLayoutManager(new LinearLayoutManager(getActivity()));
                             recyclerViewdaftar.setHasFixedSize(true);
                             recyclerViewdaftar.setAdapter(adapterabsensi);
+
+                            if(dialog.isShowing()){
+                                dialog.dismiss();
+                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -1094,7 +1154,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-        ProgressDialog dialog ;
         String urldata = generator.jabatanurl;
         String passeddata = "" ;
 
@@ -1108,11 +1167,6 @@ public class FragmentHome extends Fragment {
 
         String TAG = getClass().getSimpleName();
 
-        protected void onPreExecute (){
-            super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
 
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
@@ -1174,10 +1228,7 @@ public class FragmentHome extends Fragment {
             return response;
         }
 
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
-        }
+
 
         protected void onPostExecute(String result1) {
 
@@ -1187,8 +1238,18 @@ public class FragmentHome extends Fragment {
                     try {
                         if (result.getString("status").equals("true")) {
                             Log.e(TAG, "data jabatan" + result.toString());
-                            list_jabatan = new ArrayList<>();
+                            if(list_jabatan!=null){
+                                list_jabatan.clear();
+                            }else{
+                                list_jabatan = new ArrayList<>();
+                            }
                             JSONArray pengsarray = result.getJSONArray("data");
+
+                            if(daftaritems!=null){
+                                daftaritems.clear();
+                            }else{
+                                daftaritems = new ArrayList<>();
+                            }
                             for (int i = 0; i < pengsarray.length(); i++) {
                                 JSONObject obj = pengsarray.getJSONObject(i);
                                 list_jabatan.add(obj.getString("jabatan"));
@@ -1196,7 +1257,7 @@ public class FragmentHome extends Fragment {
                                 kar.execute();
                             }
 
-                            daftaritems = new ArrayList<>();
+
 
                         }
                     } catch (JSONException e) {
@@ -1235,7 +1296,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-        ProgressDialog dialog ;
         String urldata = generator.daftarabsensiurl;
         String passeddata = "" ;
         String jabatan="";
@@ -1253,11 +1313,6 @@ public class FragmentHome extends Fragment {
 
         String TAG = getClass().getSimpleName();
 
-        protected void onPreExecute (){
-            super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
 
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
@@ -1327,10 +1382,7 @@ public class FragmentHome extends Fragment {
             return response;
         }
 
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
-        }
+
 
         protected void onPostExecute(String result1) {
 
@@ -1360,15 +1412,14 @@ public class FragmentHome extends Fragment {
                             daftarabsensi.setBanyak(""+banyakkaryawan);
                             daftarabsensi.setTotal(""+totalkaryawan);
                             daftaritems.add(daftarabsensi);
-
                             int absen=0;
                             absen=totalkaryawan-banyakkaryawan;
                             totalabsen.setText(String.valueOf(absen));
-
+                            Log.e(TAG,String.valueOf(absen));
                             adapterabsensi.notifyDataSetChanged();
 
+                            //getketerangan();
                         }
-
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -1403,7 +1454,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-        ProgressDialog dialog ;
         String urldata = generator.daftarabsensiurl;
         String passeddata = "" ;
         String jabatan="";
@@ -1421,11 +1471,6 @@ public class FragmentHome extends Fragment {
 
         String TAG = getClass().getSimpleName();
 
-        protected void onPreExecute (){
-            super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
 
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
@@ -1495,10 +1540,7 @@ public class FragmentHome extends Fragment {
             return response;
         }
 
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
-        }
+
 
         protected void onPostExecute(String result1) {
 
@@ -1523,19 +1565,193 @@ public class FragmentHome extends Fragment {
                         }
 
                         if(panjang+1==list_jabatan.size()){
-                            daftarabsensi=new listkaryawandaftarabsensi();
-                            daftarabsensi.setJabatan("Total Karyawan");
-                            daftarabsensi.setBanyak(""+banyakkaryawan);
-                            daftarabsensi.setTotal(""+totalkaryawan);
-                            daftaritems.add(daftarabsensi);
+                            if(daftaritems.size()>0){
+                                daftarabsensi=new listkaryawandaftarabsensi();
+                                daftarabsensi.setJabatan("Total Karyawan");
+                                daftarabsensi.setBanyak(""+banyakkaryawan);
+                                daftarabsensi.setTotal(""+totalkaryawan);
+                                daftaritems.add(daftarabsensi);
+                            }
 
                             int absen=0;
                             absen=totalkaryawan-banyakkaryawan;
                             totalabsen.setText(String.valueOf(absen));
 
+                            //Log.e("MASUK ADAPTER", "Berhasil"+absen+"total"+totalkaryawan);
                             if(adapterabsensi!=null){
                                 adapterabsensi.notifyDataSetChanged();
                             }
+                            //refreshhome.setRefreshing(false);
+
+
+
+
+
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+
+            /*
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }*/
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
+    private class retrivetotalgaji extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        String urldata;
+        String passeddata = "" ;
+        TextView tv;
+        String tipe="";
+        public retrivetotalgaji(Context context, TextView tv, String tipe)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            //dialog=new ProgressDialog(context);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+            this.tv=tv;
+            this.tipe=tipe;
+            if(tipe.equals("bersih")){
+                urldata=generator.totalgajiurl;
+            }
+            else{
+                urldata=generator.gajiestimasiurl;
+            }
+        }
+
+        String TAG = getClass().getSimpleName();
+
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                //this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    RequestBody body=null;
+
+                    Calendar cal = Calendar.getInstance();
+
+                    cal.setTime(new Date());
+
+                    cal.add(Calendar.MONTH,-1);
+
+                    String dat1 = cal.get(Calendar.YEAR)+"-"+(cal.get(Calendar.MONTH)+1)+"-01";
+                    String dat2 = cal.get(Calendar.YEAR)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+                    Log.e(TAG, "datagajitotal"+dat1+" "+dat2 );
+
+                    if(tipe.equals("bersih")){
+                        body = new FormBody.Builder()
+                                .add("start",dat1)
+                                .add("end",dat2)
+                                .build();
+                    }
+                    else{
+                        body = new FormBody.Builder()
+                                .build();
+                    }
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .post(body)
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+
+
+        protected void onPostExecute(String result1) {
+
+            try {
+
+                if (result != null) {
+
+                    Log.e(TAG, "total gaji" + result.toString());
+
+                    try {
+                        //JSONArray pengsarray = result.getJSONArray("data");
+                        DecimalFormat formatter = new DecimalFormat("###,###,###.00");
+                        if(tipe.equals("bersih")){
+                            JSONObject obj = result.getJSONObject("data");
+
+                            tv.setText("RP "+formatter.format(Double.parseDouble(obj.getString("gajiBersih"))));
+
+                        }
+                        else{
+                            tv.setText("RP "+formatter.format(Double.parseDouble(result.getString("data"))));
+
 
                         }
                     } catch (Exception e) {
@@ -1571,7 +1787,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-        ProgressDialog dialog ;
         String urldata = "";
         String passeddata = "" ;
         String keterangan="";
@@ -1586,6 +1801,9 @@ public class FragmentHome extends Fragment {
             this.keterangan=keterangan;
             this.tv=tv;
             this.lyt=lyt;
+
+
+
             if(keterangan.equals("izin")){
                 urldata=generator.getizinhariyurl;
             }
@@ -1595,20 +1813,15 @@ public class FragmentHome extends Fragment {
             else if(keterangan.equals("cuti")){
                 urldata=generator.getcutihariyurl;
             }
-            else if(keterangan.equals("dinas")){
-                urldata=generator.getdinashariyurl;
-            }
             else if(keterangan.equals("telat")){
                 urldata=generator.absensitelatyurl;
+            }
+            else if(keterangan.equals("dinas")){
+                urldata=generator.getdinashariyurl;
             }
         }
         String TAG = getClass().getSimpleName();
 
-        protected void onPreExecute (){
-            super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
 
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
@@ -1673,10 +1886,7 @@ public class FragmentHome extends Fragment {
             return response;
         }
 
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
-        }
+
 
         protected void onPostExecute(String result1) {
 
@@ -1695,6 +1905,7 @@ public class FragmentHome extends Fragment {
                                 getActivity().startActivity(intent);
                             }
                         });
+
                     }  catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
@@ -1720,46 +1931,41 @@ public class FragmentHome extends Fragment {
         }
     }
 
-    private class retrivegetizin extends AsyncTask<Void, Integer, String>
+    private class retrivegajimentah0 extends AsyncTask<Void, Integer, String>
     {
         String response = "";
-        String error = "";
-        String username=  "" ;
-        String password = "" ;
         SharedPreferences prefs ;
+        Double value = 0.0d;
         JSONObject result = null ;
-        ProgressDialog dialog ;
-        String urldata = generator.getizinhariyurl;
-        String passeddata = "" ;
+        String urldata = generator.totalgajiurl;
+        SimpleDateFormat sdfchart = new SimpleDateFormat("yyyy-MM-dd");
+        int position;
 
-        public retrivegetizin(Context context)
+        public retrivegajimentah0(Context context,int position)
         {
+            Log.e(TAG, "retrivegajimentah0: "+"working" );
+            this.position = position;
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
-            this.username = generator.username;
-            this.password = generator.password;
-            this.error = error ;
         }
 
         String TAG = getClass().getSimpleName();
 
-        protected void onPreExecute (){
-            super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
 
         protected String doInBackground(Void...arg0) {
             Log.d(TAG + " DoINBackGround","On doInBackground...");
 
             try {
-                //this.dialog.setMessage("Loading Data...");
 
                 JSONObject jsonObject;
 
                 try {
                     OkHttpClient client = new OkHttpClient();
 
+                    Log.e("gajimentah by chart",dt1.get(position)+" "+dt2.get(position) );
+
                     RequestBody body = new FormBody.Builder()
+                            .add("start",dt1.get(position))
+                            .add("end",dt2.get(position))
                             .build();
 
                     Request request = new Request.Builder()
@@ -1786,23 +1992,25 @@ public class FragmentHome extends Fragment {
                     else {
 
                         result = new JSONObject(responses.body().string());
+
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    return null;
                 }
             } catch (IOException e) {
+                e.printStackTrace();
                 //this.dialog.dismiss();
                 Log.e("doInBackground: ", "IO Exception" + e.getMessage());
                 generator.jsondatalogin = null;
-                response = "Error IOException";
             } catch (NullPointerException e) {
                 //this.dialog.dismiss();
+                e.printStackTrace();
                 Log.e("doInBackground: ", "null data" + e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Please check Connection and Server";
             } catch (Exception e) {
                 //this.dialog.dismiss();
+                e.printStackTrace();
                 Log.e("doInBackground: ", e.getMessage());
                 generator.jsondatalogin = null;
                 response = "Error Occured, PLease Contact Administrator/Support";
@@ -1812,319 +2020,287 @@ public class FragmentHome extends Fragment {
             return response;
         }
 
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
-        }
+
 
         protected void onPostExecute(String result1) {
-
             try {
-                Log.e(TAG, "data json result" + result.toString());
+                Log.e(TAG, "retrive gaji mentah:"+result.toString() );
                 if (result != null) {
                     try {
-                        JSONArray pengsarray = result.getJSONArray("rows");
-                        totalizin.setText(""+pengsarray.length());
-                        retrivegetsakit kar = new retrivegetsakit(getActivity());
-                        kar.execute();
+                        dialog.setMessage("Memuat Data Chart...("+position+1+"/12)Mohon Tunggu");
+                        if(result.getString("status").equals("true")){
 
-                    }  catch (JSONException e) {
+                            JSONObject obj = result.getJSONObject("data");
+
+                            value = 0.0d;
+
+                            value = value +obj.getDouble("gajiBersih");
+
+                            mRealm.beginTransaction();
+                            datagajiobject score1 = new datagajiobject(value.floatValue(), (float) position, monthbarbottom.get(position));
+                            //Log.e("replace", "/" + String.valueOf(thisYear) + " " + datesdata.get(finalI));
+                            mRealm.copyToRealm(score1);
+                            mRealm.commitTransaction();
+
+                            barChart.invalidate();
+                            barChart.getAxisLeft().setDrawGridLines(false);
+                            barChart.getXAxis().setDrawGridLines(false);
+                            barChart.setExtraBottomOffset(5f);
+
+                            barChart.getXAxis().setLabelCount(7);
+                            barChart.getXAxis().setGranularity(1f);
+
+                            // no description text
+                            barChart.getDescription().setEnabled(false);
+
+                            // enable touch gestures
+                            barChart.setTouchEnabled(true);
+
+                            if (barChart instanceof BarLineChartBase) {
+
+                                BarLineChartBase mChart = (BarLineChartBase) barChart;
+
+                                mChart.setDrawGridBackground(false);
+
+                                // enable scaling and dragging
+                                mChart.setDragEnabled(true);
+                                mChart.setScaleEnabled(true);
+
+                                // if disabled, scaling can be done on x- and y-axis separately
+                                mChart.setPinchZoom(false);
+
+                                YAxis leftAxis = mChart.getAxisLeft();
+                                leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
+                                leftAxis.setTextSize(8f);
+                                leftAxis.setTextColor(Color.BLACK);
+
+                                XAxis xAxis = mChart.getXAxis();
+                                xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+                                xAxis.setTextSize(8f);
+                                xAxis.setTextColor(Color.BLACK);
+
+                                mChart.getAxisRight().setEnabled(false);
+                            }
+
+                            RealmResults<datagajiobject> results = mRealm.where(datagajiobject.class).findAll();
+
+                            IAxisValueFormatter formatter = new IAxisValueFormatter() {
+                                @Override
+                                public String getFormattedValue(float value, AxisBase axis) {
+                                    return monthbarbottom.get((int) value);
+                                }
+                            };
+                            barChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
+
+                            barChart.getXAxis().setValueFormatter(formatter);
+
+                            // BAR-CHART
+                            RealmBarDataSet<datagajiobject> barDataSet = new RealmBarDataSet<datagajiobject>(results, "ranges", "datagaji");
+
+                            barDataSet.setColor(Color.BLUE);
+
+                            //barDataSet.setColor(generator.green);
+
+                            barDataSet.setLabel("Period Gaji : " + finalPerios);
+
+                            ArrayList<IBarDataSet> barDataSets = new ArrayList<IBarDataSet>();
+                            barDataSets.add(barDataSet);
+
+                            BarData barData = new BarData(barDataSets);
+
+                            barChart.setData(barData);
+                            barChart.setFitBars(true);
+                            barChart.animateY(1400, Easing.EasingOption.EaseInOutQuart);
+
+                            barChart.invalidate();
+
+                            Log.e("chartmonthposition",position+"" );
+
+                            if(position+1==12){
+                                dialog.setMessage("Memuat Data Summary");
+
+                                for(int i=0;i<tipegaji.length;i++){
+                                    retrivetotalgaji kar = new retrivetotalgaji(getActivity(),tgaji.get(i),tipegaji[i]);
+                                    kar.execute();
+                                }
+
+                                dialog.setMessage("Memuat Data Kontrak");
+
+                                for(int i=0;i<kontrak_kerja.length;i++){
+                                    retrivekontrakkerjakar k_k=new retrivekontrakkerjakar(parent_view.getContext(),kontrak_kerja[i], kk.get(i),rv_kk.get(i),banyakkontrakkerja.get(i));
+                                    k_k.execute();
+                                }
+
+                                dialog.setMessage("Memuat Data Aktifitas");
+
+                                for(int i=0;i<keterangan.length;i++){
+                                    retriveketerangan keterangans=new retriveketerangan(getActivity(), keterangan[i], ket.get(i), lyt_ket.get(i));
+                                    keterangans.execute();
+                                }
+
+                                dialog.setMessage("Memuat Data summary karyawan");
+                                if(refreshhome.isRefreshing()){
+                                    retrivegetjabatanref jab=new retrivegetjabatanref(getActivity());
+                                    jab.execute();
+                                    //refreshhome.setRefreshing(false);
+                                }
+                                else{
+                                    retrivegetjabatan jab=new retrivegetjabatan(getActivity());
+                                    jab.execute();
+                                }
+                            }
+                        }
+                        else {
+                            mRealm.beginTransaction();
+                            datagajiobject score1 = new datagajiobject(value.floatValue(), (float) position, monthbarbottom.get(position));
+                            //Log.e("replace", "/" + String.valueOf(thisYear) + " " + datesdata.get(finalI));
+                            mRealm.copyToRealm(score1);
+                            mRealm.commitTransaction();
+
+                            barChart.invalidate();
+                            barChart.getAxisLeft().setDrawGridLines(false);
+                            barChart.getXAxis().setDrawGridLines(false);
+                            barChart.setExtraBottomOffset(5f);
+
+                            barChart.getXAxis().setLabelCount(7);
+                            barChart.getXAxis().setGranularity(1f);
+
+                            // no description text
+                            barChart.getDescription().setEnabled(false);
+
+                            // enable touch gestures
+                            barChart.setTouchEnabled(true);
+
+                            if (barChart instanceof BarLineChartBase) {
+
+                                BarLineChartBase mChart = (BarLineChartBase) barChart;
+
+                                mChart.setDrawGridBackground(false);
+
+                                // enable scaling and dragging
+                                mChart.setDragEnabled(true);
+                                mChart.setScaleEnabled(true);
+
+                                // if disabled, scaling can be done on x- and y-axis separately
+                                mChart.setPinchZoom(false);
+
+                                YAxis leftAxis = mChart.getAxisLeft();
+                                leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
+                                leftAxis.setTextSize(8f);
+                                leftAxis.setTextColor(Color.BLACK);
+
+                                XAxis xAxis = mChart.getXAxis();
+                                xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+                                xAxis.setTextSize(8f);
+                                xAxis.setTextColor(Color.BLACK);
+
+                                mChart.getAxisRight().setEnabled(false);
+                            }
+
+                            RealmResults<datagajiobject> results = mRealm.where(datagajiobject.class).findAll();
+
+                            IAxisValueFormatter formatter = new IAxisValueFormatter() {
+                                @Override
+                                public String getFormattedValue(float value, AxisBase axis) {
+                                    return monthbarbottom.get((int) value);
+                                }
+                            };
+                            barChart.getAxisLeft().setValueFormatter(new LargeValueFormatter());
+
+                            barChart.getXAxis().setValueFormatter(formatter);
+
+                            // BAR-CHART
+                            RealmBarDataSet<datagajiobject> barDataSet = new RealmBarDataSet<datagajiobject>(results, "ranges", "datagaji");
+
+                            barDataSet.setColor(Color.BLUE);
+
+                            //barDataSet.setColor(generator.green);
+
+                            barDataSet.setLabel("Period Gaji : " + finalPerios);
+
+                            ArrayList<IBarDataSet> barDataSets = new ArrayList<IBarDataSet>();
+                            barDataSets.add(barDataSet);
+
+                            BarData barData = new BarData(barDataSets);
+
+                            barChart.setData(barData);
+                            barChart.setFitBars(true);
+                            barChart.animateY(1400, Easing.EasingOption.EaseInOutQuart);
+
+                            barChart.invalidate();
+
+                            if(position+1==12){
+
+                                dialog.setMessage("Memuat Data Summary");
+
+                                for(int i=0;i<tipegaji.length;i++){
+                                    retrivetotalgaji kar = new retrivetotalgaji(getActivity(),tgaji.get(i),tipegaji[i]);
+                                    kar.execute();
+                                }
+
+                                dialog.setMessage("Memuat Data Kontrak");
+
+                                for(int i=0;i<kontrak_kerja.length;i++){
+                                    retrivekontrakkerjakar k_k=new retrivekontrakkerjakar(parent_view.getContext(),kontrak_kerja[i], kk.get(i),rv_kk.get(i),banyakkontrakkerja.get(i));
+                                    k_k.execute();
+                                }
+
+                                dialog.setMessage("Memuat Data Aktifitas");
+
+                                for(int i=0;i<keterangan.length;i++){
+                                    retriveketerangan keterangans=new retriveketerangan(getActivity(), keterangan[i], ket.get(i), lyt_ket.get(i));
+                                    keterangans.execute();
+                                }
+
+                                dialog.setMessage("Memuat Data summary karyawan");
+
+                                if(refreshhome.isRefreshing()){
+                                    retrivegetjabatanref jab=new retrivegetjabatanref(getActivity());
+                                    jab.execute();
+                                    //refreshhome.setRefreshing(false);
+                                }
+                                else{
+                                    retrivegetjabatan jab=new retrivegetjabatan(getActivity());
+                                    jab.execute();
+                                }
+
+                            }
+
+
+
+                        }
+                        Log.e("chartmonthposition",position+1+"" );
+                        Log.e("data kode",result.toString() );
+
+                        //JSONArray pengsarray = result.getJSONArray("data");
+
+                        //int gaji=1000000;
+
+                    } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
-                    }  catch (Exception e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
                     }
 
 
+
                 } else {
-                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi ", Snackbar.LENGTH_SHORT).show();
                 }
             }catch (Exception E){
                 E.printStackTrace();
                 Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
                 Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
             }
-
-            /*
-            if(this.dialog.isShowing()){
-                dialog.dismiss();
-            }*/
-
-
-            Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
 
-    private class retrivegetsakit extends AsyncTask<Void, Integer, String>
-    {
-        String response = "";
-        String error = "";
-        String username=  "" ;
-        String password = "" ;
-        SharedPreferences prefs ;
-        JSONObject result = null ;
-        ProgressDialog dialog ;
-        String urldata = generator.getsakithariyurl;
-        String passeddata = "" ;
-
-        public retrivegetsakit(Context context)
-        {
-            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
-            this.username = generator.username;
-            this.password = generator.password;
-            this.error = error ;
-        }
-
-        String TAG = getClass().getSimpleName();
-
-        protected void onPreExecute (){
-            super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
-
-        protected String doInBackground(Void...arg0) {
-            Log.d(TAG + " DoINBackGround","On doInBackground...");
-
-            try {
-                //this.dialog.setMessage("Loading Data...");
-
-                JSONObject jsonObject;
-
-                try {
-                    OkHttpClient client = new OkHttpClient();
-
-                    RequestBody body = new FormBody.Builder()
-                            .build();
-
-                    Request request = new Request.Builder()
-                            .header("Authorization",prefs.getString("Authorization",""))
-                            .post(body)
-                            .url(urldata)
-                            .build();
-                    Response responses = null;
-
-                    try {
-                        responses = client.newCall(request).execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        jsonObject =  null;
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        jsonObject = null;
-                    }
-
-                    if (responses==null){
-                        jsonObject = null;
-                        Log.e(TAG, "NULL");
-                    }
-                    else {
-
-                        result = new JSONObject(responses.body().string());
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            } catch (IOException e) {
-                //this.dialog.dismiss();
-                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
-                generator.jsondatalogin = null;
-                response = "Error IOException";
-            } catch (NullPointerException e) {
-                //this.dialog.dismiss();
-                Log.e("doInBackground: ", "null data" + e.getMessage());
-                generator.jsondatalogin = null;
-                response = "Please check Connection and Server";
-            } catch (Exception e) {
-                //this.dialog.dismiss();
-                Log.e("doInBackground: ", e.getMessage());
-                generator.jsondatalogin = null;
-                response = "Error Occured, PLease Contact Administrator/Support";
-            }
-
-
-            return response;
-        }
-
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
-        }
-
-        protected void onPostExecute(String result1) {
-
-            try {
-                Log.e(TAG, "data json result" + result.toString());
-                if (result != null) {
-                    try {
-                        JSONArray pengsarray = result.getJSONArray("rows");
-                        totalsakit.setText(""+pengsarray.length());
-                        retrivegetcuti kar = new retrivegetcuti(getActivity());
-                        kar.execute();
-
-                    }  catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "onPostExecute: " + e.getMessage());
-                    }  catch (Exception e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "onPostExecute: " + e.getMessage());
-                    }
-
-
-                } else {
-                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
-                }
-            }catch (Exception E){
-                E.printStackTrace();
-                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
-                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
-            }
-
-            /*
-            if(this.dialog.isShowing()){
-                dialog.dismiss();
-            }*/
-
-
-            Log.d(TAG + " onPostExecute", "" + result1);
-        }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mRealm.close();
     }
-
-    private class retrivegetcuti extends AsyncTask<Void, Integer, String>
-    {
-        String response = "";
-        String error = "";
-        String username=  "" ;
-        String password = "" ;
-        SharedPreferences prefs ;
-        JSONObject result = null ;
-        ProgressDialog dialog ;
-        String urldata = generator.getcutihariyurl;
-        String passeddata = "" ;
-
-        public retrivegetcuti(Context context)
-        {
-            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
-            this.username = generator.username;
-            this.password = generator.password;
-            this.error = error ;
-        }
-
-        String TAG = getClass().getSimpleName();
-
-        protected void onPreExecute (){
-            super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
-
-        protected String doInBackground(Void...arg0) {
-            Log.d(TAG + " DoINBackGround","On doInBackground...");
-
-            try {
-                //this.dialog.setMessage("Loading Data...");
-
-                JSONObject jsonObject;
-
-                try {
-                    OkHttpClient client = new OkHttpClient();
-
-                    RequestBody body = new FormBody.Builder()
-                            .build();
-
-                    Request request = new Request.Builder()
-                            .header("Authorization",prefs.getString("Authorization",""))
-                            .post(body)
-                            .url(urldata)
-                            .build();
-                    Response responses = null;
-
-                    try {
-                        responses = client.newCall(request).execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        jsonObject =  null;
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        jsonObject = null;
-                    }
-
-                    if (responses==null){
-                        jsonObject = null;
-                        Log.e(TAG, "NULL");
-                    }
-                    else {
-
-                        result = new JSONObject(responses.body().string());
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            } catch (IOException e) {
-                //this.dialog.dismiss();
-                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
-                generator.jsondatalogin = null;
-                response = "Error IOException";
-            } catch (NullPointerException e) {
-                //this.dialog.dismiss();
-                Log.e("doInBackground: ", "null data" + e.getMessage());
-                generator.jsondatalogin = null;
-                response = "Please check Connection and Server";
-            } catch (Exception e) {
-                //this.dialog.dismiss();
-                Log.e("doInBackground: ", e.getMessage());
-                generator.jsondatalogin = null;
-                response = "Error Occured, PLease Contact Administrator/Support";
-            }
-
-
-            return response;
-        }
-
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
-        }
-
-        protected void onPostExecute(String result1) {
-
-            try {
-                Log.e(TAG, "data json result" + result.toString());
-                if (result != null) {
-                    try {
-                        JSONArray pengsarray = result.getJSONArray("rows");
-                        totalcuti.setText(""+pengsarray.length());
-                    }  catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "onPostExecute: " + e.getMessage());
-                    }  catch (Exception e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "onPostExecute: " + e.getMessage());
-                    }
-
-
-                } else {
-                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
-                }
-            }catch (Exception E){
-                E.printStackTrace();
-                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
-                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
-            }
-
-            /*
-            if(this.dialog.isShowing()){
-                dialog.dismiss();
-            }*/
-
-
-            Log.d(TAG + " onPostExecute", "" + result1);
-        }
-    }
-
-
-
 }
+

@@ -44,32 +44,22 @@ public class ActivityAbsensi extends AppCompatActivity {
     CoordinatorLayout parent_view;
 
     public static String jabatan="JABATAN";
-
-    int checker = 0;
-
+    int checker=0;
     FloatingActionButton checkin, checkout, breakin, breakout, extrain, extraout, absensi, absensiwajah, scan;
     SharedPreferences prefs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_absensi_security);
-        //prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
-        Log.e("Jabatan : ", getIntent().getStringExtra("jabatan"));
-
+        setContentView(R.layout.activity_absensi);
         initToolbar();
         initComponent();
         initListener();
-
-        //absensiwajah=findViewById(R.id.lyt_parent_absensiwajah);
-        //absensiwajah.setVisibility(View.GONE);
-        //TextView absensiwajahteks=findViewById(R.id.nameabsensiwajah);
-        //absensiwajahteks.setVisibility(View.GONE);
-        //recyclerView = findViewById(R.id.recyclerView);
     }
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Absensi Anggota");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Tools.setSystemBarColor(this, R.color.colorPrimary);
     }
@@ -77,83 +67,108 @@ public class ActivityAbsensi extends AppCompatActivity {
     private void initComponent() {
         parent_view= findViewById(R.id.parent_view);
 
-        scan=findViewById(R.id.lyt_parent);
-        checkin=findViewById(R.id.lyt_parent_checkin);
+        prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
+
+        checkin=findViewById(R.id.lyt_parent);
         checkout=findViewById(R.id.lyt_parent_checkout);
         breakin=findViewById(R.id.lyt_parent_breakin);
         breakout=findViewById(R.id.lyt_parent_breakout);
+        extrain=findViewById(R.id.lyt_parent_extrain);
+        extraout=findViewById(R.id.lyt_parent_extraout);
         absensi=findViewById(R.id.lyt_parent_absensi);
+        absensiwajah=findViewById(R.id.lyt_parent_absensiwajah);
 
-        TextView scanteks=findViewById(R.id.name);
-        TextView checkinteks=findViewById(R.id.namecheckin);
+        absensiwajah.setVisibility(View.GONE);
+
+        TextView checkinteks=findViewById(R.id.name);
         TextView checkoutteks=findViewById(R.id.namecheckout);
         TextView breakinteks=findViewById(R.id.namebreakin);
         TextView breakoutteks=findViewById(R.id.namebreakout);
+        TextView extrainteks=findViewById(R.id.nameextrain);
+        TextView extraouteks=findViewById(R.id.nameextraout);
         TextView absensiteks=findViewById(R.id.nameabsensi);
+        TextView absensiwajahteks=findViewById(R.id.nameabsensiwajah);
+        absensiwajahteks.setVisibility(View.GONE);
 
-        scanteks.setText("Scan Karyawan");
         checkinteks.setText("Check IN");
         checkoutteks.setText("Check OUT");
         breakinteks.setText("Break IN");
         breakoutteks.setText("Break OUT");
+        extrainteks.setText("Extra IN");
+        extraouteks.setText("Extra OUT");
         absensiteks.setText("Absensi");
+        absensiwajahteks.setText("Absensi Wajah");
 
-        /*ImageView imagescan = findViewById(R.id.image);
-        ImageView image_checkin = findViewById(R.id.image_checkin);
+        /*
+        ImageView image = findViewById(R.id.image);
         ImageView image_checkout = findViewById(R.id.image_checkout);
         ImageView image_breakin = findViewById(R.id.image_breakin);
         ImageView image_breakout = findViewById(R.id.image_breakout);
+        ImageView image_extrain = findViewById(R.id.image_extrain);
+        ImageView image_extraout = findViewById(R.id.image_extraout);
         ImageView image_absensi = findViewById(R.id.image_absensi);
-
-        Picasso.get().load("https://cmkt-image-prd.global.ssl.fastly.net/0.1.0/ps/1526884/910/607/m1/fpnw/wm0/calendar-icon-on-white-background-01-.jpg?1470399461&s=0993250c9c0f1dcc4aeaaf5caccb6222").into(imagescan);
-        Picasso.get().load("http://www.icym.edu.my/v13/images/checklist.jpg").into(image_checkin);
+        ImageView image_absensiwajah = findViewById(R.id.image_absensiwajah);
+        Picasso.get().load("http://www.icym.edu.my/v13/images/checklist.jpg").into(image);
         Picasso.get().load("http://sainte-catherine.fr/wordpress/wp-content/uploads/2018/05/sondage-padel-620x330.jpg").into(image_checkout);
         Picasso.get().load("http://www.metrochemgroup.com/wp-content/uploads/2018/04/meal-break.jpg").into(image_breakin);
         Picasso.get().load("https://www.kidcheck.com/wp-content/uploads/2016/06/time-limit-1-300x217.jpg").into(image_breakout);
-        Picasso.get().load("https://d35kskn2b3gqvv.cloudfront.net/wp-content/uploads/2016/10/qrcodes.png").into(image_absensi);*/
+        Picasso.get().load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlrePrH8HNpXnZDBTvLTGSDpTngRFS8kfJHrRM8HvOP94eYC3M").into(image_extrain);
+        Picasso.get().load("http://www.officepower.net/wp-content/uploads/2015/11/OP_Blog_Q4_0411_Freedom.jpg").into(image_extraout);
+        Picasso.get().load("https://d35kskn2b3gqvv.cloudfront.net/wp-content/uploads/2016/10/qrcodes.png").into(image_absensi);
+        Picasso.get().load("https://wi-images.condecdn.net/image/wgyjRWNyLYJ/crop/810/f/istockfae.jpg").into(image_absensiwajah);*/
+
     }
 
-    private void initListener() {
-        scan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectedtype(1,1,scan);
-            }
-        });
-
+    private void initListener(){
         checkin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectedtype(1,2,checkin);
+                selectedtype(0,0,checkin);
             }
         });
 
         breakout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectedtype(1,3,breakout);
+                selectedtype(0,1,checkout);
             }
         });
 
         breakin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectedtype(1,4,breakin);
+                selectedtype(0,2,checkout);
             }
         });
-
 
         checkout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectedtype(1,5,checkout);
+                selectedtype(0,3,checkout);
             }
         });
 
-        absensi();
-    }
+        extrain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
 
-    public void absensi() {
+        extraout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectedtype(0,5,checkout);
+            }
+        });
+
+        absensiwajah.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Intent face = new Intent(ActivityAbsensi.this, facedetection.class);
+                //startActivity(face);
+            }
+        });
+
         absensi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -161,7 +176,6 @@ public class ActivityAbsensi extends AppCompatActivity {
                 LinearLayout l = (LinearLayout) LayoutInflater.from(ActivityAbsensi.this).inflate(R.layout.layout_barcode, null);
 
                 dialog.setTitle("Absensi");
-
 
                 ImageView barcode = l.findViewById(R.id.barcodekaryawan);
 
@@ -183,6 +197,7 @@ public class ActivityAbsensi extends AppCompatActivity {
             }
         });
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_activity_main, menu);
@@ -257,22 +272,21 @@ public class ActivityAbsensi extends AppCompatActivity {
         };
 
         ColorStateList myList = new ColorStateList(states, colors);
-        scan.setEnabled(false);
+
         breakin.setEnabled(false);
         breakout.setEnabled(false);
         checkin.setEnabled(false);
         checkout.setEnabled(false);
-        //extrain.setEnabled(false);
-        //extraout.setEnabled(false);
+        extrain.setEnabled(false);
+        extraout.setEnabled(false);
         absensi.setEnabled(false);
 
-        scan.setBackgroundTintList(myList);
         breakin.setBackgroundTintList(myList);
         breakout.setBackgroundTintList(myList);
         checkin.setBackgroundTintList(myList);
         checkout.setBackgroundTintList(myList);
-        //extrain.setBackgroundTintList(myList);
-        //extraout.setBackgroundTintList(myList);
+        extrain.setBackgroundTintList(myList);
+        extraout.setBackgroundTintList(myList);
         absensi.setBackgroundTintList(myList);
 
         final String[] data = {""};
@@ -376,21 +390,21 @@ public class ActivityAbsensi extends AppCompatActivity {
             };
 
             ColorStateList myList = new ColorStateList(states, colors);
-            scan.setEnabled(true);
+
             breakin.setEnabled(true);
             breakout.setEnabled(true);
             checkin.setEnabled(true);
             checkout.setEnabled(true);
-            //extrain.setEnabled(true);
-            //extraout.setEnabled(true);
+            extrain.setEnabled(true);
+            extraout.setEnabled(true);
             absensi.setEnabled(true);
-            scan.setBackgroundTintList(myList);
+
             breakin.setBackgroundTintList(myList);
             breakout.setBackgroundTintList(myList);
             checkin.setBackgroundTintList(myList);
             checkout.setBackgroundTintList(myList);
-            //extrain.setBackgroundTintList(myList);
-            //extrain.setBackgroundTintList(myList);
+            extrain.setBackgroundTintList(myList);
+            extrain.setBackgroundTintList(myList);
             checker=0;
         }
 
@@ -416,25 +430,23 @@ public class ActivityAbsensi extends AppCompatActivity {
                 };
 
                 ColorStateList myList = new ColorStateList(states, colors);
-                scan.setEnabled(true);
+
                 breakin.setEnabled(true);
                 breakout.setEnabled(true);
                 checkin.setEnabled(true);
                 checkout.setEnabled(true);
-                //extrain.setEnabled(true);
-                //extraout.setEnabled(true);
+                extrain.setEnabled(true);
+                extraout.setEnabled(true);
                 absensi.setEnabled(true);
 
-                scan.setBackgroundTintList(myList);
                 breakin.setBackgroundTintList(myList);
                 breakout.setBackgroundTintList(myList);
                 checkin.setBackgroundTintList(myList);
                 checkout.setBackgroundTintList(myList);
-                //extrain.setBackgroundTintList(myList);
-                //extraout.setBackgroundTintList(myList);
+                extrain.setBackgroundTintList(myList);
+                extraout.setBackgroundTintList(myList);
                 absensi.setBackgroundTintList(myList);
             }
         }
     }
-
 }
