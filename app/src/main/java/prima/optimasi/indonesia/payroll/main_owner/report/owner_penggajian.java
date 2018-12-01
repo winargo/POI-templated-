@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -130,15 +132,11 @@ public class owner_penggajian extends AppCompatActivity {
 
     private class retrivegaji extends AsyncTask<Void, Integer, String>
     {
-        String response = "";
-        String error = "";
-        String username=  "" ;
-        String password = "" ;
+        String response="";
         SharedPreferences prefs ;
         JSONObject result = null ;
         ProgressDialog dialog ;
         String urldata = generator.laporanpengajianurl;
-        String passeddata = "" ;
         String dt1="";
         String dt2="";
 
@@ -235,63 +233,96 @@ public class owner_penggajian extends AppCompatActivity {
         protected void onPostExecute(String result1) {
 
             try {
-                Log.e(TAG, "data json result" + result.toString());
+                List<datagajiperiode> datagaji = new ArrayList<>();
+
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+
+                String kodepay = "";
+
+                Log.e(TAG, "datapenggajianlaporan" + result.toString());
                 if (result != null) {
-                    try {
-                        items = new ArrayList<>();
-                        Log.e("datagajilaporan",result.toString() );
-                        if(result.getString("status").equals("true")) {
+                    JSONArray objects = result.getJSONArray("data");
+                    for(int i = 0 ; i < objects.length();i++){
+                        JSONObject obj = objects.getJSONObject(i);
 
-                            JSONArray obj2 = result.getJSONArray("data");
+                        if(kodepay.equals("")){
+                            datagajiperiode data = new datagajiperiode();
+                            data.setIssection(true);
+                            data.setKode(obj.getString("kode_payroll"));
+                            datagaji.add(data);
 
-                            List<String> datakode = new ArrayList<>();
-                            List<datalaporanpenggajian> dataall = new ArrayList<>();
+                            data = new datagajiperiode();
+                            data.setKode(obj.getString("kode_payroll"));
+                            data.setIssection(false);
+                            kodepay = obj.getString("kode_payroll");
+                            data.setTanggalgajian(sdf.format(sdf1.parse(obj.getString("tanggal_proses").substring(0,10))));
+                            data.setGajibersih(obj.getDouble("gaji_total"));
 
-                            for (int i=0 ; i<obj2.length();i++){
-                                JSONObject obj = obj2.getJSONObject(i);
-                                if(obj.getString("umk").equals("null")){
-
-                                }
-                                else{
-                                    datalaporanpenggajian data1 = new datalaporanpenggajian();
-
-
-                                    data1.setTunjangan(obj.getDouble("tunjangan"));
-                                    data1.setPunihsment(obj.getDouble("punishment"));
-                                    data1.setBpjs(obj.getDouble("bpjs"));
-                                    data1.setReward(obj.getDouble("reward"));
-                                    data1.setPotongatelat(obj.getDouble("potonganTelat"));
-                                    data1.setHarikerja(obj.getDouble("hariKerja"));
-                                    data1.setUmk(obj.getDouble("umk"));
-                                    data1.setGajihari(obj.getDouble("gajiHari"));
-                                    dataall.add(data1);
-                                    datakode.add(obj.getString("kode"));
-                                }
-
+                            if(obj.getString("foto").equals("")){
+                                data.setImageurl(generator.noimageurl);
                             }
-
-                            Double Valuechart = 0.0d;
-
-                            DecimalFormat fomatter = new DecimalFormat("###,###,###.00");
-
-                            for (int i=0;i<dataall.size();i++){
-                                retrivegajimentahrecurse gaji = new retrivegajimentahrecurse(owner_penggajian.this,datakode,i,0,datakode.size()-1,dataall,Valuechart,dt1,dt2);
-                                gaji.execute();
+                            else {
+                                data.setImageurl(generator.profileurl+obj.getString("foto"));
                             }
+                            data.setIssection(false);
+                            data.setKeterangan("");
+                            data.setReward(obj.getDouble("reward"));
+                            data.setPunishment(obj.getDouble("punishment"));
+                            data.setTotalgaji(obj.getDouble("gaji_bersih"));
+                            data.setPotongan(obj.getDouble("potongan_telat"));
+                            data.setJabatan(obj.getString("jabatan"));
+                            data.setBpjs(obj.getDouble("potongan_bpjs"));
+                            data.setTunlain(obj.getDouble("penggajian_tunlain"));
+                            data.setTunjangan(obj.getDouble("tunjangan"));
+                            data.setNama(obj.getString("nama"));
+                            data.setTanggalgajian(sdf.format(sdf1.parse(obj.getString("tanggal_proses").substring(0,10))));
+                            datagaji.add(data);
+                        }
+                        else if(kodepay.equals(obj.getString("kode_payroll"))) {
+                            datagajiperiode data = new datagajiperiode();
+                            data.setIssection(false);
+                            data.setKode(obj.getString("kode_payroll"));
+                            kodepay = obj.getString("kode_payroll");
+                            data.setTanggalgajian(sdf.format(sdf1.parse(obj.getString("tanggal_proses").substring(0,10))));
+                            data.setGajibersih(obj.getDouble("gaji_total"));
+
+                            if(obj.getString("foto").equals("")){
+                                data.setImageurl(generator.noimageurl);
+                            }
+                            else {
+                                data.setImageurl(generator.profileurl+obj.getString("foto"));
+                            }
+                            data.setIssection(false);
+                            data.setKeterangan("");
+                            data.setReward(obj.getDouble("reward"));
+                            data.setPunishment(obj.getDouble("punishment"));
+                            data.setTotalgaji(obj.getDouble("gaji_bersih"));
+                            data.setPotongan(obj.getDouble("potongan_telat"));
+                            data.setJabatan(obj.getString("jabatan"));
+                            data.setBpjs(obj.getDouble("potongan_bpjs"));
+                            data.setTunlain(obj.getDouble("penggajian_tunlain"));
+                            data.setTunjangan(obj.getDouble("tunjangan"));
+                            data.setNama(obj.getString("nama"));
+                            data.setTanggalgajian(sdf.format(sdf1.parse(obj.getString("tanggal_proses").substring(0,10))));
+                            datagaji.add(data);
+                        }
+                        else {
+                            datagajiperiode data = new datagajiperiode();
+                            data.setKode(obj.getString("kode_payroll"));
+                            data.setIssection(true);
+                            datagaji.add(data);
+                        }
 
 
-                        }
-                        else{
-                            tidakada.setVisibility(View.VISIBLE);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "onPostExecute: " + e.getMessage());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+
                     }
 
+                    mAdapter = new AdapterListSectionedgaji(owner_penggajian.this,datagaji);
+                    RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                    recyclerView.setLayoutManager(mLayoutManager);
+                    recyclerView.setItemAnimator(new DefaultItemAnimator());
+                    recyclerView.setAdapter(mAdapter);
 
                 } else {
                     Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
@@ -311,7 +342,7 @@ public class owner_penggajian extends AppCompatActivity {
         }
     }
 
-    private class retrivegajimentahrecurse extends AsyncTask<Void, Integer, String >
+    /*private class retrivegajimentahrecurse extends AsyncTask<Void, Integer, String >
     {
         String response = "";
         SharedPreferences prefs ;
@@ -477,7 +508,7 @@ public class owner_penggajian extends AppCompatActivity {
         }
 
     }
-/*
+
     private class retrivegajimentah0 extends AsyncTask<Void, Integer, String>
     {
         String response = "";

@@ -62,6 +62,8 @@ public class generator {
     public static LocationListener listernerlocation;
     public static QrCodeActivity tempactivity = null;
 
+    public static String noimageurl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ";
+
     public static Bitmap tempbitmap = null;
     public static View tempview=null;
 

@@ -30,7 +30,6 @@ public class AdapterListSectionedgaji extends RecyclerView.Adapter<RecyclerView.
 
     private final int VIEW_ITEM = 1;
     private final int VIEW_SECTION = 0;
-    private int animation_type = 0;
 
     private List<datagajiperiode> items = new ArrayList<>();
     private Context ctx;
@@ -44,14 +43,13 @@ public class AdapterListSectionedgaji extends RecyclerView.Adapter<RecyclerView.
         this.mOnItemClickListener = mItemClickListener;
     }
 
-    public AdapterListSectionedgaji(Context context, List<datagajiperiode> items, int animation_type) {
+    public AdapterListSectionedgaji(Context context, List<datagajiperiode> items) {
         this.items = items;
         ctx = context;
-        this.animation_type = animation_type;
     }
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
-        public TextView tanggal,bpjs,potongantelat,tunjangan,nama,jabatan,reward,punishment,totalbersih,gajihari;
+        public TextView tanggal,bpjs,potongantelat,tunjangan,nama,jabatan,reward,punishment,totalbersih,gajihari,tunjanganlain;
         public CardView card;
 
         public OriginalViewHolder(View v) {
@@ -64,6 +62,9 @@ public class AdapterListSectionedgaji extends RecyclerView.Adapter<RecyclerView.
             punishment = v.findViewById(R.id.nilaipunishment);
             totalbersih = v.findViewById(R.id.nilaigajibersih);
             gajihari = v.findViewById(R.id.gajikerjahari);
+            tunjangan = v.findViewById(R.id.nilaitunjangan);
+            tunjanganlain = v.findViewById(R.id.nilaitunjanganlain);
+            reward = v.findViewById(R.id.nilaireward);
 
         }
     }
@@ -102,14 +103,21 @@ public class AdapterListSectionedgaji extends RecyclerView.Adapter<RecyclerView.
 
             DecimalFormat formatter = new DecimalFormat("###,###,###");
 
-            view.totalbersih.setText("Rp"+formatter.format(Integer.parseInt(p.getTotalgaji())));
-            view.gajihari.setText("Rp"+formatter.format(Integer.parseInt(p.getGajibersih())));
-            view.potongantelat.setText("Rp"+formatter.format(Integer.parseInt(p.getPotongan())));
+            view.totalbersih.setText("Rp "+formatter.format(p.getTotalgaji()));
+            view.gajihari.setText("Rp "+formatter.format(p.getGajibersih()));
+            view.potongantelat.setText("Rp "+formatter.format(p.getPotongan()));
             String gajian=p.getTanggalgajian();
             SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
             SimpleDateFormat fomat = new SimpleDateFormat("yyyy-MM-dd");
+            view.bpjs.setText("RP "+formatter.format(p.getBpjs()));
+            view.tunjangan.setText("Rp "+formatter.format(p.getTunjangan()));
+            view.tunjanganlain.setText("Rp "+formatter.format(p.getTunlain()));
+
+            view.punishment.setText("Rp "+formatter.format(p.getPunishment()));
+            view.reward.setText("Rp "+formatter.format(p.getReward()));
+
             try{
-                view.tanggal.setText(format1.format((fomat.parse(gajian))));
+                view.tanggal.setText(gajian+"\n"+p.getKode());
 
             }catch(Exception e){
                 Log.e("DATE : ", ""+gajian);
@@ -137,20 +145,15 @@ public class AdapterListSectionedgaji extends RecyclerView.Adapter<RecyclerView.
                     }
                 }
             });*/
-            setAnimation(view.itemView, position);
+            //setAnimation(view.itemView, position);
         } else {
             SectionViewHolder view = (SectionViewHolder) holder;
             SimpleDateFormat formate = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
-                Log.e("date data", "onBindViewHolder: "+p.getDatatgl() );
-            try {
-                view.title_section.setText(format1.format(formate.parse(p.getDatatgl())));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+            view.title_section.setText(p.getKode());
             view.title_section.setTextColor(Color.BLACK);
-                view.title_section.setTextSize(15f);
-                view.title_section.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+            view.title_section.setTextSize(15f);
+            view.title_section.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         }
     }
 
@@ -172,11 +175,5 @@ public class AdapterListSectionedgaji extends RecyclerView.Adapter<RecyclerView.
     private int lastPosition = -1;
     private boolean on_attach = true;
 
-    private void setAnimation(View view, int position) {
-        if (position > lastPosition) {
-            ItemAnimation.animate(view, on_attach ? position : -1, animation_type);
-            lastPosition = position;
-        }
-    }
 
 }
