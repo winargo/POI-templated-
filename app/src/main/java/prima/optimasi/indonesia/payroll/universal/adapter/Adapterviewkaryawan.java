@@ -2,11 +2,14 @@ package prima.optimasi.indonesia.payroll.universal.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,8 +91,17 @@ public class Adapterviewkaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
         final listkaryawan_izincutisakit p = items.get(position);
         if (holder instanceof OriginalViewHolder) {
             OriginalViewHolder view = (OriginalViewHolder) holder;
-
-            view.tanggal.setText("Tanggal"+position);
+            SimpleDateFormat parsed = new SimpleDateFormat("MM");
+            SimpleDateFormat parsed1 = new SimpleDateFormat("MMMM");
+            String bulan="";
+            try {
+                bulan= parsed1.format(parsed.parse(p.getBulan()));
+            }
+            catch (ParseException e){
+                e.printStackTrace();
+            }
+            Log.e("Bulan",bulan);
+            view.tanggal.setText(bulan);
             view.izin.setText(p.getIzin());
             view.sakit.setText(p.getSakit());
             view.absen.setText(p.getAbsen());

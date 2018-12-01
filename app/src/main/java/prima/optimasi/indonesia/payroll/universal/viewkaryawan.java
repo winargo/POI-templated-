@@ -51,6 +51,8 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
@@ -86,8 +88,8 @@ public class viewkaryawan extends AppCompatActivity {
 
 
     private View parent_view;
-
-    LinearLayout linear_view, dotsLayout;
+    String kodekar="";
+    LinearLayout linear_view, lyt_tidakada;
     TextView templahir,tanggallahir,nama,jabatan,telepon,hp,alamat,email,agama,pend,gaji,status;
     TextView scount,icount,acount;
     ImageButton message,phone;
@@ -115,34 +117,9 @@ public class viewkaryawan extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_profile_karyawan);
+        initToolbar();
+        initComponent();
 
-        image = findViewById(R.id.karimage);
-
-        templahir = findViewById(R.id.kartempatlahir);
-        tanggallahir = findViewById(R.id.kartanggallahir);
-        nama = findViewById(R.id.karname);
-        jabatan = findViewById(R.id.karjob);
-        telepon = findViewById(R.id.kartel);
-        hp = findViewById(R.id.karhp);
-        alamat = findViewById(R.id.karala);
-        email = findViewById(R.id.karemail);
-        agama = findViewById(R.id.karagama);
-        pend = findViewById(R.id.karpend);
-        gaji = findViewById(R.id.kargaji);
-        status = findViewById(R.id.karstatus);
-
-        parent_view=findViewById(R.id.parent_view);
-        linear_view=findViewById(R.id.linear_view);
-        message = findViewById(R.id.karmsg);
-        phone = findViewById(R.id.karphone);
-
-        icount = findViewById(R.id.karizin);
-        scount = findViewById(R.id.karsakit);
-        acount = findViewById(R.id.karabsen);
-
-        //pager = findViewById(R.id.view_pager);
-        //dotsLayout=findViewById(R.id.layout_dots);
-        recyclerView=findViewById(R.id.recyclerView);
         /*
         tabpager = findViewById(R.id.tab_layout);
         pager = findViewById(R.id.view_pager);
@@ -247,8 +224,7 @@ public class viewkaryawan extends AppCompatActivity {
             }
         });
 
-        initToolbar();
-        initComponent();
+
         listizin=new ArrayList<>();
         listsakit=new ArrayList<>();
         items=new ArrayList<>();
@@ -269,7 +245,36 @@ public class viewkaryawan extends AppCompatActivity {
     }
 
     private void initComponent() {
+        lyt_tidakada=findViewById(R.id.linear_view);
 
+
+        image = findViewById(R.id.karimage);
+
+        templahir = findViewById(R.id.kartempatlahir);
+        tanggallahir = findViewById(R.id.kartanggallahir);
+        nama = findViewById(R.id.karname);
+        jabatan = findViewById(R.id.karjob);
+        telepon = findViewById(R.id.kartel);
+        hp = findViewById(R.id.karhp);
+        alamat = findViewById(R.id.karala);
+        email = findViewById(R.id.karemail);
+        agama = findViewById(R.id.karagama);
+        pend = findViewById(R.id.karpend);
+        gaji = findViewById(R.id.kargaji);
+        status = findViewById(R.id.karstatus);
+
+        parent_view=findViewById(R.id.parent_view);
+        linear_view=findViewById(R.id.linear_view);
+        message = findViewById(R.id.karmsg);
+        phone = findViewById(R.id.karphone);
+
+        icount = findViewById(R.id.karizin);
+        scount = findViewById(R.id.karsakit);
+        acount = findViewById(R.id.karabsen);
+
+        //pager = findViewById(R.id.view_pager);
+        //dotsLayout=findViewById(R.id.layout_dots);
+        recyclerView=findViewById(R.id.recyclerView);
     }
 
     @Override
@@ -338,6 +343,7 @@ public class viewkaryawan extends AppCompatActivity {
                             .build();
                     Response responses = null;
 
+                    Log.e(TAG ,prefs.getString("Authorization",""));
                     try {
                         responses = client.newCall(request).execute();
                     } catch (IOException e) {
@@ -406,6 +412,7 @@ public class viewkaryawan extends AppCompatActivity {
 
                         parsed = new SimpleDateFormat("dd MMMM yyyy");
 
+                        kodekar=obj.getString("kode_karyawan");
                         tanggallahir.setText(parsed.format(temp));
                         nama.setText(obj.getString("nama"));
                         jabatan.setText(obj.getString("jabatan"));
@@ -460,7 +467,7 @@ public class viewkaryawan extends AppCompatActivity {
 
 
 
-                        Log.e(TAG, "onPostExecute: "+ generator.profileurl+"/"+obj.getString("foto") );
+                        //Log.e(TAG, "onPostExecute: "+ generator.profileurl+"/"+obj.getString("foto") );
 
 
 
@@ -503,6 +510,7 @@ public class viewkaryawan extends AppCompatActivity {
         JSONObject result = null ;
         ProgressDialog dialog ;
         String urldata;
+        String keterangan="";
         //String passedid = "" ;
 
         public retriveketerangan(Context context,String keterangan)
@@ -513,12 +521,13 @@ public class viewkaryawan extends AppCompatActivity {
             this.password = generator.password;
             //passedid = id;
             this.error = error ;
+            this.keterangan=keterangan;
             ctx=context;
             if(keterangan.equals("izin")){
-                urldata=generator.getdataizinbulananyurl;
+                urldata=generator.pengajuanizinkodeurl;
             }
             else{
-                urldata=generator.getdatasakitbulananyurl;
+                urldata=generator.pengajuansakitkodeurl;
             }
         }
 
@@ -542,10 +551,10 @@ public class viewkaryawan extends AppCompatActivity {
                 try {
                     OkHttpClient client = new OkHttpClient();
 
-
-                    RequestBody body = new FormBody.Builder()
-                            .add("id",getIntent().getStringExtra("idkaryawan"))
+                    RequestBody body= new FormBody.Builder()
+                            .add("id", getIntent().getStringExtra("idkaryawan"))
                             .build();
+
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
@@ -615,7 +624,7 @@ public class viewkaryawan extends AppCompatActivity {
                         Log.e(TAG, "data json result" + pengsarray.length());
                         String tempcall="",temp="";
                         String tempbulan="";
-                        int banyakizin=0;
+                        int banyakizin=0, banyaksakit=0;
 
                         /*
                         if(keterangan.equals("izin")){
@@ -626,13 +635,167 @@ public class viewkaryawan extends AppCompatActivity {
                             kar.setIzin(listizin);
                         }*/
                         for (int i = 0; i <pengsarray.length(); i++) {
-                            if(keterangan.equals("sakit")) {
-                                kar = new listkaryawan_izincutisakit();
-                                kar.setIzin("Izin" + i);
-                                kar.setSakit("Sakit" + i);
-                                kar.setAbsen("Absen" + i);
-                                items.add(kar);
+                            JSONObject obj = pengsarray.getJSONObject(i);
+
+                            if(keterangan.equals("izin")) {
+                                if (obj.getString("status").equals("Diterima")) {
+                                    String bulan = obj.getString("tgl_izin").substring(5, 7);
+                                    Log.e("Bulan", bulan);
+                                    if (i + 1 != pengsarray.length()) {
+                                        if (!tempbulan.equals(bulan)) {
+                                            if (tempbulan.equals("")) {
+                                                tempbulan = bulan;
+                                                kar = new listkaryawan_izincutisakit();
+                                                kar.setBulan(bulan);
+                                                banyakizin += Integer.parseInt(obj.getString("lama"));
+                                            } else {
+                                                tempbulan = bulan;
+                                                kar.setIzin(String.valueOf(banyakizin));
+                                                kar.setSakit(String.valueOf(0));
+                                                kar.setAbsen(String.valueOf(0));
+                                                items.add(kar);
+                                                banyakizin = 0;
+                                                kar = new listkaryawan_izincutisakit();
+                                                kar.setBulan(bulan);
+                                                banyakizin += Integer.parseInt(obj.getString("lama"));
+                                            }
+
+                                        } else if (tempbulan.equals(bulan)) {
+                                            banyakizin += Integer.parseInt(obj.getString("lama"));
+                                        }
+                                    } else {
+                                        if (!tempbulan.equals(bulan)) {
+                                            if (tempbulan.equals("")) {
+                                                kar = new listkaryawan_izincutisakit();
+                                                kar.setBulan(bulan);
+                                                banyakizin += Integer.parseInt(obj.getString("lama"));
+                                                kar.setIzin(String.valueOf(banyakizin));
+                                                kar.setSakit(String.valueOf(0));
+                                                kar.setAbsen(String.valueOf(0));
+                                                items.add(kar);
+                                                listizin.add(String.valueOf(banyakizin));
+                                            } else {
+                                                kar.setIzin(String.valueOf(banyakizin));
+                                                kar.setSakit(String.valueOf(0));
+                                                kar.setAbsen(String.valueOf(0));
+                                                items.add(kar);
+                                                listizin.add(String.valueOf(banyakizin));
+                                                kar = new listkaryawan_izincutisakit();
+                                                kar.setBulan(bulan);
+                                                kar.setIzin(obj.getString("lama"));
+                                                kar.setSakit(String.valueOf(0));
+                                                kar.setAbsen(String.valueOf(0));
+                                                items.add(kar);
+                                                listizin.add(String.valueOf(banyakizin));
+                                            }
+
+                                        } else if (tempbulan.equals(bulan)) {
+                                            banyakizin += Integer.parseInt(obj.getString("lama"));
+                                            kar.setIzin(String.valueOf(banyakizin));
+                                            kar.setSakit(String.valueOf(0));
+                                            kar.setAbsen(String.valueOf(0));
+                                            items.add(kar);
+                                            listizin.add(String.valueOf(banyakizin));
+                                        }
+                                    }
+
+                                }
                             }
+
+                            else{
+                                String bulan=obj.getString("tgl_sakit").substring(5,7);
+                                Log.e("Bulan",bulan);
+                                if (i + 1 != pengsarray.length()) {
+                                    if (!tempbulan.equals(bulan)) {
+                                        if (tempbulan.equals("")) {
+                                            tempbulan = bulan;
+
+                                            if(!items.contains(bulan) || items.size()==0) {
+                                                kar = new listkaryawan_izincutisakit();
+                                                kar.setBulan(bulan);
+                                            }
+                                            banyaksakit+=Integer.parseInt(obj.getString("lama"));
+                                        } else {
+
+                                            //kar.setIzin(String.valueOf(banyakizin));
+                                            if(!items.contains(tempbulan) || items.size()==0) {
+                                                kar.setIzin(String.valueOf(0));
+                                                kar.setSakit(String.valueOf(banyaksakit));
+                                                kar.setAbsen(String.valueOf(0));
+                                                items.add(kar);
+                                            }
+                                            else{
+                                                for(int j=0;j<items.size();j++) {
+                                                    if(items.get(j).getBulan().equals(tempbulan)){
+                                                        items.get(j).setSakit(String.valueOf(banyaksakit));
+                                                    }
+                                                }
+                                            }
+                                            tempbulan = bulan;
+
+                                            banyaksakit=0;
+                                            if(!items.contains(tempbulan)) {
+                                                kar=new listkaryawan_izincutisakit();
+                                                kar.setBulan(bulan);
+                                            }
+                                            banyaksakit+=Integer.parseInt(obj.getString("lama"));
+                                        }
+
+                                    } else if (tempbulan.equals(bulan)) {
+                                        banyaksakit+=Integer.parseInt(obj.getString("lama"));
+                                    }
+                                }
+                                else {
+                                    if (!tempbulan.equals(bulan)) {
+                                        if (tempbulan.equals("")) {
+                                            if(!items.contains(bulan) || items.size()==0) {
+                                                kar = new listkaryawan_izincutisakit();
+                                                kar.setBulan(bulan);
+                                            }
+                                            banyaksakit+=Integer.parseInt(obj.getString("lama"));
+
+                                            for(int j=0;j<items.size();j++) {
+                                                if(items.get(j).getBulan().equals(bulan)){
+                                                    items.get(j).setSakit(String.valueOf(banyaksakit));
+                                                }
+                                            }
+                                        } else {
+                                            //kar.setIzin(String.valueOf(banyaksakit));
+                                            //kar.setSakit(String.valueOf(i));
+                                            //kar.setAbsen(String.valueOf(i));
+                                            for(int j=0;j<items.size();j++) {
+                                                if(items.get(j).getBulan().equals(bulan)){
+                                                    items.get(j).setSakit(String.valueOf(banyaksakit));
+                                                }
+                                            }
+                                            if(!items.contains(bulan) || items.size()==0) {
+                                                kar = new listkaryawan_izincutisakit();
+                                                kar.setBulan(bulan);
+                                            }
+                                            //kar.setIzin(obj.getString("lama"));
+                                            //kar.setSakit(obj.getString("lama"));
+                                            //kar.setAbsen(String.valueOf(i));
+                                            for(int j=0;j<items.size();j++) {
+                                                if(items.get(j).getBulan().equals(bulan)){
+                                                    items.get(j).setSakit(obj.getString("lama"));
+                                                }
+                                            }
+                                        }
+
+                                    } else if (tempbulan.equals(bulan)) {
+                                        banyakizin+=Integer.parseInt(obj.getString("lama"));
+                                        //kar.setIzin(String.valueOf(banyaksakit));
+                                        //kar.setSakit(String.valueOf(banyaksakit));
+                                        //kar.setAbsen(String.valueOf(i));
+                                        for(int j=0;j<items.size();j++) {
+                                            if(items.get(j).getBulan().equals(bulan)){
+                                                items.get(j).setSakit(String.valueOf(banyaksakit));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
                             /*
                             JSONObject obj = pengsarray.getJSONObject(i);
                             String thn_izin=obj.getString("tgl_izin").substring(0,4);
@@ -764,12 +927,24 @@ public class viewkaryawan extends AppCompatActivity {
                             //kar.setIzin();
 
                         }
+                        Collections.sort(items, new Comparator<listkaryawan_izincutisakit>() {
+                            @Override
+                            public int compare(listkaryawan_izincutisakit listkaryawan_izincutisakit, listkaryawan_izincutisakit t1) {
+                                //Log.e("ABSEN",""+listperingkatkaryawan.getAbsen().compareTo(t1.getAbsen()));
+
+                                return listkaryawan_izincutisakit.getBulan().compareTo(t1.getBulan());
+
+                            }
+                        });
                         if(keterangan.equals("sakit")) {
-                            adapter = new Adapterviewkaryawan(viewkaryawan.this, items, ItemAnimation.LEFT_RIGHT);
-                            recyclerView.setLayoutManager(new LinearLayoutManager(viewkaryawan.this, LinearLayoutManager.HORIZONTAL, false));
-                            recyclerView.setAdapter(adapter);
-                            PagerSnapHelper snapHelper = new PagerSnapHelper();
-                            snapHelper.attachToRecyclerView(recyclerView);
+                            if(items.size()>0){
+                                lyt_tidakada.setVisibility(View.GONE);
+                                adapter = new Adapterviewkaryawan(viewkaryawan.this, items, ItemAnimation.LEFT_RIGHT);
+                                recyclerView.setLayoutManager(new LinearLayoutManager(viewkaryawan.this, LinearLayoutManager.HORIZONTAL, false));
+                                recyclerView.setAdapter(adapter);
+                                PagerSnapHelper snapHelper = new PagerSnapHelper();
+                                snapHelper.attachToRecyclerView(recyclerView);
+                            }
                         }
                         /*
                         boolean status=result.getBoolean("status");

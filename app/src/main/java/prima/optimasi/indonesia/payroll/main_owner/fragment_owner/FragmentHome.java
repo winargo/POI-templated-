@@ -2175,8 +2175,12 @@ public class FragmentHome extends Fragment {
                 Log.e(TAG, "retrive gaji mentah:"+result.toString() );
                 if (result != null) {
                     try {
+<<<<<<< HEAD
                         int temp=position+1;
                         dialog.setMessage("Memuat Data Chart...("+(temp)+"/12)Mohon Tunggu");
+=======
+                        dialog.setMessage("Memuat Data Chart...("+(position+1)+"/12)Mohon Tunggu");
+>>>>>>> e9c094bbfd23d12f58fb6d5a02e47086770a17ed
                         if(result.getString("status").equals("true")){
 
                             JSONObject obj = result.getJSONObject("data");
