@@ -336,7 +336,7 @@ public class Adapterabsensiaktifitas extends RecyclerView.Adapter<RecyclerView.V
                 }
 
             }
-            else
+            else if(!view.txt_checkin.getText().equals("-") && view.txt_checkout.getText().equals("-"))
             {
                 Stopwatch timer = new Stopwatch();
                 final int REFRESH_RATE = 1000;
@@ -403,6 +403,9 @@ public class Adapterabsensiaktifitas extends RecyclerView.Adapter<RecyclerView.V
 
                 
                 //view.txt_totaljam.setText("Total Jam Kerja : " + " Total Jam Tidak Tersedia");
+            }
+            else {
+                view.txt_totaljam.setText("Total Jam Kerja : " + " Total Jam Tidak Tersedia");
             }
 
            /* try{

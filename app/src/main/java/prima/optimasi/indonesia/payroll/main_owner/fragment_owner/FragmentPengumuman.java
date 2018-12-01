@@ -467,7 +467,7 @@ public class FragmentPengumuman extends Fragment {
                         }
 
                         refreshpengumuman.setRefreshing(false);
-                        ((mainmenu_owner) getActivity()).closesearch();
+                        ((mainmenu_owner) getActivity()).closesearchpeng();
 
 
                     } catch (JSONException e) {

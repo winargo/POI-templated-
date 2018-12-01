@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -170,7 +171,9 @@ public class mainmenu_hrd extends AppCompatActivity implements NavigationView.On
             @Override
             public void onTabSelected(TabLayout.Tab tab){
                 int position = tab.getPosition();
-                tabpager.setTabTextColors(R.color.overlay_dark_10,R.color.qr_code_white);//set active color
+
+                //tabpager.setTabTextColors(R.color.overlay_dark_30,R.color.qr_code_white);//set active color
+
                 if(position==9){
                     if(tempmenu!=null){
                         tempmenu.findItem(R.id.action_show).setVisible(false);
@@ -207,12 +210,26 @@ public class mainmenu_hrd extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        int[][] states = new int[][] {
+                new int[] { android.R.attr.state_selected}, // enabled
+                new int[] {-android.R.attr.state_selected}, // disabled
+
+        };
+
+        int[] colors = new int[] {
+                getResources().getColor(R.color.qr_code_white),
+                getResources().getColor(R.color.light_color),
+        };
+
+        ColorStateList myList = new ColorStateList(states, colors);
+
         for (int i = 0; i < tabpager.getTabCount(); i++) {
             //noinspection ConstantConditions
             View v = LayoutInflater.from(this).inflate(R.layout.customtablayout,null);
             TextView tv=v.findViewById(R.id.texttab);
             tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-            tv.setTextColor(Color.WHITE);
+            //tv.setTextColor(Color.WHITE);
+            tv.setTextColor(myList);
             tv.setText(tabTitles[i]);
 
             ImageView img = v.findViewById(R.id.icontab);

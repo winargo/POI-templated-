@@ -625,6 +625,7 @@ public class viewkaryawan extends AppCompatActivity {
                         String tempcall="",temp="";
                         String tempbulan="";
                         int banyakizin=0, banyaksakit=0;
+                        boolean ada;
 
                         /*
                         if(keterangan.equals("izin")){
@@ -703,22 +704,33 @@ public class viewkaryawan extends AppCompatActivity {
                             }
 
                             else{
+                                ada=false;
                                 String bulan=obj.getString("tgl_sakit").substring(5,7);
                                 Log.e("Bulan",bulan);
                                 if (i + 1 != pengsarray.length()) {
                                     if (!tempbulan.equals(bulan)) {
                                         if (tempbulan.equals("")) {
                                             tempbulan = bulan;
-
-                                            if(!items.contains(bulan) || items.size()==0) {
+                                            if(items.size()==0){
                                                 kar = new listkaryawan_izincutisakit();
                                                 kar.setBulan(bulan);
+                                            }
+                                            else{
+                                                for(int j=0;j<items.size();j++) {
+                                                    if(items.get(j).getBulan().equals(bulan)){
+                                                        ada=true;
+                                                    }
+                                                }
+                                                if(!ada){
+                                                    kar = new listkaryawan_izincutisakit();
+                                                    kar.setBulan(bulan);
+                                                }
                                             }
                                             banyaksakit+=Integer.parseInt(obj.getString("lama"));
                                         } else {
 
                                             //kar.setIzin(String.valueOf(banyakizin));
-                                            if(!items.contains(tempbulan) || items.size()==0) {
+                                            if(items.size()==0){
                                                 kar.setIzin(String.valueOf(0));
                                                 kar.setSakit(String.valueOf(banyaksakit));
                                                 kar.setAbsen(String.valueOf(0));
@@ -726,17 +738,37 @@ public class viewkaryawan extends AppCompatActivity {
                                             }
                                             else{
                                                 for(int j=0;j<items.size();j++) {
-                                                    if(items.get(j).getBulan().equals(tempbulan)){
+                                                    if(items.get(j).getBulan().equals(bulan)){
                                                         items.get(j).setSakit(String.valueOf(banyaksakit));
+                                                        ada=true;
                                                     }
                                                 }
+                                                if(!ada){
+                                                    kar.setIzin(String.valueOf(0));
+                                                    kar.setSakit(String.valueOf(banyaksakit));
+                                                    kar.setAbsen(String.valueOf(0));
+                                                    items.add(kar);
+                                                }
+
                                             }
+
                                             tempbulan = bulan;
 
                                             banyaksakit=0;
-                                            if(!items.contains(tempbulan)) {
-                                                kar=new listkaryawan_izincutisakit();
+                                            if(items.size()==0){
+                                                kar = new listkaryawan_izincutisakit();
                                                 kar.setBulan(bulan);
+                                            }
+                                            else{
+                                                for(int j=0;j<items.size();j++) {
+                                                    if(items.get(j).getBulan().equals(bulan)){
+                                                        ada=true;
+                                                    }
+                                                }
+                                                if(!ada){
+                                                    kar = new listkaryawan_izincutisakit();
+                                                    kar.setBulan(bulan);
+                                                }
                                             }
                                             banyaksakit+=Integer.parseInt(obj.getString("lama"));
                                         }
@@ -748,36 +780,75 @@ public class viewkaryawan extends AppCompatActivity {
                                 else {
                                     if (!tempbulan.equals(bulan)) {
                                         if (tempbulan.equals("")) {
-                                            if(!items.contains(bulan) || items.size()==0) {
-                                                kar = new listkaryawan_izincutisakit();
-                                                kar.setBulan(bulan);
-                                            }
+
                                             banyaksakit+=Integer.parseInt(obj.getString("lama"));
 
-                                            for(int j=0;j<items.size();j++) {
-                                                if(items.get(j).getBulan().equals(bulan)){
-                                                    items.get(j).setSakit(String.valueOf(banyaksakit));
+                                            if(items.size()==0){
+                                                kar=new listkaryawan_izincutisakit();
+                                                kar.setBulan(bulan);
+                                                kar.setIzin(String.valueOf(0));
+                                                kar.setSakit(String.valueOf(banyaksakit));
+                                                kar.setAbsen(String.valueOf(0));
+                                                items.add(kar);
+                                            }
+                                            else{
+                                                for(int j=0;j<items.size();j++) {
+                                                    if(items.get(j).getBulan().equals(bulan)){
+                                                        items.get(j).setSakit(String.valueOf(banyaksakit));
+                                                        ada=true;
+                                                    }
+                                                }
+                                                if(!ada){
+                                                    kar=new listkaryawan_izincutisakit();
+                                                    kar.setBulan(bulan);
+                                                    kar.setIzin(String.valueOf(0));
+                                                    kar.setSakit(String.valueOf(banyaksakit));
+                                                    kar.setAbsen(String.valueOf(0));
+                                                    items.add(kar);
                                                 }
                                             }
                                         } else {
-                                            //kar.setIzin(String.valueOf(banyaksakit));
-                                            //kar.setSakit(String.valueOf(i));
-                                            //kar.setAbsen(String.valueOf(i));
-                                            for(int j=0;j<items.size();j++) {
-                                                if(items.get(j).getBulan().equals(bulan)){
-                                                    items.get(j).setSakit(String.valueOf(banyaksakit));
+                                            if(items.size()==0){
+                                                kar.setIzin(String.valueOf(0));
+                                                kar.setSakit(String.valueOf(banyaksakit));
+                                                kar.setAbsen(String.valueOf(0));
+                                                items.add(kar);
+                                            }
+                                            else{
+                                                for(int j=0;j<items.size();j++) {
+                                                    if(items.get(j).getBulan().equals(tempbulan)){
+                                                        items.get(j).setSakit(String.valueOf(banyaksakit));
+                                                        ada=true;
+                                                    }
+                                                }
+                                                if(!ada){
+                                                    kar.setIzin(String.valueOf(0));
+                                                    kar.setSakit(String.valueOf(banyaksakit));
+                                                    kar.setAbsen(String.valueOf(0));
+                                                    items.add(kar);
                                                 }
                                             }
-                                            if(!items.contains(bulan) || items.size()==0) {
+                                            tempbulan = bulan;
+                                            if(items.size()==0){
                                                 kar = new listkaryawan_izincutisakit();
                                                 kar.setBulan(bulan);
+                                                kar.setIzin(String.valueOf(0));
+                                                kar.setSakit(obj.getString("lama"));
+                                                kar.setAbsen(String.valueOf(0));
                                             }
-                                            //kar.setIzin(obj.getString("lama"));
-                                            //kar.setSakit(obj.getString("lama"));
-                                            //kar.setAbsen(String.valueOf(i));
-                                            for(int j=0;j<items.size();j++) {
-                                                if(items.get(j).getBulan().equals(bulan)){
-                                                    items.get(j).setSakit(obj.getString("lama"));
+                                            else{
+                                                for(int j=0;j<items.size();j++) {
+                                                    if(items.get(j).getBulan().equals(bulan)){
+                                                        items.get(j).setSakit(obj.getString("lama"));
+                                                        ada=true;
+                                                    }
+                                                }
+                                                if(!ada){
+                                                    kar = new listkaryawan_izincutisakit();
+                                                    kar.setBulan(bulan);
+                                                    kar.setIzin(String.valueOf(0));
+                                                    kar.setSakit(obj.getString("lama"));
+                                                    kar.setAbsen(String.valueOf(0));
                                                 }
                                             }
                                         }
@@ -787,9 +858,24 @@ public class viewkaryawan extends AppCompatActivity {
                                         //kar.setIzin(String.valueOf(banyaksakit));
                                         //kar.setSakit(String.valueOf(banyaksakit));
                                         //kar.setAbsen(String.valueOf(i));
-                                        for(int j=0;j<items.size();j++) {
-                                            if(items.get(j).getBulan().equals(bulan)){
-                                                items.get(j).setSakit(String.valueOf(banyaksakit));
+                                        if(items.size()==0){
+                                            kar.setIzin(String.valueOf(0));
+                                            kar.setSakit(String.valueOf(banyaksakit));
+                                            kar.setAbsen(String.valueOf(0));
+                                            items.add(kar);
+                                        }
+                                        else{
+                                            for(int j=0;j<items.size();j++) {
+                                                if(items.get(j).getBulan().equals(bulan)){
+                                                    items.get(j).setSakit(String.valueOf(banyaksakit));
+                                                    ada=true;
+                                                }
+                                            }
+                                            if(!ada){
+                                                kar.setIzin(String.valueOf(0));
+                                                kar.setSakit(String.valueOf(banyaksakit));
+                                                kar.setAbsen(String.valueOf(0));
+                                                items.add(kar);
                                             }
                                         }
                                     }

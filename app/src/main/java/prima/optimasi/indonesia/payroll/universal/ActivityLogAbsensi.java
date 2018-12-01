@@ -227,7 +227,7 @@ public class ActivityLogAbsensi extends AppCompatActivity {
 
                             itemabsensi.add(absensi);
                             //set data and list adapter
-                            mAdapter = new Adapter_Log_Absensi(ActivityLogAbsensi.this, itemabsensi, ItemAnimation.LEFT_RIGHT);
+                            mAdapter = new Adapter_Log_Absensi(ActivityLogAbsensi.this, itemabsensi, ItemAnimation.NONE);
                             recyclerView.setLayoutManager(new LinearLayoutManager(ActivityLogAbsensi.this));
                             recyclerView.setHasFixedSize(true);
                             recyclerView.setAdapter(mAdapter);

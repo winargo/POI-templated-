@@ -566,7 +566,7 @@ public class FragmentHome extends Fragment {
 
                 dialog.setTitle("Memuat Data");
                 dialog.setMessage("Mengambil Data Bulanan");
-
+                perios="";
                 for(int i = 0; i< 12; i++) {
                     cal.add(Calendar.MONTH, 1);
 
@@ -589,12 +589,14 @@ public class FragmentHome extends Fragment {
                     Log.e("Month data",(cal.get(Calendar.MONTH)+1)+" / "+cal.get(Calendar.YEAR) );
 
 
+
                     if (i == 0) {
                         perios = perios + sdf.format(cal.getTime()) + " - ";
                     }
                     if (i == 11) {
                         perios = perios + sdf.format(cal.getTime());
                     }
+                    finalPerios = perios;
 
                     System.out.println(sdf.format(cal.getTime()) + sdfyear.format(cal.getTime()));
                     int finalI = i;
@@ -654,7 +656,7 @@ public class FragmentHome extends Fragment {
                 totalkaryawan=0;
                 //retrivegetjabatanref jab=new retrivegetjabatanref(getActivity());
                 //jab.execute();
-                refreshhome.setRefreshing(false);
+
             }
         });
 
@@ -1722,7 +1724,12 @@ public class FragmentHome extends Fragment {
                             int absen=0;
                             absen=totalkaryawan-banyakkaryawan;
                             totalabsen.setText(String.valueOf(absen));
-
+                            if(refreshhome.isRefreshing()){
+                                refreshhome.setRefreshing(false);
+                            }
+                            if(dialog.isShowing()){
+                                dialog.dismiss();
+                            }
                             //Log.e("MASUK ADAPTER", "Berhasil"+absen+"total"+totalkaryawan);
                             if(adapterabsensi!=null){
                                 adapterabsensi.notifyDataSetChanged();
@@ -2173,7 +2180,12 @@ public class FragmentHome extends Fragment {
                 Log.e(TAG, "retrive gaji mentah:"+result.toString() );
                 if (result != null) {
                     try {
+
+                        int temp=position+1;
+                        dialog.setMessage("Memuat Data Chart...("+(temp)+"/12)Mohon Tunggu");
+
                         dialog.setMessage("Memuat Data Chart...("+(position+1)+"/12)Mohon Tunggu");
+
                         if(result.getString("status").equals("true")){
 
                             JSONObject obj = result.getJSONObject("data");
