@@ -620,7 +620,11 @@ public class generator {
                         prefs.edit().putInt("statustoken",0).commit();
 
                         Log.e(TAG, "onPostExecute: "+"UnRegistered to server" );
-                        //((Activity)cntx).finish();
+                        try {
+                            ((Activity) cntx).finish();
+                        }catch (Exception e){
+                            Log.e(TAG, e.getMessage() );
+                        }
                     }
                     else {
                         res = "Fail";

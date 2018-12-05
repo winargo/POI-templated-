@@ -754,51 +754,115 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
 
                 String title = "";
                 if (result != null) {
-                    if (result.getString("status").equals("true")) {
+                    if(issecurity){
+                        if (result.getString("status").equals("true")) {
+                            if(type==1){
+                                title = "Berhasil";
 
-                        title = "Berhasil";
+                                final AlertDialog alert = new AlertDialog.Builder(ctx).setTitle(title).setMessage(result.getString("message")).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        try {
+                                            mCaptureActivityHandler.restartPreviewAndDecode();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }//Do something after 100ms
+                                    }
+                                }).create();
 
-                        double longitude = 0.0d;
-                        double latitude = 0.0d;
+                                alert.show();
+                            }
+                            else {
 
-                        if (generator.location == null) {
+                                title = "Berhasil";
+
+                                double longitude = 0.0d;
+                                double latitude = 0.0d;
+
+                                if (generator.location == null) {
+
+                                    if (ActivityCompat.checkSelfPermission(QrCodeActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(QrCodeActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                        generator.location = generator.lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                                        longitude = generator.location.getLongitude();
+                                        latitude = generator.location.getLatitude();
+                                    } else {
+                                        generator.location = generator.lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                                        longitude = generator.location.getLongitude();
+                                        latitude = generator.location.getLatitude();
+                                        Log.d(TAG, "onPostExecute: " + "error location request");
+                                    }
+
+
+                                } else {
+                                    longitude = generator.location.getLongitude();
+                                    latitude = generator.location.getLatitude();
+                                }
+                                absensithrowlocation throwdata = new absensithrowlocation(ctx, type, kode, longitude, latitude, issecurity);
+                                throwdata.execute();
+                            }
+
+                        } else {
+                            title = "Gagal";
+
+                            final AlertDialog alert = new AlertDialog.Builder(ctx).setTitle(title).setMessage(result.getString("message")).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    try {
+                                        mCaptureActivityHandler.restartPreviewAndDecode();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }//Do something after 100ms
+                                }
+                            }).create();
+
+                            alert.show();
+                        }
+                    }
+                    else {
+                        if (result.getString("status").equals("true")) {
+
+                            title = "Berhasil";
+
+                            double longitude = 0.0d;
+                            double latitude = 0.0d;
+
+                            if (generator.location == null) {
 
                                 if (ActivityCompat.checkSelfPermission(QrCodeActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(QrCodeActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                                     generator.location = generator.lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                                     longitude = generator.location.getLongitude();
                                     latitude = generator.location.getLatitude();
-                                }
-                                else {
+                                } else {
                                     generator.location = generator.lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                                     longitude = generator.location.getLongitude();
                                     latitude = generator.location.getLatitude();
-                                    Log.d(TAG, "onPostExecute: "+"error location request");
+                                    Log.d(TAG, "onPostExecute: " + "error location request");
                                 }
 
 
-                        }
-                        else {
-                            longitude = generator.location.getLongitude();
-                            latitude = generator.location.getLatitude();
-                        }
-                        absensithrowlocation throwdata = new absensithrowlocation(ctx, type, kode, longitude, latitude, issecurity);
-                        throwdata.execute();
-
-                    } else {
-                        title = "Gagal";
-
-                        final AlertDialog alert = new AlertDialog.Builder(ctx).setTitle(title).setMessage(result.getString("message")).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                try {
-                                    mCaptureActivityHandler.restartPreviewAndDecode();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }//Do something after 100ms
+                            } else {
+                                longitude = generator.location.getLongitude();
+                                latitude = generator.location.getLatitude();
                             }
-                        }).create();
+                            absensithrowlocation throwdata = new absensithrowlocation(ctx, type, kode, longitude, latitude, issecurity);
+                            throwdata.execute();
 
-                        alert.show();
+                        } else {
+                            title = "Gagal";
+
+                            final AlertDialog alert = new AlertDialog.Builder(ctx).setTitle(title).setMessage(result.getString("message")).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    try {
+                                        mCaptureActivityHandler.restartPreviewAndDecode();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }//Do something after 100ms
+                                }
+                            }).create();
+
+                            alert.show();
+                        }
                     }
                 }
                 else {

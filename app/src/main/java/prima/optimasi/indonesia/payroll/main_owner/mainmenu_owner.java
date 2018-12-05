@@ -454,6 +454,8 @@ public class mainmenu_owner extends AppCompatActivity
 
             startActivity(logout);
 
+            finish();
+
             return true;
         }
         else if(id == R.id.action_add){
