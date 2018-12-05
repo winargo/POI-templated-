@@ -31,6 +31,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -70,6 +71,8 @@ public class activity_login extends AppCompatActivity {
 
     ImageButton settings;
 
+    ImageView imglogin;
+
     AlertDialog companydata;
 
     AdapterListCompany adapter;
@@ -92,6 +95,11 @@ public class activity_login extends AppCompatActivity {
 
         Realm.init(this);
         dbase= new SQLiteHelper(this);
+
+        imglogin = findViewById(R.id.imagelogin);
+
+        Picasso.get().load(R.drawable.image_26).into(imglogin);
+
 
         pref = getSharedPreferences("poipayroll",MODE_PRIVATE);
 
