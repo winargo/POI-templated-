@@ -646,30 +646,7 @@ public class generator {
 
             }
 
-
-            try {
-                AlertDialog alertDialog = new AlertDialog.Builder(cntx).create();
-                alertDialog.setTitle("Scan result");
-                alertDialog.setMessage(result.toString() + res);
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
-
-                //JSONArray bArray= responseObject.getJSONArray("B");
-                //for(int i=0;i<bArray.length();i++){
-                //    JSONObject innerObject=bArray.getJSONObject(i);
-                //    String a= innerObject.getString("a");
-                //    String b= innerObject.getString("b");
-                //}
-            } catch (Exception e) {
-                e.printStackTrace();
-                error = e.getMessage();
-            }
-            Log.d(TAG + " onPostExecute", "" + result1);
+            Log.d(TAG + " onPostExecute", "" + result.toString()+" "+res);
         }
     }
 
