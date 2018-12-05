@@ -75,6 +75,11 @@ public class mainmenu_hrd extends AppCompatActivity implements NavigationView.On
     DrawerLayout drawer;
     RelativeLayout linear;
     @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
@@ -338,9 +343,26 @@ public class mainmenu_hrd extends AppCompatActivity implements NavigationView.On
         expListView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
             @Override
             public void onGroupCollapse(int groupPosition) {
-                //  Toast.makeText(getApplicationContext(),
-                //    listDataHeader.get(groupPosition) + " Collapsed",
-                //   Toast.LENGTH_SHORT).show();
+                if(listDataHeader.get(groupPosition).equals("Home")){
+                    pager.setCurrentItem(0);
+                    drawer.closeDrawer(Gravity.START);
+                }
+                else if(listDataHeader.get(groupPosition).equals("Pengumuman")){
+                    pager.setCurrentItem(1);
+                    drawer.closeDrawer(Gravity.START);
+                }
+                else if(listDataHeader.get(groupPosition).equals("Karyawan")){
+                    pager.setCurrentItem(2);
+                    drawer.closeDrawer(Gravity.START);
+                }
+                else if(listDataHeader.get(groupPosition).equals("Cek Gaji")){
+                    pager.setCurrentItem(3);
+                    drawer.closeDrawer(Gravity.START);
+                }
+                else if(listDataHeader.get(groupPosition).equals("Pengajuan")){
+                    pager.setCurrentItem(4);
+                    drawer.closeDrawer(Gravity.START);
+                }
 
             }
         });
@@ -493,7 +515,6 @@ public class mainmenu_hrd extends AppCompatActivity implements NavigationView.On
 
     public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
         // tab titles
-        private String[] tabTitles = new String[]{"Home", "Pengumuman","Karyawan", "Cek Gaji","Pengajuan"};
 
         public ExamplePagerAdapter(FragmentManager fm) {
             super(fm);

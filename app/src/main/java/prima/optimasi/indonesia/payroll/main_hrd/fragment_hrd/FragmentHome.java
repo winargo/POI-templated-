@@ -370,7 +370,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-         ;
         String urldata;
         String passeddata = "" ;
         TextView tv;
@@ -596,7 +595,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-         ;
         String urldata;
         String passeddata = "" ;
         TextView tv;
@@ -826,7 +824,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-         ;
         String urldata = generator.jabatanurl;
         String passeddata = "" ;
         public retrivegetjabatan(Context context)
@@ -946,7 +943,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-         ;
         String urldata = generator.jabatanurl;
         String passeddata = "" ;
         public retrivegetjabatanref(Context context)
@@ -1062,7 +1058,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-         ;
         String urldata = generator.daftarabsensiurl;
         String passeddata = "" ;
         String jabatan="";
@@ -1168,7 +1163,12 @@ public class FragmentHome extends Fragment {
                             daftaritems.add(daftarabsensi);
                             int absen=0;
                             absen=totalkaryawan-banyakkaryawan;
-                            totalabsen.setText(String.valueOf(absen));
+                            if(absen<0){
+                                totalabsen.setText("0");
+                            }
+                            else{
+                                totalabsen.setText(String.valueOf(absen));
+                            }
                             adapterabsensi.notifyDataSetChanged();
                             if(dialog.isShowing()){
                                 dialog.dismiss();
@@ -1201,7 +1201,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-         ;
         String urldata = generator.daftarabsensiurl;
         String passeddata = "" ;
         String jabatan="";
@@ -1307,7 +1306,12 @@ public class FragmentHome extends Fragment {
                             daftaritems.add(daftarabsensi);
                             int absen=0;
                             absen=totalkaryawan-banyakkaryawan;
-                            totalabsen.setText(String.valueOf(absen));
+                            if(absen<0){
+                                totalabsen.setText("0");
+                            }
+                            else{
+                                totalabsen.setText(String.valueOf(absen));
+                            }
                             if(adapterabsensi!=null){
                                 adapterabsensi.notifyDataSetChanged();
                             }
@@ -1345,7 +1349,6 @@ public class FragmentHome extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-         ;
         String urldata = "";
         String passeddata = "" ;
         String keterangan="";

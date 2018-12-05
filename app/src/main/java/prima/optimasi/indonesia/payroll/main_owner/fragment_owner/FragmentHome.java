@@ -1562,7 +1562,13 @@ public class FragmentHome extends Fragment {
                             daftaritems.add(daftarabsensi);
                             int absen=0;
                             absen=totalkaryawan-banyakkaryawan;
-                            totalabsen.setText(String.valueOf(absen));
+                            if(absen<0){
+                                totalabsen.setText("0");
+                            }
+                            else{
+                                totalabsen.setText(String.valueOf(absen));
+                            }
+
                             Log.e(TAG,String.valueOf(absen));
                             adapterabsensi.notifyDataSetChanged();
 
@@ -1723,7 +1729,12 @@ public class FragmentHome extends Fragment {
 
                             int absen=0;
                             absen=totalkaryawan-banyakkaryawan;
-                            totalabsen.setText(String.valueOf(absen));
+                            if(absen<0){
+                                totalabsen.setText("0");
+                            }
+                            else{
+                                totalabsen.setText(String.valueOf(absen));
+                            }
                             if(refreshhome.isRefreshing()){
                                 refreshhome.setRefreshing(false);
                             }
@@ -1735,10 +1746,6 @@ public class FragmentHome extends Fragment {
                                 adapterabsensi.notifyDataSetChanged();
                             }
                             //refreshhome.setRefreshing(false);
-
-
-
-
 
                         }
                     } catch (Exception e) {

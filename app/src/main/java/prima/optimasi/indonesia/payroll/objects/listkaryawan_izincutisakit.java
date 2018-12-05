@@ -3,7 +3,7 @@ package prima.optimasi.indonesia.payroll.objects;
 public class listkaryawan_izincutisakit {
     String jabatan;
     String izin;
-    String absen;
+    String absen, cuti, dinas, telat;
     String sakit;
     String bulan;
     String iskar;
@@ -12,6 +12,13 @@ public class listkaryawan_izincutisakit {
     String nama,desc;
     String imagelink;
 
+    public String getTelat() {
+        return telat;
+    }
+
+    public void setTelat(String telat) {
+        this.telat = telat;
+    }
 
     public String getAbsen() {
         return absen;
@@ -19,6 +26,22 @@ public class listkaryawan_izincutisakit {
 
     public void setAbsen(String absen) {
         this.absen = absen;
+    }
+
+    public String getDinas() {
+        return dinas;
+    }
+
+    public void setDinas(String dinas) {
+        this.dinas = dinas;
+    }
+
+    public String getCuti() {
+        return cuti;
+    }
+
+    public void setCuti(String cuti) {
+        this.cuti = cuti;
     }
 
     public String getBulan() {

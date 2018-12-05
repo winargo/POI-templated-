@@ -208,7 +208,7 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                                 JSONObject obj = pengsarray.getJSONObject(i);
 
                                 if(!prefs.getString("kodekaryawan", "").equals(obj.getString("kode_karyawan"))) {
-                                    if (obj.getString("otoritas").equals("2")) {
+                                    if (obj.getString("otoritas").equals("3")) {
 
                                     }
                                     else{
@@ -240,6 +240,7 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                                 }
                             }
                             spinnerkar.setItems(listnama);
+                            spinnerkar.setSelectedIndex(0);
                             if(!swipehome.isRefreshing()){
                                 items = new ArrayList<>();
                                 for (int i=0;i<kets.length;i++){
@@ -441,6 +442,7 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                             }
 
                             String keterangans = obj.getString("keterangans");
+
                             ajukan = new listkaryawanpengajuan();
                             ajukan.setJenis(keterangan);
                             ajukan.setNama(obj.getString("nama"));
@@ -871,7 +873,7 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
             @Override
             public void onRefresh() {
 
-                dialog = new ProgressDialog(ActivityPengajuanKabag.this);
+                //dialog = new ProgressDialog(ActivityPengajuanKabag.this);
                 dialog.setMessage("Loading ...");
                 dialog.show();
                 if(items!=null){
@@ -880,16 +882,40 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                 else{
                     items=new ArrayList<>();
                 }
+                if(itemskaryawan!=null){
+                    itemskaryawan.clear();
+                }
+                else{
+                    itemskaryawan = new ArrayList<>();
+                }
+                if(listnama!=null){
+                    listnama.clear();
+                }
+                else{
+                    listnama = new ArrayList<>();
+                }
+                if(listid!=null){
+                    listid.clear();
+                }
+                else{
+                    listid = new ArrayList<>();
+                }
                 if(pengajuan!=null){
                     pengajuan.notifyDataSetChanged();
                 }
                 spinner.setSelectedIndex(0);
-                spinnerkar.setSelectedIndex(0);
-                itemskaryawan = new ArrayList<>();
-                listnama=new ArrayList<>();
-                listid=new ArrayList<>();
+
+
+                Calendar c = Calendar.getInstance();
+                c.add(Calendar.DATE,0);
+                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                String formattedDate = df.format(c.getTime());
+                tglmasuk.setText(formattedDate);
+                tglkeluar.setText(formattedDate);
+                keterangan.setText("");
                 retrivekaryawan kar=new retrivekaryawan(ActivityPengajuanKabag.this,dialog);
                 kar.execute();
+
             }
         });
     }

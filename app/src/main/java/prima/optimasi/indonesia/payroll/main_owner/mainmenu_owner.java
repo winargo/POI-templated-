@@ -50,6 +50,7 @@ import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentJob;
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentPengumuman;
 import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentReport;
 import prima.optimasi.indonesia.payroll.main_owner.manage.pengumuman.addpengumuman;
+import prima.optimasi.indonesia.payroll.universal.viewkaryawan_nonaktif;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
 public class mainmenu_owner extends AppCompatActivity
@@ -466,6 +467,8 @@ public class mainmenu_owner extends AppCompatActivity
             return true;
         }
         else if (id == R.id.action_show) {
+            Intent a = new Intent(mainmenu_owner.this,viewkaryawan_nonaktif.class);
+            startActivity(a);
             return true;
         }
 

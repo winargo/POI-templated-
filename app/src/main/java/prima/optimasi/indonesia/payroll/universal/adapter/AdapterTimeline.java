@@ -6,64 +6,64 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.model.Image;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan_izincutisakit;
+import prima.optimasi.indonesia.payroll.objects.listtimeline;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 
-public class Adapterviewkaryawan extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class AdapterTimeline extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final int VIEW_ITEM = 1;
     private final int VIEW_SECTION = 0;
     private int animation_type = 0;
 
-    private List<listkaryawan_izincutisakit> items = new ArrayList<>();
+    private List<listtimeline> items = new ArrayList<>();
     private Context ctx;
     private OnItemClickListener mOnItemClickListener;
 
     public interface OnItemClickListener {
-        void onItemClick(View view, listkaryawan_izincutisakit obj, int position);
+        void onItemClick(View view, listtimeline obj, int position);
     }
 
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
         this.mOnItemClickListener = mItemClickListener;
     }
 
-    public Adapterviewkaryawan(Context context, List<listkaryawan_izincutisakit> items, int animation_type) {
+    public AdapterTimeline(Context context, List<listtimeline> items, int animation_type) {
         this.items = items;
         ctx = context;
         this.animation_type = animation_type;
     }
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
-        public TextView tanggal, izin, sakit, cuti, absen, telat, dinas;
-        public View viewizin, viewsakit, viewcuti, viewabsen, viewtelat, viewdinas;
-
+        public TextView tanggal, nama, aktivitas, keterangan;
+        //public View viewizin, viewsakit, viewcuti, viewabsen, viewtelat, viewdinas;
+        public ImageView dots;
         public OriginalViewHolder(View v) {
             super(v);
-            tanggal = (TextView) v.findViewById(R.id.karytanggal);
-            izin = v.findViewById(R.id.karyizin);
-            sakit = v.findViewById(R.id.karysakit);
-            absen = v.findViewById(R.id.karyabsen);
+            tanggal = (TextView) v.findViewById(R.id.tanggal);
+            nama = (TextView) v.findViewById(R.id.nama);
+            aktivitas = (TextView) v.findViewById(R.id.aktivitas);
+            keterangan = (TextView) v.findViewById(R.id.keterangan);
+            dots = (ImageView) v.findViewById(R.id.dots);
 
-            cuti = v.findViewById(R.id.karycuti);
-            telat = v.findViewById(R.id.karytelat);
-            dinas = v.findViewById(R.id.karydinas);
-
-
+            /*
             viewizin = (View) v.findViewById(R.id.karviewizin);
             viewsakit = (View) v.findViewById(R.id.karviewsakit);
             viewabsen = (View) v.findViewById(R.id.karviewabsen);
-
             viewcuti = (View) v.findViewById(R.id.karviewcuti);
             viewtelat = (View) v.findViewById(R.id.karviewtelat);
-            viewdinas = (View) v.findViewById(R.id.karviewdinas);
+            viewdinas = (View) v.findViewById(R.id.karviewdinas);*/
 
         }
     }
@@ -82,7 +82,7 @@ public class Adapterviewkaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder vh;
         //if (viewType == VIEW_ITEM) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_keterangan_karyawan, parent, false);
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_timeline, parent, false);
             vh = new OriginalViewHolder(v);
         /*
         } else {
@@ -96,26 +96,30 @@ public class Adapterviewkaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        final listkaryawan_izincutisakit p = items.get(position);
+        final listtimeline p = items.get(position);
         if (holder instanceof OriginalViewHolder) {
             OriginalViewHolder view = (OriginalViewHolder) holder;
-            /*
-            SimpleDateFormat parsed = new SimpleDateFormat("yyyy-MM");
-            SimpleDateFormat parsed1 = new SimpleDateFormat("MMMM yyyy");
+
+            SimpleDateFormat parsed = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat parsed1 = new SimpleDateFormat("dd MMMM yyyy");
             String bulan="";
             try {
-                bulan= parsed1.format(parsed.parse(p.getBulan()));
+                bulan= parsed1.format(parsed.parse(p.getTanggal()));
+                Log.e("Bulan",bulan);
+                Calendar cal=Calendar.getInstance();
+                String tglskrg=parsed1.format(cal.getTime());
+                if(tglskrg.equals(bulan)){
+                    view.dots.setBackgroundDrawable(ctx.getResources().getDrawable(R.drawable.dot));
+                }
             }
             catch (ParseException e){
                 e.printStackTrace();
             }
-            Log.e("Bulan",bulan);*/
-            view.tanggal.setText(p.getBulan());
-            view.izin.setText(p.getIzin());
-            view.sakit.setText(p.getSakit());
-            view.cuti.setText(p.getCuti());
-            view.dinas.setText(p.getDinas());
-            view.telat.setText(p.getTelat());
+
+            view.tanggal.setText(p.getTanggal());
+            view.nama.setText(p.getNama());
+            view.keterangan.setText(p.getKeterangan());
+            view.aktivitas.setText(p.getAktivitas());
             //view.absen.setText(p.getAbsen());
 
 

@@ -7,7 +7,7 @@ public class listkaryawan {
     boolean section = false;
     String nama,desc;
     String imagelink;
-    String jenis;
+    String jenis, status;
 
     public String getKode() {
         return kode;
@@ -74,5 +74,13 @@ public class listkaryawan {
 
     public void setJenis(String jenis) {
         this.jenis = jenis;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
