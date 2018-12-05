@@ -65,6 +65,7 @@ import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListSect
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 import prima.optimasi.indonesia.payroll.objects.listkaryawanpengajuan;
 import prima.optimasi.indonesia.payroll.universal.adapter.Adapterhistorypengajuan;
+import prima.optimasi.indonesia.payroll.universal.adapter.Adapterhistorypengajuankabag;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
@@ -74,7 +75,7 @@ public class FragmentPengajuan extends Fragment {
     CoordinatorLayout parent_view;
     NestedScrollView nsv;
     Button send;
-    MaterialSpinner spinner;
+    MaterialSpinner spinner, spinnerkar;
     private SimpleDateFormat dateFormatter;
     TextView tglmasuk,tglkeluar;
     EditText keterangan;
@@ -83,25 +84,27 @@ public class FragmentPengajuan extends Fragment {
     RecyclerView recyclerView;
     Date tgl_masuk, tgl_keluar;
     int lama=0;
-    Adapterhistorypengajuan pengajuan;
+    Adapterhistorypengajuankabag pengajuan;
     List<listkaryawanpengajuan> items;
     listkaryawanpengajuan ajukan;
+    List<listkaryawan> itemskaryawan;
+    List<String> listid;
+    List<String> listnama;
     String[] kets={"Izin","Sakit","Cuti","Dinas"};
     ProgressDialog dialog;
+    String idkar="";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.activity_pengajuan, container, false);
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.activity_pengajuan_kabag, container, false);
         initComponent(rootView);
         initListener();
-        for (int i=0;i<kets.length;i++){
-            retrivegetketerangan ket=new retrivegetketerangan(getActivity(), kets[i]);
-            ket.execute();
-        }
+        retrivekaryawan kar=new retrivekaryawan(getActivity(), dialog);
+        kar.execute();
         return rootView;
     }
 
-    private class retrivegetketerangan extends AsyncTask<Void, Integer, String>
+    private class retrivekaryawan extends AsyncTask<Void, Integer, String>
     {
         String response = "";
         String error = "";
@@ -110,35 +113,205 @@ public class FragmentPengajuan extends Fragment {
         SharedPreferences prefs ;
         JSONObject result = null ;
         ProgressDialog dialog ;
-        String urldata ;
+        String urldata = generator.listemployeeurl;
         String passeddata = "" ;
-        String keterangan="";
 
-        public retrivegetketerangan(Context context, String keterangan)
+        public retrivekaryawan(Context context, ProgressDialog  dialog)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
-            dialog = new ProgressDialog(context);
+            //dialog = new ProgressDialog(context);
             this.username = generator.username;
             this.password = generator.password;
             this.error = error ;
-            this.keterangan=keterangan;
-            if(keterangan.equals("Izin")){
-                urldata= generator.pengajuanizinkodeurl;
-            }
-            else if(keterangan.equals("Sakit")){
-                urldata= generator.pengajuansakitkodeurl;
-            }
-            else if(keterangan.equals("Cuti")){
-                urldata= generator.pengajuancutikodeurl;
-            }
-            else if(keterangan.equals("Dinas")){
-                urldata= generator.pengajuandinaskodeurl;
-            }
-
+            this.dialog=dialog;
         }
 
         String TAG = getClass().getSimpleName();
 
+        protected void onPreExecute (){
+            //this.dialog.show();
+            super.onPreExecute();
+            //this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                //this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                e.printStackTrace();
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+
+                if (result != null) {
+                    try {
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        JSONArray pengsarray = result.getJSONArray("rows");
+
+                        String tempcall = "";
+
+                        listnama.add("Pilih Karyawan");
+                        for (int i = 0; i < pengsarray.length(); i++) {
+                            JSONObject obj = pengsarray.getJSONObject(i);
+                            listkaryawan kar = new listkaryawan();
+                            kar.setSection(false);
+                            kar.setJabatan("Karyawan");
+                            kar.setIskar(obj.getString("id"));
+                            listid.add(obj.getString("id"));
+                            if (!obj.getString("foto").equals("")) {
+                                kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                Log.e(TAG, "image data" + kar.getImagelink());
+                            }
+                            else{
+                                kar.setImagelink("");
+                                Log.e(TAG, "image data" + kar.getImagelink());
+                            }
+                            /*
+                            else{
+                                kar.setImagelink("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qlAqV8WwUWaqr0SDbTj5Ht9lQ");
+                                Log.e(TAG, "image data" + kar.getImagelink());
+                            }*/
+
+                            kar.setNama(obj.getString("nama"));
+                            listnama.add(obj.getString("nama"));
+                            kar.setDesc("Karyawan");
+                            itemskaryawan.add(kar);
+
+                        }
+                        spinnerkar.setItems(listnama);
+                        spinnerkar.setSelectedIndex(0);
+                        if(!swipehome.isRefreshing()){
+                            items = new ArrayList<>();
+                            for (int i=0;i<kets.length;i++){
+                                for (int j=0;j<listid.size();j++){
+                                    retrivegetketerangan ket=new retrivegetketerangan(getActivity(), dialog, kets[i],listid.get(j));
+                                    ket.execute();
+                                }
+                            }
+                        }
+                        else{
+                            for (int i=0;i<kets.length;i++){
+                                for (int j=0;j<listid.size();j++){
+                                    retrivegetketeranganref ketref=new retrivegetketeranganref(getActivity(), kets[i],listid.get(j));
+                                    ketref.execute();
+                                }
+                            }
+                        }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+
+            /*
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }*/
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
+    private class retrivekaryawanhrd extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        ProgressDialog dialog ;
+        String urldata = generator.kabaggrupkaryawanurl;
+        String passeddata = "" ;
+
+        public retrivekaryawanhrd(Context context, ProgressDialog dialog)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            //dialog = new ProgressDialog(context);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+            this.dialog=dialog;
+        }
+
+        String TAG = getClass().getSimpleName();
         protected void onPreExecute (){
             this.dialog.show();
             super.onPreExecute();
@@ -158,11 +331,8 @@ public class FragmentPengajuan extends Fragment {
                     OkHttpClient client = new OkHttpClient();
 
                     RequestBody body = new FormBody.Builder()
-                            .add("id",prefs.getString("id", ""))
-
+                            .add("kode",prefs.getString("kodekaryawan", ""))
                             .build();
-
-                    Log.e(TAG, prefs.getString("id", ""));
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
@@ -220,71 +390,75 @@ public class FragmentPengajuan extends Fragment {
         }
 
         protected void onPostExecute(String result1) {
-
             try {
-                //
+                Log.e(TAG, "data json result" + result.toString());
                 if (result != null) {
                     try {
-                        Log.e(TAG, "data json result" + result.toString());
 
-                        JSONArray pengsarray = result.getJSONArray("rows");
-                        Log.e(TAG, "data json result" + pengsarray.length());
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        boolean status=result.getBoolean("status");
+                        if(!status){
+                            Snackbar.make(parent_view,result.getString("message"),Snackbar.LENGTH_SHORT).show();
+                        }
+                        else {
+                            JSONArray pengsarray = result.getJSONArray("data");
 
-                        for (int i = 0; i < pengsarray.length(); i++) {
-                            JSONObject obj = pengsarray.getJSONObject(i);
-                            String mulai="", akhir="", status="";
-                            if(keterangan.equals("Sakit")) {
-                                mulai = obj.getString("tgl_sakit").substring(0, 10);
-                                akhir = obj.getString("akhir_sakit").substring(0, 10);
-                                status = "Diterima";
-                            }
-                            else if(keterangan.equals("Cuti")) {
-                                mulai=obj.getString("mulai_berlaku").substring(0,10);
-                                akhir=obj.getString("exp_date").substring(0,10);
-                                status=obj.getString("status");
-                            }
-                            else if(keterangan.equals("Dinas")) {
-                                mulai=obj.getString("tgl_dinas").substring(0,10);
-                                akhir=obj.getString("akhir_dinas").substring(0,10);
-                                status=obj.getString("status");
-                            }
-                            else if(keterangan.equals("Izin")) {
-                                mulai=obj.getString("tgl_izin").substring(0,10);
-                                akhir=obj.getString("akhir_izin").substring(0,10);
-                                status=obj.getString("status");
-                            }
+                            String tempcall = "";
 
-                            String keterangans = obj.getString("keterangans");
-                            ajukan = new listkaryawanpengajuan();
-                            ajukan.setJenis(keterangan);
-                            ajukan.setTanggal_masuk(mulai);
-                            ajukan.setTanggal_keluar(akhir);
-                            if(status.equals("Ditolak")){
-                                ajukan.setStatus("Rejected");
+                            listnama.add("Pilih Karyawan");
+                            for (int i = 0; i < pengsarray.length(); i++) {
+                                JSONObject obj = pengsarray.getJSONObject(i);
+
+                                if(!prefs.getString("kodekaryawan", "").equals(obj.getString("kode_karyawan"))) {
+                                    if (obj.getString("otoritas").equals("2")) {
+
+                                    }
+                                    else{
+                                        listkaryawan kar = new listkaryawan();
+                                        kar.setSection(false);
+                                        kar.setJabatan("Karyawan");
+                                        kar.setIskar(obj.getString("id"));
+                                        listid.add(obj.getString("id"));
+                                        if (!obj.getString("foto").equals("")) {
+                                            kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                            Log.e(TAG, "image data" + kar.getImagelink());
+                                        }
+                                        else{
+                                            kar.setImagelink("");
+                                            Log.e(TAG, "image data" + kar.getImagelink());
+                                        }
+                                        /*
+                                        else{
+                                            kar.setImagelink("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qlAqV8WwUWaqr0SDbTj5Ht9lQ");
+                                            Log.e(TAG, "image data" + kar.getImagelink());
+                                        }*/
+
+                                        kar.setNama(obj.getString("nama"));
+                                        listnama.add(obj.getString("nama"));
+                                        kar.setDesc("Karyawan");
+                                        itemskaryawan.add(kar);
+
+                                    }
+                                }
                             }
-                            else if(status.equals("Diterima")){
-                                ajukan.setStatus("Approved");
+                            spinnerkar.setItems(listnama);
+                            if(!swipehome.isRefreshing()){
+                                items = new ArrayList<>();
+                                for (int i=0;i<kets.length;i++){
+                                    for (int j=0;j<listid.size();j++){
+                                        retrivegetketerangan ket=new retrivegetketerangan(getActivity(), dialog, kets[i],listid.get(j));
+                                        ket.execute();
+                                    }
+                                }
                             }
                             else{
-                                ajukan.setStatus("Pending");
+                                for (int i=0;i<kets.length;i++){
+                                    for (int j=0;j<listid.size();j++){
+                                        retrivegetketeranganref ketref=new retrivegetketeranganref(getActivity(), kets[i],listid.get(j));
+                                        ketref.execute();
+                                    }
+                                }
                             }
-
-                            if (keterangans.equals("")) {
-                                Log.e(TAG, "data json result" + "KOSONG");
-                            } else {
-                                ajukan.setKeterangan(keterangans);
-                            }
-                            Log.e(TAG, "data json result" + keterangans);
-
-                            items.add(ajukan);
-                        }
-
-                        if(items.size()>0 && keterangan.equals("Dinas")){
-                            pengajuan = new Adapterhistorypengajuan(getActivity(), items, ItemAnimation.LEFT_RIGHT);
-                            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-                            recyclerView.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(getActivity(), 3), true));
-                            recyclerView.setHasFixedSize(true);
-                            recyclerView.setAdapter(pengajuan);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -298,22 +472,22 @@ public class FragmentPengajuan extends Fragment {
                 } else {
                     Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
                 }
-            } catch (Exception E) {
+            }catch (Exception E){
                 E.printStackTrace();
-                Log.e(TAG, "onPostExecute: " + E.getMessage().toString());
-                Snackbar.make(parent_view, E.getMessage().toString(), Snackbar.LENGTH_SHORT).show();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
             }
 
-            if (this.dialog.isShowing()) {
+            /*
+            if(this.dialog.isShowing()){
                 dialog.dismiss();
-            }
-
+            }*/
 
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
 
-    private class retrivegetketeranganref extends AsyncTask<Void, Integer, String>
+    private class retrivegetketerangan extends AsyncTask<Void, Integer, String>
     {
         String response = "";
         String error = "";
@@ -321,18 +495,21 @@ public class FragmentPengajuan extends Fragment {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-        //ProgressDialog dialog ;
+        ProgressDialog dialog ;
         String urldata ;
         String passeddata = "" ;
         String keterangan="";
+        String id="";
 
-        public retrivegetketeranganref(Context context, String keterangan)
+        public retrivegetketerangan(Context context, ProgressDialog dialog, String keterangan, String id)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
             //dialog = new ProgressDialog(context);
             this.username = generator.username;
             this.password = generator.password;
             this.error = error ;
+            this.dialog=dialog;
+            this.id=id;
             this.keterangan=keterangan;
             if(keterangan.equals("Izin")){
                 urldata= generator.pengajuanizinkodeurl;
@@ -370,7 +547,227 @@ public class FragmentPengajuan extends Fragment {
                     OkHttpClient client = new OkHttpClient();
 
                     RequestBody body = new FormBody.Builder()
-                            .add("id",prefs.getString("id", ""))
+                            .add("id",id)
+
+                            .build();
+
+                    Log.e(TAG, prefs.getString("id", ""));
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .post(body)
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+                //
+                if (result != null) {
+                    try {
+                        Log.e(TAG, "data json result" + result.toString());
+
+                        JSONArray pengsarray = result.getJSONArray("rows");
+                        Log.e(TAG, "data json result" + pengsarray.length());
+
+                        for (int i = 0; i < pengsarray.length(); i++) {
+                            JSONObject obj = pengsarray.getJSONObject(i);
+                            String mulai="", akhir="", status="";
+                            if(keterangan.equals("Sakit")) {
+                                mulai = obj.getString("tgl_sakit").substring(0, 10);
+                                akhir = obj.getString("akhir_sakit").substring(0, 10);
+                                status = "Diterima";
+                            }
+                            else if(keterangan.equals("Cuti")) {
+                                mulai=obj.getString("mulai_berlaku").substring(0,10);
+                                akhir=obj.getString("exp_date").substring(0,10);
+                                status=obj.getString("status");
+                            }
+                            else if(keterangan.equals("Dinas")) {
+                                mulai=obj.getString("tgl_dinas").substring(0,10);
+                                akhir=obj.getString("akhir_dinas").substring(0,10);
+                                status=obj.getString("status");
+                            }
+                            else if(keterangan.equals("Izin")) {
+                                mulai=obj.getString("tgl_izin").substring(0,10);
+                                akhir=obj.getString("akhir_izin").substring(0,10);
+                                status=obj.getString("status");
+                            }
+
+                            String keterangans = obj.getString("keterangans");
+
+                            ajukan = new listkaryawanpengajuan();
+                            ajukan.setJenis(keterangan);
+                            ajukan.setNama(obj.getString("nama"));
+                            ajukan.setTanggal_masuk(mulai);
+                            ajukan.setTanggal_keluar(akhir);
+                            if(status.equals("Ditolak")){
+                                ajukan.setStatus("Rejected");
+                            }
+                            else if(status.equals("Diterima")){
+                                ajukan.setStatus("Approved");
+                            }
+                            else{
+                                ajukan.setStatus("Pending");
+                            }
+
+                            if (keterangans.equals("")) {
+                                Log.e(TAG, "data json result" + "KOSONG");
+                            } else {
+                                ajukan.setKeterangan(keterangans);
+                            }
+                            Log.e(TAG, "data json result" + keterangans);
+
+                            items.add(ajukan);
+                        }
+
+                        if(items.size()>0 && keterangan.equals("Dinas")){
+                            pengajuan = new Adapterhistorypengajuankabag(getActivity(), items, ItemAnimation.LEFT_RIGHT);
+                            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                            //recyclerView.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(getActivity(), 3), true));
+                            recyclerView.setHasFixedSize(true);
+                            recyclerView.setAdapter(pengajuan);
+                            if (this.dialog.isShowing()) {
+                                dialog.dismiss();
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            } catch (Exception E) {
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: " + E.getMessage().toString());
+                Snackbar.make(parent_view, E.getMessage().toString(), Snackbar.LENGTH_SHORT).show();
+            }
+
+            /*
+            if (this.dialog.isShowing()) {
+                dialog.dismiss();
+            }*/
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
+    private class retrivegetketeranganref extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        //ProgressDialog dialog ;
+        String urldata ;
+        String passeddata = "" ;
+        String keterangan="";
+        String id="";
+
+        public retrivegetketeranganref(Context context, String keterangan, String id)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            //dialog = new ProgressDialog(context);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+            this.id=id;
+            this.keterangan=keterangan;
+            if(keterangan.equals("Izin")){
+                urldata= generator.pengajuanizinkodeurl;
+            }
+            else if(keterangan.equals("Sakit")){
+                urldata= generator.pengajuansakitkodeurl;
+            }
+            else if(keterangan.equals("Cuti")){
+                urldata= generator.pengajuancutikodeurl;
+            }
+            else if(keterangan.equals("Dinas")){
+                urldata= generator.pengajuandinaskodeurl;
+            }
+
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            //this.dialog.show();
+            super.onPreExecute();
+            //this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                //this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    RequestBody body = new FormBody.Builder()
+                            .add("id",id)
 
                             .build();
 
@@ -468,6 +865,7 @@ public class FragmentPengajuan extends Fragment {
 
                             String keterangans = obj.getString("keterangans");
                             ajukan = new listkaryawanpengajuan();
+                            ajukan.setNama(obj.getString("nama"));
                             ajukan.setJenis(keterangan);
                             ajukan.setTanggal_masuk(mulai);
                             ajukan.setTanggal_keluar(akhir);
@@ -547,7 +945,8 @@ public class FragmentPengajuan extends Fragment {
         spinner = (MaterialSpinner) rootView.findViewById(R.id.spinner);
 
         spinner.setItems("Pilih Pengajuan","Cuti", "Izin", "Dinas", "Sakit");
-
+        spinnerkar = (MaterialSpinner) rootView.findViewById(R.id.spinnerkar);
+        dialog=new ProgressDialog(getActivity());
         nsv.setPadding(0,0,0,0);
         tglmasuk=rootView.findViewById(R.id.tglmasuk);
         tglkeluar=rootView.findViewById(R.id.tglkeluar);
@@ -564,7 +963,9 @@ public class FragmentPengajuan extends Fragment {
         tanggal_keluar1=formattedDate;
 
         send=rootView.findViewById(R.id.send_pengajuan);
-        items = new ArrayList<>();
+        itemskaryawan = new ArrayList<>();
+        listnama=new ArrayList<>();
+        listid=new ArrayList<>();
     }
 
     private void initListener(){
@@ -593,76 +994,94 @@ public class FragmentPengajuan extends Fragment {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("NEXT DATE : ", ""+tanggal_masuk.compareTo(tanggal_keluar));
+                Log.e("NEXT DATE : ", "" + tanggal_masuk.compareTo(tanggal_keluar));
                 SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-                try{
-                    tgl_masuk=df.parse(tanggal_masuk1);
-                    tgl_keluar=df.parse(tanggal_keluar1);
-                    lama=tgl_masuk.compareTo(tgl_keluar)+1;
-                    if(!spinner.getText().equals("Pilih Pengajuan")){
-                        if(tgl_masuk.compareTo(tgl_keluar)>0) {
-                            final Dialog dialog = new Dialog(getActivity());
-                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
-                            dialog.setContentView(R.layout.dialog_warning);
-                            dialog.setCancelable(true);
+                try {
+                    tgl_masuk = df.parse(tglmasuk.getText().toString());
+                    tgl_keluar = df.parse(tglkeluar.getText().toString());
+                    lama = tgl_masuk.compareTo(tgl_keluar) + 1;
+                    if(!spinnerkar.getText().equals("Pilih Karyawan")) {
+                        if (!spinner.getText().equals("Pilih Pengajuan")) {
+                            if (keterangan.getText().toString().trim().equals("")) {
+                                Snackbar.make(parent_view, "Keterangan Tidak Boleh Kosong", Snackbar.LENGTH_SHORT).show();
+                            } else {
+                                if (tgl_masuk.compareTo(tgl_keluar) > 0) {
+                                    final Dialog dialog = new Dialog(getActivity());
+                                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+                                    dialog.setContentView(R.layout.dialog_warning);
+                                    dialog.setCancelable(true);
 
-                            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-                            lp.copyFrom(dialog.getWindow().getAttributes());
-                            lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-                            lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-                            ImageView icon = dialog.findViewById(R.id.icon);
-                            TextView title = dialog.findViewById(R.id.title);
-                            TextView content = dialog.findViewById(R.id.content);
-                            icon.setVisibility(View.GONE);
-                            title.setText("Kesalahan Data Tanggal");
-                            content.setText("Tanggal keluar wajib lebih atau sama dari tanggal masuk yang diinput");
-                            ((AppCompatButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Toast.makeText(getActivity(), ((AppCompatButton) v).getText().toString() + " Clicked", Toast.LENGTH_SHORT).show();
-                                    dialog.dismiss();
-                                }
-                            });
+                                    WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                                    lp.copyFrom(dialog.getWindow().getAttributes());
+                                    lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                                    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                                    ImageView icon = dialog.findViewById(R.id.icon);
+                                    TextView title = dialog.findViewById(R.id.title);
+                                    TextView content = dialog.findViewById(R.id.content);
+                                    icon.setVisibility(View.GONE);
+                                    title.setText("Kesalahan Data Tanggal");
+                                    content.setText("Tanggal keluar wajib lebih atau sama dari tanggal masuk yang diinput");
+                                    ((AppCompatButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            dialog.dismiss();
+                                        }
+                                    });
 
-                            dialog.show();
-                            dialog.getWindow().setAttributes(lp);
-                        }else{
-                            Log.e("NEXT DATE : ", "Berhasil");
-                            if(!keterangan.getText().toString().trim().equals("")){
-                                if(spinner.getText().equals("Cuti")){
-                                    retrivepengajuancuti cuti =new retrivepengajuancuti(getActivity());
-                                    cuti.execute();
-                                }
-                                else if(spinner.getText().equals("Izin")){
-                                    retrivepengajuanizin izin =new retrivepengajuanizin(getActivity());
-                                    izin.execute();
-                                }
-                                else if(spinner.getText().equals("Dinas")){
-                                    retrivepengajuandinas dinas=new retrivepengajuandinas(getActivity());
-                                    dinas.execute();
-                                }
-                                else if(spinner.getText().equals("Sakit")){
-                                    retrivepengajuansakit sakit =new retrivepengajuansakit(getActivity());
-                                    sakit.execute();
-                                }
+                                    dialog.show();
+                                    dialog.getWindow().setAttributes(lp);
+                                } else {
+                                    Log.e("NEXT DATE : ", "Berhasil");
 
+
+                                    Log.e("NEXT DATE : ", "" + tanggal_masuk1 + " " + tanggal_keluar1);
+
+                                    if (!keterangan.getText().toString().trim().equals("")) {
+                                        for(int i=0;i<itemskaryawan.size();i++){
+                                            if(itemskaryawan.get(i).getNama().equals(spinnerkar.getText().toString())){
+                                                idkar=itemskaryawan.get(i).getIskar();
+
+                                            }
+                                        }
+                                        if(!idkar.equals("")) {
+                                            //Snackbar.make(parent_view, idkar, Snackbar.LENGTH_SHORT).show();
+
+                                            if (spinner.getText().equals("Cuti")) {
+                                                retrivepengajuancuti cuti = new retrivepengajuancuti(getActivity());
+                                                cuti.execute();
+                                            } else if (spinner.getText().equals("Izin")) {
+                                                retrivepengajuanizin izin = new retrivepengajuanizin(getActivity());
+                                                izin.execute();
+                                            } else if (spinner.getText().equals("Dinas")) {
+                                                retrivepengajuandinas dinas = new retrivepengajuandinas(getActivity());
+                                                dinas.execute();
+                                            } else if (spinner.getText().equals("Sakit")) {
+                                                retrivepengajuansakit sakit = new retrivepengajuansakit(getActivity());
+                                                sakit.execute();
+                                            }
+                                        }
+                                        else{
+                                            Log.e("retrivekaryawan", "bermasalah");
+                                        }
+
+                                    } else {
+                                        Log.e("NEXT DATE : ", "Isi Keterangan Anda");
+                                    }
+
+                                }
                             }
-                            else{
-                                Log.e("NEXT DATE : ", "Isi Keterangan Anda");
-                            }
-
+                        } else if (spinner.getText().equals("Pilih Pengajuan")) {
+                            Snackbar.make(parent_view, "Pilih Jenis Pengajuan", Snackbar.LENGTH_SHORT).show();
                         }
+                    }else if (spinner.getText().equals("Pilih Karyawan")) {
+                        Snackbar.make(parent_view, "Pilih Karyawan", Snackbar.LENGTH_SHORT).show();
                     }
 
-                    else if(spinner.getText().equals("Pilih Pengajuan")){
-                        Log.e("SPINNER : ", "Isi Jenis Pengajuan Anda");
-                    }
 
-                }catch(Exception e){
-                    Log.e("NEXT DATE : ", ""+tanggal_masuk.compareTo(tanggal_keluar));
-                    Log.e("NEXT DATE : ", ""+tanggal_masuk1+" "+tanggal_keluar1);
+                } catch (Exception e) {
+                    Log.e("NEXT DATE : ", "" + tanggal_masuk.compareTo(tanggal_keluar));
+                    Log.e("NEXT DATE : ", "" + tanggal_masuk1 + " " + tanggal_keluar1);
                 }
-
             }
         });
 
@@ -670,7 +1089,7 @@ public class FragmentPengajuan extends Fragment {
             @Override
             public void onRefresh() {
 
-                dialog = new ProgressDialog(getActivity());
+                //dialog = new ProgressDialog(getActivity());
                 dialog.setMessage("Loading ...");
                 dialog.show();
                 if(items!=null){
@@ -678,6 +1097,27 @@ public class FragmentPengajuan extends Fragment {
                 }
                 else{
                     items=new ArrayList<>();
+                }
+                if(itemskaryawan!=null){
+                    itemskaryawan.clear();
+                }
+                else{
+                    itemskaryawan = new ArrayList<>();
+                }
+                if(listnama!=null){
+                    listnama.clear();
+                }
+                else{
+                    listnama = new ArrayList<>();
+                }
+                if(listid!=null){
+                    listid.clear();
+                }
+                else{
+                    listid = new ArrayList<>();
+                }
+                if(pengajuan!=null){
+                    pengajuan.notifyDataSetChanged();
                 }
                 spinner.setSelectedIndex(0);
                 Calendar c = Calendar.getInstance();
@@ -687,13 +1127,8 @@ public class FragmentPengajuan extends Fragment {
                 tglmasuk.setText(formattedDate);
                 tglkeluar.setText(formattedDate);
                 keterangan.setText("");
-                if(pengajuan!=null){
-                    pengajuan.notifyDataSetChanged();
-                }
-                for (int i=0;i<kets.length;i++) {
-                    retrivegetketeranganref ketref = new retrivegetketeranganref(getActivity(), kets[i]);
-                    ketref.execute();
-                }
+                retrivekaryawan kar=new retrivekaryawan(getActivity(),dialog);
+                kar.execute();
             }
         });
     }

@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -76,6 +77,8 @@ import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 
 import prima.optimasi.indonesia.payroll.objects.listkaryawan_izincutisakit;
 import prima.optimasi.indonesia.payroll.objects.listkaryawankontrakkerja;
+import prima.optimasi.indonesia.payroll.objects.listtimeline;
+import prima.optimasi.indonesia.payroll.universal.adapter.AdapterTimeline;
 import prima.optimasi.indonesia.payroll.universal.adapter.Adapterviewkaryawan;
 import prima.optimasi.indonesia.payroll.universal.adapter.ViewPagerAdapter;
 import prima.optimasi.indonesia.payroll.universal.fragment.viewketerangankaryawan;
@@ -88,31 +91,39 @@ public class viewkaryawan extends AppCompatActivity {
 
 
     private View parent_view;
-    String kodekar="";
-    LinearLayout linear_view, lyt_tidakada;
+    String kodekar="", namakar="";
+    LinearLayout linear_view, biodata;
     TextView templahir,tanggallahir,nama,jabatan,telepon,hp,alamat,email,agama,pend,gaji,status;
     TextView scount,icount,acount;
-    ImageButton message,phone;
+    ImageButton message,phone, indeterminate;
     CircularImageView image;
     String[] tabTitles = new String []{"Januari", "Februari","Maret","April","Mei","Juni","Juli"};
-    String[] keterangan = new String []{"izin", "sakit"};
+    String[] keterangan = new String []{"izin", "sakit","cuti","dinas","telat"};
     List<String> listizin;
     List<String> listsakit;
+    List<String> listcuti;
+    List<String> listdinas;
+    ProgressDialog dialog;
+    String blnskrg="";
+
     ViewPager pager;
     TabLayout tabpager;
     TabLayout indicator;
     //ViewPagerAdapter adapter;
-
+    AdapterTimeline timeline;
+    listtimeline tl;
+    List<listtimeline> itemstl;
     listkaryawan_izincutisakit kar;
     List<listkaryawan_izincutisakit> items;
     List<Integer> color;
     List<String> colorName;
+    List<String> dt1, dt2;
     private TextView[] dots;
-    RecyclerView recyclerView;
+    RecyclerView recyclerView, rvtimeline;
     //private AdapterListSectioned mAdapter;
     Adapterviewkaryawan adapter;
     private ArrayList<Integer> ImagesArray = new ArrayList<Integer>();
-
+    boolean biodatanow=true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -224,14 +235,67 @@ public class viewkaryawan extends AppCompatActivity {
             }
         });
 
+        indeterminate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(biodatanow){
+                    biodata.setVisibility(View.GONE);
+                    biodatanow=false;
+                    indeterminate.setImageDrawable(viewkaryawan.this.getResources().getDrawable(R.drawable.ic_add_box));
+                }else {
+                    biodata.setVisibility(View.VISIBLE);
+                    biodatanow=true;
+                    indeterminate.setImageDrawable(viewkaryawan.this.getResources().getDrawable(R.drawable.ic_indeterminate));
+                }
+            }
+        });
 
+        itemstl=new ArrayList<>();
         listizin=new ArrayList<>();
         listsakit=new ArrayList<>();
+        listcuti=new ArrayList<>();
+        listdinas=new ArrayList<>();
         items=new ArrayList<>();
-        for (int i=0;i<keterangan.length;i++){
-            retriveketerangan ket = new retriveketerangan(viewkaryawan.this,keterangan[i]);
-            ket.execute();
+        SimpleDateFormat parsed = new SimpleDateFormat("yyyy-MM");
+
+        Calendar cal = Calendar.getInstance();
+        blnskrg=parsed.format(cal.getTime());
+        cal.add(Calendar.MONTH, -12);
+
+        //cal.add(Calendar.MONTH, 1);
+        //Log.e("Bulan ",parsed1.format(cal.getTime()));
+        String dbulan="";
+        dt1=new ArrayList<>();
+        dt2=new ArrayList<>();
+        dialog=new ProgressDialog(viewkaryawan.this);
+        dialog.setTitle("Mohon Menunggu");
+        dialog.setMessage("Memproses Data Aktivitas");
+        dialog.show();
+        for(int j=0;j<12;j++){
+
+            cal.add(Calendar.MONTH, 1);
+            String dat1 = parsed.format(cal.getTime())+"-0"+cal.getActualMinimum(Calendar.DAY_OF_MONTH);
+            String dat2 = parsed.format(cal.getTime())+"-"+cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+            Log.e("Date",dat1+dat2);
+            //dialog.setMessage("Memproses Data "+dat1+" - "+dat2);
+            dt1.add(dat1);
+            dt2.add(dat2);
+
         }
+
+
+        for(int x=0;x<12;x++){
+            dialog.setMessage("Memuat Data "+dt1.get(x)+" - "+dt2.get(x));
+            for (int i=0;i<keterangan.length;i++){
+
+                retriveketerangan ket = new retriveketerangan(viewkaryawan.this,keterangan[i], dt1.get(x),dt2.get(x));
+                ket.execute();
+            }
+        }
+        retrivetimeline time = new retrivetimeline(viewkaryawan.this);
+        time.execute();
+
 
     }
 
@@ -245,11 +309,9 @@ public class viewkaryawan extends AppCompatActivity {
     }
 
     private void initComponent() {
-        lyt_tidakada=findViewById(R.id.linear_view);
-
-
+        biodata = findViewById(R.id.biodata);
         image = findViewById(R.id.karimage);
-
+        indeterminate= findViewById(R.id.indeterminate);
         templahir = findViewById(R.id.kartempatlahir);
         tanggallahir = findViewById(R.id.kartanggallahir);
         nama = findViewById(R.id.karname);
@@ -275,6 +337,8 @@ public class viewkaryawan extends AppCompatActivity {
         //pager = findViewById(R.id.view_pager);
         //dotsLayout=findViewById(R.id.layout_dots);
         recyclerView=findViewById(R.id.recyclerView);
+        rvtimeline=findViewById(R.id.recyclerViewtimeline);
+
     }
 
     @Override
@@ -415,6 +479,7 @@ public class viewkaryawan extends AppCompatActivity {
                         kodekar=obj.getString("kode_karyawan");
                         tanggallahir.setText(parsed.format(temp));
                         nama.setText(obj.getString("nama"));
+                        namakar=obj.getString("nama");
                         jabatan.setText(obj.getString("jabatan"));
                         telepon.setText(obj.getString("telepon"));
                         hp.setText(obj.getString("no_wali"));
@@ -508,12 +573,488 @@ public class viewkaryawan extends AppCompatActivity {
         SharedPreferences prefs ;
         Context ctx;
         JSONObject result = null ;
+        //ProgressDialog dialog;
+        String urldata;
+        String keterangan="";
+        //String passedid = "" ;
+        String date1="";
+        String date2="";
+
+        public retriveketerangan(Context context,String keterangan, String date1, String date2)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            //dialog = new ProgressDialog(context);
+            this.username = generator.username;
+            this.password = generator.password;
+            //passedid = id;
+            this.error = error ;
+            this.keterangan=keterangan;
+            this.date1=date1;
+            this.date2=date2;
+            ctx=context;
+            if(keterangan.equals("izin")){
+                urldata=generator.getizinperbulanyurl;
+            }
+            else if(keterangan.equals("sakit")){
+                urldata=generator.getsakitperbulanyurl;
+            }
+            else if(keterangan.equals("cuti")){
+                urldata=generator.getcutiperbulanyurl;
+            }
+            else if(keterangan.equals("dinas")){
+                urldata=generator.getdinasperbulanyurl;
+            }
+            else{
+                urldata=generator.gettelatperbulanyurl;
+            }
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            //this.dialog.show();
+            super.onPreExecute();
+            //this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                //this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    RequestBody body= new FormBody.Builder()
+                            .add("id", getIntent().getStringExtra("idkaryawan"))
+                            .add("start",date1)
+                            .add("end",date2)
+                            .build();
+
+                    Log.e("Authorization", prefs.getString("Authorization",""));
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .post(body)
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+
+                if (result != null) {
+                    try {
+                        Log.e(TAG, keterangan+" : "+ result);
+                        JSONArray pengsarray;
+                        if(keterangan.equals("telat")){
+                            pengsarray= result.getJSONArray("data");
+                        }else{
+                            pengsarray = result.getJSONArray("rows");
+                        }
+                        SimpleDateFormat parsed = new SimpleDateFormat("yyyy-MM");
+                        SimpleDateFormat parsed1 = new SimpleDateFormat("MMMM yyyy");
+                        if(keterangan.equals("izin")){
+                            listizin.clear();
+                            listsakit.clear();
+                            listcuti.clear();
+                            listdinas.clear();
+                            listizin.add(String.valueOf(pengsarray.length()));
+                        }
+                        else if(keterangan.equals("sakit")){
+                            listsakit.add(String.valueOf(pengsarray.length()));
+                        }
+                        else if(keterangan.equals("cuti")){
+                            listcuti.add(String.valueOf(pengsarray.length()));
+                        }
+                        else if(keterangan.equals("dinas")){
+                            listdinas.add(String.valueOf(pengsarray.length()));
+                        }
+                        else if(keterangan.equals("telat")){
+                            kar=new listkaryawan_izincutisakit();
+                            String blnthn=parsed1.format(parsed.parse(date1.substring(0,7)));
+                            kar.setBulan(blnthn);
+                            if(listizin.size()==0){
+                                kar.setIzin("0");
+                            }
+                            else{
+                                kar.setIzin(listizin.get(0));
+                            }
+                            if(listsakit.size()==0){
+                                kar.setSakit("0");
+                            }
+                            else{
+                                kar.setSakit(listsakit.get(0));
+                            }
+                            if(listcuti.size()==0){
+                                kar.setCuti("0");
+
+                            }
+                            else{
+                                kar.setCuti(listcuti.get(0));
+
+                            }
+                            if(listdinas.size()==0){
+                                kar.setDinas("0");
+
+                            }
+                            else{
+                                kar.setDinas(listdinas.get(0));
+
+                            }
+                            kar.setTelat(String.valueOf(pengsarray.length()));
+                            items.add(kar);
+                        }
+                        if(date1.substring(0,7).equals(blnskrg) && keterangan.equals("telat")){
+                            if(items.size()>0){
+                                adapter = new Adapterviewkaryawan(viewkaryawan.this, items, ItemAnimation.NONE);
+                                recyclerView.setLayoutManager(new LinearLayoutManager(viewkaryawan.this, LinearLayoutManager.HORIZONTAL, false));
+                                recyclerView.setAdapter(adapter);
+                                PagerSnapHelper snapHelper = new PagerSnapHelper();
+                                snapHelper.attachToRecyclerView(recyclerView);
+
+                            }
+                            if(dialog.isShowing()){
+                                dialog.dismiss();
+                            }
+                        }
+
+
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+            /*
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }*/
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
+    private class retrivetimeline extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        Context ctx;
+        JSONObject result = null ;
+        //ProgressDialog dialog;
+        String urldata=generator.gettimelineyurl;
+        //String passedid = "" ;
+
+
+        public retrivetimeline(Context context)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            //dialog = new ProgressDialog(context);
+            this.username = generator.username;
+            this.password = generator.password;
+            //passedid = id;
+            this.error = error ;
+            ctx=context;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            //this.dialog.show();
+            super.onPreExecute();
+            //this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                //this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    RequestBody body= new FormBody.Builder()
+                            .add("id", getIntent().getStringExtra("idkaryawan"))
+                            .build();
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .post(body)
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+
+                if (result != null) {
+                    try {
+                        Log.e(TAG, "data json "+ result);
+                        JSONObject obj= result.getJSONObject("data");
+                        tl=new listtimeline();
+                        tl.setNama(namakar);
+                        tl.setAktivitas(" masuk kerja pertama kali");
+                        tl.setTanggal(obj.getString("tanggal_masuk").substring(0,10));
+                        tl.setKeterangan("Pertama kali masuk kerja pada tanggal "+obj.getString("tanggal_masuk").substring(0,10));
+                        itemstl.add(tl);
+
+                        JSONArray arraycuti=obj.getJSONArray("cuti");
+                        for(int i=0;i<arraycuti.length();i++){
+                            JSONObject objcuti=arraycuti.getJSONObject(i);
+                            tl=new listtimeline();
+                            tl.setNama(namakar);
+                            tl.setAktivitas(" mengajukan cuti");
+                            tl.setTanggal(objcuti.getString("tanggal").substring(0,10));
+                            tl.setKeterangan("Pengajuan cuti pada tanggal "+objcuti.getString("mulai_berlaku").substring(0,10)+" s/d "+objcuti.getString("exp_date").substring(0,10)+" dengan "+ objcuti.getString("lama_cuti")+" lama cuti ");
+                            itemstl.add(tl);
+
+                            tl=new listtimeline();
+                            tl.setNama(namakar);
+                            tl.setAktivitas(" mulai cuti");
+                            tl.setTanggal(objcuti.getString("mulai_berlaku").substring(0,10));
+                            tl.setKeterangan("Mulai cuti pada tanggal "+objcuti.getString("mulai_berlaku").substring(0,10));
+                            itemstl.add(tl);
+
+                            tl=new listtimeline();
+                            tl.setNama(namakar);
+                            tl.setAktivitas(" cuti berakhir");
+                            tl.setTanggal(objcuti.getString("exp_date").substring(0,10));
+                            tl.setKeterangan("Akhir cuti pada tanggal "+objcuti.getString("exp_date").substring(0,10));
+                            itemstl.add(tl);
+                        }
+
+                        JSONArray arraysakit=obj.getJSONArray("sakit");
+                        for(int i=0;i<arraysakit.length();i++){
+                            JSONObject objsakit=arraysakit.getJSONObject(i);
+                            tl=new listtimeline();
+                            tl.setNama(namakar);
+                            tl.setAktivitas(" mengajukan sakit");
+                            tl.setTanggal(objsakit.getString("tanggal").substring(0,10));
+                            tl.setKeterangan("Pengajuan sakit pada tanggal "+objsakit.getString("tgl_sakit").substring(0,10)+" s/d "+objsakit.getString("akhir_sakit").substring(0,10)+" dengan "+ objsakit.getString("lama")+" lama sakit ");
+                            itemstl.add(tl);
+
+                            tl=new listtimeline();
+                            tl.setNama(namakar);
+                            tl.setAktivitas(" mulai sakit");
+                            tl.setTanggal(objsakit.getString("tgl_sakit").substring(0,10));
+                            tl.setKeterangan("Mulai sakit pada tanggal "+objsakit.getString("tgl_sakit").substring(0,10));
+                            itemstl.add(tl);
+
+                            tl=new listtimeline();
+                            tl.setNama(namakar);
+                            tl.setAktivitas(" sakit berakhir");
+                            tl.setTanggal(objsakit.getString("akhir_sakit").substring(0,10));
+                            tl.setKeterangan("Akhir sakit pada tanggal "+objsakit.getString("akhir_sakit").substring(0,10));
+                            itemstl.add(tl);
+                        }
+
+                        JSONArray arraydinas=obj.getJSONArray("dinas");
+                        for(int i=0;i<arraydinas.length();i++){
+                            JSONObject objdinas=arraydinas.getJSONObject(i);
+                            tl=new listtimeline();
+                            tl.setNama(namakar);
+                            tl.setAktivitas(" mengajukan dinas");
+                            tl.setTanggal(objdinas.getString("tanggal").substring(0,10));
+                            tl.setKeterangan("Pengajuan sakit pada tanggal "+objdinas.getString("tgl_dinas").substring(0,10)+" s/d "+objdinas.getString("akhir_dinas").substring(0,10)+" dengan "+ objdinas.getString("lama")+" lama dinas ");
+                            itemstl.add(tl);
+
+                            tl=new listtimeline();
+                            tl.setNama(namakar);
+                            tl.setAktivitas(" mulai dinas");
+                            tl.setTanggal(objdinas.getString("tgl_dinas").substring(0,10));
+                            tl.setKeterangan("Mulai dinas pada tanggal "+objdinas.getString("tgl_dinas").substring(0,10));
+                            itemstl.add(tl);
+
+                            tl=new listtimeline();
+                            tl.setNama(namakar);
+                            tl.setAktivitas(" akhir dinas");
+                            tl.setTanggal(objdinas.getString("akhir_dinas").substring(0,10));
+                            tl.setKeterangan("Akhir dinas pada tanggal "+objdinas.getString("akhir_dinas").substring(0,10));
+                            itemstl.add(tl);
+                        }
+                        Collections.sort(itemstl, new Comparator<listtimeline>() {
+                            @Override
+                            public int compare(listtimeline listtimeline, listtimeline t1) {
+                                //Log.e("ABSEN",""+listperingkatkaryawan.getAbsen().compareTo(t1.getAbsen()));
+
+                                return -listtimeline.getTanggal().compareTo(t1.getTanggal());
+
+                            }
+                        });
+                        Log.e("ITEMSTL",""+itemstl.size());
+                        if(itemstl.size()>0){
+                            timeline = new AdapterTimeline(viewkaryawan.this, itemstl, ItemAnimation.NONE);
+                            rvtimeline.setLayoutManager(new LinearLayoutManager(viewkaryawan.this));
+                            rvtimeline.setHasFixedSize(true);
+                            rvtimeline.setAdapter(timeline);
+                        }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+            }
+            /*
+            if(this.dialog.isShowing()){
+                dialog.dismiss();
+            }*/
+
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }
+
+    private class retriveketerangans extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        Context ctx;
+        JSONObject result = null ;
         ProgressDialog dialog ;
         String urldata;
         String keterangan="";
         //String passedid = "" ;
 
-        public retriveketerangan(Context context,String keterangan)
+        public retriveketerangans(Context context,String keterangan)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
             //dialog = new ProgressDialog(context);
@@ -526,8 +1067,14 @@ public class viewkaryawan extends AppCompatActivity {
             if(keterangan.equals("izin")){
                 urldata=generator.pengajuanizinkodeurl;
             }
-            else{
+            else if(keterangan.equals("sakit")){
                 urldata=generator.pengajuansakitkodeurl;
+            }
+            else if(keterangan.equals("cuti")){
+                urldata=generator.pengajuancutikodeurl;
+            }
+            else{
+                urldata=generator.pengajuandinaskodeurl;
             }
         }
 
@@ -624,9 +1171,118 @@ public class viewkaryawan extends AppCompatActivity {
                         Log.e(TAG, "data json result" + pengsarray.length());
                         String tempcall="",temp="";
                         String tempbulan="";
-                        int banyakizin=0, banyaksakit=0;
+                        int banyakizin=0, banyaksakit=0, banyakcuti=0, banyakdinas=0;
                         boolean ada;
+                        /*
+                        for(int i=0;i<pengsarray.length();i++){
+                            JSONObject obj = pengsarray.getJSONObject(i);
+                            if(!keterangan.equals("sakit")){
+                                if (obj.getString("status").equals("Diterima")) {
+                                    if(keterangan.equals("izin")){
+                                        ada=false;
+                                        String bulan = obj.getString("tgl_izin").substring(5, 7);
+                                        if(listizin.size()!=0){
+                                            for(int j=0;j<listizin.size();j++){
+                                                if(listizin.get(j).getBulan().equals(bulan)){
+                                                    listizin.get(j).setIzin(listizin.get(j).getIzin()+1);
+                                                }
 
+                                            }
+                                            if(!ada){
+                                                kar=new listkaryawan_izincutisakit();
+                                                kar.setBulan(bulan);
+                                                kar.setIzin(String.valueOf(obj.getString("lama")));
+                                                listizin.add(kar);
+                                            }
+                                        }
+                                        else{
+                                            kar=new listkaryawan_izincutisakit();
+                                            kar.setBulan(bulan);
+                                            kar.setIzin(String.valueOf(obj.getString("lama")));
+                                            listizin.add(kar);
+                                        }
+
+                                    }
+                                    else {
+                                        ada=false;
+                                        String bulan = obj.getString("mulai_berlaku").substring(5, 7);
+                                        if(listcuti.size()!=0){
+                                            for(int j=0;j<listcuti.size();j++){
+                                                if(listcuti.get(j).getBulan().equals(bulan)){
+                                                    listcuti.get(j).setCuti(listizin.get(j).getCuti()+1);
+                                                }
+
+                                            }
+                                            if(!ada){
+                                                kar=new listkaryawan_izincutisakit();
+                                                kar.setBulan(bulan);
+                                                kar.setCuti(String.valueOf(obj.getString("lama_cuti")));
+                                                listcuti.add(kar);
+                                            }
+                                        }
+                                        else{
+                                            kar=new listkaryawan_izincutisakit();
+                                            kar.setBulan(bulan);
+                                            kar.setCuti(String.valueOf(obj.getString("lama_cuti")));
+                                            listcuti.add(kar);
+                                        }
+                                    }
+                                }
+                            }else{
+                                ada=false;
+                                String bulan = obj.getString("tgl_sakit").substring(5, 7);
+                                if(listsakit.size()!=0){
+                                    for(int j=0;j<listsakit.size();j++){
+                                        if(listsakit.get(j).getBulan().equals(bulan)){
+                                            listsakit.get(j).setSakit(listsakit.get(j).getSakit()+1);
+                                        }
+
+                                    }
+                                    if(!ada){
+                                        kar=new listkaryawan_izincutisakit();
+                                        kar.setBulan(bulan);
+                                        kar.setSakit(String.valueOf(obj.getString("lama")));
+                                        listsakit.add(kar);
+                                    }
+                                }
+                                else{
+                                    kar=new listkaryawan_izincutisakit();
+                                    kar.setBulan(bulan);
+                                    kar.setSakit(String.valueOf(obj.getString("lama")));
+                                    listsakit.add(kar);
+                                }
+
+                            }
+                        }
+
+                        if(keterangan.equals("cuti")){
+                            int p=0;
+                            if(listizin.size()>=listsakit.size() && listizin.size()>=listcuti.size()){
+                                p=listizin.size();
+                            }
+                            else if(listsakit.size()>=listizin.size()){
+                                p=listsakit.size();
+                            }
+                            else{
+                                p=listcuti.size();
+                            }
+                            for (int i=0;i<p;i++){
+                                kar=new listkaryawan_izincutisakit();
+                                kar.setBulan();
+                                for(int j=0;j<listizin.size();j++)
+                                kar.setIzin(listizin.get(i));
+                            }
+                            kar=new listkaryawan_izincutisakit();
+                            kar.setBulan();
+                            for(int i=0;i<12;i++){
+                                if(listizin.get(i).getBulan()==String.valueOf(i+1)){
+                                    kar=new listkaryawan_izincutisakit();
+                                    kar.setBulan();
+                                }
+
+                            }
+
+                        }*/
                         /*
                         if(keterangan.equals("izin")){
                             listizin.add(""+pengsarray.length());
@@ -635,117 +1291,164 @@ public class viewkaryawan extends AppCompatActivity {
                             kar=new listkaryawan_izincutisakit();
                             kar.setIzin(listizin);
                         }*/
-                        for (int i = 0; i <pengsarray.length(); i++) {
+
+                        SimpleDateFormat parsed = new SimpleDateFormat("yyyy-MM");
+                        SimpleDateFormat parsed1 = new SimpleDateFormat("MMMM yyyy");
+                        Calendar cal = Calendar.getInstance();
+
+                        cal.add(Calendar.MONTH, -12);
+                        Log.e("Bulan ",parsed1.format(cal.getTime()));
+
+                        //cal.add(Calendar.MONTH, 1);
+                        //Log.e("Bulan ",parsed1.format(cal.getTime()));
+                        String dbulan="";
+                        /*
+                        for(int x=0;x<12;x++) {
+                            cal.add(Calendar.MONTH, 1);
+                            String dbulan = parsed1.format(cal.getTime());*/
+
+                        for (int i = 0; i < pengsarray.length(); i++) {
                             JSONObject obj = pengsarray.getJSONObject(i);
 
-                            if(keterangan.equals("izin")) {
-                                if (obj.getString("status").equals("Diterima")) {
-                                    String bulan = obj.getString("tgl_izin").substring(5, 7);
-                                    Log.e("Bulan", bulan);
-                                    if (i + 1 != pengsarray.length()) {
-                                        if (!tempbulan.equals(bulan)) {
-                                            if (tempbulan.equals("")) {
-                                                tempbulan = bulan;
-                                                kar = new listkaryawan_izincutisakit();
-                                                kar.setBulan(bulan);
-                                                banyakizin += Integer.parseInt(obj.getString("lama"));
-                                            } else {
-                                                tempbulan = bulan;
-                                                kar.setIzin(String.valueOf(banyakizin));
-                                                kar.setSakit(String.valueOf(0));
-                                                kar.setAbsen(String.valueOf(0));
-                                                items.add(kar);
-                                                banyakizin = 0;
-                                                kar = new listkaryawan_izincutisakit();
-                                                kar.setBulan(bulan);
-                                                banyakizin += Integer.parseInt(obj.getString("lama"));
-                                            }
-
-                                        } else if (tempbulan.equals(bulan)) {
-                                            banyakizin += Integer.parseInt(obj.getString("lama"));
-                                        }
-                                    } else {
-                                        if (!tempbulan.equals(bulan)) {
-                                            if (tempbulan.equals("")) {
-                                                kar = new listkaryawan_izincutisakit();
-                                                kar.setBulan(bulan);
-                                                banyakizin += Integer.parseInt(obj.getString("lama"));
-                                                kar.setIzin(String.valueOf(banyakizin));
-                                                kar.setSakit(String.valueOf(0));
-                                                kar.setAbsen(String.valueOf(0));
-                                                items.add(kar);
-                                                listizin.add(String.valueOf(banyakizin));
-                                            } else {
-                                                kar.setIzin(String.valueOf(banyakizin));
-                                                kar.setSakit(String.valueOf(0));
-                                                kar.setAbsen(String.valueOf(0));
-                                                items.add(kar);
-                                                listizin.add(String.valueOf(banyakizin));
-                                                kar = new listkaryawan_izincutisakit();
-                                                kar.setBulan(bulan);
-                                                kar.setIzin(obj.getString("lama"));
-                                                kar.setSakit(String.valueOf(0));
-                                                kar.setAbsen(String.valueOf(0));
-                                                items.add(kar);
-                                                listizin.add(String.valueOf(banyakizin));
-                                            }
-
-                                        } else if (tempbulan.equals(bulan)) {
-                                            banyakizin += Integer.parseInt(obj.getString("lama"));
-                                            kar.setIzin(String.valueOf(banyakizin));
-                                            kar.setSakit(String.valueOf(0));
-                                            kar.setAbsen(String.valueOf(0));
-                                            items.add(kar);
-                                            listizin.add(String.valueOf(banyakizin));
-                                        }
+                            if (keterangan.equals("izin")) {
+                                dbulan = parsed1.format(cal.getTime());
+                                String bulan = parsed1.format(parsed.parse(obj.getString("tgl_izin").substring(0, 7)));
+                                Log.e("DBulan", bulan + dbulan);
+                                int j=0;
+                                while(j<12){
+                                    cal.add(Calendar.MONTH, 1);
+                                    dbulan = parsed1.format(cal.getTime());
+                                    if(dbulan.compareTo(bulan)==-1){
+                                        kar = new listkaryawan_izincutisakit();
+                                        kar.setBulan(dbulan);
+                                        kar.setIzin(String.valueOf(0));
+                                        kar.setSakit(String.valueOf(0));
+                                        kar.setCuti(String.valueOf(0));
+                                        kar.setDinas(String.valueOf(0));
+                                        kar.setAbsen(String.valueOf(0));
+                                        items.add(kar);
+                                        Log.e("DBulan", "Berhasil"+dbulan.compareTo(bulan));
                                     }
-
+                                    else{
+                                        Log.e("DBulan", "T Berhasil"+dbulan.compareTo(bulan));
+                                    }
+                                    j++;
                                 }
-                            }
 
-                            else{
-                                ada=false;
-                                String bulan=obj.getString("tgl_sakit").substring(5,7);
-                                Log.e("Bulan",bulan);
+                                Log.e("Bulan", bulan);
                                 if (i + 1 != pengsarray.length()) {
                                     if (!tempbulan.equals(bulan)) {
                                         if (tempbulan.equals("")) {
                                             tempbulan = bulan;
-                                            if(items.size()==0){
+                                            kar = new listkaryawan_izincutisakit();
+                                            kar.setBulan(bulan);
+
+                                            banyakizin += Integer.parseInt(obj.getString("lama"));
+                                        } else {
+                                            tempbulan = bulan;
+                                            kar.setIzin(String.valueOf(banyakizin));
+                                            kar.setSakit(String.valueOf(0));
+                                            kar.setCuti(String.valueOf(0));
+                                            kar.setDinas(String.valueOf(0));
+                                            kar.setAbsen(String.valueOf(0));
+                                            items.add(kar);
+                                            banyakizin = 0;
+                                            kar = new listkaryawan_izincutisakit();
+                                            kar.setBulan(bulan);
+                                            banyakizin += Integer.parseInt(obj.getString("lama"));
+                                        }
+
+                                    } else if (tempbulan.equals(bulan)) {
+                                        banyakizin += Integer.parseInt(obj.getString("lama"));
+                                    }
+                                } else {
+                                    if (!tempbulan.equals(bulan)) {
+                                        if (tempbulan.equals("")) {
+                                            kar = new listkaryawan_izincutisakit();
+                                            kar.setBulan(bulan);
+                                            banyakizin += Integer.parseInt(obj.getString("lama"));
+                                            kar.setIzin(String.valueOf(banyakizin));
+                                            kar.setSakit(String.valueOf(0));
+                                            kar.setCuti(String.valueOf(0));
+                                            kar.setDinas(String.valueOf(0));
+                                            kar.setAbsen(String.valueOf(0));
+                                            items.add(kar);
+
+                                        } else {
+                                            kar.setIzin(String.valueOf(banyakizin));
+                                            kar.setSakit(String.valueOf(0));
+                                            kar.setCuti(String.valueOf(0));
+                                            kar.setDinas(String.valueOf(0));
+                                            kar.setAbsen(String.valueOf(0));
+                                            items.add(kar);
+
+                                            kar = new listkaryawan_izincutisakit();
+                                            kar.setBulan(bulan);
+                                            kar.setIzin(obj.getString("lama"));
+                                            kar.setSakit(String.valueOf(0));
+                                            kar.setCuti(String.valueOf(0));
+                                            kar.setDinas(String.valueOf(0));
+                                            kar.setAbsen(String.valueOf(0));
+                                            items.add(kar);
+
+                                        }
+
+                                    } else if (tempbulan.equals(bulan)) {
+                                        banyakizin += Integer.parseInt(obj.getString("lama"));
+                                        kar.setIzin(String.valueOf(banyakizin));
+                                        kar.setSakit(String.valueOf(0));
+                                        kar.setCuti(String.valueOf(0));
+                                        kar.setDinas(String.valueOf(0));
+                                        kar.setAbsen(String.valueOf(0));
+                                        items.add(kar);
+
+                                    }
+                                }
+                            } else if (keterangan.equals("sakit")) {
+                                ada = false;
+                                String bulan = obj.getString("tgl_sakit").substring(0, 7);
+                                Log.e("Bulan", bulan);
+                                if (i + 1 != pengsarray.length()) {
+                                    if (!tempbulan.equals(bulan)) {
+                                        if (tempbulan.equals("")) {
+                                            tempbulan = bulan;
+                                            if (items.size() == 0) {
                                                 kar = new listkaryawan_izincutisakit();
                                                 kar.setBulan(bulan);
-                                            }
-                                            else{
-                                                for(int j=0;j<items.size();j++) {
-                                                    if(items.get(j).getBulan().equals(bulan)){
-                                                        ada=true;
+                                            } else {
+                                                for (int j = 0; j < items.size(); j++) {
+                                                    if (items.get(j).getBulan().equals(bulan)) {
+                                                        ada = true;
                                                     }
                                                 }
-                                                if(!ada){
+                                                if (!ada) {
                                                     kar = new listkaryawan_izincutisakit();
                                                     kar.setBulan(bulan);
                                                 }
                                             }
-                                            banyaksakit+=Integer.parseInt(obj.getString("lama"));
+                                            banyaksakit += Integer.parseInt(obj.getString("lama"));
                                         } else {
 
                                             //kar.setIzin(String.valueOf(banyakizin));
-                                            if(items.size()==0){
+                                            if (items.size() == 0) {
                                                 kar.setIzin(String.valueOf(0));
                                                 kar.setSakit(String.valueOf(banyaksakit));
+                                                kar.setCuti(String.valueOf(0));
+                                                kar.setDinas(String.valueOf(0));
                                                 kar.setAbsen(String.valueOf(0));
                                                 items.add(kar);
-                                            }
-                                            else{
-                                                for(int j=0;j<items.size();j++) {
-                                                    if(items.get(j).getBulan().equals(bulan)){
+                                            } else {
+                                                for (int j = 0; j < items.size(); j++) {
+                                                    if (items.get(j).getBulan().equals(bulan)) {
                                                         items.get(j).setSakit(String.valueOf(banyaksakit));
-                                                        ada=true;
+                                                        ada = true;
                                                     }
                                                 }
-                                                if(!ada){
+                                                if (!ada) {
                                                     kar.setIzin(String.valueOf(0));
                                                     kar.setSakit(String.valueOf(banyaksakit));
+                                                    kar.setCuti(String.valueOf(0));
+                                                    kar.setDinas(String.valueOf(0));
                                                     kar.setAbsen(String.valueOf(0));
                                                     items.add(kar);
                                                 }
@@ -754,126 +1457,516 @@ public class viewkaryawan extends AppCompatActivity {
 
                                             tempbulan = bulan;
 
-                                            banyaksakit=0;
-                                            if(items.size()==0){
+                                            banyaksakit = 0;
+                                            if (items.size() == 0) {
                                                 kar = new listkaryawan_izincutisakit();
                                                 kar.setBulan(bulan);
-                                            }
-                                            else{
-                                                for(int j=0;j<items.size();j++) {
-                                                    if(items.get(j).getBulan().equals(bulan)){
-                                                        ada=true;
+                                            } else {
+                                                for (int j = 0; j < items.size(); j++) {
+                                                    if (items.get(j).getBulan().equals(bulan)) {
+                                                        ada = true;
                                                     }
                                                 }
-                                                if(!ada){
+                                                if (!ada) {
                                                     kar = new listkaryawan_izincutisakit();
                                                     kar.setBulan(bulan);
                                                 }
                                             }
-                                            banyaksakit+=Integer.parseInt(obj.getString("lama"));
+                                            banyaksakit += Integer.parseInt(obj.getString("lama"));
                                         }
 
                                     } else if (tempbulan.equals(bulan)) {
-                                        banyaksakit+=Integer.parseInt(obj.getString("lama"));
+                                        banyaksakit += Integer.parseInt(obj.getString("lama"));
                                     }
-                                }
-                                else {
+                                } else {
                                     if (!tempbulan.equals(bulan)) {
                                         if (tempbulan.equals("")) {
 
-                                            banyaksakit+=Integer.parseInt(obj.getString("lama"));
+                                            banyaksakit += Integer.parseInt(obj.getString("lama"));
 
-                                            if(items.size()==0){
-                                                kar=new listkaryawan_izincutisakit();
+                                            if (items.size() == 0) {
+                                                kar = new listkaryawan_izincutisakit();
                                                 kar.setBulan(bulan);
                                                 kar.setIzin(String.valueOf(0));
                                                 kar.setSakit(String.valueOf(banyaksakit));
+                                                kar.setCuti(String.valueOf(0));
+                                                kar.setDinas(String.valueOf(0));
                                                 kar.setAbsen(String.valueOf(0));
                                                 items.add(kar);
-                                            }
-                                            else{
-                                                for(int j=0;j<items.size();j++) {
-                                                    if(items.get(j).getBulan().equals(bulan)){
+                                            } else {
+                                                for (int j = 0; j < items.size(); j++) {
+                                                    if (items.get(j).getBulan().equals(bulan)) {
                                                         items.get(j).setSakit(String.valueOf(banyaksakit));
-                                                        ada=true;
+                                                        ada = true;
                                                     }
                                                 }
-                                                if(!ada){
-                                                    kar=new listkaryawan_izincutisakit();
+                                                if (!ada) {
+                                                    kar = new listkaryawan_izincutisakit();
                                                     kar.setBulan(bulan);
                                                     kar.setIzin(String.valueOf(0));
                                                     kar.setSakit(String.valueOf(banyaksakit));
+                                                    kar.setCuti(String.valueOf(0));
+                                                    kar.setDinas(String.valueOf(0));
                                                     kar.setAbsen(String.valueOf(0));
                                                     items.add(kar);
                                                 }
                                             }
                                         } else {
-                                            if(items.size()==0){
+                                            if (items.size() == 0) {
                                                 kar.setIzin(String.valueOf(0));
                                                 kar.setSakit(String.valueOf(banyaksakit));
+                                                kar.setCuti(String.valueOf(0));
+                                                kar.setDinas(String.valueOf(0));
                                                 kar.setAbsen(String.valueOf(0));
                                                 items.add(kar);
-                                            }
-                                            else{
-                                                for(int j=0;j<items.size();j++) {
-                                                    if(items.get(j).getBulan().equals(tempbulan)){
+                                            } else {
+                                                for (int j = 0; j < items.size(); j++) {
+                                                    if (items.get(j).getBulan().equals(tempbulan)) {
                                                         items.get(j).setSakit(String.valueOf(banyaksakit));
-                                                        ada=true;
+                                                        ada = true;
                                                     }
                                                 }
-                                                if(!ada){
+                                                if (!ada) {
                                                     kar.setIzin(String.valueOf(0));
                                                     kar.setSakit(String.valueOf(banyaksakit));
+                                                    kar.setCuti(String.valueOf(0));
+                                                    kar.setDinas(String.valueOf(0));
                                                     kar.setAbsen(String.valueOf(0));
                                                     items.add(kar);
                                                 }
                                             }
                                             tempbulan = bulan;
-                                            if(items.size()==0){
+                                            banyaksakit = 0;
+                                            banyaksakit += Integer.parseInt(obj.getString("lama"));
+                                            if (items.size() == 0) {
                                                 kar = new listkaryawan_izincutisakit();
                                                 kar.setBulan(bulan);
                                                 kar.setIzin(String.valueOf(0));
-                                                kar.setSakit(obj.getString("lama"));
+                                                kar.setSakit(String.valueOf(banyaksakit));
+                                                kar.setCuti(String.valueOf(0));
+                                                kar.setDinas(String.valueOf(0));
                                                 kar.setAbsen(String.valueOf(0));
-                                            }
-                                            else{
-                                                for(int j=0;j<items.size();j++) {
-                                                    if(items.get(j).getBulan().equals(bulan)){
-                                                        items.get(j).setSakit(obj.getString("lama"));
-                                                        ada=true;
+                                            } else {
+                                                for (int j = 0; j < items.size(); j++) {
+                                                    if (items.get(j).getBulan().equals(bulan)) {
+                                                        items.get(j).setSakit(String.valueOf(banyaksakit));
+                                                        ada = true;
                                                     }
                                                 }
-                                                if(!ada){
+                                                if (!ada) {
                                                     kar = new listkaryawan_izincutisakit();
                                                     kar.setBulan(bulan);
                                                     kar.setIzin(String.valueOf(0));
-                                                    kar.setSakit(obj.getString("lama"));
+                                                    kar.setSakit(String.valueOf(banyaksakit));
+                                                    kar.setCuti(String.valueOf(0));
+                                                    kar.setDinas(String.valueOf(0));
                                                     kar.setAbsen(String.valueOf(0));
                                                 }
                                             }
                                         }
 
                                     } else if (tempbulan.equals(bulan)) {
-                                        banyakizin+=Integer.parseInt(obj.getString("lama"));
+                                        banyaksakit += Integer.parseInt(obj.getString("lama"));
                                         //kar.setIzin(String.valueOf(banyaksakit));
                                         //kar.setSakit(String.valueOf(banyaksakit));
                                         //kar.setAbsen(String.valueOf(i));
-                                        if(items.size()==0){
+                                        if (items.size() == 0) {
                                             kar.setIzin(String.valueOf(0));
                                             kar.setSakit(String.valueOf(banyaksakit));
+                                            kar.setCuti(String.valueOf(0));
+                                            kar.setDinas(String.valueOf(0));
                                             kar.setAbsen(String.valueOf(0));
                                             items.add(kar);
-                                        }
-                                        else{
-                                            for(int j=0;j<items.size();j++) {
-                                                if(items.get(j).getBulan().equals(bulan)){
+                                        } else {
+                                            for (int j = 0; j < items.size(); j++) {
+                                                if (items.get(j).getBulan().equals(bulan)) {
                                                     items.get(j).setSakit(String.valueOf(banyaksakit));
-                                                    ada=true;
+                                                    ada = true;
                                                 }
                                             }
-                                            if(!ada){
+                                            if (!ada) {
                                                 kar.setIzin(String.valueOf(0));
                                                 kar.setSakit(String.valueOf(banyaksakit));
+                                                kar.setCuti(String.valueOf(0));
+                                                kar.setDinas(String.valueOf(0));
+                                                kar.setAbsen(String.valueOf(0));
+                                                items.add(kar);
+                                            }
+                                        }
+                                    }
+                                }
+                            } else if (keterangan.equals("cuti")) {
+                                ada = false;
+                                String bulan = obj.getString("mulai_berlaku").substring(0, 7);
+                                Log.e("Bulan", bulan);
+                                if (i + 1 != pengsarray.length()) {
+                                    if (!tempbulan.equals(bulan)) {
+                                        if (tempbulan.equals("")) {
+                                            tempbulan = bulan;
+                                            if (items.size() == 0) {
+                                                kar = new listkaryawan_izincutisakit();
+                                                kar.setBulan(bulan);
+                                            } else {
+                                                for (int j = 0; j < items.size(); j++) {
+                                                    if (items.get(j).getBulan().equals(bulan)) {
+                                                        ada = true;
+                                                    }
+                                                }
+                                                if (!ada) {
+                                                    kar = new listkaryawan_izincutisakit();
+                                                    kar.setBulan(bulan);
+                                                }
+                                            }
+                                            banyakcuti += Integer.parseInt(obj.getString("lama_cuti"));
+                                        } else {
+
+                                            //kar.setIzin(String.valueOf(banyakizin));
+                                            if (items.size() == 0) {
+                                                kar.setIzin(String.valueOf(0));
+                                                kar.setSakit(String.valueOf(0));
+                                                kar.setCuti(String.valueOf(banyakcuti));
+                                                kar.setDinas(String.valueOf(0));
+                                                kar.setAbsen(String.valueOf(0));
+                                                items.add(kar);
+                                            } else {
+                                                for (int j = 0; j < items.size(); j++) {
+                                                    if (items.get(j).getBulan().equals(bulan)) {
+                                                        items.get(j).setCuti(String.valueOf(banyakcuti));
+                                                        ada = true;
+                                                    }
+                                                }
+                                                if (!ada) {
+                                                    kar.setIzin(String.valueOf(0));
+                                                    kar.setSakit(String.valueOf(0));
+                                                    kar.setCuti(String.valueOf(banyakcuti));
+                                                    kar.setDinas(String.valueOf(0));
+                                                    kar.setAbsen(String.valueOf(0));
+                                                    items.add(kar);
+                                                }
+
+                                            }
+
+                                            tempbulan = bulan;
+
+                                            banyakcuti = 0;
+                                            if (items.size() == 0) {
+                                                kar = new listkaryawan_izincutisakit();
+                                                kar.setBulan(bulan);
+                                            } else {
+                                                for (int j = 0; j < items.size(); j++) {
+                                                    if (items.get(j).getBulan().equals(bulan)) {
+                                                        ada = true;
+                                                    }
+                                                }
+                                                if (!ada) {
+                                                    kar = new listkaryawan_izincutisakit();
+                                                    kar.setBulan(bulan);
+                                                }
+                                            }
+                                            banyakcuti += Integer.parseInt(obj.getString("lama_cuti"));
+                                        }
+
+                                    } else if (tempbulan.equals(bulan)) {
+                                        banyakcuti += Integer.parseInt(obj.getString("lama_cuti"));
+                                    }
+                                } else {
+                                    if (!tempbulan.equals(bulan)) {
+                                        if (tempbulan.equals("")) {
+
+                                            banyakcuti += Integer.parseInt(obj.getString("lama_cuti"));
+
+                                            if (items.size() == 0) {
+                                                kar = new listkaryawan_izincutisakit();
+                                                kar.setBulan(bulan);
+                                                kar.setIzin(String.valueOf(0));
+                                                kar.setSakit(String.valueOf(0));
+                                                kar.setCuti(String.valueOf(banyakcuti));
+                                                kar.setDinas(String.valueOf(0));
+                                                kar.setAbsen(String.valueOf(0));
+                                                items.add(kar);
+                                            } else {
+                                                for (int j = 0; j < items.size(); j++) {
+                                                    if (items.get(j).getBulan().equals(bulan)) {
+                                                        items.get(j).setCuti(String.valueOf(banyakcuti));
+                                                        ada = true;
+                                                    }
+                                                }
+                                                if (!ada) {
+                                                    kar = new listkaryawan_izincutisakit();
+                                                    kar.setBulan(bulan);
+                                                    kar.setIzin(String.valueOf(0));
+                                                    kar.setSakit(String.valueOf(0));
+                                                    kar.setCuti(String.valueOf(banyakcuti));
+                                                    kar.setDinas(String.valueOf(0));
+                                                    kar.setAbsen(String.valueOf(0));
+                                                    items.add(kar);
+                                                }
+                                            }
+                                        } else {
+                                            if (items.size() == 0) {
+                                                kar.setIzin(String.valueOf(0));
+                                                kar.setSakit(String.valueOf(0));
+                                                kar.setCuti(String.valueOf(banyakcuti));
+                                                kar.setDinas(String.valueOf(0));
+                                                kar.setAbsen(String.valueOf(0));
+                                                items.add(kar);
+                                            } else {
+                                                for (int j = 0; j < items.size(); j++) {
+                                                    if (items.get(j).getBulan().equals(tempbulan)) {
+                                                        items.get(j).setCuti(String.valueOf(banyakcuti));
+                                                        ada = true;
+                                                    }
+                                                }
+                                                if (!ada) {
+                                                    kar.setIzin(String.valueOf(0));
+                                                    kar.setSakit(String.valueOf(0));
+                                                    kar.setCuti(String.valueOf(banyakcuti));
+                                                    kar.setDinas(String.valueOf(0));
+                                                    kar.setAbsen(String.valueOf(0));
+                                                    items.add(kar);
+                                                }
+                                            }
+                                            tempbulan = bulan;
+                                            if (items.size() == 0) {
+                                                kar = new listkaryawan_izincutisakit();
+                                                kar.setBulan(bulan);
+                                                kar.setIzin(String.valueOf(0));
+                                                kar.setSakit(String.valueOf(0));
+                                                kar.setCuti(obj.getString("lama_cuti"));
+                                                kar.setDinas(String.valueOf(0));
+                                                kar.setAbsen(String.valueOf(0));
+                                            } else {
+                                                for (int j = 0; j < items.size(); j++) {
+                                                    if (items.get(j).getBulan().equals(bulan)) {
+                                                        items.get(j).setCuti(obj.getString("lama_cuti"));
+                                                        ada = true;
+                                                    }
+                                                }
+                                                if (!ada) {
+                                                    kar = new listkaryawan_izincutisakit();
+                                                    kar.setBulan(bulan);
+                                                    kar.setIzin(String.valueOf(0));
+                                                    kar.setSakit(String.valueOf(0));
+                                                    kar.setCuti(obj.getString("lama_cuti"));
+                                                    kar.setDinas(String.valueOf(0));
+                                                    kar.setAbsen(String.valueOf(0));
+                                                }
+                                            }
+                                        }
+
+                                    } else if (tempbulan.equals(bulan)) {
+                                        banyakcuti += Integer.parseInt(obj.getString("lama_cuti"));
+                                        //kar.setIzin(String.valueOf(banyaksakit));
+                                        //kar.setSakit(String.valueOf(banyaksakit));
+                                        //kar.setAbsen(String.valueOf(i));
+                                        if (items.size() == 0) {
+                                            kar.setIzin(String.valueOf(0));
+                                            kar.setSakit(String.valueOf(0));
+                                            kar.setCuti(String.valueOf(banyakcuti));
+                                            kar.setDinas(String.valueOf(0));
+                                            kar.setAbsen(String.valueOf(0));
+                                            items.add(kar);
+                                        } else {
+                                            for (int j = 0; j < items.size(); j++) {
+                                                if (items.get(j).getBulan().equals(bulan)) {
+                                                    items.get(j).setCuti(String.valueOf(banyakcuti));
+                                                    ada = true;
+                                                }
+                                            }
+                                            if (!ada) {
+                                                kar.setIzin(String.valueOf(0));
+                                                kar.setSakit(String.valueOf(0));
+                                                kar.setCuti(String.valueOf(banyakcuti));
+                                                kar.setDinas(String.valueOf(0));
+                                                kar.setAbsen(String.valueOf(0));
+                                                items.add(kar);
+                                            }
+                                        }
+                                    }
+                                }
+                            } else {
+                                ada = false;
+                                String bulan = obj.getString("tgl_dinas").substring(0, 7);
+                                Log.e("Bulan", bulan);
+                                if (i + 1 != pengsarray.length()) {
+                                    if (!tempbulan.equals(bulan)) {
+                                        if (tempbulan.equals("")) {
+                                            tempbulan = bulan;
+                                            if (items.size() == 0) {
+                                                kar = new listkaryawan_izincutisakit();
+                                                kar.setBulan(bulan);
+                                            } else {
+                                                for (int j = 0; j < items.size(); j++) {
+                                                    if (items.get(j).getBulan().equals(bulan)) {
+                                                        ada = true;
+                                                    }
+                                                }
+                                                if (!ada) {
+                                                    kar = new listkaryawan_izincutisakit();
+                                                    kar.setBulan(bulan);
+                                                }
+                                            }
+                                            banyakdinas += Integer.parseInt(obj.getString("lama"));
+                                        } else {
+
+                                            //kar.setIzin(String.valueOf(banyakizin));
+                                            if (items.size() == 0) {
+                                                kar.setIzin(String.valueOf(0));
+                                                kar.setSakit(String.valueOf(0));
+                                                kar.setCuti(String.valueOf(0));
+                                                kar.setDinas(String.valueOf(banyakdinas));
+                                                kar.setAbsen(String.valueOf(0));
+                                                items.add(kar);
+                                            } else {
+                                                for (int j = 0; j < items.size(); j++) {
+                                                    if (items.get(j).getBulan().equals(bulan)) {
+                                                        items.get(j).setDinas(String.valueOf(banyakdinas));
+                                                        ada = true;
+                                                    }
+                                                }
+                                                if (!ada) {
+                                                    kar.setIzin(String.valueOf(0));
+                                                    kar.setSakit(String.valueOf(0));
+                                                    kar.setCuti(String.valueOf(0));
+                                                    kar.setDinas(String.valueOf(banyakdinas));
+                                                    kar.setAbsen(String.valueOf(0));
+                                                    items.add(kar);
+                                                }
+
+                                            }
+
+                                            tempbulan = bulan;
+
+                                            banyakdinas = 0;
+                                            if (items.size() == 0) {
+                                                kar = new listkaryawan_izincutisakit();
+                                                kar.setBulan(bulan);
+                                            } else {
+                                                for (int j = 0; j < items.size(); j++) {
+                                                    if (items.get(j).getBulan().equals(bulan)) {
+                                                        ada = true;
+                                                    }
+                                                }
+                                                if (!ada) {
+                                                    kar = new listkaryawan_izincutisakit();
+                                                    kar.setBulan(bulan);
+                                                }
+                                            }
+                                            banyakdinas += Integer.parseInt(obj.getString("lama"));
+                                        }
+
+                                    } else if (tempbulan.equals(bulan)) {
+                                        banyakdinas += Integer.parseInt(obj.getString("lama"));
+                                    }
+                                } else {
+                                    if (!tempbulan.equals(bulan)) {
+                                        if (tempbulan.equals("")) {
+
+                                            banyakdinas += Integer.parseInt(obj.getString("lama"));
+
+                                            if (items.size() == 0) {
+                                                kar = new listkaryawan_izincutisakit();
+                                                kar.setBulan(bulan);
+                                                kar.setIzin(String.valueOf(0));
+                                                kar.setSakit(String.valueOf(0));
+                                                kar.setCuti(String.valueOf(0));
+                                                kar.setDinas(String.valueOf(banyakdinas));
+                                                kar.setAbsen(String.valueOf(0));
+                                                items.add(kar);
+                                            } else {
+                                                for (int j = 0; j < items.size(); j++) {
+                                                    if (items.get(j).getBulan().equals(bulan)) {
+                                                        items.get(j).setDinas(String.valueOf(banyakdinas));
+                                                        ada = true;
+                                                    }
+                                                }
+                                                if (!ada) {
+                                                    kar = new listkaryawan_izincutisakit();
+                                                    kar.setBulan(bulan);
+                                                    kar.setIzin(String.valueOf(0));
+                                                    kar.setSakit(String.valueOf(0));
+                                                    kar.setCuti(String.valueOf(0));
+                                                    kar.setDinas(String.valueOf(banyakdinas));
+                                                    kar.setAbsen(String.valueOf(0));
+                                                    items.add(kar);
+                                                }
+                                            }
+                                        } else {
+                                            if (items.size() == 0) {
+                                                kar.setIzin(String.valueOf(0));
+                                                kar.setSakit(String.valueOf(0));
+                                                kar.setCuti(String.valueOf(0));
+                                                kar.setDinas(String.valueOf(banyakdinas));
+                                                kar.setAbsen(String.valueOf(0));
+                                                items.add(kar);
+                                            } else {
+                                                for (int j = 0; j < items.size(); j++) {
+                                                    if (items.get(j).getBulan().equals(tempbulan)) {
+                                                        items.get(j).setDinas(String.valueOf(banyakdinas));
+                                                        ada = true;
+                                                    }
+                                                }
+                                                if (!ada) {
+                                                    kar.setIzin(String.valueOf(0));
+                                                    kar.setSakit(String.valueOf(0));
+                                                    kar.setCuti(String.valueOf(0));
+                                                    kar.setDinas(String.valueOf(banyakdinas));
+                                                    kar.setAbsen(String.valueOf(0));
+                                                    items.add(kar);
+                                                }
+                                            }
+                                            tempbulan = bulan;
+                                            if (items.size() == 0) {
+                                                kar = new listkaryawan_izincutisakit();
+                                                kar.setBulan(bulan);
+                                                kar.setIzin(String.valueOf(0));
+                                                kar.setSakit(String.valueOf(0));
+                                                kar.setCuti(String.valueOf(0));
+                                                kar.setDinas(obj.getString("lama"));
+                                                kar.setAbsen(String.valueOf(0));
+                                            } else {
+                                                for (int j = 0; j < items.size(); j++) {
+                                                    if (items.get(j).getBulan().equals(bulan)) {
+                                                        items.get(j).setDinas(obj.getString("lama"));
+                                                        ada = true;
+                                                    }
+                                                }
+                                                if (!ada) {
+                                                    kar = new listkaryawan_izincutisakit();
+                                                    kar.setBulan(bulan);
+                                                    kar.setIzin(String.valueOf(0));
+                                                    kar.setSakit(String.valueOf(0));
+                                                    kar.setCuti(String.valueOf(0));
+                                                    kar.setDinas(obj.getString("lama"));
+                                                    kar.setAbsen(String.valueOf(0));
+                                                }
+                                            }
+                                        }
+
+                                    } else if (tempbulan.equals(bulan)) {
+                                        banyakdinas += Integer.parseInt(obj.getString("lama"));
+                                        //kar.setIzin(String.valueOf(banyaksakit));
+                                        //kar.setSakit(String.valueOf(banyaksakit));
+                                        //kar.setAbsen(String.valueOf(i));
+                                        if (items.size() == 0) {
+                                            kar.setIzin(String.valueOf(0));
+                                            kar.setSakit(String.valueOf(0));
+                                            kar.setCuti(String.valueOf(0));
+                                            kar.setDinas(String.valueOf(banyakdinas));
+                                            kar.setAbsen(String.valueOf(0));
+                                            items.add(kar);
+                                        } else {
+                                            for (int j = 0; j < items.size(); j++) {
+                                                if (items.get(j).getBulan().equals(bulan)) {
+                                                    items.get(j).setDinas(String.valueOf(banyakdinas));
+                                                    ada = true;
+                                                }
+                                            }
+                                            if (!ada) {
+                                                kar.setIzin(String.valueOf(0));
+                                                kar.setSakit(String.valueOf(0));
+                                                kar.setCuti(String.valueOf(0));
+                                                kar.setDinas(String.valueOf(banyakdinas));
                                                 kar.setAbsen(String.valueOf(0));
                                                 items.add(kar);
                                             }
@@ -881,6 +1974,9 @@ public class viewkaryawan extends AppCompatActivity {
                                     }
                                 }
                             }
+                        }
+                        //}
+
 
                             /*
                             JSONObject obj = pengsarray.getJSONObject(i);
@@ -1010,9 +2106,9 @@ public class viewkaryawan extends AppCompatActivity {
                                 banyak++;
                             }
                             */
-                            //kar.setIzin();
+                        //kar.setIzin();
 
-                        }
+
                         Collections.sort(items, new Comparator<listkaryawan_izincutisakit>() {
                             @Override
                             public int compare(listkaryawan_izincutisakit listkaryawan_izincutisakit, listkaryawan_izincutisakit t1) {
@@ -1022,9 +2118,9 @@ public class viewkaryawan extends AppCompatActivity {
 
                             }
                         });
-                        if(keterangan.equals("sakit")) {
+                        if(keterangan.equals("dinas")) {
                             if(items.size()>0){
-                                lyt_tidakada.setVisibility(View.GONE);
+
                                 adapter = new Adapterviewkaryawan(viewkaryawan.this, items, ItemAnimation.LEFT_RIGHT);
                                 recyclerView.setLayoutManager(new LinearLayoutManager(viewkaryawan.this, LinearLayoutManager.HORIZONTAL, false));
                                 recyclerView.setAdapter(adapter);
@@ -1040,8 +2136,8 @@ public class viewkaryawan extends AppCompatActivity {
                             linear_view.addView(SubFragment);
                         }
                         else {*/
-                            //for(int i=0;i<pengsarray.length();i++){
-                                //final JSONObject obj = pengsarray.getJSONObject(i);
+                        //for(int i=0;i<pengsarray.length();i++){
+                        //final JSONObject obj = pengsarray.getJSONObject(i);
                         /*
                         ModelObject modelObject=new ModelObject();
                         List<String> layoutresid=new ArrayList<>();
@@ -1078,7 +2174,7 @@ public class viewkaryawan extends AppCompatActivity {
                         }
                         */
 
-                            //}
+                        //}
 
                         //}
                         /*
@@ -1120,59 +2216,5 @@ public class viewkaryawan extends AppCompatActivity {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
-
-    /*
-    private void setupViewPager(ViewPager pager){
-
-        ViewPagerAdapter adapter=new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(viewketerangankaryawan.newInstance("Januari"),"Januari");
-        adapter.addFragment(viewketerangankaryawan.newInstance("Februari"),"Februari");
-        adapter.addFragment(viewketerangankaryawan.newInstance("Maret"),"Maret");
-        adapter.addFragment(viewketerangankaryawan.newInstance("April"),"April");
-        adapter.addFragment(viewketerangankaryawan.newInstance("Mei"),"Mei");
-        adapter.addFragment(viewketerangankaryawan.newInstance("Juni"),"Juni");
-        adapter.addFragment(viewketerangankaryawan.newInstance("Juli"),"Juli");
-        pager.setAdapter(adapter);
-
-    }
-    */
-    /*
-    public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
-
-        // tab titles
-        private String[] tabTitles = new String[]{"Pengumuman", "Cek Gaji","Log Absensi","Pengajuan"};
-
-        public ExamplePagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        // overriding getPageTitle()
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return tabTitles[position];
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return new FragmentPengumuman();
-                case 1:
-                    return new FragmentCekGaji();
-                case 2:
-                    return new FragmentAbsensi();
-                case 3:
-                    return new FragmentPengajuan();
-                default:
-                    return null;
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return tabTitles.length;
-        }
-        // ...
-    }*/
 
 }

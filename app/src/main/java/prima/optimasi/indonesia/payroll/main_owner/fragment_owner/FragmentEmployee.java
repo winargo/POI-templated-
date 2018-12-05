@@ -96,7 +96,7 @@ public class FragmentEmployee extends Fragment{
 
     long selecteddate = 0L;
 
-    int nilaikabag=0,nilaikaryawan=0,nilaikehadiran=0,nilaiall = 0;
+    int nilaikabag=0,nilaikaryawan=0,nilaikehadiran=0,nilaiall = 0, nilainonaktif=0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -233,17 +233,27 @@ public class FragmentEmployee extends Fragment{
         refreshkabag.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-
-                if(mAdapterkabag!=null){
+                if(itemskaryawan==null){
+                    itemskaryawan  = new ArrayList<>();
+                }
+                else{
+                    itemskaryawan.clear();
+                }
+                if(itemskabag==null){
+                    itemskabag = new ArrayList<>();
+                }
+                else{
                     itemskabag.clear();
+                }
+                if(mAdapterkabag!=null){
                     mAdapterkabag.notifyDataSetChanged();
                 }
                 if(mAdapterkaryawan!=null){
-                    itemskaryawan.clear();
                     mAdapterkaryawan.notifyDataSetChanged();
                 }
 
                 nilaiall = 0;
+                nilainonaktif=0;
                 retrivekaryawanrefersh ref = new retrivekaryawanrefersh(getActivity());
                 ref.execute();
             }
@@ -252,16 +262,27 @@ public class FragmentEmployee extends Fragment{
         refreshkaryawan.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(mAdapterkaryawan!=null){
+                if(itemskaryawan==null){
+                    itemskaryawan  = new ArrayList<>();
+                }
+                else{
                     itemskaryawan.clear();
+                }
+                if(itemskabag==null){
+                    itemskabag = new ArrayList<>();
+                }
+                else{
+                    itemskabag.clear();
+                }
+                if(mAdapterkaryawan!=null){
                     mAdapterkaryawan.notifyDataSetChanged();
                 }
                 if(mAdapterkabag!=null){
-                    itemskabag.clear();
                     mAdapterkabag.notifyDataSetChanged();
                 }
 
                 nilaiall = 0;
+                nilainonaktif=0;
                 retrivekaryawanrefersh ref = new retrivekaryawanrefersh(getActivity());
                 ref.execute();
             }
@@ -464,7 +485,8 @@ public class FragmentEmployee extends Fragment{
 
                         for (int i = 0; i < pengsarray.length(); i++) {
                             JSONObject obj = pengsarray.getJSONObject(i);
-                            if(obj.getString("otoritas").equals("1")){
+                            if (obj.getString("status_kerja").equals("aktif")) {
+                                if (obj.getString("otoritas").equals("1")) {
                                 /*if(!tempcall.equals(obj.getString("otoritas"))){
                                     if(tempcall.equals("")){
                                         listkaryawan kar = new listkaryawan();
@@ -481,24 +503,24 @@ public class FragmentEmployee extends Fragment{
                                         items.add(kar);
                                     }
                                 }*/
-                                listkaryawan kar = new listkaryawan();
-                                kar.setSection(false);
-                                kar.setJabatan("Karyawan");
-                                kar.setIskar(obj.getString("id"));
-                                if (!obj.getString("foto").equals("")) {
-                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
-                                    Log.e(TAG, "image data" + kar.getImagelink());
-                                }
-                                else{
-                                    kar.setImagelink("");
-                                    Log.e(TAG, "image data" + kar.getImagelink());
-                                }
+                                    listkaryawan kar = new listkaryawan();
+                                    kar.setSection(false);
+                                    kar.setJabatan("Karyawan");
+                                    kar.setIskar(obj.getString("id"));
+                                    if (!obj.getString("foto").equals("")) {
+                                        kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                        Log.e(TAG, "image data" + kar.getImagelink());
+                                    } else {
+                                        kar.setImagelink("");
+                                        Log.e(TAG, "image data" + kar.getImagelink());
+                                    }
 
-                                kar.setNama(obj.getString("nama"));
-                                kar.setDesc(obj.getString("jabatan"));
-                                itemskaryawan.add(kar);
-                            }else if(obj.getString("otoritas").equals("2")){
-                                if(!tempcall.equals(obj.getString("otoritas"))){
+                                    kar.setNama(obj.getString("nama"));
+                                    kar.setDesc(obj.getString("jabatan"));
+                                    kar.setStatus(obj.getString("status_kerja"));
+                                    itemskaryawan.add(kar);
+                                } else if (obj.getString("otoritas").equals("2")) {
+                                    if (!tempcall.equals(obj.getString("otoritas"))) {
                                     /*if(tempcall.equals("")){
                                         listkaryawan kar = new listkaryawan();
                                         kar.setJabatan("Kepala Bagian");
@@ -513,24 +535,24 @@ public class FragmentEmployee extends Fragment{
                                         tempcall = obj.getString("otoritas");
                                         items.add(kar);
                                     }*/
-                                }
-                                listkaryawan kar = new listkaryawan();
-                                kar.setSection(false);
-                                kar.setJabatan("Kepala Bagian");
-                                kar.setIskar(obj.getString("id"));
-                                if (!obj.getString("foto").equals("")) {
-                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
-                                    Log.e(TAG, "image data" + kar.getImagelink());
-                                }
-                                else{
-                                    kar.setImagelink("");
-                                    Log.e(TAG, "image data" + kar.getImagelink());
-                                }
+                                    }
+                                    listkaryawan kar = new listkaryawan();
+                                    kar.setSection(false);
+                                    kar.setJabatan("Kepala Bagian");
+                                    kar.setIskar(obj.getString("id"));
+                                    if (!obj.getString("foto").equals("")) {
+                                        kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                        Log.e(TAG, "image data" + kar.getImagelink());
+                                    } else {
+                                        kar.setImagelink("");
+                                        Log.e(TAG, "image data" + kar.getImagelink());
+                                    }
 
-                                kar.setNama(obj.getString("nama"));
-                                kar.setDesc(obj.getString("jabatan"));
-                                itemskabag.add(kar);
-                            }else if(obj.getString("otoritas").equals("3")){
+                                    kar.setNama(obj.getString("nama"));
+                                    kar.setDesc(obj.getString("jabatan"));
+                                    kar.setStatus(obj.getString("status_kerja"));
+                                    itemskabag.add(kar);
+                                } else if (obj.getString("otoritas").equals("3")) {
                                 /*if(!tempcall.equals(obj.getString("otoritas"))){
                                     /*if(tempcall.equals("")){
                                         listkaryawan kar = new listkaryawan();
@@ -547,46 +569,52 @@ public class FragmentEmployee extends Fragment{
                                         items.add(kar);
                                     }
                                 }*/
-                                listkaryawan kar = new listkaryawan();
-                                kar.setSection(false);
-                                kar.setJabatan("HRD");
-                                kar.setIskar(obj.getString("id"));
-                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
-
-                                Log.e(TAG, "image data" + kar.getImagelink() );
-
-                                kar.setNama(obj.getString("nama"));
-                                kar.setDesc(obj.getString("jabatan"));
-                                itemskabag.add(kar);
-                            }
-                            else {
-                                listkaryawan kar = new listkaryawan();
-                                kar.setSection(false);
-                                kar.setJabatan("Karyawan");
-                                kar.setIskar(obj.getString("id"));
-                                if (!obj.getString("foto").equals("")) {
+                                    listkaryawan kar = new listkaryawan();
+                                    kar.setSection(false);
+                                    kar.setJabatan("HRD");
+                                    kar.setIskar(obj.getString("id"));
                                     kar.setImagelink(generator.profileurl + obj.getString("foto"));
+
                                     Log.e(TAG, "image data" + kar.getImagelink());
-                                }
-                                else{
-                                    kar.setImagelink("");
-                                    Log.e(TAG, "image data" + kar.getImagelink());
+
+                                    kar.setNama(obj.getString("nama"));
+                                    kar.setDesc(obj.getString("jabatan"));
+                                    kar.setStatus(obj.getString("status_kerja"));
+                                    itemskabag.add(kar);
+                                } else {
+                                    listkaryawan kar = new listkaryawan();
+                                    kar.setSection(false);
+                                    kar.setJabatan("Karyawan");
+                                    kar.setIskar(obj.getString("id"));
+                                    if (!obj.getString("foto").equals("")) {
+                                        kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                        Log.e(TAG, "image data" + kar.getImagelink());
+                                    } else {
+                                        kar.setImagelink("");
+                                        Log.e(TAG, "image data" + kar.getImagelink());
+                                    }
+
+                                    kar.setNama(obj.getString("nama"));
+                                    kar.setDesc(obj.getString("jabatan"));
+                                    kar.setStatus(obj.getString("status_kerja"));
+                                    itemskaryawan.add(kar);
                                 }
 
-                                kar.setNama(obj.getString("nama"));
-                                kar.setDesc(obj.getString("jabatan"));
-                                itemskaryawan.add(kar);
                             }
-
+                            else{
+                                nilainonaktif++;
+                            }
                         }
+
 
                         nilaikabag = itemskabag.size();
                         nilaikaryawan = itemskaryawan.size();
 
                         totalkaryawan.setText("Jumlah Karyawan : "+nilaikaryawan);
                         totalkabag.setText("Jumlah Kepala bagian : "+nilaikabag);
-
-                        nilaiall = itemskabag.size()+itemskaryawan.size();
+                        generator.bykkabag=totalkabag;
+                        generator.bykkar=totalkaryawan;
+                        nilaiall = itemskabag.size()+itemskaryawan.size()+nilainonaktif;
 
                         //mAdapter = new AdapterListSectioned(getActivity(), items, ItemAnimation.LEFT_RIGHT);
                         mAdapterkabag = new AdapterGridCaller(getActivity(), itemskabag,ItemAnimation.FADE_IN);
@@ -729,12 +757,7 @@ public class FragmentEmployee extends Fragment{
                 Log.e(TAG, "data json result" + result.toString());
                 if (result != null) {
                     try {
-                        if(itemskaryawan==null){
-                            itemskaryawan  = new ArrayList<>();
-                        }
-                        if(itemskabag==null){
-                            itemskabag = new ArrayList<>();
-                        }
+
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         JSONArray pengsarray = result.getJSONArray("rows");
 
@@ -742,7 +765,8 @@ public class FragmentEmployee extends Fragment{
 
                         for (int i = 0; i < pengsarray.length(); i++) {
                             JSONObject obj = pengsarray.getJSONObject(i);
-                            if(obj.getString("otoritas").equals("1")){
+                            if (obj.getString("status_kerja").equals("aktif")) {
+                                if (obj.getString("otoritas").equals("1")) {
                                 /*if(!tempcall.equals(obj.getString("otoritas"))){
                                     if(tempcall.equals("")){
                                         listkaryawan kar = new listkaryawan();
@@ -759,24 +783,24 @@ public class FragmentEmployee extends Fragment{
                                         items.add(kar);
                                     }
                                 }*/
-                                listkaryawan kar = new listkaryawan();
-                                kar.setSection(false);
-                                kar.setJabatan("Karyawan");
-                                kar.setIskar(obj.getString("id"));
-                                if (!obj.getString("foto").equals("")) {
-                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
-                                    Log.e(TAG, "image data" + kar.getImagelink());
-                                }
-                                else{
-                                    kar.setImagelink("");
-                                    Log.e(TAG, "image data" + kar.getImagelink());
-                                }
+                                    listkaryawan kar = new listkaryawan();
+                                    kar.setSection(false);
+                                    kar.setJabatan("Karyawan");
+                                    kar.setIskar(obj.getString("id"));
+                                    if (!obj.getString("foto").equals("")) {
+                                        kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                        Log.e(TAG, "image data" + kar.getImagelink());
+                                    } else {
+                                        kar.setImagelink("");
+                                        Log.e(TAG, "image data" + kar.getImagelink());
+                                    }
 
-                                kar.setNama(obj.getString("nama"));
-                                kar.setDesc(obj.getString("jabatan"));
-                                itemskaryawan.add(kar);
-                            }else if(obj.getString("otoritas").equals("2")){
-                                if(!tempcall.equals(obj.getString("otoritas"))){
+                                    kar.setNama(obj.getString("nama"));
+                                    kar.setDesc(obj.getString("jabatan"));
+                                    kar.setStatus(obj.getString("status_kerja"));
+                                    itemskaryawan.add(kar);
+                                } else if (obj.getString("otoritas").equals("2")) {
+                                    if (!tempcall.equals(obj.getString("otoritas"))) {
                                     /*if(tempcall.equals("")){
                                         listkaryawan kar = new listkaryawan();
                                         kar.setJabatan("Kepala Bagian");
@@ -791,24 +815,24 @@ public class FragmentEmployee extends Fragment{
                                         tempcall = obj.getString("otoritas");
                                         items.add(kar);
                                     }*/
-                                }
-                                listkaryawan kar = new listkaryawan();
-                                kar.setSection(false);
-                                kar.setJabatan("Kepala Bagian");
-                                kar.setIskar(obj.getString("id"));
-                                if (!obj.getString("foto").equals("")) {
-                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
-                                    Log.e(TAG, "image data" + kar.getImagelink());
-                                }
-                                else{
-                                    kar.setImagelink("");
-                                    Log.e(TAG, "image data" + kar.getImagelink());
-                                }
+                                    }
+                                    listkaryawan kar = new listkaryawan();
+                                    kar.setSection(false);
+                                    kar.setJabatan("Kepala Bagian");
+                                    kar.setIskar(obj.getString("id"));
+                                    if (!obj.getString("foto").equals("")) {
+                                        kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                        Log.e(TAG, "image data" + kar.getImagelink());
+                                    } else {
+                                        kar.setImagelink("");
+                                        Log.e(TAG, "image data" + kar.getImagelink());
+                                    }
 
-                                kar.setNama(obj.getString("nama"));
-                                kar.setDesc(obj.getString("jabatan"));
-                                itemskabag.add(kar);
-                            }else if(obj.getString("otoritas").equals("3")){
+                                    kar.setNama(obj.getString("nama"));
+                                    kar.setDesc(obj.getString("jabatan"));
+                                    kar.setStatus(obj.getString("status_kerja"));
+                                    itemskabag.add(kar);
+                                } else if (obj.getString("otoritas").equals("3")) {
                                 /*if(!tempcall.equals(obj.getString("otoritas"))){
                                     /*if(tempcall.equals("")){
                                         listkaryawan kar = new listkaryawan();
@@ -836,36 +860,36 @@ public class FragmentEmployee extends Fragment{
                                 kar.setNama(obj.getString("nama"));
                                 kar.setDesc(obj.getString("jabatan"));
                                 items.add(kar);*/
-                                listkaryawan kar = new listkaryawan();
-                                kar.setSection(false);
-                                kar.setJabatan("HRD");
-                                kar.setIskar(obj.getString("id"));
-                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
-
-                                Log.e(TAG, "image data" + kar.getImagelink() );
-
-                                kar.setNama(obj.getString("nama"));
-                                kar.setDesc(obj.getString("jabatan"));
-                                itemskabag.add(kar);
-                            }
-                            else {
-                                listkaryawan kar = new listkaryawan();
-                                kar.setSection(false);
-                                kar.setJabatan("Karyawan");
-                                kar.setIskar(obj.getString("id"));
-                                if (!obj.getString("foto").equals("")) {
+                                    listkaryawan kar = new listkaryawan();
+                                    kar.setSection(false);
+                                    kar.setJabatan("HRD");
+                                    kar.setIskar(obj.getString("id"));
                                     kar.setImagelink(generator.profileurl + obj.getString("foto"));
-                                    Log.e(TAG, "image data" + kar.getImagelink());
-                                }
-                                else{
-                                    kar.setImagelink("");
-                                    Log.e(TAG, "image data" + kar.getImagelink());
-                                }
 
-                                kar.setNama(obj.getString("nama"));
-                                kar.setDesc(obj.getString("jabatan"));
-                                itemskaryawan.add(kar);
-                            }
+                                    Log.e(TAG, "image data" + kar.getImagelink());
+
+                                    kar.setNama(obj.getString("nama"));
+                                    kar.setDesc(obj.getString("jabatan"));
+                                    kar.setStatus(obj.getString("status_kerja"));
+                                    itemskabag.add(kar);
+                                } else {
+                                    listkaryawan kar = new listkaryawan();
+                                    kar.setSection(false);
+                                    kar.setJabatan("Karyawan");
+                                    kar.setIskar(obj.getString("id"));
+                                    if (!obj.getString("foto").equals("")) {
+                                        kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                        Log.e(TAG, "image data" + kar.getImagelink());
+                                    } else {
+                                        kar.setImagelink("");
+                                        Log.e(TAG, "image data" + kar.getImagelink());
+                                    }
+
+                                    kar.setNama(obj.getString("nama"));
+                                    kar.setDesc(obj.getString("jabatan"));
+                                    kar.setStatus(obj.getString("status_kerja"));
+                                    itemskaryawan.add(kar);
+                                }
                             /*int sect_count = 0;
                             int sect_idx = 0;
                             List<String> months = DataGenerator.getStringsMonth(getActivity());
@@ -874,26 +898,31 @@ public class FragmentEmployee extends Fragment{
                                 sect_count = sect_count + 5;
                                 sect_idx++;
                             }*/
+                            }
+                            else{
+                                nilainonaktif++;
+                            }
 
                         }
 
                         //mAdapter = new AdapterListSectioned(getActivity(), items, ItemAnimation.LEFT_RIGHT);
 
-                        if(mAdapterkabag!=null){
-                            mAdapterkabag.notifyDataSetChanged();
-                        }
-                        if(mAdapterkaryawan!=null){
-                            mAdapterkaryawan.notifyDataSetChanged();
-                        }
+
 
                         nilaikabag = itemskabag.size();
                         nilaikaryawan = itemskaryawan.size();
 
                         totalkaryawan.setText("Jumlah Karyawan : "+nilaikaryawan);
                         totalkabag.setText("Jumlah Kepala bagian : "+nilaikabag);
-
-                        nilaiall = nilaikabag + nilaikaryawan;
-
+                        generator.bykkabag=totalkabag;
+                        generator.bykkar=totalkaryawan;
+                        nilaiall = nilaikabag + nilaikaryawan+nilainonaktif;
+                        if(mAdapterkabag!=null){
+                            mAdapterkabag.notifyDataSetChanged();
+                        }
+                        if(mAdapterkaryawan!=null){
+                            mAdapterkaryawan.notifyDataSetChanged();
+                        }
                         refreshkabag.setRefreshing(false);
                         refreshkaryawan.setRefreshing(false);
                         ((mainmenu_owner) getActivity()).closesearch();
@@ -924,6 +953,7 @@ public class FragmentEmployee extends Fragment{
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
+
     private class retriveabsensi extends AsyncTask<Void, Integer, String>
     {
         String response = "";

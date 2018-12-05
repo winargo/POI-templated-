@@ -48,6 +48,7 @@ import java.util.List;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import prima.optimasi.indonesia.payroll.universal.viewkaryawan_nonaktif;
 import qrcodescanner.QrCodeActivity;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -105,7 +106,8 @@ public class generator {
     public static String scanloginurl = "http://"+ generator.Server+":"+generator.port+"/loginScan";
     public static String sendtokenurl = "http://"+ generator.Server+":"+generator.port+"/postnotif";
     public static String listemployeeurl = "http://"+ generator.Server+":"+generator.port+"/karyawan";
-    public static String freezeemployeeurl = "http://"+ generator.Server+":"+generator.port+"/freeze";
+    public static String freezeemployeeurl = "http://"+ generator.Server+":"+generator.port+"/karyawan/freeze";
+    public static String unfreezeemployeeurl = "http://"+ generator.Server+":"+generator.port+"/karyawan/unfreeze";
     public static String calenderurl = "http://"+ generator.Server+":"+generator.port+"/calendar";
 
     public static String cutiurl="http://"+ generator.Server+":"+generator.port+"/laporan/cuti";
@@ -182,6 +184,14 @@ public class generator {
     public static String pengajuansakitkodeurl="http://"+ generator.Server+":"+generator.port+"/sakit/kode";
     public static String pengajuandinaskodeurl="http://"+ generator.Server+":"+generator.port+"/dinas/kode";
 
+    public static String getizinperbulanyurl="http://"+ generator.Server+":"+generator.port+"/izin/perbulan";
+    public static String getsakitperbulanyurl="http://"+ generator.Server+":"+generator.port+"/sakit/perbulan";
+    public static String getcutiperbulanyurl="http://"+ generator.Server+":"+generator.port+"/cuti/perbulan";
+    public static String getdinasperbulanyurl="http://"+ generator.Server+":"+generator.port+"/dinas/perbulan";
+    public static String gettelatperbulanyurl="http://"+ generator.Server+":"+generator.port+"/absensi/telat/perbulan";
+
+    public static String gettimelineyurl="http://"+ generator.Server+":"+generator.port+"/karyawan/timeline";
+
     public static String getdataizinbulananyurl="http://"+ generator.Server+":"+generator.port+"/izin/bulanan";
     public static String getdatasakitbulananyurl="http://"+ generator.Server+":"+generator.port+"/sakit/bulanan";
 
@@ -207,6 +217,7 @@ public class generator {
 
     public static int posisi=0, posisipengumuman=0;
 
+    public static TextView bykkar=null, bykkabag=null;
     public static Boolean isconnected(Context context){
         Boolean status = false;
 
@@ -940,6 +951,14 @@ public class generator {
         pengajuandinaskodeurl="http://"+ generator.Server+":"+generator.port+"/dinas/kode";
         getdataizinbulananyurl="http://"+ generator.Server+":"+generator.port+"/izin/bulanan";
         getdatasakitbulananyurl="http://"+ generator.Server+":"+generator.port+"/sakit/bulanan";
+        getizinperbulanyurl="http://"+ generator.Server+":"+generator.port+"/izin/perbulan";
+        getsakitperbulanyurl="http://"+ generator.Server+":"+generator.port+"/sakit/perbulan";
+        getcutiperbulanyurl="http://"+ generator.Server+":"+generator.port+"/cuti/perbulan";
+        getdinasperbulanyurl="http://"+ generator.Server+":"+generator.port+"/dinas/perbulan";
+        gettelatperbulanyurl="http://"+ generator.Server+":"+generator.port+"/absensi/telat/perbulan";
+        gettimelineyurl="http://"+ generator.Server+":"+generator.port+"/karyawan/timeline";
+        freezeemployeeurl = "http://"+ generator.Server+":"+generator.port+"/karyawan/freeze";
+        unfreezeemployeeurl = "http://"+ generator.Server+":"+generator.port+"/karyawan/unfreeze";
         kontrakkerjahabisurl="http://"+ generator.Server+":"+generator.port+"/kontrak/habis";
         kontrakkerja1bulanurl="http://"+ generator.Server+":"+generator.port+"/kontrak/1bulan";
         kontrakkerja2bulanurl="http://"+ generator.Server+":"+generator.port+"/kontrak/2bulan";

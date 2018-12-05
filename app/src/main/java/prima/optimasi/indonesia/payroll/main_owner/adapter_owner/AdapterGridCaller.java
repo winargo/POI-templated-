@@ -1,5 +1,6 @@
 package prima.optimasi.indonesia.payroll.main_owner.adapter_owner;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -9,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,8 +46,10 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
+import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentEmployee;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 import prima.optimasi.indonesia.payroll.universal.viewkaryawan;
+import prima.optimasi.indonesia.payroll.universal.viewkaryawan_nonaktif;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 
@@ -106,6 +110,7 @@ public class AdapterGridCaller extends RecyclerView.Adapter<RecyclerView.ViewHol
         final listkaryawan obj = itemsfilter.get(position);
         if (holder instanceof OriginalViewHolder) {
             OriginalViewHolder view = (OriginalViewHolder) holder;
+
             view.name.setText(obj.getNama());
             view.brief.setText(obj.getDesc() + " - " + obj.getJabatan());
             if(obj.getImagelink().equals("")){
@@ -141,38 +146,71 @@ public class AdapterGridCaller extends RecyclerView.Adapter<RecyclerView.ViewHol
                     public boolean onLongClick(View v) {
                         PopupMenu popup = new PopupMenu(ctx, view.lyt_parent);
                         //inflating menu from xml resource
-                        popup.inflate(R.menu.menu_freeze);
+                        if (obj.getStatus().equals("aktif")) {
+                            popup.inflate(R.menu.menu_freeze);
+                            //adding click listener
+                            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                @Override
+                                public boolean onMenuItemClick(MenuItem item) {
+                                    switch (item.getItemId()) {
+                                        case R.id.action_freeze:
+                                            AlertDialog dialog = new AlertDialog.Builder(ctx).setTitle("Freeze Karyawan").setMessage("Apakah anda yakin ingin membekukan karyawan, karyawan tidak dapat melakukan absensi").setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    //dialog.dismiss();
+                                                    retrivefreeze freeze = new retrivefreeze(ctx, obj.getIskar(), obj.getStatus(),obj.getNama(), obj.getJabatan());
+                                                    freeze.execute();
+                                                }
+                                            }).setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                }
+                                            }).show();
 
-                        //adding click listener
-                        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                            @Override
-                            public boolean onMenuItemClick(MenuItem item) {
-                                switch (item.getItemId()) {
-                                    case R.id.action_freeze:
-                                        AlertDialog dialog = new AlertDialog.Builder(ctx).setTitle("Freeze Karyawan").setMessage("Apakah anda yakin ingin membekukan karyawan").setPositiveButton("Ya", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.dismiss();
-                                                //retrivefreeze freeze=new retrivefreeze(ctx,obj.getIskar());
-                                                //freeze.execute();
-                                            }
-                                        }).setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.dismiss();
-                                            }
-                                        }).show();
-
-                                        return true;
-                                    default:
-                                        return false;
+                                            return true;
+                                        default:
+                                            return false;
+                                    }
                                 }
-                            }
-                        });
-                        //displaying the popup
-                        popup.show();
-                        return true;
+                            });
+                            //displaying the popup
+                            popup.show();
+                            return true;
+                        }
+                        else {
+                            popup.inflate(R.menu.menu_unfreeze);
+                            //adding click listener
+                            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                                @Override
+                                public boolean onMenuItemClick(MenuItem item) {
+                                    switch (item.getItemId()) {
+                                        case R.id.action_unfreeze:
+                                            AlertDialog dialog = new AlertDialog.Builder(ctx).setTitle("Unfreeze Karyawan").setMessage("Apakah anda yakin ingin mengaktifkan karyawan kembali").setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    //dialog.dismiss();
+                                                    retrivefreeze freeze = new retrivefreeze(ctx, obj.getIskar(), obj.getStatus(), obj.getNama(), obj.getJabatan());
+                                                    freeze.execute();
+                                                }
+                                            }).setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                }
+                                            }).show();
+                                            return true;
+                                        default:
+                                            return false;
+                                    }
+                                }
+                            });
+                            //displaying the popup
+                            popup.show();
+                            return true;
+                        }
                     }
+
                 });
             }
             setAnimation(view.itemView, position);
@@ -187,20 +225,28 @@ public class AdapterGridCaller extends RecyclerView.Adapter<RecyclerView.ViewHol
         SharedPreferences prefs ;
         JSONObject result = null ;
         ProgressDialog dialog ;
-        String urldata = generator.deletepengumumanurl;
+        String urldata;
         String id = "";
-        View snake = null;
-        View parent = null;
+        String status="";
+        String nama="";
+        String jabatan="";
 
-        public retrivefreeze(Context context, String id)
+        public retrivefreeze(Context context, String id, String status, String nama, String jabatan)
         {
-            this.snake = snake;
-            this.parent = parent;
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
             dialog = new ProgressDialog(context);
             this.username = generator.username;
             this.password = generator.password;
             this.id = id ;
+            this.status=status;
+            this.nama=nama;
+            this.jabatan=jabatan;
+            if(status.equals("aktif")){
+                urldata=generator.freezeemployeeurl;
+            }
+            else {
+                urldata=generator.unfreezeemployeeurl;
+            }
         }
 
         String TAG = getClass().getSimpleName();
@@ -226,12 +272,11 @@ public class AdapterGridCaller extends RecyclerView.Adapter<RecyclerView.ViewHol
 
                     RequestBody body= new FormBody.Builder()
                             .add("id",id)
-                            .add("status_kerja","non_aktif")
                             .build();
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
-                            .post(body)
+                            .put(body)
                             .url(urldata)
                             .build();
                     Response responses = null;
@@ -293,10 +338,66 @@ public class AdapterGridCaller extends RecyclerView.Adapter<RecyclerView.ViewHol
                 if (result != null) {
                     try {
                         if(result.getString("status").equals("true")){
-                            Toast.makeText(ctx, "Berhasil membekukan karyawan", Toast.LENGTH_SHORT).show();
+                            if(status.equals("aktif")) {
+                                //HOLD FILTERS WE FIND
+                                List<listkaryawan> foundFilters = new ArrayList<>();
+
+                                String galaxy;
+
+                                //ITERATE CURRENT LIST
+                                for (int i = 0; i < items.size(); i++) {
+                                    galaxy = items.get(i).getNama();
+
+                                    //SEARCH
+                                    if (!galaxy.toUpperCase().contains(nama)) {
+                                        //ADD IF FOUND
+                                        foundFilters.add(items.get(i));
+                                    }
+                                }
+                                setItems((List<listkaryawan>) foundFilters);
+
+                                if(jabatan.equals("Karyawan")){
+                                    generator.bykkar.setText("Jumlah Karyawan : "+foundFilters.size());
+                                }
+                                else{
+                                    generator.bykkabag.setText("Jumlah Kepala bagian : "+foundFilters.size());
+                                }
+
+                                notifyDataSetChanged();
+
+                                Toast.makeText(ctx, "Berhasil membekukan karyawan", Toast.LENGTH_SHORT).show();
+                            }
+                            else{
+                                //HOLD FILTERS WE FIND
+                                List<listkaryawan> foundFilters = new ArrayList<>();
+
+                                String galaxy;
+
+                                //ITERATE CURRENT LIST
+                                for (int i = 0; i < items.size(); i++) {
+                                    galaxy = items.get(i).getNama();
+
+                                    //SEARCH
+                                    if (!galaxy.toUpperCase().contains(nama)) {
+                                        //ADD IF FOUND
+                                        foundFilters.add(items.get(i));
+                                    }
+                                }
+                                setItems((List<listkaryawan>) foundFilters);
+                                notifyDataSetChanged();
+
+                                Toast.makeText(ctx, "Berhasil mengaktifkan karyawan", Toast.LENGTH_SHORT).show();
+
+                            }
                         }
                         else {
-                            Toast.makeText(ctx, "Gagal bekukan, cek koneksi", Toast.LENGTH_SHORT).show();
+                            if(status.equals("aktif")) {
+                                Toast.makeText(ctx, "Gagal bekukan, cek koneksi", Toast.LENGTH_SHORT).show();
+                            }
+                            else{
+                                Toast.makeText(ctx, "Gagal aktifkan, cek koneksi", Toast.LENGTH_SHORT).show();
+
+                            }
                         }
 
                     } catch (JSONException e) {
@@ -309,12 +410,12 @@ public class AdapterGridCaller extends RecyclerView.Adapter<RecyclerView.ViewHol
 
 
                 } else {
-                    Snackbar.make(snake, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                    Toast.makeText(ctx, "Terjadi Kesalahan Koneksi", Toast.LENGTH_SHORT).show();
                 }
             }catch (Exception E){
                 E.printStackTrace();
                 Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
-                Snackbar.make(snake,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
+                //Snackbar.make(snake,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
             }
 
             if(this.dialog.isShowing()){
