@@ -612,8 +612,6 @@ public class FragmentEmployee extends Fragment{
 
                         totalkaryawan.setText("Jumlah Karyawan : "+nilaikaryawan);
                         totalkabag.setText("Jumlah Kepala bagian : "+nilaikabag);
-                        generator.bykkabag=totalkabag;
-                        generator.bykkar=totalkaryawan;
                         nilaiall = itemskabag.size()+itemskaryawan.size()+nilainonaktif;
 
                         //mAdapter = new AdapterListSectioned(getActivity(), items, ItemAnimation.LEFT_RIGHT);
@@ -914,8 +912,6 @@ public class FragmentEmployee extends Fragment{
 
                         totalkaryawan.setText("Jumlah Karyawan : "+nilaikaryawan);
                         totalkabag.setText("Jumlah Kepala bagian : "+nilaikabag);
-                        generator.bykkabag=totalkabag;
-                        generator.bykkar=totalkaryawan;
                         nilaiall = nilaikabag + nilaikaryawan+nilainonaktif;
                         if(mAdapterkabag!=null){
                             mAdapterkabag.notifyDataSetChanged();
@@ -2115,6 +2111,56 @@ public class FragmentEmployee extends Fragment{
                 generator.posisi=0;
                 ((mainmenu_owner) getActivity()).closesearch();
             }
+        }
+    }
+
+    public void refkaryawan(String jabatan){
+        if(!jabatan.equals("Karyawan")) {
+            if (itemskaryawan == null) {
+                itemskaryawan = new ArrayList<>();
+            } else {
+                itemskaryawan.clear();
+            }
+            if (itemskabag == null) {
+                itemskabag = new ArrayList<>();
+            } else {
+                itemskabag.clear();
+            }
+            if (mAdapterkabag != null) {
+                mAdapterkabag.notifyDataSetChanged();
+            }
+            if (mAdapterkaryawan != null) {
+                mAdapterkaryawan.notifyDataSetChanged();
+            }
+
+            nilaiall = 0;
+            nilainonaktif = 0;
+            retrivekaryawanrefersh ref = new retrivekaryawanrefersh(getActivity());
+            ref.execute();
+
+        }
+        else {
+            if (itemskaryawan == null) {
+                itemskaryawan = new ArrayList<>();
+            } else {
+                itemskaryawan.clear();
+            }
+            if (itemskabag == null) {
+                itemskabag = new ArrayList<>();
+            } else {
+                itemskabag.clear();
+            }
+            if (mAdapterkaryawan != null) {
+                mAdapterkaryawan.notifyDataSetChanged();
+            }
+            if (mAdapterkabag != null) {
+                mAdapterkabag.notifyDataSetChanged();
+            }
+
+            nilaiall = 0;
+            nilainonaktif = 0;
+            retrivekaryawanrefersh ref = new retrivekaryawanrefersh(getActivity());
+            ref.execute();
         }
     }
 }

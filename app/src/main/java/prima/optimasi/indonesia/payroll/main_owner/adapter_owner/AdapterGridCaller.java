@@ -339,35 +339,11 @@ public class AdapterGridCaller extends RecyclerView.Adapter<RecyclerView.ViewHol
                     try {
                         if(result.getString("status").equals("true")){
                             if(status.equals("aktif")) {
-                                //HOLD FILTERS WE FIND
-                                List<listkaryawan> foundFilters = new ArrayList<>();
-
-                                String galaxy;
-
-                                //ITERATE CURRENT LIST
-                                for (int i = 0; i < items.size(); i++) {
-                                    galaxy = items.get(i).getNama();
-
-                                    //SEARCH
-                                    if (!galaxy.toUpperCase().contains(nama)) {
-                                        //ADD IF FOUND
-                                        foundFilters.add(items.get(i));
-                                    }
-                                }
-                                setItems((List<listkaryawan>) foundFilters);
-
-                                if(jabatan.equals("Karyawan")){
-                                    generator.bykkar.setText("Jumlah Karyawan : "+foundFilters.size());
-                                }
-                                else{
-                                    generator.bykkabag.setText("Jumlah Kepala bagian : "+foundFilters.size());
-                                }
-
-                                notifyDataSetChanged();
-
+                                generator.employee.refkaryawan(jabatan);
                                 Toast.makeText(ctx, "Berhasil membekukan karyawan", Toast.LENGTH_SHORT).show();
                             }
                             else{
+
                                 //HOLD FILTERS WE FIND
                                 List<listkaryawan> foundFilters = new ArrayList<>();
 
@@ -378,14 +354,14 @@ public class AdapterGridCaller extends RecyclerView.Adapter<RecyclerView.ViewHol
                                     galaxy = items.get(i).getNama();
 
                                     //SEARCH
-                                    if (!galaxy.toUpperCase().contains(nama)) {
+                                    if (!galaxy.toUpperCase().contains(nama.toUpperCase())) {
                                         //ADD IF FOUND
                                         foundFilters.add(items.get(i));
                                     }
                                 }
                                 setItems((List<listkaryawan>) foundFilters);
                                 notifyDataSetChanged();
-
+                                generator.employee.refkaryawan(jabatan);
                                 Toast.makeText(ctx, "Berhasil mengaktifkan karyawan", Toast.LENGTH_SHORT).show();
 
                             }

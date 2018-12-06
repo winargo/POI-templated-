@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -221,49 +222,58 @@ public class owner_pinjaman extends AppCompatActivity {
                         String tempcall = "";
                         for (int i = 0; i < pengsarray.length(); i++) {
                             JSONObject obj = pengsarray.getJSONObject(i);
-                            if(!tempcall.equals(obj.getString("tanggal").substring(0,10))){
-                                if(tempcall.equals("")){
-                                    datapinjaman kar = new datapinjaman();
-                                    kar.setDatatgl(obj.getString("tanggal").substring(0,10));
-                                    kar.setIssection(true);
-                                    tempcall = obj.getString("tanggal").substring(0,10);
-                                    items.add(kar);
+                            Date tanggal=format.parse(obj.getString("tanggal"));
+                            Date daritanggal=format.parse(getIntent().getStringExtra("tanggal_masuk"));
+                            Date sampaitanggal=format.parse(getIntent().getStringExtra("tanggal_keluar"));
+                            Log.e("Tanggal",""+tanggal);
+                            Log.e("Tanggal",""+daritanggal);
+                            Log.e("Tanggal",""+sampaitanggal);
+                            Log.e("Compare1",""+daritanggal.compareTo(tanggal));
+                            Log.e("Compare2",""+sampaitanggal.compareTo(tanggal));
+                            if(daritanggal.compareTo(tanggal)<=0 && sampaitanggal.compareTo(tanggal)>=0) {
+                                if (!tempcall.equals(obj.getString("tanggal").substring(0, 10))) {
+                                    if (tempcall.equals("")) {
+                                        datapinjaman kar = new datapinjaman();
+                                        kar.setDatatgl(obj.getString("tanggal").substring(0, 10));
+                                        kar.setIssection(true);
+                                        tempcall = obj.getString("tanggal").substring(0, 10);
+                                        items.add(kar);
+                                    } else {
+                                        datapinjaman kar = new datapinjaman();
+                                        kar.setDatatgl(obj.getString("tanggal").substring(0, 10));
+                                        kar.setIssection(true);
+                                        tempcall = obj.getString("tanggal").substring(0, 10);
+                                        items.add(kar);
+                                    }
                                 }
-                                else{
-                                    datapinjaman kar = new datapinjaman();
-                                    kar.setDatatgl(obj.getString("tanggal").substring(0,10));
-                                    kar.setIssection(true);
-                                    tempcall = obj.getString("tanggal").substring(0,10);
-                                    items.add(kar);
+                                datapinjaman kar = new datapinjaman();
+                                kar.setIssection(false);
+                                //kar.setIskar(obj.getString("id"));
+                                kar.setImageurl(generator.profileurl + obj.getString("foto"));
+
+                                Log.e(TAG, "image data" + kar.getImageurl());
+
+                                if (!obj.getString("status").equals("Ditolak")) {
+                                    bayar = bayar + Double.parseDouble(obj.getString("bayar"));
+                                    pinjam = pinjam + Double.parseDouble(obj.getString("jumlah"));
+                                    sisa = sisa + Double.parseDouble(obj.getString("sisa"));
                                 }
+
+                                kar.setNama(obj.getString("nama"));
+                                kar.setPinjaman(obj.getString("jumlah"));
+                                kar.setBayar(obj.getString("bayar"));
+                                kar.setSisa(obj.getString("sisa"));
+                                kar.setJabatan(obj.getString("jabatan"));
+                                kar.setImageurl(generator.profileurl + obj.getString("foto"));
+
+                                SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+
+                                SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
+                                kar.setStatus(obj.getString("status"));
+
+                                //kar.setJabatan(obj.getString("jabatan"));
+                                items.add(kar);
                             }
-                            datapinjaman kar = new datapinjaman();
-                            kar.setIssection(false);
-                            //kar.setIskar(obj.getString("id"));
-                            kar.setImageurl(generator.profileurl+obj.getString("foto"));
-
-                            Log.e(TAG, "image data" + kar.getImageurl() );
-
-                            if(!obj.getString("status").equals("Ditolak")) {
-                                bayar = bayar + Double.parseDouble(obj.getString("bayar"));
-                                pinjam = pinjam + Double.parseDouble(obj.getString("jumlah"));
-                                sisa = sisa + Double.parseDouble(obj.getString("sisa"));
-                            }
-
-                            kar.setNama(obj.getString("nama"));
-                            kar.setPinjaman(obj.getString("jumlah"));
-                            kar.setBayar(obj.getString("bayar"));
-                            kar.setSisa(obj.getString("sisa"));
-                            kar.setJabatan(obj.getString("jabatan"));
-                            kar.setImageurl(generator.profileurl+obj.getString("foto"));
-
-                            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-
-                            SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
-                            kar.setStatus(obj.getString("status"));
-                            
-                            //kar.setJabatan(obj.getString("jabatan"));
-                            items.add(kar);
                             /*int sect_count = 0;
                             int sect_idx = 0;
                             List<String> months = DataGenerator.getStringsMonth(getActivity());

@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -65,8 +66,8 @@ public class owner_izin extends AppCompatActivity {
 
         parent_view = findViewById(R.id.report_snackbar);
 
-        retrivecuti cuti = new retrivecuti(this,pd);
-        cuti.execute();
+        retriveizin izin = new retriveizin(this,pd);
+        izin.execute();
 
     }
 
@@ -88,7 +89,7 @@ public class owner_izin extends AppCompatActivity {
     }
 
 
-    private class retrivecuti extends AsyncTask<Void, Integer, String>
+    private class retriveizin extends AsyncTask<Void, Integer, String>
     {
         String response = "";
         String error = "";
@@ -100,7 +101,7 @@ public class owner_izin extends AppCompatActivity {
         String urldata = generator.izinurl;
         String passeddata = "" ;
 
-        public retrivecuti(Context context,ProgressDialog pede)
+        public retriveizin(Context context,ProgressDialog pede)
         {
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
             dialog = pede;
@@ -198,44 +199,53 @@ public class owner_izin extends AppCompatActivity {
 
                         for (int i = 0; i < pengsarray.length(); i++) {
                             JSONObject obj = pengsarray.getJSONObject(i);
-                            if(!tempcall.equals(obj.getString("tanggal").substring(0,10))){
-                                if(tempcall.equals("")){
-                                    datacuti kar = new datacuti();
-                                    kar.setDatatgl(obj.getString("tanggal").substring(0,10));
-                                    kar.setIssection(true);
-                                    tempcall = obj.getString("tanggal").substring(0,10);
-                                    items.add(kar);
+                            Date tanggal=format.parse(obj.getString("tanggal"));
+                            Date daritanggal=format.parse(getIntent().getStringExtra("tanggal_masuk"));
+                            Date sampaitanggal=format.parse(getIntent().getStringExtra("tanggal_keluar"));
+                            Log.e("Tanggal",""+tanggal);
+                            Log.e("Tanggal",""+daritanggal);
+                            Log.e("Tanggal",""+sampaitanggal);
+                            Log.e("Compare1",""+daritanggal.compareTo(tanggal));
+                            Log.e("Compare2",""+sampaitanggal.compareTo(tanggal));
+                            if(daritanggal.compareTo(tanggal)<=0 && sampaitanggal.compareTo(tanggal)>=0) {
+                                if (!tempcall.equals(obj.getString("tanggal").substring(0, 10))) {
+                                    if (tempcall.equals("")) {
+                                        datacuti kar = new datacuti();
+                                        kar.setDatatgl(obj.getString("tanggal").substring(0, 10));
+                                        kar.setIssection(true);
+                                        tempcall = obj.getString("tanggal").substring(0, 10);
+                                        items.add(kar);
+                                    } else {
+                                        datacuti kar = new datacuti();
+                                        kar.setDatatgl(obj.getString("tanggal").substring(0, 10));
+                                        kar.setIssection(true);
+                                        tempcall = obj.getString("tanggal").substring(0, 10);
+                                        items.add(kar);
+                                    }
                                 }
-                                else{
-                                    datacuti kar = new datacuti();
-                                    kar.setDatatgl(obj.getString("tanggal").substring(0,10));
-                                    kar.setIssection(true);
-                                    tempcall = obj.getString("tanggal").substring(0,10);
-                                    items.add(kar);
-                                }
-                            }
-                            datacuti kar = new datacuti();
-                            kar.setIssection(false);
-                            //kar.setIskar(obj.getString("id"));
-                            kar.setImageurl(generator.profileurl+obj.getString("foto"));
 
-                            Log.e(TAG, "image data" + kar.getImageurl() );
+                                datacuti kar = new datacuti();
+                                kar.setIssection(false);
+                                //kar.setIskar(obj.getString("id"));
+                                kar.setImageurl(generator.profileurl + obj.getString("foto"));
 
-                            kar.setNama(obj.getString("nama"));
-                            kar.setJabatan(obj.getString("jabatan"));
-                            kar.setImageurl(generator.profileurl+obj.getString("foto"));
+                                Log.e(TAG, "image data" + kar.getImageurl());
 
-                            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                                kar.setNama(obj.getString("nama"));
+                                kar.setJabatan(obj.getString("jabatan"));
+                                kar.setImageurl(generator.profileurl + obj.getString("foto"));
 
-                            SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
+                                SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
 
-                            kar.setTglmulai(format2.format(format1.parse(obj.getString("tgl_izin").substring(0,10))));
-                            kar.setTglakhir(format2.format(format1.parse(obj.getString("akhir_izin").substring(0,10))));
-                            kar.setKeterangan(obj.getString("keterangans"));
-                            kar.setHari(obj.getString("lama"));
-                            kar.setStatus(obj.getString("status"));
-                            //kar.setJabatan(obj.getString("jabatan"));
-                            items.add(kar);
+                                SimpleDateFormat format2 = new SimpleDateFormat("dd/MM/yyyy");
+
+                                kar.setTglmulai(format2.format(format1.parse(obj.getString("tgl_izin").substring(0, 10))));
+                                kar.setTglakhir(format2.format(format1.parse(obj.getString("akhir_izin").substring(0, 10))));
+                                kar.setKeterangan(obj.getString("keterangans"));
+                                kar.setHari(obj.getString("lama"));
+                                kar.setStatus(obj.getString("status"));
+                                //kar.setJabatan(obj.getString("jabatan"));
+                                items.add(kar);
                             /*int sect_count = 0;
                             int sect_idx = 0;
                             List<String> months = DataGenerator.getStringsMonth(getActivity());
@@ -244,6 +254,7 @@ public class owner_izin extends AppCompatActivity {
                                 sect_count = sect_count + 5;
                                 sect_idx++;
                             }*/
+                            }
 
                         }
 
