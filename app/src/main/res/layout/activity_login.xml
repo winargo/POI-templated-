@@ -9,7 +9,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/image_26" />
+        android:id="@+id/imagelogin"
+        android:src="@drawable/image_26"
+        />
 
     <LinearLayout
         android:layout_width="330dp"
