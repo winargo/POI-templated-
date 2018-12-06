@@ -96,18 +96,431 @@ public class AdapterListBasic extends RecyclerView.Adapter<RecyclerView.ViewHold
                 @Override
                 public void onClick(View view1) {
                     if(view.name.getText().toString().equals("Cuti")){
-                        Intent cuti = new Intent(ctx,owner_cuti.class);
-                        ctx.startActivity(cuti);
+                        final Dialog dialog = new Dialog(ctx);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+                        dialog.setContentView(R.layout.dialog_range_tanggal);
+                        dialog.setCancelable(true);
+
+                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                        lp.copyFrom(dialog.getWindow().getAttributes());
+                        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+                        final TextView title = (TextView) dialog.findViewById(R.id.title);
+                        final Button spn_from_date = (Button) dialog.findViewById(R.id.from_date);
+                        final Button spn_to_date = (Button) dialog.findViewById(R.id.to_date);
+
+                        title.setText("Laporan Cuti");
+                        Calendar c = Calendar.getInstance();
+                        c.add(Calendar.DATE,0);
+                        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                        String formattedDate = df.format(c.getTime());
+                        spn_from_date.setText(formattedDate);
+                        spn_to_date.setText(formattedDate);
+                        tanggal_masuk=c.getTime();
+                        tanggal_keluar=c.getTime();
+                        tanggal_masuk1=formattedDate;
+                        tanggal_keluar1=formattedDate;
+
+                        spn_from_date.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialogDatePickerLight(spn_from_date, "masuk");
+                            }
+                        });
+
+                        spn_to_date.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialogDatePickerLight(spn_to_date, "keluar");
+                            }
+                        });
+
+                        ((ImageButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+                        ((Button) dialog.findViewById(R.id.bt_save)).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                                try {
+                                    tgl_masuk = df.parse(tanggal_masuk1);
+                                    tgl_keluar = df.parse(tanggal_keluar1);
+                                    if (tgl_masuk.compareTo(tgl_keluar) > 0) {
+                                        final Dialog warn = new Dialog(ctx);
+                                        warn.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+                                        warn.setContentView(R.layout.dialog_warning);
+                                        warn.setCancelable(true);
+
+                                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                                        lp.copyFrom(warn.getWindow().getAttributes());
+                                        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                                        ImageView icon = warn.findViewById(R.id.icon);
+                                        TextView title = warn.findViewById(R.id.title);
+                                        TextView content = warn.findViewById(R.id.content);
+                                        icon.setVisibility(View.GONE);
+                                        title.setText("Kesalahan Data Tanggal");
+                                        content.setText("Tanggal keluar wajib lebih atau sama dari tanggal masuk yang diinput");
+                                        ((AppCompatButton) warn.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                Toast.makeText(ctx, ((AppCompatButton) v).getText().toString() + " Clicked", Toast.LENGTH_SHORT).show();
+                                                warn.dismiss();
+                                            }
+                                        });
+
+                                        warn.show();
+                                        warn.getWindow().setAttributes(lp);
+                                    } else {
+                                        dialog.dismiss();
+                                        Intent pengajian = new Intent(ctx, owner_cuti.class);
+                                        SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
+                                        SimpleDateFormat fomat = new SimpleDateFormat("yyyy-MM-dd");
+                                        pengajian.putExtra("tanggal_masuk", fomat.format(format1.parse(tanggal_masuk1)));
+                                        pengajian.putExtra("tanggal_keluar", fomat.format(format1.parse(tanggal_keluar1)));
+                                        Log.e("DATE : ", "" + fomat.format(format1.parse(tanggal_masuk1)) + " " + fomat.format(format1.parse(tanggal_keluar1)));
+                                        ctx.startActivity(pengajian);
+                                    }
+                                }
+                                catch(Exception e){
+                                    Log.e("NEXT DATE : ", ""+tanggal_masuk.compareTo(tanggal_keluar));
+                                    Log.e("NEXT DATE : ", ""+tanggal_masuk1+" "+tanggal_keluar1);
+                                }
+
+                            }
+                        });
+
+                        dialog.show();
+                        dialog.getWindow().setAttributes(lp);
                     }
                     else if(view.name.getText().toString().equals("Izin")){
-                        Intent izin = new Intent(ctx,owner_izin.class);
-                        ctx.startActivity(izin);
+                        final Dialog dialog = new Dialog(ctx);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+                        dialog.setContentView(R.layout.dialog_range_tanggal);
+                        dialog.setCancelable(true);
+
+                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                        lp.copyFrom(dialog.getWindow().getAttributes());
+                        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+                        final TextView title = (TextView) dialog.findViewById(R.id.title);
+                        final Button spn_from_date = (Button) dialog.findViewById(R.id.from_date);
+                        final Button spn_to_date = (Button) dialog.findViewById(R.id.to_date);
+
+                        title.setText("Laporan Izin");
+                        Calendar c = Calendar.getInstance();
+                        c.add(Calendar.DATE,0);
+                        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                        String formattedDate = df.format(c.getTime());
+
+                        spn_from_date.setText(formattedDate);
+                        spn_to_date.setText(formattedDate);
+                        tanggal_masuk=c.getTime();
+                        tanggal_keluar=c.getTime();
+                        tanggal_masuk1=formattedDate;
+                        tanggal_keluar1=formattedDate;
+
+                        spn_from_date.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialogDatePickerLight(spn_from_date, "masuk");
+                            }
+                        });
+
+                        spn_to_date.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialogDatePickerLight(spn_to_date, "keluar");
+                            }
+                        });
+
+                        ((ImageButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+                        ((Button) dialog.findViewById(R.id.bt_save)).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                                try {
+
+                                    tgl_masuk = df.parse(tanggal_masuk1);
+                                    tgl_keluar = df.parse(tanggal_keluar1);
+                                    long selisih=tgl_keluar.getTime()-tgl_masuk.getTime();
+                                    int days = (int) (selisih / (1000*60*60*24))+1;
+                                    Log.e("Selisih",""+days);
+                                    if (tgl_masuk.compareTo(tgl_keluar) > 0) {
+                                        final Dialog warn = new Dialog(ctx);
+                                        warn.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+                                        warn.setContentView(R.layout.dialog_warning);
+                                        warn.setCancelable(true);
+
+                                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                                        lp.copyFrom(warn.getWindow().getAttributes());
+                                        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                                        ImageView icon = warn.findViewById(R.id.icon);
+                                        TextView title = warn.findViewById(R.id.title);
+                                        TextView content = warn.findViewById(R.id.content);
+                                        icon.setVisibility(View.GONE);
+                                        title.setText("Kesalahan Data Tanggal");
+                                        content.setText("Tanggal keluar wajib lebih atau sama dari tanggal masuk yang diinput");
+                                        ((AppCompatButton) warn.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                Toast.makeText(ctx, ((AppCompatButton) v).getText().toString() + " Clicked", Toast.LENGTH_SHORT).show();
+                                                warn.dismiss();
+                                            }
+                                        });
+
+                                        warn.show();
+                                        warn.getWindow().setAttributes(lp);
+                                    } else {
+                                        dialog.dismiss();
+                                        Intent peringkat = new Intent(ctx, owner_izin.class);
+                                        SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
+                                        SimpleDateFormat fomat = new SimpleDateFormat("yyyy-MM-dd");
+
+                                        peringkat.putExtra("tanggal_masuk", fomat.format(format1.parse(tanggal_masuk1)));
+                                        peringkat.putExtra("tanggal_keluar", fomat.format(format1.parse(tanggal_keluar1)));
+                                        peringkat.putExtra("lama", String.valueOf(days));
+                                        Log.e("DATE : ", "" + fomat.format(format1.parse(tanggal_masuk1)) + " " + fomat.format(format1.parse(tanggal_keluar1)));
+                                        ctx.startActivity(peringkat);
+                                    }
+                                }
+                                catch(Exception e){
+                                    Log.e("NEXT DATE : ", ""+tanggal_masuk.compareTo(tanggal_keluar));
+                                    Log.e("NEXT DATE : ", ""+tanggal_masuk1+" "+tanggal_keluar1);
+                                }
+
+                            }
+                        });
+
+                        dialog.show();
+                        dialog.getWindow().setAttributes(lp);
                     }else if(view.name.getText().toString().equals("Sakit")){
-                        Intent sakit = new Intent(ctx,owner_sakit.class);
-                        ctx.startActivity(sakit);
+                        final Dialog dialog = new Dialog(ctx);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+                        dialog.setContentView(R.layout.dialog_range_tanggal);
+                        dialog.setCancelable(true);
+
+                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                        lp.copyFrom(dialog.getWindow().getAttributes());
+                        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+                        final TextView title = (TextView) dialog.findViewById(R.id.title);
+                        final Button spn_from_date = (Button) dialog.findViewById(R.id.from_date);
+                        final Button spn_to_date = (Button) dialog.findViewById(R.id.to_date);
+
+                        title.setText("Laporan Sakit");
+                        Calendar c = Calendar.getInstance();
+                        c.add(Calendar.DATE,0);
+                        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                        String formattedDate = df.format(c.getTime());
+
+                        spn_from_date.setText(formattedDate);
+                        spn_to_date.setText(formattedDate);
+                        tanggal_masuk=c.getTime();
+                        tanggal_keluar=c.getTime();
+                        tanggal_masuk1=formattedDate;
+                        tanggal_keluar1=formattedDate;
+
+                        spn_from_date.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialogDatePickerLight(spn_from_date, "masuk");
+                            }
+                        });
+
+                        spn_to_date.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialogDatePickerLight(spn_to_date, "keluar");
+                            }
+                        });
+
+                        ((ImageButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+                        ((Button) dialog.findViewById(R.id.bt_save)).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                                try {
+
+                                    tgl_masuk = df.parse(tanggal_masuk1);
+                                    tgl_keluar = df.parse(tanggal_keluar1);
+                                    long selisih=tgl_keluar.getTime()-tgl_masuk.getTime();
+                                    int days = (int) (selisih / (1000*60*60*24))+1;
+                                    Log.e("Selisih",""+days);
+                                    if (tgl_masuk.compareTo(tgl_keluar) > 0) {
+                                        final Dialog warn = new Dialog(ctx);
+                                        warn.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+                                        warn.setContentView(R.layout.dialog_warning);
+                                        warn.setCancelable(true);
+
+                                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                                        lp.copyFrom(warn.getWindow().getAttributes());
+                                        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                                        ImageView icon = warn.findViewById(R.id.icon);
+                                        TextView title = warn.findViewById(R.id.title);
+                                        TextView content = warn.findViewById(R.id.content);
+                                        icon.setVisibility(View.GONE);
+                                        title.setText("Kesalahan Data Tanggal");
+                                        content.setText("Tanggal keluar wajib lebih atau sama dari tanggal masuk yang diinput");
+                                        ((AppCompatButton) warn.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                Toast.makeText(ctx, ((AppCompatButton) v).getText().toString() + " Clicked", Toast.LENGTH_SHORT).show();
+                                                warn.dismiss();
+                                            }
+                                        });
+
+                                        warn.show();
+                                        warn.getWindow().setAttributes(lp);
+                                    } else {
+                                        dialog.dismiss();
+                                        Intent peringkat = new Intent(ctx, owner_sakit.class);
+                                        SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
+                                        SimpleDateFormat fomat = new SimpleDateFormat("yyyy-MM-dd");
+
+                                        peringkat.putExtra("tanggal_masuk", fomat.format(format1.parse(tanggal_masuk1)));
+                                        peringkat.putExtra("tanggal_keluar", fomat.format(format1.parse(tanggal_keluar1)));
+                                        peringkat.putExtra("lama", String.valueOf(days));
+                                        Log.e("DATE : ", "" + fomat.format(format1.parse(tanggal_masuk1)) + " " + fomat.format(format1.parse(tanggal_keluar1)));
+                                        ctx.startActivity(peringkat);
+                                    }
+                                }
+                                catch(Exception e){
+                                    Log.e("NEXT DATE : ", ""+tanggal_masuk.compareTo(tanggal_keluar));
+                                    Log.e("NEXT DATE : ", ""+tanggal_masuk1+" "+tanggal_keluar1);
+                                }
+
+                            }
+                        });
+
+                        dialog.show();
+                        dialog.getWindow().setAttributes(lp);
                     }else if(view.name.getText().toString().equals("Pinjaman")){
-                        Intent pinjaman = new Intent(ctx,owner_pinjaman.class);
-                        ctx.startActivity(pinjaman);
+                        final Dialog dialog = new Dialog(ctx);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+                        dialog.setContentView(R.layout.dialog_range_tanggal);
+                        dialog.setCancelable(true);
+
+                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                        lp.copyFrom(dialog.getWindow().getAttributes());
+                        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+
+                        final TextView title = (TextView) dialog.findViewById(R.id.title);
+                        final Button spn_from_date = (Button) dialog.findViewById(R.id.from_date);
+                        final Button spn_to_date = (Button) dialog.findViewById(R.id.to_date);
+
+                        title.setText("Laporan Pinjaman");
+                        Calendar c = Calendar.getInstance();
+                        c.add(Calendar.DATE,0);
+                        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                        String formattedDate = df.format(c.getTime());
+
+                        spn_from_date.setText(formattedDate);
+                        spn_to_date.setText(formattedDate);
+                        tanggal_masuk=c.getTime();
+                        tanggal_keluar=c.getTime();
+                        tanggal_masuk1=formattedDate;
+                        tanggal_keluar1=formattedDate;
+
+                        spn_from_date.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialogDatePickerLight(spn_from_date, "masuk");
+                            }
+                        });
+
+                        spn_to_date.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialogDatePickerLight(spn_to_date, "keluar");
+                            }
+                        });
+
+                        ((ImageButton) dialog.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+                        ((Button) dialog.findViewById(R.id.bt_save)).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                                try {
+
+                                    tgl_masuk = df.parse(tanggal_masuk1);
+                                    tgl_keluar = df.parse(tanggal_keluar1);
+                                    long selisih=tgl_keluar.getTime()-tgl_masuk.getTime();
+                                    int days = (int) (selisih / (1000*60*60*24))+1;
+                                    Log.e("Selisih",""+days);
+                                    if (tgl_masuk.compareTo(tgl_keluar) > 0) {
+                                        final Dialog warn = new Dialog(ctx);
+                                        warn.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+                                        warn.setContentView(R.layout.dialog_warning);
+                                        warn.setCancelable(true);
+
+                                        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+                                        lp.copyFrom(warn.getWindow().getAttributes());
+                                        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+                                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                                        ImageView icon = warn.findViewById(R.id.icon);
+                                        TextView title = warn.findViewById(R.id.title);
+                                        TextView content = warn.findViewById(R.id.content);
+                                        icon.setVisibility(View.GONE);
+                                        title.setText("Kesalahan Data Tanggal");
+                                        content.setText("Tanggal keluar wajib lebih atau sama dari tanggal masuk yang diinput");
+                                        ((AppCompatButton) warn.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                Toast.makeText(ctx, ((AppCompatButton) v).getText().toString() + " Clicked", Toast.LENGTH_SHORT).show();
+                                                warn.dismiss();
+                                            }
+                                        });
+
+                                        warn.show();
+                                        warn.getWindow().setAttributes(lp);
+                                    } else {
+                                        dialog.dismiss();
+                                        Intent peringkat = new Intent(ctx, owner_pinjaman.class);
+                                        SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
+                                        SimpleDateFormat fomat = new SimpleDateFormat("yyyy-MM-dd");
+
+                                        peringkat.putExtra("tanggal_masuk", fomat.format(format1.parse(tanggal_masuk1)));
+                                        peringkat.putExtra("tanggal_keluar", fomat.format(format1.parse(tanggal_keluar1)));
+                                        peringkat.putExtra("lama", String.valueOf(days));
+                                        Log.e("DATE : ", "" + fomat.format(format1.parse(tanggal_masuk1)) + " " + fomat.format(format1.parse(tanggal_keluar1)));
+                                        ctx.startActivity(peringkat);
+                                    }
+                                }
+                                catch(Exception e){
+                                    Log.e("NEXT DATE : ", ""+tanggal_masuk.compareTo(tanggal_keluar));
+                                    Log.e("NEXT DATE : ", ""+tanggal_masuk1+" "+tanggal_keluar1);
+                                }
+
+                            }
+                        });
+
+                        dialog.show();
+                        dialog.getWindow().setAttributes(lp);
                     }else if(view.name.getText().toString().equals("Penggajian")){
                         final Dialog dialog = new Dialog(ctx);
                         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before

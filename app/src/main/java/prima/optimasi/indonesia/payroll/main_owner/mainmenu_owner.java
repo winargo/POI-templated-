@@ -532,7 +532,9 @@ public class mainmenu_owner extends AppCompatActivity
                 case 0:
                     return new FragmentHome();
                 case 1:
-                    return new FragmentEmployee();
+                    FragmentEmployee employees=new FragmentEmployee();
+                    generator.employee=employees;
+                    return employees;
                 case 2:
                     return new FragmentReport();
                 case 3:

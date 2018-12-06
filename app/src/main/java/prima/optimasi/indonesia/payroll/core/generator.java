@@ -31,6 +31,7 @@ import prima.optimasi.indonesia.payroll.main_hrd.mainmenu_hrd;
 import prima.optimasi.indonesia.payroll.main_kabag.mainmenu_kabag;
 import prima.optimasi.indonesia.payroll.main_karyawan.mainmenu_karyawan;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterGridCaller;
+import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentEmployee;
 import prima.optimasi.indonesia.payroll.main_owner.mainmenu_owner;
 import prima.optimasi.indonesia.payroll.objects.pengumuman;
 import prima.optimasi.indonesia.payroll.okhttpclass;
@@ -219,7 +220,7 @@ public class generator {
 
     public static int posisi=0, posisipengumuman=0;
 
-    public static TextView bykkar=null, bykkabag=null;
+    public static FragmentEmployee employee=null;
     public static Boolean isconnected(Context context){
         Boolean status = false;
 

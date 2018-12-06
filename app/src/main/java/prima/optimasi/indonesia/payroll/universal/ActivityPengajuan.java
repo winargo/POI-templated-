@@ -37,6 +37,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -262,6 +264,20 @@ public class ActivityPengajuan extends AppCompatActivity {
                         }
 
                         if(items.size()>0 && keterangan.equals("Dinas")){
+                            Collections.sort(items, new Comparator<listkaryawanpengajuan>() {
+                                @Override
+                                public int compare(listkaryawanpengajuan listkaryawanpengajuan, listkaryawanpengajuan t1) {
+                                    //Log.e("ABSEN",""+listperingkatkaryawan.getAbsen().compareTo(t1.getAbsen()));
+                                    if(listkaryawanpengajuan.getTanggal_masuk().compareTo(t1.getTanggal_masuk())==0){
+                                        if(listkaryawanpengajuan.getTanggal_keluar().compareTo(t1.getTanggal_keluar())==0){
+                                            return -listkaryawanpengajuan.getJenis().compareTo(t1.getJenis());
+                                        }
+                                        return -listkaryawanpengajuan.getTanggal_keluar().compareTo(t1.getTanggal_keluar());
+                                    }
+                                    return -listkaryawanpengajuan.getTanggal_masuk().compareTo(t1.getTanggal_masuk());
+
+                                }
+                            });
                             pengajuan = new Adapterhistorypengajuan(ActivityPengajuan.this, items, ItemAnimation.LEFT_RIGHT);
                             recyclerView.setLayoutManager(new LinearLayoutManager(ActivityPengajuan.this));
                             //recyclerView.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(ActivityPengajuan.this, 3), true));
@@ -474,7 +490,20 @@ public class ActivityPengajuan extends AppCompatActivity {
                         }
 
                         if(keterangan.equals("Dinas")){
+                            Collections.sort(items, new Comparator<listkaryawanpengajuan>() {
+                                @Override
+                                public int compare(listkaryawanpengajuan listkaryawanpengajuan, listkaryawanpengajuan t1) {
+                                    //Log.e("ABSEN",""+listperingkatkaryawan.getAbsen().compareTo(t1.getAbsen()));
+                                    if(listkaryawanpengajuan.getTanggal_masuk().compareTo(t1.getTanggal_masuk())==0){
+                                        if(listkaryawanpengajuan.getTanggal_keluar().compareTo(t1.getTanggal_keluar())==0){
+                                            return -listkaryawanpengajuan.getJenis().compareTo(t1.getJenis());
+                                        }
+                                        return -listkaryawanpengajuan.getTanggal_keluar().compareTo(t1.getTanggal_keluar());
+                                    }
+                                    return -listkaryawanpengajuan.getTanggal_masuk().compareTo(t1.getTanggal_masuk());
 
+                                }
+                            });
                             if(pengajuan!=null){
                                 pengajuan.notifyDataSetChanged();
                             }
