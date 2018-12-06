@@ -206,6 +206,8 @@ public class generator {
 
     public static String chartgajineedkode="http://"+ generator.Server+":"+generator.port+"/absensi/kode";
 
+    public static String estimasidetaildashboard="http://"+ generator.Server+":"+generator.port+"/penggajian/estimasi";
+
     public static JSONObject jsondatalogin = null ;
     public static JSONObject jsondatajadwal = null ;
 
@@ -948,7 +950,7 @@ public class generator {
         jabatanurl="http://"+ generator.Server+":"+generator.port+"/jabatan";
         karyawanjabatanurl="http://"+ generator.Server+":"+generator.port+"/karyawan/jabatan";
         chartgajineedkode="http://"+ generator.Server+":"+generator.port+"/absensi/kode";
-
+        estimasidetaildashboard="http://"+ generator.Server+":"+generator.port+"/penggajian/estimasi";
     }
 
 }

@@ -79,6 +79,7 @@
                     android:paddingRight="@dimen/spacing_middle">
 
                     <android.support.v7.widget.CardView
+                        android:id="@+id/section_gaji"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/spacing_xsmall"
@@ -153,6 +154,7 @@
                     android:paddingRight="@dimen/spacing_middle">
 
                     <android.support.v7.widget.CardView
+                        android:id="@+id/section_gaji_estimasi"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/spacing_xsmall"

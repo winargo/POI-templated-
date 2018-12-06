@@ -764,6 +764,11 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".main_owner.detail_dashboard_gaji"
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".main_owner.report.owner_peringkatkaryawan"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />

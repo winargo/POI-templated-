@@ -13,6 +13,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -60,6 +61,7 @@ import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListDaftarAbsensi;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterListSectionedKontrakKerja;
+import prima.optimasi.indonesia.payroll.main_owner.detail_dashboard_gaji;
 import prima.optimasi.indonesia.payroll.objects.datagajiobject;
 import prima.optimasi.indonesia.payroll.objects.listkaryawandaftarabsensi;
 import prima.optimasi.indonesia.payroll.objects.listkaryawankontrakkerja;
@@ -114,6 +116,8 @@ public class FragmentHome extends Fragment {
     List<String> monthbarbottom;
     List<String> dt1,dt2;
 
+    CardView gaji,gaajiestimasi;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -124,13 +128,36 @@ public class FragmentHome extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_home, container, false);
 
+        mRealm = Realm.getDefaultInstance();
+
         dialog = new ProgressDialog(getActivity());
 
         dialog.setTitle("Mohon Tunggu");
         dialog.setMessage("Loading Data..");
         dialog.show();
 
-        mRealm = Realm.getDefaultInstance();
+        gaji = rootView.findViewById(R.id.section_gaji);
+        gaajiestimasi = rootView.findViewById(R.id.section_gaji_estimasi);
+
+        gaji.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent a = new Intent(getActivity(),detail_dashboard_gaji.class);
+                a.putExtra("estimasi","0");
+                startActivity(a);
+            }
+        });
+
+        gaajiestimasi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent a = new Intent(getActivity(),detail_dashboard_gaji.class);
+                a.putExtra("estimasi","1");
+                startActivity(a);
+            }
+        });
+
+
 
         barChart =rootView.findViewById(R.id.incbarchart);
 
@@ -237,7 +264,7 @@ public class FragmentHome extends Fragment {
 
 
 
-            retrivegajimentah0 gajim = new retrivegajimentah0(getActivity(),i);
+            retrivegajibulanan gajim = new retrivegajibulanan(getActivity(),i);
             gajim.execute();
 
         }
@@ -643,7 +670,7 @@ public class FragmentHome extends Fragment {
 
 
 
-                    retrivegajimentah0 gajim = new retrivegajimentah0(getActivity(),i);
+                    retrivegajibulanan gajim = new retrivegajibulanan(getActivity(),i);
                     gajim.execute();
 
                 }
@@ -1839,7 +1866,10 @@ public class FragmentHome extends Fragment {
                         cal.add(Calendar.MONTH,1);
 
                         dat1 = cal.get(Calendar.YEAR)+"-"+(cal.get(Calendar.MONTH)+1)+"-01";
-                        dat2 = cal.get(Calendar.YEAR)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+                        dat2 = sdf.format(new Date());
                         body = new FormBody.Builder()
                                 .add("start",dat1)
                                 .add("end",dat2)
@@ -1917,7 +1947,7 @@ public class FragmentHome extends Fragment {
                         }
                         else{
                             tv.setText("RP "+formatter.format(Double.parseDouble(result.getString("data"))));
-
+                            Log.e("gaji",urldata+" "+ tv.getText().toString() );
 
                         }
                     } catch (Exception e) {
@@ -2097,7 +2127,7 @@ public class FragmentHome extends Fragment {
         }
     }
 
-    private class retrivegajimentah0 extends AsyncTask<Void, Integer, String>
+    private class retrivegajibulanan extends AsyncTask<Void, Integer, String>
     {
         String response = "";
         SharedPreferences prefs ;
@@ -2107,9 +2137,9 @@ public class FragmentHome extends Fragment {
         SimpleDateFormat sdfchart = new SimpleDateFormat("yyyy-MM-dd");
         int position;
 
-        public retrivegajimentah0(Context context,int position)
+        public retrivegajibulanan(Context context,int position)
         {
-            Log.e(TAG, "retrivegajimentah0: "+"working" );
+            Log.e(TAG, "retrivegajibulanan: "+"working" );
             this.position = position;
             prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
         }
