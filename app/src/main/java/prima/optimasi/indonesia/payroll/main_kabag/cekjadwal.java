@@ -294,7 +294,7 @@ public class cekjadwal extends AppCompatActivity {
                     try {
                         itemjadwal = new ArrayList<>();
                         Log.e(TAG, "data json result" + result);
-                        JSONArray pengsarray = result.getJSONArray("rows");
+                        JSONArray pengsarray = result.getJSONArray("data");
                         //Dialog jadwal=new Dialog(cekjadwal.this);
                         //jadwal.setContentView(R.layout.cek_jadwal);
 

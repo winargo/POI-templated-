@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -89,7 +90,7 @@ import prima.optimasi.indonesia.payroll.utils.previewimage;
 
 public class viewkaryawan extends AppCompatActivity {
 
-
+    FloatingActionButton timeline;
     private View parent_view;
     String kodekar="", namakar="";
     LinearLayout linear_view, biodata;
@@ -110,20 +111,17 @@ public class viewkaryawan extends AppCompatActivity {
     TabLayout tabpager;
     TabLayout indicator;
     //ViewPagerAdapter adapter;
-    AdapterTimeline timeline;
-    listtimeline tl;
-    List<listtimeline> itemstl;
+
     listkaryawan_izincutisakit kar;
     List<listkaryawan_izincutisakit> items;
     List<Integer> color;
     List<String> colorName;
     List<String> dt1, dt2;
     private TextView[] dots;
-    RecyclerView recyclerView, rvtimeline;
+    RecyclerView recyclerView;
     //private AdapterListSectioned mAdapter;
     Adapterviewkaryawan adapter;
     private ArrayList<Integer> ImagesArray = new ArrayList<Integer>();
-    boolean biodatanow=true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -235,22 +233,21 @@ public class viewkaryawan extends AppCompatActivity {
             }
         });
 
-        indeterminate.setOnClickListener(new View.OnClickListener() {
+        timeline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(biodatanow){
-                    biodata.setVisibility(View.GONE);
-                    biodatanow=false;
-                    indeterminate.setImageDrawable(viewkaryawan.this.getResources().getDrawable(R.drawable.ic_add_box));
-                }else {
-                    biodata.setVisibility(View.VISIBLE);
-                    biodatanow=true;
-                    indeterminate.setImageDrawable(viewkaryawan.this.getResources().getDrawable(R.drawable.ic_indeterminate));
+                if(namakar.equals("")){
+
+                }
+                else {
+                    Intent intent = new Intent(viewkaryawan.this, viewtimeline.class);
+                    intent.putExtra("idkaryawan", getIntent().getStringExtra("idkaryawan"));
+                    intent.putExtra("nama", namakar);
+                    startActivity(intent);
                 }
             }
         });
 
-        itemstl=new ArrayList<>();
         listizin=new ArrayList<>();
         listsakit=new ArrayList<>();
         listcuti=new ArrayList<>();
@@ -269,7 +266,7 @@ public class viewkaryawan extends AppCompatActivity {
         dt2=new ArrayList<>();
         dialog=new ProgressDialog(viewkaryawan.this);
         dialog.setTitle("Mohon Menunggu");
-        dialog.setMessage("Memproses Data Aktivitas");
+        dialog.setMessage("Memuat Data");
         dialog.show();
         for(int j=0;j<12;j++){
 
@@ -286,17 +283,12 @@ public class viewkaryawan extends AppCompatActivity {
 
 
         for(int x=0;x<12;x++){
-            dialog.setMessage("Memuat Data "+dt1.get(x)+" - "+dt2.get(x));
             for (int i=0;i<keterangan.length;i++){
 
                 retriveketerangan ket = new retriveketerangan(viewkaryawan.this,keterangan[i], dt1.get(x),dt2.get(x));
                 ket.execute();
             }
         }
-        retrivetimeline time = new retrivetimeline(viewkaryawan.this);
-        time.execute();
-
-
     }
 
     private void initToolbar() {
@@ -309,9 +301,8 @@ public class viewkaryawan extends AppCompatActivity {
     }
 
     private void initComponent() {
-        biodata = findViewById(R.id.biodata);
+        timeline = findViewById(R.id.timeline);
         image = findViewById(R.id.karimage);
-        indeterminate= findViewById(R.id.indeterminate);
         templahir = findViewById(R.id.kartempatlahir);
         tanggallahir = findViewById(R.id.kartanggallahir);
         nama = findViewById(R.id.karname);
@@ -337,7 +328,6 @@ public class viewkaryawan extends AppCompatActivity {
         //pager = findViewById(R.id.view_pager);
         //dotsLayout=findViewById(R.id.layout_dots);
         recyclerView=findViewById(R.id.recyclerView);
-        rvtimeline=findViewById(R.id.recyclerViewtimeline);
 
     }
 
@@ -773,244 +763,6 @@ public class viewkaryawan extends AppCompatActivity {
                         }
 
 
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "onPostExecute: " + e.getMessage());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "onPostExecute: " + e.getMessage());
-                    }
-
-
-                } else {
-                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
-                }
-            }catch (Exception E){
-                E.printStackTrace();
-                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
-                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
-            }
-            /*
-            if(this.dialog.isShowing()){
-                dialog.dismiss();
-            }*/
-
-
-            Log.d(TAG + " onPostExecute", "" + result1);
-        }
-    }
-
-    private class retrivetimeline extends AsyncTask<Void, Integer, String>
-    {
-        String response = "";
-        String error = "";
-        String username=  "" ;
-        String password = "" ;
-        SharedPreferences prefs ;
-        Context ctx;
-        JSONObject result = null ;
-        //ProgressDialog dialog;
-        String urldata=generator.gettimelineyurl;
-        //String passedid = "" ;
-
-
-        public retrivetimeline(Context context)
-        {
-            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
-            //dialog = new ProgressDialog(context);
-            this.username = generator.username;
-            this.password = generator.password;
-            //passedid = id;
-            this.error = error ;
-            ctx=context;
-        }
-
-        String TAG = getClass().getSimpleName();
-
-        protected void onPreExecute (){
-            //this.dialog.show();
-            super.onPreExecute();
-            //this.dialog.setMessage("Getting Data...");
-            Log.d(TAG + " PreExceute","On pre Exceute......");
-        }
-
-        protected String doInBackground(Void...arg0) {
-            Log.d(TAG + " DoINBackGround","On doInBackground...");
-
-            try {
-                //this.dialog.setMessage("Loading Data...");
-
-                JSONObject jsonObject;
-
-                try {
-                    OkHttpClient client = new OkHttpClient();
-
-                    RequestBody body= new FormBody.Builder()
-                            .add("id", getIntent().getStringExtra("idkaryawan"))
-                            .build();
-
-                    Request request = new Request.Builder()
-                            .header("Authorization",prefs.getString("Authorization",""))
-                            .post(body)
-                            .url(urldata)
-                            .build();
-                    Response responses = null;
-
-                    try {
-                        responses = client.newCall(request).execute();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        jsonObject =  null;
-                    }catch (Exception e){
-                        e.printStackTrace();
-                        jsonObject = null;
-                    }
-
-                    if (responses==null){
-                        jsonObject = null;
-                        Log.e(TAG, "NULL");
-                    }
-                    else {
-
-                        result = new JSONObject(responses.body().string());
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            } catch (IOException e) {
-                //this.dialog.dismiss();
-                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
-                generator.jsondatalogin = null;
-                response = "Error IOException";
-            } catch (NullPointerException e) {
-                //this.dialog.dismiss();
-                Log.e("doInBackground: ", "null data" + e.getMessage());
-                generator.jsondatalogin = null;
-                response = "Please check Connection and Server";
-            } catch (Exception e) {
-                //this.dialog.dismiss();
-                Log.e("doInBackground: ", e.getMessage());
-                generator.jsondatalogin = null;
-                response = "Error Occured, PLease Contact Administrator/Support";
-            }
-
-
-            return response;
-        }
-
-        protected void onProgressUpdate(Integer...a){
-            super.onProgressUpdate(a);
-            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
-        }
-
-        protected void onPostExecute(String result1) {
-
-            try {
-
-                if (result != null) {
-                    try {
-                        Log.e(TAG, "data json "+ result);
-                        JSONObject obj= result.getJSONObject("data");
-                        tl=new listtimeline();
-                        tl.setNama(namakar);
-                        tl.setAktivitas(" masuk kerja pertama kali");
-                        tl.setTanggal(obj.getString("tanggal_masuk").substring(0,10));
-                        tl.setKeterangan("Pertama kali masuk kerja pada tanggal "+obj.getString("tanggal_masuk").substring(0,10));
-                        itemstl.add(tl);
-
-                        JSONArray arraycuti=obj.getJSONArray("cuti");
-                        for(int i=0;i<arraycuti.length();i++){
-                            JSONObject objcuti=arraycuti.getJSONObject(i);
-                            tl=new listtimeline();
-                            tl.setNama(namakar);
-                            tl.setAktivitas(" mengajukan cuti");
-                            tl.setTanggal(objcuti.getString("tanggal").substring(0,10));
-                            tl.setKeterangan("Pengajuan cuti pada tanggal "+objcuti.getString("mulai_berlaku").substring(0,10)+" s/d "+objcuti.getString("exp_date").substring(0,10)+" dengan "+ objcuti.getString("lama_cuti")+" lama cuti ");
-                            itemstl.add(tl);
-
-                            tl=new listtimeline();
-                            tl.setNama(namakar);
-                            tl.setAktivitas(" mulai cuti");
-                            tl.setTanggal(objcuti.getString("mulai_berlaku").substring(0,10));
-                            tl.setKeterangan("Mulai cuti pada tanggal "+objcuti.getString("mulai_berlaku").substring(0,10));
-                            itemstl.add(tl);
-
-                            tl=new listtimeline();
-                            tl.setNama(namakar);
-                            tl.setAktivitas(" cuti berakhir");
-                            tl.setTanggal(objcuti.getString("exp_date").substring(0,10));
-                            tl.setKeterangan("Akhir cuti pada tanggal "+objcuti.getString("exp_date").substring(0,10));
-                            itemstl.add(tl);
-                        }
-
-                        JSONArray arraysakit=obj.getJSONArray("sakit");
-                        for(int i=0;i<arraysakit.length();i++){
-                            JSONObject objsakit=arraysakit.getJSONObject(i);
-                            tl=new listtimeline();
-                            tl.setNama(namakar);
-                            tl.setAktivitas(" mengajukan sakit");
-                            tl.setTanggal(objsakit.getString("tanggal").substring(0,10));
-                            tl.setKeterangan("Pengajuan sakit pada tanggal "+objsakit.getString("tgl_sakit").substring(0,10)+" s/d "+objsakit.getString("akhir_sakit").substring(0,10)+" dengan "+ objsakit.getString("lama")+" lama sakit ");
-                            itemstl.add(tl);
-
-                            tl=new listtimeline();
-                            tl.setNama(namakar);
-                            tl.setAktivitas(" mulai sakit");
-                            tl.setTanggal(objsakit.getString("tgl_sakit").substring(0,10));
-                            tl.setKeterangan("Mulai sakit pada tanggal "+objsakit.getString("tgl_sakit").substring(0,10));
-                            itemstl.add(tl);
-
-                            tl=new listtimeline();
-                            tl.setNama(namakar);
-                            tl.setAktivitas(" sakit berakhir");
-                            tl.setTanggal(objsakit.getString("akhir_sakit").substring(0,10));
-                            tl.setKeterangan("Akhir sakit pada tanggal "+objsakit.getString("akhir_sakit").substring(0,10));
-                            itemstl.add(tl);
-                        }
-
-                        JSONArray arraydinas=obj.getJSONArray("dinas");
-                        for(int i=0;i<arraydinas.length();i++){
-                            JSONObject objdinas=arraydinas.getJSONObject(i);
-                            tl=new listtimeline();
-                            tl.setNama(namakar);
-                            tl.setAktivitas(" mengajukan dinas");
-                            tl.setTanggal(objdinas.getString("tanggal").substring(0,10));
-                            tl.setKeterangan("Pengajuan sakit pada tanggal "+objdinas.getString("tgl_dinas").substring(0,10)+" s/d "+objdinas.getString("akhir_dinas").substring(0,10)+" dengan "+ objdinas.getString("lama")+" lama dinas ");
-                            itemstl.add(tl);
-
-                            tl=new listtimeline();
-                            tl.setNama(namakar);
-                            tl.setAktivitas(" mulai dinas");
-                            tl.setTanggal(objdinas.getString("tgl_dinas").substring(0,10));
-                            tl.setKeterangan("Mulai dinas pada tanggal "+objdinas.getString("tgl_dinas").substring(0,10));
-                            itemstl.add(tl);
-
-                            tl=new listtimeline();
-                            tl.setNama(namakar);
-                            tl.setAktivitas(" akhir dinas");
-                            tl.setTanggal(objdinas.getString("akhir_dinas").substring(0,10));
-                            tl.setKeterangan("Akhir dinas pada tanggal "+objdinas.getString("akhir_dinas").substring(0,10));
-                            itemstl.add(tl);
-                        }
-                        Collections.sort(itemstl, new Comparator<listtimeline>() {
-                            @Override
-                            public int compare(listtimeline listtimeline, listtimeline t1) {
-                                //Log.e("ABSEN",""+listperingkatkaryawan.getAbsen().compareTo(t1.getAbsen()));
-
-                                return -listtimeline.getTanggal().compareTo(t1.getTanggal());
-
-                            }
-                        });
-                        Log.e("ITEMSTL",""+itemstl.size());
-                        if(itemstl.size()>0){
-                            timeline = new AdapterTimeline(viewkaryawan.this, itemstl, ItemAnimation.NONE);
-                            rvtimeline.setLayoutManager(new LinearLayoutManager(viewkaryawan.this));
-                            rvtimeline.setHasFixedSize(true);
-                            rvtimeline.setAdapter(timeline);
-                        }
 
 
                     } catch (JSONException e) {
