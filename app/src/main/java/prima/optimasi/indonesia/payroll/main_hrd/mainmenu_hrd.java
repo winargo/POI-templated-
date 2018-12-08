@@ -442,34 +442,7 @@ public class mainmenu_hrd extends AppCompatActivity implements NavigationView.On
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic("hrd");
-
-            Intent logout = new Intent(mainmenu_hrd.this,activity_login.class);
-            SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
-
-            if(prefs.getInt("statustoken",0)==0){
-
-            }
-            else {
-                generator.unregistertokentoserver unregistertokentoserver = new generator.unregistertokentoserver(mainmenu_hrd.this,prefs.getString("tokennotif",""),prefs.getString("Authorization",""));
-                unregistertokentoserver.execute();
-            }
-
-            SharedPreferences.Editor edit = prefs.edit();
-
-            edit.putString("iduser","");
-            edit.putString("username","");
-            edit.putString("jabatan","");
-            edit.putString("level","");
-            edit.putString("tempatlahir","");
-            edit.putString("profileimage","");
-            edit.putString("kodekaryawan","");
-            edit.putString("Authorization","");
-
-            edit.commit();
-
-            startActivity(logout);
-
+            generator.logout(mainmenu_hrd.this,"hrd");
             return true;
         }
         return super.onOptionsItemSelected(item);

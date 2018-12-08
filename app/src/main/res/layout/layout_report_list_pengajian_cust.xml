@@ -96,7 +96,7 @@
                                 android:layout_weight="1"
                                 android:paddingLeft="@dimen/spacing_middle"
                                 android:layout_height="wrap_content"
-                                android:text="Gaji Total"
+                                android:text="Gaji"
                                 android:textAlignment="textStart"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                                 android:textColor="@color/colorPrimary"
@@ -124,7 +124,61 @@
 
                                 android:paddingLeft="@dimen/spacing_middle"
                                 android:layout_height="wrap_content"
-                                android:text="Potongan Total"
+                                android:text="Makan"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                                android:textColor="@color/colorPrimary"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/nilaimakan"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:paddingLeft="@dimen/spacing_middle"
+                                android:textAlignment="textEnd"
+                                android:layout_height="wrap_content"
+                                android:text="0.00"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                                android:textColor="@color/grey_60" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_medium"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+
+                                android:paddingLeft="@dimen/spacing_middle"
+                                android:layout_height="wrap_content"
+                                android:text="Transport"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                                android:textColor="@color/colorPrimary"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/nilaitransport"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:paddingLeft="@dimen/spacing_middle"
+                                android:textAlignment="textEnd"
+                                android:layout_height="wrap_content"
+                                android:text="0.00"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                                android:textColor="@color/grey_60" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_medium"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+
+                                android:paddingLeft="@dimen/spacing_middle"
+                                android:layout_height="wrap_content"
+                                android:text="Potongan"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                                 android:textColor="@color/colorPrimary"
                                 android:textStyle="bold" />
@@ -151,7 +205,7 @@
                                 android:layout_gravity="center"
                                 android:paddingLeft="@dimen/spacing_middle"
                                 android:layout_height="wrap_content"
-                                android:text="BPJS Total"
+                                android:text="BPJS"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                                 android:textColor="@color/colorPrimary"
                                 android:textStyle="bold" />
@@ -178,7 +232,7 @@
                                 android:layout_gravity="center"
                                 android:paddingLeft="@dimen/spacing_middle"
                                 android:layout_height="wrap_content"
-                                android:text="Tunjangan Total"
+                                android:text="Tunjangan"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                                 android:textColor="@color/colorPrimary"
                                 android:textStyle="bold" />
@@ -205,7 +259,7 @@
                                 android:layout_gravity="center"
                                 android:paddingLeft="@dimen/spacing_middle"
                                 android:layout_height="wrap_content"
-                                android:text="Tunjangan Lain Total"
+                                android:text="Tunjangan Lain"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                                 android:textColor="@color/colorPrimary"
                                 android:textStyle="bold" />
@@ -232,7 +286,7 @@
                                 android:layout_gravity="center"
                                 android:paddingLeft="@dimen/spacing_middle"
                                 android:layout_height="wrap_content"
-                                android:text="Punishment Total"
+                                android:text="Punishment"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                                 android:textColor="@color/colorPrimary"
                                 android:textStyle="bold" />
@@ -259,7 +313,7 @@
                                 android:layout_gravity="center"
                                 android:paddingLeft="@dimen/spacing_middle"
                                 android:layout_height="wrap_content"
-                                android:text="Reward Total"
+                                android:text="Reward"
                                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                                 android:textColor="@color/colorPrimary"
                                 android:textStyle="bold" />

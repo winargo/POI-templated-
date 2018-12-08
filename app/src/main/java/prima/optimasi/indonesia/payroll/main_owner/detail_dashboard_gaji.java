@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.applandeo.materialcalendarview.CalendarView;
 import com.applandeo.materialcalendarview.EventDay;
@@ -117,6 +118,9 @@ public class detail_dashboard_gaji extends AppCompatActivity {
         Collections.reverse(preview);
         Collections.reverse(dt1);
         Collections.reverse(dt2);
+
+        dari = dt1.get(dt1.size()-1);
+        sampai = dt2.get(dt2.size()-1);
 
         spinnerdates = (MaterialSpinner) findViewById(R.id.spinnerdate);
         spinnerdates.setItems(preview);
@@ -515,24 +519,83 @@ public class detail_dashboard_gaji extends AppCompatActivity {
                         JSONArray arrydata = result.getJSONArray("data");
 
                         List<String> datapayroll = new ArrayList<>();
-                        for(int i=0;i<arrydata.length();i++){
-                            JSONObject obj = arrydata.getJSONObject(i);
-                            if(datapayroll.size()==0){
-                                datapayroll.add(obj.getString("kode_payroll"));
-                            }
-                            else {
-                                for(int j=0;j<datapayroll.size();j++){
-                                    if(datapayroll.get(j).equals(obj.getString("kode_payroll"))){
-                                        break;
-                                    }
-                                    if (datapayroll.size()-1==j){
-                                        datapayroll.add(obj.getString("kode_payroll"));
+                        if(arrydata.length()==0){
+                            Toast.makeText(detail_dashboard_gaji.this, "Tidak Ada Proses Penggajian pada Bulan Ini", Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+
+                            String tanggal1 = "", tanggal2 = "";
+                            tanggal1=dt1;
+                            tanggal2=dt2;
+
+
+                            tanggal1 = sdf.format(sdf1.parse(tanggal1));
+                            tanggal2 = sdf.format(sdf1.parse(tanggal2));
+
+                            for (int i = 0; i < arrydata.length(); i++) {
+                                JSONObject obj = arrydata.getJSONObject(i);
+                                if (datapayroll.size() == 0) {
+                                    datapayroll.add(obj.getString("kode_payroll"));
+                                } else {
+                                    for (int j = 0; j < datapayroll.size(); j++) {
+                                        if (datapayroll.get(j).equals(obj.getString("kode_payroll"))) {
+                                            break;
+                                        }
+                                        if (datapayroll.size() - 1 == j) {
+                                            datapayroll.add(obj.getString("kode_payroll"));
+                                        }
                                     }
                                 }
                             }
+
+                            Double reward = 0.0d, punishment = 0.0d, bpjs = 0.0d, tunlain = 0.0d, tunjangan = 0.0d, telat = 0.0d, kotor = 0.0d, bersih = 0.0d, total = 0.0d,makan = 0.0d,transport = 0.0d;
+
+                            for (int j = 0; j < datapayroll.size(); j++) {
+                                for (int i = 0; i < arrydata.length(); i++) {
+                                    JSONObject obj = arrydata.getJSONObject(i);
+
+                                    if(i==arrydata.length()-1){
+                                        reward = 0.0d ;
+                                        punishment = 0.0d ;
+                                        total = 0.0d ;
+                                        makan = 0.0d ;
+                                        transport = 0.0d ;
+                                        bpjs = 0.0d ;
+                                        tunjangan = 0.0d ;
+                                        tunjangan = 0.0d ;
+                                        reward = 0.0d ;
+                                        reward = 0.0d ;
+                                        reward = 0.0d ;
+                                        reward = 0.0d ;
+                                        reward = 0.0d ;
+                                    }
+                                }
+                            }
+
+
+                            datagajiperiode data = new datagajiperiode();
+                            data.setTanggal1(tanggal1);
+                            data.setTanggal2(tanggal2);
+                            data.setIssection(false);
+                            data.setTanggalgajian("");
+                            data.setGajibersih(bersih);
+                            data.setKeterangan("");
+                            data.setReward(reward);
+                            data.setPunishment(punishment);
+                            data.setTotalgaji(total);
+                            data.setPotongan(telat);
+                            data.setBpjs(bpjs);
+                            data.setTunlain(tunlain);
+                            data.setTunjangan(tunjangan);
+                            datagaji.add(data);
+
+                            for (int j = 0; j < datapayroll.size(); j++) {
+
+                            }
                         }
 
-                        for(da)
+
+
                         Log.e("listpenggajianpayroll",datapayroll.toString() );
                     }
 

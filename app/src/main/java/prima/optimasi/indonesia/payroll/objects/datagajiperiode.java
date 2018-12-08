@@ -8,7 +8,7 @@ import java.util.Locale;
 
 public class datagajiperiode implements Comparable<datagajiperiode> {
     String nama,jabatan,kode,keterangan,imageurl,dataproses, tanggalgajian,tanggal1,tanggal2;
-    Double totalgaji,gajibersih,potongan,bpjs,tunjangan,tunlain,punishment,reward;
+    Double totalgaji,gajibersih,potongan,bpjs,tunjangan,tunlain,punishment,reward,makan,transport;
     Boolean issection;
 
     public String getDataproses() {
@@ -83,6 +83,14 @@ public class datagajiperiode implements Comparable<datagajiperiode> {
         return tanggalgajian;
     }
 
+    public Double getMakan() {
+        return makan;
+    }
+
+    public Double getTransport() {
+        return transport;
+    }
+
     public void setPunishment(Double punishment) {
         this.punishment = punishment;
     }
@@ -153,6 +161,14 @@ public class datagajiperiode implements Comparable<datagajiperiode> {
 
     public void setTanggal2(String tanggal2) {
         this.tanggal2 = tanggal2;
+    }
+
+    public void setMakan(Double makan) {
+        this.makan = makan;
+    }
+
+    public void setTransport(Double transport) {
+        this.transport = transport;
     }
 
     @Override

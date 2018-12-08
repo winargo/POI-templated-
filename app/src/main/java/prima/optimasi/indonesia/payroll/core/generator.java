@@ -828,35 +828,56 @@ public class generator {
     }
 
     public static void logout(Context ctx, String jabatan){
-        FirebaseMessaging.getInstance().unsubscribeFromTopic(jabatan);
 
-        Intent logout = new Intent(ctx,activity_login.class);
-        SharedPreferences prefs = ctx.getSharedPreferences("poipayroll",MODE_PRIVATE);
+        AlertDialog alert = new AlertDialog.Builder(ctx).setTitle("Warning").setPositiveButton("YA", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                AlertDialog alert = new AlertDialog.Builder(ctx).setTitle("Warning").setPositiveButton("YA", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        FirebaseMessaging.getInstance().unsubscribeFromTopic(jabatan);
 
-        if(prefs.getInt("statustoken",0)==0){
+                        Intent logout = new Intent(ctx,activity_login.class);
+                        SharedPreferences prefs = ctx.getSharedPreferences("poipayroll",MODE_PRIVATE);
 
-        }
-        else {
-            generator.unregistertokentoserver unregistertokentoserver = new generator.unregistertokentoserver(ctx,prefs.getString("tokennotif",""),prefs.getString("Authorization",""));
-            unregistertokentoserver.execute();
-        }
+                        if(prefs.getInt("statustoken",0)==0){
+
+                        }
+                        else {
+                            generator.unregistertokentoserver unregistertokentoserver = new generator.unregistertokentoserver(ctx,prefs.getString("tokennotif",""),prefs.getString("Authorization",""));
+                            unregistertokentoserver.execute();
+                        }
 
 
-        SharedPreferences.Editor edit = prefs.edit();
-        edit.putString("id","");
-        edit.putString("idfp","");
-        edit.putString("username","");
-        edit.putString("jabatan","");
-        edit.putString("level","");
-        edit.putString("tempatlahir","");
-        edit.putString("profileimage","");
-        edit.putString("Authorization","");
-        edit.putString("kodekaryawan","");
+                        SharedPreferences.Editor edit = prefs.edit();
+                        edit.putString("id","");
+                        edit.putString("idfp","");
+                        edit.putString("username","");
+                        edit.putString("jabatan","");
+                        edit.putString("level","");
+                        edit.putString("tempatlahir","");
+                        edit.putString("profileimage","");
+                        edit.putString("Authorization","");
+                        edit.putString("kodekaryawan","");
 
-        edit.commit();
+                        edit.commit();
 
-        ctx.startActivity(logout);
-        ((Activity)ctx).finish();
+                        ctx.startActivity(logout);
+                        ((Activity)ctx).finish();
+                    }
+                }).setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).setMessage("Konfirmasi ?").show();
+            }
+        }).setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).setMessage("Log out Dari Prima HRD ?").show();
     }
 
     public static boolean checkInternet(Context ctx){

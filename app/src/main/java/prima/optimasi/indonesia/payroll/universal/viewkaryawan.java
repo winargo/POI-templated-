@@ -123,30 +123,6 @@ public class viewkaryawan extends AppCompatActivity {
                 }
             }
         }
-<<<<<<< HEAD
-        */
-
-        /*
-        indicator=findViewById(R.id.indicator);
-        color = new ArrayList<>();
-        color.add(Color.RED);
-        color.add(Color.GREEN);
-        color.add(Color.BLUE);
-
-        colorName = new ArrayList<>();
-        colorName.add("RED");
-        colorName.add("GREEN");
-        colorName.add("BLUE");
-
-        pager.setAdapter(new ViewPagerAdapter(this, color, colorName));
-        indicator.setupWithViewPager(pager, true);
-        */
-
-        Log.e("karyawan","invoked" );
-
-        retrivekaryawan kar = new retrivekaryawan(this,getIntent().getStringExtra("idkaryawan"));
-        kar.execute();
-=======
         else {
             snackbar = Snackbar.make(parent_view, R.string.no_connection, Snackbar.LENGTH_INDEFINITE)
                     .setAction("COBA LAGI", new View.OnClickListener() {
@@ -158,7 +134,6 @@ public class viewkaryawan extends AppCompatActivity {
             snackbar.show();
         }
     }
->>>>>>> 718ee07bd7d47d8ceee612a268ace32851326cf3
 
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

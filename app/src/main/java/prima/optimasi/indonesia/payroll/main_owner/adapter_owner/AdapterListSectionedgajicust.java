@@ -43,7 +43,7 @@ public class AdapterListSectionedgajicust extends RecyclerView.Adapter<RecyclerV
     }
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
-        public TextView tanggal1,tanggal2,bpjs,potongantelat,tunjangan,nama,jabatan,reward,punishment,totalbersih,gajihari,tunjanganlain;
+        public TextView tanggal1,tanggal2,bpjs,potongantelat,tunjangan,nama,jabatan,reward,punishment,totalbersih,gajihari,tunjanganlain,makan,transport;
         public CardView card;
 
         ImageButton delete;
@@ -60,7 +60,8 @@ public class AdapterListSectionedgajicust extends RecyclerView.Adapter<RecyclerV
             tunjangan = v.findViewById(R.id.nilaitunjangan);
             tunjanganlain = v.findViewById(R.id.nilaitunjanganlain);
             reward = v.findViewById(R.id.nilaireward);
-
+            makan = v.findViewById(R.id.nilaimakan);
+            transport = v.findViewById(R.id.nilaitransport);
             delete = v.findViewById(R.id.removeitem);
         }
     }
@@ -103,6 +104,12 @@ public class AdapterListSectionedgajicust extends RecyclerView.Adapter<RecyclerV
 
             view.potongantelat.setText("Rp "+formatter.format(p.getPotongan()));
             view.potongantelat.setTextColor(Color.RED);
+
+            view.makan.setText("Rp "+formatter.format(p.getMakan()));
+            view.makan.setTextColor(Color.RED);
+
+            view.transport.setText("Rp "+formatter.format(p.getTransport()));
+            view.transport.setTextColor(Color.RED);
 
             String gajian=p.getTanggalgajian();
             SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");

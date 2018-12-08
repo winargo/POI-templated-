@@ -430,36 +430,7 @@ public class mainmenu_owner extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_logout) {
-            FirebaseMessaging.getInstance().unsubscribeFromTopic("owner");
-
-            Intent logout = new Intent(mainmenu_owner.this,activity_login.class);
-            SharedPreferences prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
-
-            if(prefs.getInt("statustoken",0)==0){
-
-            }
-            else {
-
-                generator.unregistertokentoserver unregistertokentoserver = new generator.unregistertokentoserver(mainmenu_owner.this,prefs.getString("tokennotif",""),prefs.getString("Authorization",""));
-                unregistertokentoserver.execute();
-            }
-
-            SharedPreferences.Editor edit = prefs.edit();
-
-            edit.putString("iduser","");
-            edit.putString("username","");
-            edit.putString("jabatan","");
-            edit.putString("level","");
-            edit.putString("tempatlahir","");
-            edit.putString("profileimage","");
-            edit.putString("Authorization","");
-
-            edit.commit();
-
-            startActivity(logout);
-
-            finish();
-
+            generator.logout(mainmenu_owner.this,"owner");
             return true;
         }
         else if(id == R.id.action_add){
