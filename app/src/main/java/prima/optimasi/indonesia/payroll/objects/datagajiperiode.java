@@ -7,12 +7,20 @@ import java.util.Date;
 import java.util.Locale;
 
 public class datagajiperiode implements Comparable<datagajiperiode> {
-    String nama,jabatan,kode,keterangan,imageurl,dataproses, tanggalgajian;
+    String nama,jabatan,kode,keterangan,imageurl,dataproses, tanggalgajian,tanggal1,tanggal2;
     Double totalgaji,gajibersih,potongan,bpjs,tunjangan,tunlain,punishment,reward;
     Boolean issection;
 
     public String getDataproses() {
         return dataproses;
+    }
+
+    public String getTanggal1() {
+        return tanggal1;
+    }
+
+    public String getTanggal2() {
+        return tanggal2;
     }
 
     public String getKode() {
@@ -137,6 +145,14 @@ public class datagajiperiode implements Comparable<datagajiperiode> {
 
     public void setTunlain(Double tunlain) {
         this.tunlain = tunlain;
+    }
+
+    public void setTanggal1(String tanggal1) {
+        this.tanggal1 = tanggal1;
+    }
+
+    public void setTanggal2(String tanggal2) {
+        this.tanggal2 = tanggal2;
     }
 
     @Override

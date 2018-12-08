@@ -151,6 +151,7 @@ public class ActivityAbsensi extends AppCompatActivity {
         extrain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                selectedtype(0,4,checkout);
             }
         });
 

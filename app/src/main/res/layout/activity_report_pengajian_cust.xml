@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout android:id="@+id/report_snackbar"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
+    android:layout_height="match_parent"
+    android:background="@color/grey_100"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:contentInsetStartWithNavigation="0dp"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_marginTop="?attr/actionBarSize"
+            android:layout_width="match_parent"
+            android:layout_height="50sp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_margin="@dimen/spacing_middle"
+                android:textSize="7pt"
+                android:gravity="left"
+                android:layout_gravity="center"
+                android:text="Dari"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/dari"
+                android:background="@drawable/layout_textviewround"
+                android:backgroundTint="@color/red_500"
+                android:layout_height="40sp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="7pt"
+                android:layout_gravity="center"
+                android:textColor="@color/overlay_light_90"
+                android:layout_width="0sp"
+                android:textAlignment="center"
+                android:text="00/00/0000"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_margin="@dimen/spacing_middle"
+                android:textSize="7pt"
+                android:layout_gravity="center"
+                android:gravity="right"
+                android:text=" - "
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/sampai"
+                android:background="@drawable/layout_textviewround"
+                android:backgroundTint="@color/red_500"
+                android:layout_height="40sp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="7pt"
+                android:layout_gravity="center"
+                android:textColor="@color/overlay_light_90"
+                android:layout_width="0sp"
+                android:textAlignment="center"
+                android:text="00/00/0000"
+                />
+            <com.varunest.sparkbutton.SparkButton
+                android:layout_width="0sp"
+                android:id="@+id/proceedselected"
+                android:layout_weight="0.5"
+                android:backgroundTint="@color/green_500"
+                android:layout_gravity="end"
+                app:sparkbutton_animationSpeed="1.0"
+                android:layout_height="match_parent"
+                app:sparkbutton_activeImage="@drawable/acceptgreen"
+                app:sparkbutton_inActiveImage="@drawable/baseline_check_circle_black_36dp"
+                app:sparkbutton_iconSize="40dp"
+                android:foregroundTint="@color/green_500"
+                app:sparkbutton_primaryColor="@color/green_500"
+                app:sparkbutton_secondaryColor="@color/green_500" />
+
+        </LinearLayout>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/tidakada"
+                    android:layout_width="match_parent"
+                    android:layout_margin="@dimen/spacing_middle"
+                    android:textSize="7pt"
+                    android:gravity="left"
+                    android:text="Tidak ada report pengajian pada tanggal tersebut"
+                    android:layout_height="wrap_content" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_report"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </android.support.v7.widget.RecyclerView>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+
+</android.support.design.widget.CoordinatorLayout>

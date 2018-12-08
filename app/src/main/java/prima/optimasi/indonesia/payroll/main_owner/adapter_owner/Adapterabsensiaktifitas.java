@@ -263,6 +263,57 @@ public class Adapterabsensiaktifitas extends RecyclerView.Adapter<RecyclerView.V
                 }
             });
 
+            view.txt_extrain.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(obj.getExtrains()){
+
+                    }
+                    else {
+                        obj.setExtrains(true);
+                        String temp = "";
+                        temp = view.txt_extrain.getText().toString();
+                        view.txt_extrain.setText("Extra IN");
+                        final Handler handler = new Handler();
+                        String finalTemp = temp;
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                view.txt_extrain.setText(finalTemp);
+                                obj.setExtrains(false);
+                                //Do something after 100ms
+                            }
+                        }, 2000);
+                    }
+                }
+            });
+
+            view.txt_extraout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(obj.getExtraouts()){
+
+                    }
+                    else {
+                        obj.setExtraouts(true);
+                        String temp = "";
+                        temp = view.txt_extraout.getText().toString();
+                        view.txt_extraout.setText("Extra OUT");
+                        final Handler handler = new Handler();
+                        String finalTemp = temp;
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                view.txt_extraout.setText(finalTemp);
+                                obj.setExtraouts(false);
+                                //Do something after 100ms
+                            }
+                        }, 2000);
+                    }
+                }
+            });
+
+
             if(obj.getImagelink().equals("")){
                 Picasso.get().load("http://www.racemph.com/wp-content/uploads/2016/09/profile-image-placeholder.png").into(view.image);
                 //Picasso.get().load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ").into(view.image);
@@ -365,30 +416,34 @@ public class Adapterabsensiaktifitas extends RecyclerView.Adapter<RecyclerView.V
                                     final int year = cal.get(Calendar.YEAR);
                                     final int month = cal.get(Calendar.MONTH)+1;
                                     final int day = cal.get(Calendar.DAY_OF_MONTH);
-                                    String[] spliter = view.txt_checkin.getText().toString().split(":");
-                                    final int hour = Integer.valueOf(spliter[0]);
-                                    final int minute = Integer.valueOf(spliter[1]);
-                                    final int second = Integer.valueOf(spliter[2]);
+                                    if(view.txt_checkin.getText().toString().contains(":")) {
+                                        String[] spliter = view.txt_checkin.getText().toString().split(":");
+                                        final int hour = Integer.valueOf(spliter[0]);
+                                        final int minute = Integer.valueOf(spliter[1]);
+                                        final int second = Integer.valueOf(spliter[2]);
 
-                                    String datadate = year + "-"+month+"-"+day+" "+ hour+ ":"+minute+":"+second;
-                                    date1 = format1.parse(datadate);
-                                    date2 = new Date();
+                                        String datadate = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
+                                        date1 = format1.parse(datadate);
+                                        date2 = new Date();
 
-                                    long difference = date2.getTime() - date1.getTime();
-                                    if(difference<0)
-                                    {
-                                        Date dateMax = format.parse("24:00:00");
-                                        Date dateMin = format.parse("00:00:00");
-                                        difference=(dateMax.getTime() -date1.getTime() )+(date2.getTime()-dateMin.getTime());
+                                        long difference = date2.getTime() - date1.getTime();
+                                        if (difference < 0) {
+                                            Date dateMax = format.parse("24:00:00");
+                                            Date dateMin = format.parse("00:00:00");
+                                            difference = (dateMax.getTime() - date1.getTime()) + (date2.getTime() - dateMin.getTime());
+                                        }
+                                        int days = (int) (difference / (1000 * 60 * 60 * 24));
+                                        int hours = (int) ((difference - (1000 * 60 * 60 * 24 * days)) / (1000 * 60 * 60));
+                                        int min = (int) (difference - (1000 * 60 * 60 * 24 * days) - (1000 * 60 * 60 * hours)) / (1000 * 60);
+                                        //hours = hours+(days*24);
+
+                                        int sec = (int) (difference - (1000 * 60 * 60 * 24 * days) - (1000 * 60 * 60 * hours) - (1000 * 60 * min)) / 1000;
+
+                                        view.txt_totaljam.setText("Jam Kerja Sementara : " + hours + " Jam " + min + " Menit " + sec + " Detik");
                                     }
-                                    int days = (int) (difference / (1000*60*60*24));
-                                    int hours = (int) ((difference - (1000*60*60*24*days)) / (1000*60*60));
-                                    int min = (int) (difference - (1000*60*60*24*days) - (1000*60*60*hours)) / (1000*60);
-                                    //hours = hours+(days*24);
+                                    else {
 
-                                    int sec = (int) (difference - (1000*60*60*24*days) - (1000*60*60*hours) - (1000*60*min)) / 1000;
-
-                                    view.txt_totaljam.setText("Jam Kerja Sementara : " + hours + " Jam " + min +" Menit "+sec+" Detik");
+                                    }
 
 
                                 } catch (ParseException e) {
