@@ -14,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
@@ -45,6 +47,7 @@ public class ActivityLogAbsensi extends AppCompatActivity {
     RecyclerView recyclerView;
     Adapter_Log_Absensi mAdapter;
     MaterialSearchView searchView;
+    Snackbar snackbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,8 +56,35 @@ public class ActivityLogAbsensi extends AppCompatActivity {
         recyclerView=findViewById(R.id.recyclerView);
         searchView=findViewById(R.id.searchView);
         initToolbar();
-        retrivelogabsensi absensi=new retrivelogabsensi(this);
-        absensi.execute();
+        snackBarWithActionIndefinite();
+    }
+
+    private void snackBarWithActionIndefinite() {
+        if(generator.checkInternet(ActivityLogAbsensi.this)) {
+            if(snackbar!=null) {
+                snackbar.dismiss();
+            }
+            if (itemabsensi != null) {
+                itemabsensi.clear();
+            } else {
+                itemabsensi = new ArrayList<>();
+            }
+            if (mAdapter != null) {
+                mAdapter.notifyDataSetChanged();
+            }
+            retrivelogabsensi absensi = new retrivelogabsensi(this);
+            absensi.execute();
+        }
+        else {
+            snackbar = Snackbar.make(parent_view, R.string.no_connection, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.try_again, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            snackBarWithActionIndefinite();
+                        }
+                    });
+            snackbar.show();
+        }
     }
 
     private void initToolbar() {
@@ -74,8 +104,6 @@ public class ActivityLogAbsensi extends AppCompatActivity {
         JSONObject result = null ;
         ProgressDialog dialog ;
         String urldata = generator.getabsensikaryawanurl;
-        String passeddata = "" ;
-        String tanggal="";
 
         public retrivelogabsensi(Context context)
         {
@@ -132,10 +160,7 @@ public class ActivityLogAbsensi extends AppCompatActivity {
                         Log.e(TAG, "NULL");
                     }
                     else {
-
                         result = new JSONObject(responses.body().string());
-
-
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -176,7 +201,6 @@ public class ActivityLogAbsensi extends AppCompatActivity {
                         itemabsensi = new ArrayList<>();
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         JSONArray pengsarray = result.getJSONArray("rows");
-
                         String tempcall = "";
 
                         for (int i = 0; i < pengsarray.length(); i++) {
@@ -232,18 +256,6 @@ public class ActivityLogAbsensi extends AppCompatActivity {
                             recyclerView.setHasFixedSize(true);
                             recyclerView.setAdapter(mAdapter);
 
-                            /*
-                            // on item list clicked
-                            mAdapter.setOnItemClickListener(new Adapter_absensi_karyawan.OnItemClickListener() {
-                                @Override
-                                public void onItemClick(View view, Social obj, int position) {
-                                    Snackbar.make(v, "Item " + obj.name + " clicked", Snackbar.LENGTH_SHORT).show();
-                                }
-                            });
-                            */
-
-
-
                         }
 
                     }catch (Exception e) {
@@ -276,28 +288,21 @@ public class ActivityLogAbsensi extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_search, menu);
         MenuItem item=menu.findItem(R.id.action_search);
         searchView.setMenuItem(item);
-
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                //Do some magic
-                mAdapter.getFilter().filter(query);
-                //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                //Do some magic\
+                if(mAdapter!=null) {
+                    mAdapter.getFilter().filter(query);
+                }
                 return false;
             }
-
             @Override
             public boolean onQueryTextChange(String query) {
                 //Do some magic
-                Log.e("Text", "newText=" + query);
-                mAdapter.getFilter().filter(query);
-                /*
-                if(mAdapter.getItemCount()==0){
-                    LayoutInflater inflater=(LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    View SubFragment=inflater.inflate(R.layout.fragment_no_item_search,parent_view,false);
-                    parent_view.addView(SubFragment);
-                }*/
-                //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                if(mAdapter!=null) {
+                    mAdapter.getFilter().filter(query);
+                }
                 return false;
             }
         });
@@ -309,7 +314,6 @@ public class ActivityLogAbsensi extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
             finish();
@@ -317,13 +321,11 @@ public class ActivityLogAbsensi extends AppCompatActivity {
         else if(id==R.id.action_search){
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onBackPressed() {
-
         if(searchView.isSearchOpen()){
             searchView.closeSearch();
         }

@@ -71,7 +71,6 @@ public class profile extends AppCompatActivity {
     ViewPager pager;
     TabLayout tabpager;
     TabLayout indicator;
-    //ViewPagerAdapter adapter;
 
     listkaryawan_izincutisakit kar;
     List<listkaryawan_izincutisakit> items;
@@ -156,7 +155,6 @@ public class profile extends AppCompatActivity {
         colorName.add("GREEN");
         colorName.add("BLUE");
 
-        pager.setAdapter(new ViewPagerAdapter(this, color, colorName));
         indicator.setupWithViewPager(pager, true);
         */
 
@@ -671,59 +669,5 @@ public class profile extends AppCompatActivity {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
-
-    /*
-    private void setupViewPager(ViewPager pager){
-
-        ViewPagerAdapter adapter=new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(viewketerangankaryawan.newInstance("Januari"),"Januari");
-        adapter.addFragment(viewketerangankaryawan.newInstance("Februari"),"Februari");
-        adapter.addFragment(viewketerangankaryawan.newInstance("Maret"),"Maret");
-        adapter.addFragment(viewketerangankaryawan.newInstance("April"),"April");
-        adapter.addFragment(viewketerangankaryawan.newInstance("Mei"),"Mei");
-        adapter.addFragment(viewketerangankaryawan.newInstance("Juni"),"Juni");
-        adapter.addFragment(viewketerangankaryawan.newInstance("Juli"),"Juli");
-        pager.setAdapter(adapter);
-
-    }
-    */
-    /*
-    public class ExamplePagerAdapter extends FragmentStatePagerAdapter {
-
-        // tab titles
-        private String[] tabTitles = new String[]{"Pengumuman", "Cek Gaji","Log Absensi","Pengajuan"};
-
-        public ExamplePagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        // overriding getPageTitle()
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return tabTitles[position];
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return new FragmentPengumuman();
-                case 1:
-                    return new FragmentCekGaji();
-                case 2:
-                    return new FragmentAbsensi();
-                case 3:
-                    return new FragmentPengajuan();
-                default:
-                    return null;
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return tabTitles.length;
-        }
-        // ...
-    }*/
 
 }

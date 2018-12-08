@@ -3,12 +3,15 @@ package prima.optimasi.indonesia.payroll.main_hrd;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -52,7 +55,7 @@ import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentEmployee;
 import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentHome;
 import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentPengajuan;
 import prima.optimasi.indonesia.payroll.main_hrd.fragment_hrd.FragmentPengumuman;
-import prima.optimasi.indonesia.payroll.main_kabag.cekjadwal;
+import prima.optimasi.indonesia.payroll.main_hrd.cekjadwal;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 
 public class mainmenu_hrd extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -86,7 +89,7 @@ public class mainmenu_hrd extends AppCompatActivity implements NavigationView.On
         initToolbar();
         initComponent();
         initListener();
-        if(loadingprogress.isShowing()){
+        if (loadingprogress.isShowing()) {
             loadingprogress.dismiss();
         }
     }
@@ -314,12 +317,12 @@ public class mainmenu_hrd extends AppCompatActivity implements NavigationView.On
                         public void onClick(DialogInterface dialog, int which) {
                             if(which==0) {
                                 Intent a = new Intent(mainmenu_hrd.this, cekjadwal.class);
-                                a.putExtra("cekjadwal",2);
+                                a.putExtra("cekjadwal",which);
                                 startActivity(a);
                             }
                             else {
                                 Intent a = new Intent(mainmenu_hrd.this, cekjadwal.class);
-                                a.putExtra("cekjadwal",1);
+                                a.putExtra("cekjadwal",which);
                                 startActivity(a);
                             }
                         }
@@ -588,5 +591,17 @@ public class mainmenu_hrd extends AppCompatActivity implements NavigationView.On
                 super.onBackPressed();
             }
         }
+    }
+    public boolean checkInternet(){
+        boolean connectStatus = true;
+        ConnectivityManager ConnectionManager=(ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo=ConnectionManager.getActiveNetworkInfo();
+        if(networkInfo != null && networkInfo.isConnected()==true ) {
+            connectStatus = true;
+        }
+        else {
+            connectStatus = false;
+        }
+        return connectStatus;
     }
 }

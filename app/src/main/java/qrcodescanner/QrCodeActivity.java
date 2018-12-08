@@ -14,6 +14,8 @@ import android.database.Cursor;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -67,9 +69,6 @@ import qrcodescanner.view.QrCodeFinderView;
 public class QrCodeActivity extends Activity implements Callback, OnClickListener {
 
     int count = 0;
-
-
-
     private static final int REQUEST_SYSTEM_PICTURE = 0;
     private static final int REQUEST_PICTURE = 1;
     public static final int MSG_DECODE_SUCCEED = 1;
@@ -401,9 +400,13 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
                     if (getIntent().getIntExtra("security", 0) == 1) {
                         security = true;
                     }
-
-                    absensi abs = new absensi(QrCodeActivity.this, prefs.getString("Authorization", ""), getIntent().getIntExtra("absensi", 0), resultString, prefs.getString("kodekaryawan", ""), security);
-                    abs.execute();
+                    if(generator.checkInternet(QrCodeActivity.this)) {
+                        absensi abs = new absensi(QrCodeActivity.this, prefs.getString("Authorization", ""), getIntent().getIntExtra("absensi", 0), resultString, prefs.getString("kodekaryawan", ""), security);
+                        abs.execute();
+                    }
+                    else{
+                        Toast.makeText(QrCodeActivity.this, R.string.no_connection,Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Log.d(LOGTAG, "Got scan result from user loaded image :" + resultString);
                     Intent data = new Intent();
@@ -797,8 +800,13 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
                                     longitude = generator.location.getLongitude();
                                     latitude = generator.location.getLatitude();
                                 }
-                                absensithrowlocation throwdata = new absensithrowlocation(ctx, type, kode, longitude, latitude, issecurity);
-                                throwdata.execute();
+                                if(generator.checkInternet(QrCodeActivity.this)) {
+                                    absensithrowlocation throwdata = new absensithrowlocation(ctx, type, kode, longitude, latitude, issecurity);
+                                    throwdata.execute();
+                                }
+                                else{
+                                    Toast.makeText(QrCodeActivity.this, R.string.no_connection,Toast.LENGTH_SHORT).show();
+                                }
                             }
 
                         } else {
@@ -844,8 +852,13 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
                                 longitude = generator.location.getLongitude();
                                 latitude = generator.location.getLatitude();
                             }
-                            absensithrowlocation throwdata = new absensithrowlocation(ctx, type, kode, longitude, latitude, issecurity);
-                            throwdata.execute();
+                            if(generator.checkInternet(QrCodeActivity.this)) {
+                                absensithrowlocation throwdata = new absensithrowlocation(ctx, type, kode, longitude, latitude, issecurity);
+                                throwdata.execute();
+                            }
+                            else{
+                                Toast.makeText(QrCodeActivity.this, R.string.no_connection,Toast.LENGTH_SHORT).show();
+                            }
 
                         } else {
                             title = "Gagal";
@@ -1112,9 +1125,14 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
                             mCaptureActivityHandler.restartPreviewAndDecode();
                         }
                         else {
-                            absensithrowlocation throwdata = new absensithrowlocation(ctx, type, kode, longitude, latitude, issecurity);
-                            throwdata.execute();
-                            count++;
+                            if(generator.checkInternet(QrCodeActivity.this)) {
+                                absensithrowlocation throwdata = new absensithrowlocation(ctx, type, kode, longitude, latitude, issecurity);
+                                throwdata.execute();
+                                count++;
+                            }
+                            else{
+                                Toast.makeText(QrCodeActivity.this, R.string.no_connection,Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                 }
@@ -1139,9 +1157,14 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
                         mCaptureActivityHandler.restartPreviewAndDecode();
                     }
                     else {
-                        absensithrowlocation throwdata = new absensithrowlocation(ctx, type, kode, longitude, latitude, issecurity);
-                        throwdata.execute();
-                        count++;
+                        if(generator.checkInternet(QrCodeActivity.this)) {
+                            absensithrowlocation throwdata = new absensithrowlocation(ctx, type, kode, longitude, latitude, issecurity);
+                            throwdata.execute();
+                            count++;
+                        }
+                        else{
+                            Toast.makeText(QrCodeActivity.this, R.string.no_connection,Toast.LENGTH_SHORT).show();
+                        }
                     }
 
 

@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,8 +41,8 @@ public class cekjadwal extends AppCompatActivity {
     List<listjadwal> itemjadwal;
     listjadwal lj;
     CoordinatorLayout parent_view;
-    private SwipeRefreshLayout refreshkaryawan;
-
+    Snackbar snackbar;
+    SharedPreferences prefs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,13 +61,39 @@ public class cekjadwal extends AppCompatActivity {
     private void initComponent() {
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         parent_view=findViewById(R.id.parent_view);
-
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+        prefs = getApplicationContext().getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
         String kodekaryawan=prefs.getString("kodekaryawan","");
         getSupportActionBar().setTitle("Cek Jadwal Sendiri");
-        retrivejadwal kar = new retrivejadwal(this,kodekaryawan);
-        kar.execute();
-        Log.e("Error", "data json result" + kodekaryawan);
+        itemjadwal = new ArrayList<>();
+        snackBarWithActionIndefinite();
+    }
+
+    private void snackBarWithActionIndefinite() {
+        if(generator.checkInternet(cekjadwal.this)) {
+            if(snackbar!=null) {
+                snackbar.dismiss();
+            }
+            if (itemjadwal != null) {
+                itemjadwal.clear();
+            } else {
+                itemjadwal = new ArrayList<>();
+            }
+            if (adapter != null) {
+                adapter.notifyDataSetChanged();
+            }
+            retrivejadwal kar = new retrivejadwal(this, prefs.getString("kodekaryawan",""));
+            kar.execute();
+        }
+        else {
+            snackbar = Snackbar.make(parent_view, R.string.no_connection, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.try_again, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            snackBarWithActionIndefinite();
+                        }
+                    });
+            snackbar.show();
+        }
     }
 
     @Override
@@ -190,11 +217,9 @@ public class cekjadwal extends AppCompatActivity {
 
                 if (result != null) {
                     try {
-                        itemjadwal = new ArrayList<>();
+
                         Log.e(TAG, "data json result" + result);
                         JSONArray pengsarray = result.getJSONArray("rows");
-                        //Dialog jadwal=new Dialog(cekjadwal.this);
-                        //jadwal.setContentView(R.layout.cek_jadwal);
 
                         for (int i = 0; i < pengsarray.length(); i++) {
                             final JSONObject obj = pengsarray.getJSONObject(i);
@@ -220,7 +245,6 @@ public class cekjadwal extends AppCompatActivity {
                             recyclerView.setHasFixedSize(true);
                             recyclerView.setAdapter(adapter);
                         }
-                        //jadwal.show();
 
                         /*
                         "rows":[{"nama":"Sparno","jabatan":"Kepala Grup A","departemen":"IT","id":157,"tanggal":"2018-11-04T00:00:00.000Z","karyawan_id":7,"group_id":6,

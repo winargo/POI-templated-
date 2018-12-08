@@ -7,38 +7,26 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
@@ -57,8 +45,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -66,39 +52,22 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
-import prima.optimasi.indonesia.payroll.activity.picker.PickerColor;
-import prima.optimasi.indonesia.payroll.adapter.AdapterListSectioned;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentAbsensi;
-import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentCekGaji;
-import prima.optimasi.indonesia.payroll.main_karyawan.fragment_karyawan.FragmentPengajuan;
-import prima.optimasi.indonesia.payroll.main_karyawan.mainmenu_karyawan;
-import prima.optimasi.indonesia.payroll.main_owner.fragment_owner.FragmentPengumuman;
-import prima.optimasi.indonesia.payroll.objects.listkaryawan;
-
 import prima.optimasi.indonesia.payroll.objects.listkaryawan_izincutisakit;
-import prima.optimasi.indonesia.payroll.objects.listkaryawankontrakkerja;
-import prima.optimasi.indonesia.payroll.objects.listtimeline;
-import prima.optimasi.indonesia.payroll.universal.adapter.AdapterTimeline;
 import prima.optimasi.indonesia.payroll.universal.adapter.Adapterviewkaryawan;
-import prima.optimasi.indonesia.payroll.universal.adapter.ViewPagerAdapter;
-import prima.optimasi.indonesia.payroll.universal.fragment.viewketerangankaryawan;
 import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.utils.previewimage;
 
 public class viewkaryawan extends AppCompatActivity {
-
     FloatingActionButton timeline;
     private View parent_view;
     String kodekar="", namakar="";
-    LinearLayout linear_view, biodata;
+    LinearLayout linear_view;
     TextView templahir,tanggallahir,nama,jabatan,telepon,hp,alamat,email,agama,pend,gaji,status;
-    TextView scount,icount,acount;
-    ImageButton message,phone, indeterminate;
+    ImageButton message,phone;
     CircularImageView image;
-    String[] tabTitles = new String []{"Januari", "Februari","Maret","April","Mei","Juni","Juli"};
     String[] keterangan = new String []{"izin", "sakit","cuti","dinas","telat"};
     List<String> listizin;
     List<String> listsakit;
@@ -106,188 +75,63 @@ public class viewkaryawan extends AppCompatActivity {
     List<String> listdinas;
     ProgressDialog dialog;
     String blnskrg="";
-
-    ViewPager pager;
-    TabLayout tabpager;
-    TabLayout indicator;
-    //ViewPagerAdapter adapter;
-
     listkaryawan_izincutisakit kar;
     List<listkaryawan_izincutisakit> items;
     List<Integer> color;
-    List<String> colorName;
     List<String> dt1, dt2;
     private TextView[] dots;
     RecyclerView recyclerView;
-    //private AdapterListSectioned mAdapter;
     Adapterviewkaryawan adapter;
-    private ArrayList<Integer> ImagesArray = new ArrayList<Integer>();
+    Snackbar snackbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_profile_karyawan);
         initToolbar();
         initComponent();
+        initListener();
+        snackBarWithActionIndefinite();
+    }
 
-        /*
-        tabpager = findViewById(R.id.tab_layout);
-        pager = findViewById(R.id.view_pager);
-
-        try{
-            //setupViewPager(pager);
-            //viewkaryawan.ExamplePagerAdapter adapter = new viewkaryawan.ExamplePagerAdapter(getSupportFragmentManager());
-            //pager.setAdapter(adapter);
-
-
-            tabpager.setupWithViewPager(pager);
-
-            for (int i = 0; i < tabpager.getTabCount(); i++) {
-                //noinspection ConstantConditions
-                View v = LayoutInflater.from(this).inflate(R.layout.customtablayout,null);
-                TextView tv=v.findViewById(R.id.texttab);
-                tv.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-                tv.setTextColor(Color.BLUE);
-                tv.setText(tabTitles[i]);
-                tabpager.getTabAt(i).setCustomView(v);
+    private void snackBarWithActionIndefinite() {
+        if(generator.checkInternet(viewkaryawan.this)) {
+            if(snackbar!=null) {
+                snackbar.dismiss();
             }
+            retrivekaryawan kar = new retrivekaryawan(this, getIntent().getStringExtra("idkaryawan"));
+            kar.execute();
 
-        }catch (NullPointerException e) {
-            Log.e("doInBackground: ", "null data" + e.getMessage());
-        } catch (Exception e) {
-            Log.e("doInBackground: ", e.getMessage());
-        }
-        */
+            SimpleDateFormat parsed = new SimpleDateFormat("yyyy-MM");
+            Calendar cal = Calendar.getInstance();
+            blnskrg = parsed.format(cal.getTime());
+            cal.add(Calendar.MONTH, -12);
 
-        /*
-        indicator=findViewById(R.id.indicator);
-        color = new ArrayList<>();
-        color.add(Color.RED);
-        color.add(Color.GREEN);
-        color.add(Color.BLUE);
-
-        colorName = new ArrayList<>();
-        colorName.add("RED");
-        colorName.add("GREEN");
-        colorName.add("BLUE");
-
-        pager.setAdapter(new ViewPagerAdapter(this, color, colorName));
-        indicator.setupWithViewPager(pager, true);
-        */
-
-
-
-        retrivekaryawan kar = new retrivekaryawan(this,getIntent().getStringExtra("idkaryawan"));
-        kar.execute();
-
-
-
-        message.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                final String[] numbers= {telepon.getText().toString(), hp.getText().toString()};
-
-                AlertDialog.Builder dialog = new AlertDialog.Builder(viewkaryawan.this);
-                dialog.setTitle("Sms to");
-                dialog.setItems(numbers, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-                        sendIntent.setData(Uri.parse("sms:"+numbers[which]));
-                        if (sendIntent.resolveActivity(getPackageManager()) != null) {
-                            startActivity(sendIntent);
-                        }
-                    }
-                });
-
-                dialog.show();
-
-
-
+            dialog.setTitle("Mohon Menunggu");
+            dialog.setMessage("Memuat Data");
+            dialog.show();
+            for (int j = 0; j < 12; j++) {
+                cal.add(Calendar.MONTH, 1);
+                String dat1 = parsed.format(cal.getTime()) + "-0" + cal.getActualMinimum(Calendar.DAY_OF_MONTH);
+                String dat2 = parsed.format(cal.getTime()) + "-" + cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+                dt1.add(dat1);
+                dt2.add(dat2);
             }
-        });
-
-        phone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                final String[] numbers= {telepon.getText().toString(), hp.getText().toString()};
-
-                AlertDialog.Builder dialog = new AlertDialog.Builder(viewkaryawan.this);
-                dialog.setTitle("Call");
-                dialog.setItems(numbers, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(Intent.ACTION_DIAL);
-                        intent.setData(Uri.parse("tel:"+numbers[which]));
-                        if (intent.resolveActivity(getPackageManager()) != null) {
-                            startActivity(intent);
-                        }
-                    }
-                });
-
-                dialog.show();
-
-
-
-            }
-        });
-
-        timeline.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(namakar.equals("")){
-
-                }
-                else {
-                    Intent intent = new Intent(viewkaryawan.this, viewtimeline.class);
-                    intent.putExtra("idkaryawan", getIntent().getStringExtra("idkaryawan"));
-                    intent.putExtra("nama", namakar);
-                    startActivity(intent);
+            for (int x = 0; x < 12; x++) {
+                for (int i = 0; i < keterangan.length; i++) {
+                    retriveketerangan ket = new retriveketerangan(viewkaryawan.this, keterangan[i], dt1.get(x), dt2.get(x));
+                    ket.execute();
                 }
             }
-        });
-
-        listizin=new ArrayList<>();
-        listsakit=new ArrayList<>();
-        listcuti=new ArrayList<>();
-        listdinas=new ArrayList<>();
-        items=new ArrayList<>();
-        SimpleDateFormat parsed = new SimpleDateFormat("yyyy-MM");
-
-        Calendar cal = Calendar.getInstance();
-        blnskrg=parsed.format(cal.getTime());
-        cal.add(Calendar.MONTH, -12);
-
-        //cal.add(Calendar.MONTH, 1);
-        //Log.e("Bulan ",parsed1.format(cal.getTime()));
-        String dbulan="";
-        dt1=new ArrayList<>();
-        dt2=new ArrayList<>();
-        dialog=new ProgressDialog(viewkaryawan.this);
-        dialog.setTitle("Mohon Menunggu");
-        dialog.setMessage("Memuat Data");
-        dialog.show();
-        for(int j=0;j<12;j++){
-
-            cal.add(Calendar.MONTH, 1);
-            String dat1 = parsed.format(cal.getTime())+"-0"+cal.getActualMinimum(Calendar.DAY_OF_MONTH);
-            String dat2 = parsed.format(cal.getTime())+"-"+cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-
-            Log.e("Date",dat1+dat2);
-            //dialog.setMessage("Memproses Data "+dat1+" - "+dat2);
-            dt1.add(dat1);
-            dt2.add(dat2);
-
         }
-
-
-        for(int x=0;x<12;x++){
-            for (int i=0;i<keterangan.length;i++){
-
-                retriveketerangan ket = new retriveketerangan(viewkaryawan.this,keterangan[i], dt1.get(x),dt2.get(x));
-                ket.execute();
-            }
+        else {
+            snackbar = Snackbar.make(parent_view, R.string.no_connection, Snackbar.LENGTH_INDEFINITE)
+                    .setAction("COBA LAGI", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            snackBarWithActionIndefinite();
+                        }
+                    });
+            snackbar.show();
         }
     }
 
@@ -315,20 +159,76 @@ public class viewkaryawan extends AppCompatActivity {
         pend = findViewById(R.id.karpend);
         gaji = findViewById(R.id.kargaji);
         status = findViewById(R.id.karstatus);
-
         parent_view=findViewById(R.id.parent_view);
         linear_view=findViewById(R.id.linear_view);
         message = findViewById(R.id.karmsg);
         phone = findViewById(R.id.karphone);
-
-        icount = findViewById(R.id.karizin);
-        scount = findViewById(R.id.karsakit);
-        acount = findViewById(R.id.karabsen);
-
-        //pager = findViewById(R.id.view_pager);
-        //dotsLayout=findViewById(R.id.layout_dots);
         recyclerView=findViewById(R.id.recyclerView);
+        listizin=new ArrayList<>();
+        listsakit=new ArrayList<>();
+        listcuti=new ArrayList<>();
+        listdinas=new ArrayList<>();
+        items=new ArrayList<>();
+        dt1=new ArrayList<>();
+        dt2=new ArrayList<>();
+        dialog=new ProgressDialog(viewkaryawan.this);
+    }
 
+    private void initListener(){
+        message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String[] numbers= {telepon.getText().toString(), hp.getText().toString()};
+                AlertDialog.Builder dialog = new AlertDialog.Builder(viewkaryawan.this);
+                dialog.setTitle("Sms to");
+                dialog.setItems(numbers, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                        sendIntent.setData(Uri.parse("sms:"+numbers[which]));
+                        if (sendIntent.resolveActivity(getPackageManager()) != null) {
+                            startActivity(sendIntent);
+                        }
+                    }
+                });
+                dialog.show();
+            }
+        });
+
+        phone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String[] numbers= {telepon.getText().toString(), hp.getText().toString()};
+                AlertDialog.Builder dialog = new AlertDialog.Builder(viewkaryawan.this);
+                dialog.setTitle("Call");
+                dialog.setItems(numbers, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Intent.ACTION_DIAL);
+                        intent.setData(Uri.parse("tel:"+numbers[which]));
+                        if (intent.resolveActivity(getPackageManager()) != null) {
+                            startActivity(intent);
+                        }
+                    }
+                });
+
+                dialog.show();
+            }
+        });
+
+        timeline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(namakar.equals("")){
+                }
+                else {
+                    Intent intent = new Intent(viewkaryawan.this, viewtimeline.class);
+                    intent.putExtra("idkaryawan", getIntent().getStringExtra("idkaryawan"));
+                    intent.putExtra("nama", namakar);
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     @Override
@@ -388,8 +288,6 @@ public class viewkaryawan extends AppCompatActivity {
 
                 try {
                     OkHttpClient client = new OkHttpClient();
-
-
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
@@ -479,9 +377,6 @@ public class viewkaryawan extends AppCompatActivity {
                         pend.setText(obj.getString("pendidikan"));
                         gaji.setText("Rp "+ formatter.format(obj.getDouble("gaji")));
                         status.setText(obj.getString("status_kerja"));
-                        scount.setText("-");
-                        icount.setText("-");
-                        acount.setText("-");
                         String urlpath="";
                         if(obj.getString("foto").equals("")){
                             urlpath="http://www.racemph.com/wp-content/uploads/2016/09/profile-image-placeholder.png";
@@ -519,14 +414,6 @@ public class viewkaryawan extends AppCompatActivity {
 
                             }
                         });
-
-
-
-                        //Log.e(TAG, "onPostExecute: "+ generator.profileurl+"/"+obj.getString("foto") );
-
-
-
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
@@ -566,7 +453,6 @@ public class viewkaryawan extends AppCompatActivity {
         //ProgressDialog dialog;
         String urldata;
         String keterangan="";
-        //String passedid = "" ;
         String date1="";
         String date2="";
 
@@ -576,7 +462,6 @@ public class viewkaryawan extends AppCompatActivity {
             //dialog = new ProgressDialog(context);
             this.username = generator.username;
             this.password = generator.password;
-            //passedid = id;
             this.error = error ;
             this.keterangan=keterangan;
             this.date1=date1;
@@ -625,8 +510,6 @@ public class viewkaryawan extends AppCompatActivity {
                             .add("end",date2)
                             .build();
 
-                    Log.e("Authorization", prefs.getString("Authorization",""));
-
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
                             .post(body)
@@ -672,7 +555,6 @@ public class viewkaryawan extends AppCompatActivity {
                 generator.jsondatalogin = null;
                 response = "Error Occured, PLease Contact Administrator/Support";
             }
-
 
             return response;
         }
@@ -755,16 +637,11 @@ public class viewkaryawan extends AppCompatActivity {
                                 recyclerView.setAdapter(adapter);
                                 PagerSnapHelper snapHelper = new PagerSnapHelper();
                                 snapHelper.attachToRecyclerView(recyclerView);
-
                             }
                             if(dialog.isShowing()){
                                 dialog.dismiss();
                             }
                         }
-
-
-
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
@@ -786,7 +663,6 @@ public class viewkaryawan extends AppCompatActivity {
             if(this.dialog.isShowing()){
                 dialog.dismiss();
             }*/
-
 
             Log.d(TAG + " onPostExecute", "" + result1);
         }
@@ -925,116 +801,6 @@ public class viewkaryawan extends AppCompatActivity {
                         String tempbulan="";
                         int banyakizin=0, banyaksakit=0, banyakcuti=0, banyakdinas=0;
                         boolean ada;
-                        /*
-                        for(int i=0;i<pengsarray.length();i++){
-                            JSONObject obj = pengsarray.getJSONObject(i);
-                            if(!keterangan.equals("sakit")){
-                                if (obj.getString("status").equals("Diterima")) {
-                                    if(keterangan.equals("izin")){
-                                        ada=false;
-                                        String bulan = obj.getString("tgl_izin").substring(5, 7);
-                                        if(listizin.size()!=0){
-                                            for(int j=0;j<listizin.size();j++){
-                                                if(listizin.get(j).getBulan().equals(bulan)){
-                                                    listizin.get(j).setIzin(listizin.get(j).getIzin()+1);
-                                                }
-
-                                            }
-                                            if(!ada){
-                                                kar=new listkaryawan_izincutisakit();
-                                                kar.setBulan(bulan);
-                                                kar.setIzin(String.valueOf(obj.getString("lama")));
-                                                listizin.add(kar);
-                                            }
-                                        }
-                                        else{
-                                            kar=new listkaryawan_izincutisakit();
-                                            kar.setBulan(bulan);
-                                            kar.setIzin(String.valueOf(obj.getString("lama")));
-                                            listizin.add(kar);
-                                        }
-
-                                    }
-                                    else {
-                                        ada=false;
-                                        String bulan = obj.getString("mulai_berlaku").substring(5, 7);
-                                        if(listcuti.size()!=0){
-                                            for(int j=0;j<listcuti.size();j++){
-                                                if(listcuti.get(j).getBulan().equals(bulan)){
-                                                    listcuti.get(j).setCuti(listizin.get(j).getCuti()+1);
-                                                }
-
-                                            }
-                                            if(!ada){
-                                                kar=new listkaryawan_izincutisakit();
-                                                kar.setBulan(bulan);
-                                                kar.setCuti(String.valueOf(obj.getString("lama_cuti")));
-                                                listcuti.add(kar);
-                                            }
-                                        }
-                                        else{
-                                            kar=new listkaryawan_izincutisakit();
-                                            kar.setBulan(bulan);
-                                            kar.setCuti(String.valueOf(obj.getString("lama_cuti")));
-                                            listcuti.add(kar);
-                                        }
-                                    }
-                                }
-                            }else{
-                                ada=false;
-                                String bulan = obj.getString("tgl_sakit").substring(5, 7);
-                                if(listsakit.size()!=0){
-                                    for(int j=0;j<listsakit.size();j++){
-                                        if(listsakit.get(j).getBulan().equals(bulan)){
-                                            listsakit.get(j).setSakit(listsakit.get(j).getSakit()+1);
-                                        }
-
-                                    }
-                                    if(!ada){
-                                        kar=new listkaryawan_izincutisakit();
-                                        kar.setBulan(bulan);
-                                        kar.setSakit(String.valueOf(obj.getString("lama")));
-                                        listsakit.add(kar);
-                                    }
-                                }
-                                else{
-                                    kar=new listkaryawan_izincutisakit();
-                                    kar.setBulan(bulan);
-                                    kar.setSakit(String.valueOf(obj.getString("lama")));
-                                    listsakit.add(kar);
-                                }
-
-                            }
-                        }
-
-                        if(keterangan.equals("cuti")){
-                            int p=0;
-                            if(listizin.size()>=listsakit.size() && listizin.size()>=listcuti.size()){
-                                p=listizin.size();
-                            }
-                            else if(listsakit.size()>=listizin.size()){
-                                p=listsakit.size();
-                            }
-                            else{
-                                p=listcuti.size();
-                            }
-                            for (int i=0;i<p;i++){
-                                kar=new listkaryawan_izincutisakit();
-                                kar.setBulan();
-                                for(int j=0;j<listizin.size();j++)
-                                kar.setIzin(listizin.get(i));
-                            }
-                            kar=new listkaryawan_izincutisakit();
-                            kar.setBulan();
-                            for(int i=0;i<12;i++){
-                                if(listizin.get(i).getBulan()==String.valueOf(i+1)){
-                                    kar=new listkaryawan_izincutisakit();
-                                    kar.setBulan();
-                                }
-
-                            }
-
-                        }*/
                         /*
                         if(keterangan.equals("izin")){
                             listizin.add(""+pengsarray.length());
@@ -1880,67 +1646,6 @@ public class viewkaryawan extends AppCompatActivity {
                                 snapHelper.attachToRecyclerView(recyclerView);
                             }
                         }
-                        /*
-                        boolean status=result.getBoolean("status");
-                        if(!status){
-                            LayoutInflater inflater=(LayoutInflater)linear_view.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                            View SubFragment=inflater.inflate(R.layout.fragment_no_item_search,linear_view,false);
-                            linear_view.addView(SubFragment);
-                        }
-                        else {*/
-                        //for(int i=0;i<pengsarray.length();i++){
-                        //final JSONObject obj = pengsarray.getJSONObject(i);
-                        /*
-                        ModelObject modelObject=new ModelObject();
-                        List<String> layoutresid=new ArrayList<>();
-                        if(pengsarray.length()==0){
-                            layoutresid.add("R.id.item_keterangan_karyawan");
-                        }else{
-                            for(int i=0;i<pengsarray.length();i++){
-                                layoutresid.add("R.id.item_keterangan_karyawan");
-                            }
-                        }
-
-                        modelObject.setLayoutresid(layoutresid);
-                        */
-                        /*
-                        pager.setAdapter(new ViewPagerAdapter(ctx,pengsarray));
-                        //if(pengsarray.length()==0){
-                            scount.setText("-");
-                            icount.setText("-");
-                            acount.setText("-");*/
-                        //}
-                        /*
-                        else{
-
-                            /*
-                            scount.setText("-");
-                            icount.setText(""+pengsarray.length());
-                            acount.setText("-");
-                            for(int i=0;i<pengsarray.length();i++) {
-                                final JSONObject obj = pengsarray.getJSONObject(i);
-
-                                pager.setAdapter(new ViewPagerAdapter(ctx,obj));
-                            }
-
-                        }
-                        */
-
-                        //}
-
-                        //}
-                        /*
-                        "rows":[{"id_izin":22,"id_karyawan":1,"tanggal":"2018-10-22T00:00:00.000Z","keterangans":"1","tgl_izin":"2018-10-22T00:00:00.000Z","" +
-                                "akhir_izin":"2018-10-22T00:00:00.000Z","lama":"1","status":"Diterima","id":1,"kode_karyawan":"EMP-1","idfp":"KRY0001","nama":"Tes1",
-                                "alamat":"1","tempat_lahir":"1","tgl_lahir":"2018-08-23T00:00:00.000Z","telepon":"12313","no_wali":"12321321321","email":"12312@sad.asd",
-                                "tgl_masuk":"0000-00-00","kelamin":"laki-laki","status_nikah":"Menikah","pendidikan":"SMA Sederajat","wn":"Asing","agama":"Katholik",
-                                "shift":"tidak","status_kerja":"aktif","ibu_kandung":"12312321","suami_istri":"12312321","tanggungan":123213,"npwp":"1318","gaji":32640000,
-                                "rekening":"12321312312133","id_bank":6,"id_departemen":1,"id_jabatan":1,"id_grup":10,"id_golongan":15,"atas_nama":"tes1",
-                                "foto":"8c674d66f16b0ee916f030b2c9b40921.jpg","id_cabang":2,"start_date":"0000-00-00","expired_date":"0000-00-00","jab_index":0,"kontrak":"tidak",
-                                "file_kontrak":"","otoritas":1,"periode_gaji":"2-Mingguan","qrcode_file":"d756a9b60a078d4746e15bb89f7acd5c.png","jabatan":"Admin Kantor",
-                                "keterangan":"Jabatan","tunjangan":0}]*/
-
-
 
                     } catch (JSONException e) {
                         e.printStackTrace();

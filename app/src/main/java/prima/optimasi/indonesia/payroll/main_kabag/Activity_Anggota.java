@@ -45,28 +45,20 @@ import prima.optimasi.indonesia.payroll.utils.Tools;
 import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
 
 public class Activity_Anggota extends AppCompatActivity {
-
     CoordinatorLayout parent_view;
-
     private SwipeRefreshLayout refreshkabag;
     private SwipeRefreshLayout refreshkaryawan;
-
     private RecyclerView recyclerViewkaryawan;
-
     private Adapterviewkaryawan mAdapterkaryawan;
-
     MaterialSearchView searchView;
     BottomNavigationView bottomnac;
-
     TextView selectdate;
-
     List<listkaryawan> itemskaryawan;
+    Snackbar snackbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_employee);
-        refreshkaryawan = findViewById(R.id.swipekaryawan);
-        parent_view= findViewById(R.id.employeecoordinator);
         initToolbar();
         initComponent();
 
@@ -79,6 +71,9 @@ public class Activity_Anggota extends AppCompatActivity {
         Tools.setSystemBarColor(this, R.color.colorPrimary);
     }
     private void initComponent() {
+        refreshkaryawan = findViewById(R.id.swipekaryawan);
+        parent_view= findViewById(R.id.employeecoordinator);
+
         recyclerViewkaryawan = (RecyclerView) findViewById(R.id.recyclerView_karyawan);
         recyclerViewkaryawan.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerViewkaryawan.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(this, 3), true));
@@ -120,15 +115,51 @@ public class Activity_Anggota extends AppCompatActivity {
         refreshkaryawan.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                retrivekaryawanrefersh ref = new retrivekaryawanrefersh(Activity_Anggota.this);
-                ref.execute();
+                snackBarWithActionIndefinite();
             }
         });
-
-        retrivekaryawan karyawan = new retrivekaryawan(this);
-        karyawan.execute();
+        if(generator.checkInternet(Activity_Anggota.this)) {
+            retrivekaryawan karyawan = new retrivekaryawan(this);
+            karyawan.execute();
+        }
+        else {
+            snackBarWithActionIndefinite();
+        }
 
     }
+
+    private void snackBarWithActionIndefinite() {
+        if(generator.checkInternet(Activity_Anggota.this)) {
+            if(snackbar!=null) {
+                snackbar.dismiss();
+            }
+            if (itemskaryawan != null) {
+                itemskaryawan.clear();
+            } else {
+                itemskaryawan = new ArrayList<>();
+            }
+            if (mAdapterkaryawan != null) {
+                mAdapterkaryawan.notifyDataSetChanged();
+            }
+            retrivekaryawanrefersh ref = new retrivekaryawanrefersh(Activity_Anggota.this);
+            ref.execute();
+
+        }
+        else {
+            if(refreshkaryawan.isRefreshing()){
+                refreshkaryawan.setRefreshing(false);
+            }
+            snackbar = Snackbar.make(parent_view, R.string.no_connection, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.try_again, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            snackBarWithActionIndefinite();
+                        }
+                    });
+            snackbar.show();
+        }
+    }
+
 
     private class retrivekaryawan extends AsyncTask<Void, Integer, String>
     {
@@ -504,7 +535,6 @@ public class Activity_Anggota extends AppCompatActivity {
                 Log.e(TAG, "data json result" + result.toString());
                 if (result != null) {
                     try {
-                        itemskaryawan = new ArrayList<>();
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
                         boolean status=result.getBoolean("status");
@@ -537,16 +567,19 @@ public class Activity_Anggota extends AppCompatActivity {
                                             kar.setImagelink("");
                                             Log.e(TAG, "image data" + kar.getImagelink());
                                         }
-
-
                                         kar.setNama(obj.getString("nama"));
                                         kar.setDesc("Karyawan");
                                         itemskaryawan.add(kar);
                                     }
-
                                 }
                             }
-
+                            if(mAdapterkaryawan!=null){
+                                mAdapterkaryawan.notifyDataSetChanged();
+                            }
+                            else{
+                                mAdapterkaryawan = new Adapterviewkaryawan(Activity_Anggota.this, itemskaryawan, ItemAnimation.FADE_IN);
+                                recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                            }
                             refreshkaryawan.setRefreshing(false);
                         }
                     } catch (JSONException e) {
@@ -575,53 +608,31 @@ public class Activity_Anggota extends AppCompatActivity {
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
-    //"data":[{"id_absensi":334,"kode":"EMP-4","tanggal":"2018-11-23T00:00:00.000Z","kabag":"EMP-7","masuk":"08:36:16","break_out":null,"break_in":null,"keluar":null,
-    // "ket_masuk":"Masuk ke Kabag Kerja Normal 2018-11-23 08:36:16","ket_keluar":"","jam_masuk":"08:30:00","telat":6,"durasi_break":100,"telat_break":0,"jam_keluar":null,
-    // "pulang_cepat":0,"kerja":"Normal","shift":"REGULAR","token":0,"longitudecheckin":"98.7261364","latitudecheckin":"3.6129727","longitudebreakin":"","latitudebreakin":"",
-    // "longitudebreakout":"","latitudebreakout":"","longitudecheckout":"","latitudecheckout":"","lupa_keluar_kabag":0,"nama":"Musafi'i","otoritas":1,
-    // "foto":"cfac83658c20bf988d6fd29e39aa91a1.jpg","jabatan":"Programmer"},
 
-    // {"id_absensi":329,"kode":"EMP-2","tanggal":"2018-11-23T00:00:00.000Z","kabag":"EMP-7",
-    // "masuk":"08:27:44","break_out":null,"break_in":null,"keluar":null,"ket_masuk":"Masuk ke Kabag Kerja Normal 2018-11-23 08:27:44","ket_keluar":"",
-    // "jam_masuk":"08:30:00","telat":0,"durasi_break":100,"telat_break":0,"jam_keluar":null,"pulang_cepat":0,"kerja":"Normal","shift":"REGULAR","token":0,"
-    // longitudecheckin":"98.726131","latitudecheckin":"3.6129336","longitudebreakin":"","latitudebreakin":"","longitudebreakout":"","latitudebreakout":"",
-    // "longitudecheckout":"","latitudecheckout":"","lupa_keluar_kabag":0,"nama":"Herry Wibowo","otoritas":1,"foto":"0631fa1187b16d780e242bcdf6dd9c5d.png","jabatan":"Programmer"},
-
-    // {"id_absensi":346,"kode":"EMP-9","tanggal":"2018-11-23T00:00:00.000Z","kabag":"EMP-7","masuk":"00:00:00","break_out":null,"break_in":null,"keluar":"00:00:00",
-    // "ket_masuk":"Sakit","ket_keluar":"Sakit","jam_masuk":"00:00:00","telat":0,"durasi_break":0,"telat_break":0,"jam_keluar":"00:00:00","pulang_cepat":0,"kerja":"Sakit",
-    // "shift":"","token":0,"longitudecheckin":"","latitudecheckin":"","longitudebreakin":"","latitudebreakin":"","longitudebreakout":"","latitudebreakout":"",
-    // "longitudecheckout":"","latitudecheckout":"","lupa_keluar_kabag":0,"nama":"DUM01","otoritas":4,"foto":"","jabatan":"Programmer"},
-
-    // {"id_absensi":337,"kode":"EMP-9","tanggal":"2018-11-23T00:00:00.000Z","kabag":"EMP-7","masuk":"00:00:00","break_out":null,"break_in":null,"keluar":"00:00:00",
-    // "ket_masuk":"Sakit","ket_keluar":"Sakit","jam_masuk":"00:00:00","telat":0,"durasi_break":0,"telat_break":0,"jam_keluar":"00:00:00","pulang_cepat":0,"kerja":"Sakit",
-    // "shift":"","token":0,"longitudecheckin":"","latitudecheckin":"","longitudebreakin":"","latitudebreakin":"","longitudebreakout":"","latitudebreakout":"",
-    // "longitudecheckout":"","latitudecheckout":"","lupa_keluar_kabag":0,"nama":"DUM01","otoritas":4,"foto":"","jabatan":"Programmer"},
-    // {"id_absensi":340,"kode":"EMP-9","tanggal":"2018-11-23T00:00:00.000Z","kabag":"EMP-7","masuk":"00:00:00","break_out":null,"break_in":null,"keluar":"00:00:00","ket_masuk":"Sakit","ket_keluar":"Sakit","jam_masuk":"00:00:00","telat":0,"durasi_break":0,"telat_break":0,"jam_keluar":"00:00:00","pulang_cepat":0,"kerja":"Sakit","shift":"","token":0,"longitudecheckin":"","latitudecheckin":"","longitudebreakin":"","latitudebreakin":"","longitudebreakout":"","latitudebreakout":"","longitudecheckout":"","latitudecheckout":"","lupa_keluar_kabag":0,"nama":"DUM01","otoritas":4,"foto":"","jabatan":"Programmer"},{"id_absensi":341,"kode":"EMP-9","tanggal":"2018-11-23T00:00:00.000Z","kabag":"EMP-7","masuk":"00:00:00","break_out":null,"break_in":null,"keluar":"00:00:00","ket_masuk":"Sakit","ket_keluar":"Sakit","jam_masuk":"00:00:00","telat":0,"durasi_break":0,"telat_break":0,"jam_keluar":"00:00:00","pulang_cepat":0,"kerja":"Sakit","shift":"","token":0,"longitudecheckin":"","latitudecheckin":"","longitudebreakin":"","latitudebreakin":"","longitudebreakout":"","latitudebreakout":"","longitudecheckout":"","latitudecheckout":"","lupa_keluar_kabag":0,"nama":"DUM01","otoritas":4,"foto":"","jabatan":"Programmer"},{"id_absensi":336,"kode":"EMP-9","tanggal":"2018-11-23T00:00:00.000Z","kabag":"EMP-7","masuk":"00:00:00","break_out":null,"break_in":null,"keluar":"00:00:00","ket_masuk":"Sakit","ket_keluar":"Sakit","jam_masuk":"00:
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //getMenuInflater().inflate(R.menu.activity_mainmenu, menu);
         getMenuInflater().inflate(R.menu.menu_search, menu);
-
         MenuItem item = menu.findItem(R.id.action_search);
 
         searchView.setMenuItem(item);
-
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 //Do some magic
-                mAdapterkaryawan.getFilter().filter(query);
-                //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                if(mAdapterkaryawan!=null) {
+                    mAdapterkaryawan.getFilter().filter(query);
+                }
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String query) {
                 //Do some magic
-                Log.e("Text", "newText=" + query);
-                mAdapterkaryawan.getFilter().filter(query);
-                //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                if(mAdapterkaryawan!=null) {
+                    mAdapterkaryawan.getFilter().filter(query);
+                }
                 return false;
             }
         });

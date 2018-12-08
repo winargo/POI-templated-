@@ -1,20 +1,12 @@
 package prima.optimasi.indonesia.payroll.universal;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,47 +15,26 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import com.mikhaellopez.circularimageview.CircularImageView;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.TimerTask;
 
-import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
-import prima.optimasi.indonesia.payroll.adapter.AdapterListSectioned;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.main_kabag.cekjadwal;
 import prima.optimasi.indonesia.payroll.objects.listjadwal;
-import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 import prima.optimasi.indonesia.payroll.universal.adapter.Adapterjadwal;
-import prima.optimasi.indonesia.payroll.universal.adapter.ViewPagerAdapter;
-import prima.optimasi.indonesia.payroll.utils.CircleTransform;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
 import prima.optimasi.indonesia.payroll.utils.Tools;
-import prima.optimasi.indonesia.payroll.utils.previewimage;
 
 public class viewjadwalkaryawan extends AppCompatActivity {
-
-
     CoordinatorLayout parent_view;
     RecyclerView recyclerView;
     List<listjadwal> itemjadwal;
@@ -71,18 +42,43 @@ public class viewjadwalkaryawan extends AppCompatActivity {
     listjadwal lj;
     public static String id="ID";
     public static String nama_karyawan="NAMA";
+    Snackbar snackbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cek_jadwal);
-
-        parent_view=findViewById(R.id.parent_view);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-
         initToolbar();
         initComponent();
-        retrivejadwal kar = new retrivejadwal(viewjadwalkaryawan.this,getIntent().getStringExtra("id"));
-        kar.execute();
+        snackBarWithActionIndefinite();
+    }
+
+    private void snackBarWithActionIndefinite() {
+        if(generator.checkInternet(viewjadwalkaryawan.this)) {
+            if(snackbar!=null) {
+                snackbar.dismiss();
+            }
+            if(itemjadwal!=null){
+                itemjadwal.clear();
+            }
+            else{
+                itemjadwal = new ArrayList<>();
+            }
+            if(adapter!=null){
+                adapter.notifyDataSetChanged();
+            }
+            retrivejadwal kar = new retrivejadwal(viewjadwalkaryawan.this,getIntent().getStringExtra("id"));
+            kar.execute();
+        }
+        else {
+            snackbar = Snackbar.make(parent_view, R.string.no_connection, Snackbar.LENGTH_INDEFINITE)
+                    .setAction("COBA LAGI", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            snackBarWithActionIndefinite();
+                        }
+                    });
+            snackbar.show();
+        }
     }
 
     private void initToolbar() {
@@ -96,7 +92,9 @@ public class viewjadwalkaryawan extends AppCompatActivity {
     }
 
     private void initComponent() {
-
+        parent_view=findViewById(R.id.parent_view);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        itemjadwal = new ArrayList<>();
     }
 
     @Override
@@ -161,7 +159,6 @@ public class viewjadwalkaryawan extends AppCompatActivity {
                             .url(urldata+"/"+passedid)
                             .build();
 
-
                     Response responses = null;
 
                     try {
@@ -218,11 +215,8 @@ public class viewjadwalkaryawan extends AppCompatActivity {
 
                 if (result != null) {
                     try {
-                        itemjadwal = new ArrayList<>();
                         Log.e(TAG, "data json result" + result);
                         JSONArray pengsarray = result.getJSONArray("data");
-                        //Dialog jadwal=new Dialog(cekjadwal.this);
-                        //jadwal.setContentView(R.layout.cek_jadwal);
 
                         for (int i = 0; i < pengsarray.length(); i++) {
                             final JSONObject obj = pengsarray.getJSONObject(i);
@@ -241,21 +235,18 @@ public class viewjadwalkaryawan extends AppCompatActivity {
                             lj.setKeluar(keluar);
                             //lj.setJadwal_section(jadwal_section);
                             itemjadwal.add(lj);
-                            adapter = new Adapterjadwal(ctx, itemjadwal,ItemAnimation.FADE_IN);
-                            //Log.e(TAG, "data json result" + jadwal_tanggal);
-                            recyclerView.setLayoutManager(new LinearLayoutManager(viewjadwalkaryawan.this));
-                            //recyclerView.addItemDecoration(new LineItemDecoration(cekjadwal.this, LinearLayout.VERTICAL));
-                            recyclerView.setHasFixedSize(true);
-                            recyclerView.setAdapter(adapter);
+                            if(adapter!=null){
+                                adapter.notifyDataSetChanged();
+                            }
+                            else {
+                                adapter = new Adapterjadwal(ctx, itemjadwal, ItemAnimation.FADE_IN);
+                                //Log.e(TAG, "data json result" + jadwal_tanggal);
+                                recyclerView.setLayoutManager(new LinearLayoutManager(viewjadwalkaryawan.this));
+                                //recyclerView.addItemDecoration(new LineItemDecoration(cekjadwal.this, LinearLayout.VERTICAL));
+                                recyclerView.setHasFixedSize(true);
+                                recyclerView.setAdapter(adapter);
+                            }
                         }
-                        //jadwal.show();
-
-                        /*
-                        "rows":[{"nama":"Sparno","jabatan":"Kepala Grup A","departemen":"IT","id":157,"tanggal":"2018-11-04T00:00:00.000Z","karyawan_id":7,"group_id":6,
-                        "otoritas_kerja":2,"shift_id":43,"nama_shift":"SHIFT-SORE","token":8,"status_ganti":1,"ganti_karyawan_id":null,"created_at":"2018-10-05T16:14:03.000Z",
-                        "updated_at":"2018-10-05T16:14:03.000Z"}
-                        */
-
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -278,7 +269,6 @@ public class viewjadwalkaryawan extends AppCompatActivity {
             if(this.dialog.isShowing()){
                 dialog.dismiss();
             }
-
 
             Log.d(TAG + " onPostExecute", "" + result1);
         }

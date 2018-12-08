@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -37,6 +39,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.zxing.BarcodeFormat;
@@ -62,6 +65,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
+import prima.optimasi.indonesia.payroll.activity_login;
 import prima.optimasi.indonesia.payroll.adapter.Adaptermenujabatan;
 import prima.optimasi.indonesia.payroll.core.generator;
 import prima.optimasi.indonesia.payroll.universal.ActivityAbout;
@@ -100,7 +104,7 @@ public class mainmenu_karyawan extends AppCompatActivity implements NavigationVi
         initComponent();
         initListener();
 
-        if(loadingdata.isShowing()){
+        if (loadingdata.isShowing()) {
             loadingdata.dismiss();
         }
         /*
@@ -373,7 +377,7 @@ public class mainmenu_karyawan extends AppCompatActivity implements NavigationVi
         pengumuman.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(mainmenu_karyawan.this, ActivityPengumuman.class);
+                Intent intent = new Intent(mainmenu_karyawan.this, ActivityPengumuman.class);
                 startActivity(intent);
                 /*
                 getSupportFragmentManager().beginTransaction()
@@ -383,7 +387,7 @@ public class mainmenu_karyawan extends AppCompatActivity implements NavigationVi
         log_absensi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(mainmenu_karyawan.this,ActivityLogAbsensi.class);
+                Intent intent = new Intent(mainmenu_karyawan.this, ActivityLogAbsensi.class);
                 startActivity(intent);
                 /*
                 getSupportFragmentManager().beginTransaction()
@@ -393,17 +397,21 @@ public class mainmenu_karyawan extends AppCompatActivity implements NavigationVi
         cekgaji.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                gaji=0.0d;
-                potongan=0.0d;
-                retrivegaji gajis=new retrivegaji(mainmenu_karyawan.this);
-                gajis.execute();
+                gaji = 0.0d;
+                potongan = 0.0d;
+                if(generator.checkInternet(mainmenu_karyawan.this)) {
+                    retrivegaji gajis = new retrivegaji(mainmenu_karyawan.this);
+                    gajis.execute();
+                }
+                else{
+                    Toast.makeText(mainmenu_karyawan.this, R.string.no_connection,Toast.LENGTH_SHORT).show();
+                }
             }
         });
         pengajuan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Intent intent=new Intent(mainmenu_karyawan.this,ActivityPengajuan.class);
+                Intent intent = new Intent(mainmenu_karyawan.this, ActivityPengajuan.class);
                 startActivity(intent);
                 /*
                 getSupportFragmentManager().beginTransaction()
@@ -421,12 +429,11 @@ public class mainmenu_karyawan extends AppCompatActivity implements NavigationVi
         absensi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("Jabatan : ", prefs.getString("jabatan",""));
-                if(prefs.getString("jabatan","1").equals("4")){
+                if (prefs.getString("jabatan", "1").equals("4")) {
 
                     boolean permissionGranted = ActivityCompat.checkSelfPermission(mainmenu_karyawan.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
 
-                    if(permissionGranted) {
+                    if (permissionGranted) {
 
                         Intent intent = new Intent(mainmenu_karyawan.this, ActivityAbsensi.class);
                         intent.putExtra("jabatan", "security");
@@ -435,15 +442,13 @@ public class mainmenu_karyawan extends AppCompatActivity implements NavigationVi
                     } else {
                         ActivityCompat.requestPermissions(mainmenu_karyawan.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 4011);
                     }
-                }
-                else {
+                } else {
                     LinearLayout l = (LinearLayout) LayoutInflater.from(mainmenu_karyawan.this).inflate(R.layout.layout_barcode, null);
 
                     ImageView barcode = l.findViewById(R.id.barcodekaryawan);
 
 
                     String text = prefs.getString("kodekaryawan", "");
-                    Log.e("data json", "onClick: " + prefs.getString("kodekaryawan", ""));
                     MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
                     try {
                         BitMatrix bitMatrix = multiFormatWriter.encode(text, BarcodeFormat.QR_CODE, 400, 400);
@@ -459,6 +464,7 @@ public class mainmenu_karyawan extends AppCompatActivity implements NavigationVi
                     dialog1.show();
                 }
             }
+
         });
 
         appbar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
@@ -480,7 +486,7 @@ public class mainmenu_karyawan extends AppCompatActivity implements NavigationVi
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                generator.logout(mainmenu_karyawan.this,"karyawan");
+                generator.logout(mainmenu_karyawan.this, "karyawan");
             }
         });
     }

@@ -46,18 +46,46 @@ public class viewtimeline extends AppCompatActivity {
     listtimeline tl;
     List<listtimeline> itemstl;
     RecyclerView recyclerView;
+    Snackbar snackbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_timeline);
         initToolbar();
         initComponent();
-        dialog.setTitle("Mohon Menunggu");
-        dialog.setMessage("Memuat Timeline");
-        dialog.show();
-        itemstl=new ArrayList<>();
-        retrivetimeline time = new retrivetimeline(viewtimeline.this);
-        time.execute();
+        snackBarWithActionIndefinite();
+    }
+
+    private void snackBarWithActionIndefinite() {
+        if(generator.checkInternet(viewtimeline.this)) {
+            if(snackbar!=null) {
+                snackbar.dismiss();
+            }
+            if(itemstl!=null){
+                itemstl.clear();
+            }
+            else{
+                itemstl= new ArrayList<>();
+            }
+            if(timeline!=null){
+                timeline.notifyDataSetChanged();
+            }
+            dialog.setTitle("Mohon Menunggu");
+            dialog.setMessage("Memuat Timeline");
+            dialog.show();
+            retrivetimeline time = new retrivetimeline(viewtimeline.this);
+            time.execute();
+        }
+        else {
+            snackbar = Snackbar.make(parent_view, R.string.no_connection, Snackbar.LENGTH_INDEFINITE)
+                    .setAction("COBA LAGI", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            snackBarWithActionIndefinite();
+                        }
+                    });
+            snackbar.show();
+        }
     }
 
     private void initToolbar() {
@@ -74,6 +102,7 @@ public class viewtimeline extends AppCompatActivity {
         recyclerView=findViewById(R.id.recyclerView);
         namakar=getIntent().getStringExtra("nama");
         dialog=new ProgressDialog(viewtimeline.this);
+        itemstl=new ArrayList<>();
     }
 
     @Override
@@ -101,8 +130,6 @@ public class viewtimeline extends AppCompatActivity {
         JSONObject result = null ;
         //ProgressDialog dialog;
         String urldata=generator.gettimelineyurl;
-        //String passedid = "" ;
-
 
         public retrivetimeline(Context context)
         {
@@ -110,7 +137,6 @@ public class viewtimeline extends AppCompatActivity {
             //dialog = new ProgressDialog(context);
             this.username = generator.username;
             this.password = generator.password;
-            //passedid = id;
             this.error = error ;
             ctx=context;
         }
@@ -184,7 +210,6 @@ public class viewtimeline extends AppCompatActivity {
                 generator.jsondatalogin = null;
                 response = "Error Occured, PLease Contact Administrator/Support";
             }
-
 
             return response;
         }
@@ -286,13 +311,9 @@ public class viewtimeline extends AppCompatActivity {
                         Collections.sort(itemstl, new Comparator<listtimeline>() {
                             @Override
                             public int compare(listtimeline listtimeline, listtimeline t1) {
-                                //Log.e("ABSEN",""+listperingkatkaryawan.getAbsen().compareTo(t1.getAbsen()));
-
                                 return -listtimeline.getTanggal().compareTo(t1.getTanggal());
-
                             }
                         });
-                        Log.e("ITEMSTL",""+itemstl.size());
                         if(itemstl.size()>0){
                             if(dialog.isShowing()){
                                 dialog.dismiss();
@@ -302,7 +323,6 @@ public class viewtimeline extends AppCompatActivity {
                             recyclerView.setHasFixedSize(true);
                             recyclerView.setAdapter(timeline);
                         }
-
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -325,7 +345,6 @@ public class viewtimeline extends AppCompatActivity {
             if(this.dialog.isShowing()){
                 dialog.dismiss();
             }*/
-
 
             Log.d(TAG + " onPostExecute", "" + result1);
         }

@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
@@ -59,7 +60,6 @@ public class ActivityPengajuan extends AppCompatActivity {
     CoordinatorLayout parent_view;
     Button send;
     MaterialSpinner spinner;
-    private SimpleDateFormat dateFormatter;
     TextView tglmasuk,tglkeluar;
     EditText keterangan;
     Date tanggal_masuk, tanggal_keluar;
@@ -72,6 +72,7 @@ public class ActivityPengajuan extends AppCompatActivity {
     listkaryawanpengajuan ajukan;
     String[] kets={"Izin","Sakit","Cuti","Dinas"};
     ProgressDialog dialog;
+    Snackbar snackbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,9 +80,58 @@ public class ActivityPengajuan extends AppCompatActivity {
         initToolbar();
         initComponent();
         initListener();
-        for (int i=0;i<kets.length;i++){
-            retrivegetketerangan ket=new retrivegetketerangan(ActivityPengajuan.this, kets[i]);
-            ket.execute();
+        if(generator.checkInternet(ActivityPengajuan.this)) {
+            for (int i = 0; i < kets.length; i++) {
+                retrivegetketerangan ket = new retrivegetketerangan(ActivityPengajuan.this, kets[i]);
+                ket.execute();
+            }
+        }
+        else{
+            snackBarWithActionIndefinite();
+        }
+    }
+
+    private void snackBarWithActionIndefinite() {
+        if(generator.checkInternet(ActivityPengajuan.this)) {
+            if(snackbar!=null) {
+                snackbar.dismiss();
+            }
+            dialog = new ProgressDialog(ActivityPengajuan.this);
+            dialog.setMessage("Loading ...");
+            dialog.show();
+            if (items != null) {
+                items.clear();
+            } else {
+                items = new ArrayList<>();
+            }
+            spinner.setSelectedIndex(0);
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE, 0);
+            SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            String formattedDate = df.format(c.getTime());
+            tglmasuk.setText(formattedDate);
+            tglkeluar.setText(formattedDate);
+            keterangan.setText("");
+            if (pengajuan != null) {
+                pengajuan.notifyDataSetChanged();
+            }
+            for (int i = 0; i < kets.length; i++) {
+                retrivegetketeranganref ketref = new retrivegetketeranganref(ActivityPengajuan.this, kets[i]);
+                ketref.execute();
+            }
+        }
+        else {
+            if(swipehome.isRefreshing()){
+                swipehome.setRefreshing(false);
+            }
+            snackbar = Snackbar.make(parent_view, R.string.no_connection, Snackbar.LENGTH_INDEFINITE)
+                    .setAction("COBA LAGI", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            snackBarWithActionIndefinite();
+                        }
+                    });
+            snackbar.show();
         }
     }
 
@@ -95,7 +145,6 @@ public class ActivityPengajuan extends AppCompatActivity {
         JSONObject result = null ;
         ProgressDialog dialog ;
         String urldata ;
-        String passeddata = "" ;
         String keterangan="";
 
         public retrivegetketerangan(Context context, String keterangan)
@@ -118,7 +167,6 @@ public class ActivityPengajuan extends AppCompatActivity {
             else if(keterangan.equals("Dinas")){
                 urldata= generator.pengajuandinaskodeurl;
             }
-
         }
 
         String TAG = getClass().getSimpleName();
@@ -143,10 +191,7 @@ public class ActivityPengajuan extends AppCompatActivity {
 
                     RequestBody body = new FormBody.Builder()
                             .add("id",prefs.getString("id", ""))
-
                             .build();
-
-                    Log.e(TAG, prefs.getString("id", ""));
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
@@ -170,7 +215,6 @@ public class ActivityPengajuan extends AppCompatActivity {
                         Log.e(TAG, "NULL");
                     }
                     else {
-
                         result = new JSONObject(responses.body().string());
                     }
                 } catch (JSONException e) {
@@ -206,13 +250,10 @@ public class ActivityPengajuan extends AppCompatActivity {
         protected void onPostExecute(String result1) {
 
             try {
-                //
                 if (result != null) {
                     try {
                         Log.e(TAG, "data json result" + result.toString());
-
                         JSONArray pengsarray = result.getJSONArray("rows");
-                        Log.e(TAG, "data json result" + pengsarray.length());
 
                         for (int i = 0; i < pengsarray.length(); i++) {
                             JSONObject obj = pengsarray.getJSONObject(i);
@@ -252,13 +293,11 @@ public class ActivityPengajuan extends AppCompatActivity {
                             else{
                                 ajukan.setStatus("Pending");
                             }
-
                             if (keterangans.equals("")) {
-                                Log.e(TAG, "data json result" + "KOSONG");
+                                ajukan.setKeterangan("-");
                             } else {
                                 ajukan.setKeterangan(keterangans);
                             }
-                            Log.e(TAG, "data json result" + keterangans);
 
                             items.add(ajukan);
                         }
@@ -267,7 +306,6 @@ public class ActivityPengajuan extends AppCompatActivity {
                             Collections.sort(items, new Comparator<listkaryawanpengajuan>() {
                                 @Override
                                 public int compare(listkaryawanpengajuan listkaryawanpengajuan, listkaryawanpengajuan t1) {
-                                    //Log.e("ABSEN",""+listperingkatkaryawan.getAbsen().compareTo(t1.getAbsen()));
                                     if(listkaryawanpengajuan.getTanggal_masuk().compareTo(t1.getTanggal_masuk())==0){
                                         if(listkaryawanpengajuan.getTanggal_keluar().compareTo(t1.getTanggal_keluar())==0){
                                             return -listkaryawanpengajuan.getJenis().compareTo(t1.getJenis());
@@ -275,7 +313,6 @@ public class ActivityPengajuan extends AppCompatActivity {
                                         return -listkaryawanpengajuan.getTanggal_keluar().compareTo(t1.getTanggal_keluar());
                                     }
                                     return -listkaryawanpengajuan.getTanggal_masuk().compareTo(t1.getTanggal_masuk());
-
                                 }
                             });
                             pengajuan = new Adapterhistorypengajuan(ActivityPengajuan.this, items, ItemAnimation.LEFT_RIGHT);
@@ -291,7 +328,6 @@ public class ActivityPengajuan extends AppCompatActivity {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
                     }
-
 
                 } else {
                     Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
@@ -321,7 +357,6 @@ public class ActivityPengajuan extends AppCompatActivity {
         JSONObject result = null ;
         //ProgressDialog dialog ;
         String urldata ;
-        String passeddata = "" ;
         String keterangan="";
 
         public retrivegetketeranganref(Context context, String keterangan)
@@ -369,10 +404,7 @@ public class ActivityPengajuan extends AppCompatActivity {
 
                     RequestBody body = new FormBody.Builder()
                             .add("id",prefs.getString("id", ""))
-
                             .build();
-
-                    Log.e(TAG, prefs.getString("id", ""));
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
@@ -396,7 +428,6 @@ public class ActivityPengajuan extends AppCompatActivity {
                         Log.e(TAG, "NULL");
                     }
                     else {
-
                         result = new JSONObject(responses.body().string());
                     }
                 } catch (JSONException e) {
@@ -432,13 +463,10 @@ public class ActivityPengajuan extends AppCompatActivity {
         protected void onPostExecute(String result1) {
 
             try {
-                //
                 if (result != null) {
                     try {
                         Log.e(TAG, "data json result" + result.toString());
-
                         JSONArray pengsarray = result.getJSONArray("rows");
-                        Log.e(TAG, "data json result" + pengsarray.length());
 
                         for (int i = 0; i < pengsarray.length(); i++) {
                             JSONObject obj = pengsarray.getJSONObject(i);
@@ -478,13 +506,11 @@ public class ActivityPengajuan extends AppCompatActivity {
                             else{
                                 ajukan.setStatus("Pending");
                             }
-
                             if (keterangans.equals("")) {
-                                Log.e(TAG, "data json result" + "KOSONG");
+                                ajukan.setKeterangan("-");
                             } else {
                                 ajukan.setKeterangan(keterangans);
                             }
-                            Log.e(TAG, "data json result" + keterangans);
 
                             items.add(ajukan);
                         }
@@ -493,7 +519,6 @@ public class ActivityPengajuan extends AppCompatActivity {
                             Collections.sort(items, new Comparator<listkaryawanpengajuan>() {
                                 @Override
                                 public int compare(listkaryawanpengajuan listkaryawanpengajuan, listkaryawanpengajuan t1) {
-                                    //Log.e("ABSEN",""+listperingkatkaryawan.getAbsen().compareTo(t1.getAbsen()));
                                     if(listkaryawanpengajuan.getTanggal_masuk().compareTo(t1.getTanggal_masuk())==0){
                                         if(listkaryawanpengajuan.getTanggal_keluar().compareTo(t1.getTanggal_keluar())==0){
                                             return -listkaryawanpengajuan.getJenis().compareTo(t1.getJenis());
@@ -507,16 +532,16 @@ public class ActivityPengajuan extends AppCompatActivity {
                             if(pengajuan!=null){
                                 pengajuan.notifyDataSetChanged();
                             }
+                            else{
+                                pengajuan = new Adapterhistorypengajuan(ActivityPengajuan.this, items, ItemAnimation.LEFT_RIGHT);
+                                recyclerView.setLayoutManager(new LinearLayoutManager(ActivityPengajuan.this));
+                                recyclerView.setHasFixedSize(true);
+                                recyclerView.setAdapter(pengajuan);
+                            }
                             if(dialog.isShowing()){
                                 dialog.dismiss();
                             }
                             swipehome.setRefreshing(false);
-                            /*
-                            pengajuan = new Adapterhistorypengajuan(ActivityPengajuan.this, items, ItemAnimation.LEFT_RIGHT);
-                            recyclerView.setLayoutManager(new LinearLayoutManager(ActivityPengajuan.this));
-                            recyclerView.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(ActivityPengajuan.this, 3), true));
-                            recyclerView.setHasFixedSize(true);
-                            recyclerView.setAdapter(pengajuan);*/
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -541,8 +566,6 @@ public class ActivityPengajuan extends AppCompatActivity {
                 dialog.dismiss();
             }*/
 
-
-
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
@@ -551,13 +574,10 @@ public class ActivityPengajuan extends AppCompatActivity {
         parent_view=findViewById(R.id.parent_view);
         recyclerView=findViewById(R.id.recyclerView);
         swipehome=findViewById(R.id.swipehome);
-
         keterangan=findViewById(R.id.keterangan);
 
         spinner = (MaterialSpinner) findViewById(R.id.spinner);
         spinner.setItems("Pilih Pengajuan","Cuti", "Izin", "Dinas", "Sakit");
-
-        //spinner.setText("Pengajuan");
 
         tglmasuk=findViewById(R.id.tglmasuk);
         tglkeluar=findViewById(R.id.tglkeluar);
@@ -582,7 +602,6 @@ public class ActivityPengajuan extends AppCompatActivity {
             public void onClick(View view) {
                 dialogDatePickerDark(tglmasuk,"masuk");
             }
-
         });
         tglkeluar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -593,8 +612,6 @@ public class ActivityPengajuan extends AppCompatActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Log.e("NEXT DATE : ", "" + tanggal_masuk.compareTo(tanggal_keluar));
                 SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
                 try {
                     tgl_masuk = df.parse(tglmasuk.getText().toString());
@@ -631,12 +648,7 @@ public class ActivityPengajuan extends AppCompatActivity {
                                 dialog.show();
                                 dialog.getWindow().setAttributes(lp);
                             } else {
-                                Log.e("NEXT DATE : ", "Berhasil");
-
-
-                                Log.e("NEXT DATE : ", "" + tanggal_masuk1 + " " + tanggal_keluar1);
-
-                                if (!keterangan.getText().toString().trim().equals("")) {
+                                if(generator.checkInternet(ActivityPengajuan.this)) {
                                     if (spinner.getText().equals("Cuti")) {
                                         retrivepengajuancuti cuti = new retrivepengajuancuti(ActivityPengajuan.this);
                                         cuti.execute();
@@ -650,11 +662,10 @@ public class ActivityPengajuan extends AppCompatActivity {
                                         retrivepengajuansakit sakit = new retrivepengajuansakit(ActivityPengajuan.this);
                                         sakit.execute();
                                     }
-
-                                } else {
-                                    Log.e("NEXT DATE : ", "Isi Keterangan Anda");
                                 }
-
+                                else{
+                                    Toast.makeText(ActivityPengajuan.this, R.string.no_connection,Toast.LENGTH_SHORT).show();
+                                }
                             }
                         }
                     } else if (spinner.getText().equals("Pilih Pengajuan")) {
@@ -664,7 +675,6 @@ public class ActivityPengajuan extends AppCompatActivity {
 
                 } catch (Exception e) {
                     Log.e("NEXT DATE : ", "" + tanggal_masuk.compareTo(tanggal_keluar));
-                    Log.e("NEXT DATE : ", "" + tanggal_masuk1 + " " + tanggal_keluar1);
                 }
 
             }
@@ -673,31 +683,7 @@ public class ActivityPengajuan extends AppCompatActivity {
         swipehome.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-
-                dialog = new ProgressDialog(ActivityPengajuan.this);
-                dialog.setMessage("Loading ...");
-                dialog.show();
-                if(items!=null){
-                    items.clear();
-                }
-                else{
-                    items=new ArrayList<>();
-                }
-                spinner.setSelectedIndex(0);
-                Calendar c = Calendar.getInstance();
-                c.add(Calendar.DATE,0);
-                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-                String formattedDate = df.format(c.getTime());
-                tglmasuk.setText(formattedDate);
-                tglkeluar.setText(formattedDate);
-                keterangan.setText("");
-                if(pengajuan!=null){
-                    pengajuan.notifyDataSetChanged();
-                }
-                for (int i=0;i<kets.length;i++) {
-                    retrivegetketeranganref ketref = new retrivegetketeranganref(ActivityPengajuan.this, kets[i]);
-                    ketref.execute();
-                }
+                snackBarWithActionIndefinite();
             }
         });
     }
@@ -712,7 +698,6 @@ public class ActivityPengajuan extends AppCompatActivity {
         JSONObject result = null ;
         ProgressDialog dialog ;
         String urldata = generator.pengajuancutiurl;
-        String passeddata = "" ;
 
         public retrivepengajuancuti(Context context)
         {
@@ -752,10 +737,7 @@ public class ActivityPengajuan extends AppCompatActivity {
                             .add("akhir_cuti",format.format(tgl_keluar))
                             .add("lama", ""+lama)
                             .add("keterangan",keterangan.getText().toString().trim())
-
                             .build();
-
-                    Log.e(TAG, prefs.getString("id", "")+" "+format.format(tgl_masuk)+" "+format.format(tgl_keluar)+" "+lama+" "+keterangan.getText().toString()+" " );
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
@@ -819,7 +801,6 @@ public class ActivityPengajuan extends AppCompatActivity {
                 if (result != null) {
                     try {
                         Log.e(TAG, "data json result" + result.toString());
-                        //items = new ArrayList<>();
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         boolean status=result.getBoolean("status");
                         if(!status){
@@ -871,7 +852,6 @@ public class ActivityPengajuan extends AppCompatActivity {
         JSONObject result = null ;
         ProgressDialog dialog ;
         String urldata = generator.pengajuanizinurl;
-        String passeddata = "" ;
 
         public retrivepengajuanizin(Context context)
         {
@@ -912,8 +892,6 @@ public class ActivityPengajuan extends AppCompatActivity {
                             .add("lama", ""+lama)
                             .add("keterangan",keterangan.getText().toString().trim())
                             .build();
-
-                    Log.e(TAG, prefs.getString("id", "")+" "+format.format(tgl_masuk)+" "+format.format(tgl_keluar)+" "+lama+" "+keterangan.getText().toString()+" " );
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
@@ -973,7 +951,6 @@ public class ActivityPengajuan extends AppCompatActivity {
         protected void onPostExecute(String result1) {
 
             try {
-                //
                 if (result != null) {
                     try {
                         Log.e(TAG, "data json result" + result.toString());
@@ -1027,7 +1004,6 @@ public class ActivityPengajuan extends AppCompatActivity {
         JSONObject result = null ;
         ProgressDialog dialog ;
         String urldata = generator.pengajuandinasurl;
-        String passeddata = "" ;
 
         public retrivepengajuandinas(Context context)
         {
@@ -1069,8 +1045,6 @@ public class ActivityPengajuan extends AppCompatActivity {
                             .add("keterangan",keterangan.getText().toString().trim())
                             .build();
 
-                    Log.e(TAG, prefs.getString("id", "")+" "+format.format(tgl_masuk)+" "+format.format(tgl_keluar)+" "+lama+" "+keterangan.getText().toString()+" " );
-
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
                             .post(body)
@@ -1129,7 +1103,6 @@ public class ActivityPengajuan extends AppCompatActivity {
         protected void onPostExecute(String result1) {
 
             try {
-                //
                 if (result != null) {
                     try {
                         Log.e(TAG, "data json result" + result.toString());
@@ -1153,7 +1126,6 @@ public class ActivityPengajuan extends AppCompatActivity {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
                     }
-
 
                 } else {
                     Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
@@ -1182,7 +1154,6 @@ public class ActivityPengajuan extends AppCompatActivity {
         JSONObject result = null ;
         ProgressDialog dialog ;
         String urldata = generator.pengajuansakiturl;
-        String passeddata = "" ;
 
         public retrivepengajuansakit(Context context)
         {
@@ -1213,7 +1184,6 @@ public class ActivityPengajuan extends AppCompatActivity {
                 try {
                     OkHttpClient client = new OkHttpClient();
 
-                    SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
                     RequestBody body = new FormBody.Builder()
@@ -1223,8 +1193,6 @@ public class ActivityPengajuan extends AppCompatActivity {
                             .add("lama", ""+lama)
                             .add("keterangan",keterangan.getText().toString().trim())
                             .build();
-
-                    Log.e(TAG, prefs.getString("id", "")+" "+format.format(tgl_masuk)+" "+format.format(tgl_keluar)+" "+lama+" "+keterangan.getText().toString()+" " );
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
@@ -1272,7 +1240,6 @@ public class ActivityPengajuan extends AppCompatActivity {
                 response = "Error Occured, PLease Contact Administrator/Support";
             }
 
-
             return response;
         }
 
@@ -1283,7 +1250,6 @@ public class ActivityPengajuan extends AppCompatActivity {
 
         protected void onPostExecute(String result1) {
             try {
-                //
                 if (result != null) {
                     try {
                         Log.e(TAG, "data json result" + result.toString());
@@ -1309,7 +1275,6 @@ public class ActivityPengajuan extends AppCompatActivity {
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
                     }
 
-
                 } else {
                     Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
                 }
@@ -1322,7 +1287,6 @@ public class ActivityPengajuan extends AppCompatActivity {
             if(this.dialog.isShowing()){
                 dialog.dismiss();
             }
-
 
             Log.d(TAG + " onPostExecute", "" + result1);
         }
@@ -1375,7 +1339,6 @@ public class ActivityPengajuan extends AppCompatActivity {
         datePicker.show(getFragmentManager(), "Datepickerdialog");
     }
 
-
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back);
@@ -1397,7 +1360,6 @@ public class ActivityPengajuan extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
             finish();

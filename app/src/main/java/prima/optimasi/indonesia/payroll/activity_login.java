@@ -9,6 +9,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.squareup.picasso.Picasso;
@@ -140,8 +143,13 @@ public class activity_login extends AppCompatActivity {
                     dialog.show();
                 }
                 else {
-                    daftarcompany company = new daftarcompany(activity_login.this,codeentered.getText().toString());
-                    company.execute();
+                    if(generator.checkInternet(activity_login.this)) {
+                        daftarcompany company = new daftarcompany(activity_login.this, codeentered.getText().toString());
+                        company.execute();
+                    }
+                    else{
+                        Toast.makeText(activity_login.this, R.string.no_connection,Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -156,11 +164,11 @@ public class activity_login extends AppCompatActivity {
                     ActivityCompat.requestPermissions(activity_login.this, new String[] {Manifest.permission.CAMERA}, 5);
                 }
                 else {
-                    Intent i = new Intent(activity_login.this,QrCodeActivity.class);
-                    i.putExtra("keepalive",0);
-                    startActivityForResult( i,100);
-                }
+                    Intent i = new Intent(activity_login.this, QrCodeActivity.class);
+                    i.putExtra("keepalive", 0);
+                    startActivityForResult(i, 100);
 
+                }
 
             }
         });
@@ -373,9 +381,13 @@ public class activity_login extends AppCompatActivity {
     private void searchAction(final String username, final String password) {
         progress_bar.setVisibility(View.VISIBLE);
         fab.setAlpha(0f);
-
+        if(generator.checkInternet(activity_login.this)){
             TestAsync sync = new TestAsync(activity_login.this,generator.keepaliveurl,username,password,"");
             sync.execute();
+        }
+        else{
+            Toast.makeText(activity_login.this, R.string.no_connection,Toast.LENGTH_SHORT).show();
+        }
 
 
         new Handler().postDelayed(new Runnable() {
@@ -590,9 +602,15 @@ public class activity_login extends AppCompatActivity {
                 Log.d(TAG,"Have scan result in your app activity :"+ result);
 
                 codeentered.setText(result);
+                if(generator.checkInternet(activity_login.this)){
+                    loginselainowner owner = new loginselainowner(activity_login.this,result);
+                    owner.execute();
+                }
+                else{
+                    Toast.makeText(activity_login.this, R.string.no_connection,Toast.LENGTH_SHORT).show();
+                }
 
-                loginselainowner owner = new loginselainowner(activity_login.this,result);
-                owner.execute();
+
                 /*
 
                 AlertDialog alertDialog = new AlertDialog.Builder(activity_login.this).create();
@@ -643,9 +661,13 @@ public class activity_login extends AppCompatActivity {
                     return;
                 String result = intent.getStringExtra("com.blikoon.qrcodescanner.got_qr_scan_relult");
                 Log.d(TAG, "Have scan result in your app activity :" + result);
-
-                daftarcompany owner = new daftarcompany(activity_login.this, result);
-                owner.execute();
+                if (generator.checkInternet(activity_login.this)){
+                    daftarcompany owner = new daftarcompany(activity_login.this, result);
+                    owner.execute();
+                }
+                else{
+                    Toast.makeText(activity_login.this, R.string.no_connection,Toast.LENGTH_SHORT).show();
+                }
                 /*
 
                 AlertDialog alertDialog = new AlertDialog.Builder(activity_login.this).create();

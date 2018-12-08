@@ -1,10 +1,13 @@
 package prima.optimasi.indonesia.payroll.main_owner;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -87,7 +90,7 @@ public class mainmenu_owner extends AppCompatActivity
         initToolbar();
         initComponent();
         initListener();
-        if(loadingprogress.isShowing()){
+        if (loadingprogress.isShowing()) {
             loadingprogress.dismiss();
         }
 
@@ -582,5 +585,17 @@ public class mainmenu_owner extends AppCompatActivity
         tempmenu.findItem(R.id.action_search).setVisible(false);
         tempmenu.findItem(R.id.action_add).setVisible(false);
 
+    }
+    public boolean checkInternet(){
+        boolean connectStatus = true;
+        ConnectivityManager ConnectionManager=(ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo=ConnectionManager.getActiveNetworkInfo();
+        if(networkInfo != null && networkInfo.isConnected()==true ) {
+            connectStatus = true;
+        }
+        else {
+            connectStatus = false;
+        }
+        return connectStatus;
     }
 }

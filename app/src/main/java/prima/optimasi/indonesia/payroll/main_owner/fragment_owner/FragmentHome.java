@@ -118,9 +118,6 @@ public class FragmentHome extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-
-
         ViewGroup rootView = (ViewGroup) inflater.inflate(
                 R.layout.fragment_home, container, false);
 
@@ -234,6 +231,7 @@ public class FragmentHome extends Fragment {
 
 
             Log.e("chart data nowdata",value.toString() );
+
 
 
 

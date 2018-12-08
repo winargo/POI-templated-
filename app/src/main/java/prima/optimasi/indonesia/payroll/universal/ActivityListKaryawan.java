@@ -19,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.applandeo.materialcalendarview.CalendarView;
@@ -55,17 +54,15 @@ public class ActivityListKaryawan extends AppCompatActivity {
     View lyt_selectdate;
     long selecteddate = 0L;
     MaterialSearchView searchView;
-    ImageView selectdate;
     CoordinatorLayout parent_view;
     TextView tanggal, tidakada;
     RecyclerView recyclerView;
     AdapterListKaryawan adapter;
     List<listkaryawan> items, total, hadir;
     listkaryawan kar;
-
     ProgressDialog dialog;
     String tanggalskrg="", settanggal;
-    int totalkaryawan=0;
+    Snackbar snackbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +70,56 @@ public class ActivityListKaryawan extends AppCompatActivity {
         initToolbar();
         initComponent();
         initListener();
-        setretrive();
+        if(generator.checkInternet(ActivityListKaryawan.this)) {
+            dialog.setTitle("Memuat Data");
+            dialog.setMessage("Data Karyawan yang " + getIntent().getStringExtra("keterangan") + " sedang Dimuat.. mohon tunggu");
+            dialog.show();
+            setretrive();
+        }
+        else {
+            snackBarWithActionIndefinite();
+        }
+    }
+
+    private void snackBarWithActionIndefinite() {
+        if(generator.checkInternet(ActivityListKaryawan.this)) {
+            if(snackbar!=null) {
+                snackbar.dismiss();
+            }
+            dialog.setMessage("Loading ...");
+            dialog.show();
+            if(items!=null){
+                items.clear();
+            }
+            else{
+                items=new ArrayList<>();
+            }
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE,0);
+            SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            String formattedDate = df.format(c.getTime());
+            tanggal.setText(formattedDate);
+            if(adapter!=null){
+                adapter.notifyDataSetChanged();
+            }
+            setretrive();
+            if(swipehome.isRefreshing()){
+                swipehome.setRefreshing(false);
+            }
+        }
+        else {
+            if(swipehome.isRefreshing()){
+                swipehome.setRefreshing(false);
+            }
+            snackbar = Snackbar.make(parent_view, R.string.no_connection, Snackbar.LENGTH_INDEFINITE)
+                    .setAction("COBA LAGI", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            snackBarWithActionIndefinite();
+                        }
+                    });
+            snackbar.show();
+        }
     }
 
     public void setretrive(){
@@ -124,10 +170,7 @@ public class ActivityListKaryawan extends AppCompatActivity {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-
-
         String urldata = "";
-        String passeddata = "" ;
         String keterangan="";
 
         public retriveketerangan(Context context, String keterangan)
@@ -177,7 +220,6 @@ public class ActivityListKaryawan extends AppCompatActivity {
                             .add("date",settanggal)
                             .build();
 
-                    Log.e("Set Tanggal", settanggal);
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
                             .post(body)
@@ -224,7 +266,6 @@ public class ActivityListKaryawan extends AppCompatActivity {
                 response = "Error Occured, PLease Contact Administrator/Support";
             }
 
-
             return response;
         }
 
@@ -255,41 +296,6 @@ public class ActivityListKaryawan extends AppCompatActivity {
                         else{
                             tidakada.setVisibility(View.GONE);
 
-                            /*
-                            int panjang=0;
-                            for(int i=0; i<pengsarray.length();i++){
-                                SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd");
-                                JSONObject obj=pengsarray.getJSONObject(i);
-                                String mulai=obj.getString("tgl_"+keterangan).substring(0,10);
-                                String akhir=obj.getString("tgl_"+keterangan).substring(0,10);
-                                Date mulaitgl=formatter.parse(mulai);
-                                Date datetgl=formatter.parse(settanggal);
-                                Date akhirtgl=formatter.parse(akhir);
-                                Log.e("MULAI DAN AKHIR", mulai+"__"+akhir);
-                                Log.e("Tanggal Date", settanggal);
-                                Log.e("Compare", ""+settanggal.compareTo(mulai));
-                                Log.e("Compare Date", ""+datetgl.compareTo(mulaitgl));
-                                if(datetgl.compareTo(mulaitgl)>=0 && akhirtgl.compareTo(datetgl)>=0){
-                                    kar=new listkaryawan();
-                                    kar.setNama(obj.getString("nama"));
-                                    kar.setIskar(obj.getString("id"));
-                                    kar.setJabatan(obj.getString("jabatan"));
-                                    if(!obj.getString("foto").equals("")){
-                                        kar.setImagelink(generator.profileurl+obj.getString("foto"));
-                                    }
-                                    else{
-                                        kar.setImagelink("");
-                                    }
-                                    items.add(kar);
-                                    panjang++;
-                                    Log.e("PANJANG",""+panjang);
-                                }
-                                else{
-                                    Log.e("PANJANG","NULL");
-                                }
-                            }*/
-
-
                             for (int i=0;i<pengsarray.length();i++){
                                 JSONObject obj=pengsarray.getJSONObject(i);
                                 kar=new listkaryawan();
@@ -313,7 +319,6 @@ public class ActivityListKaryawan extends AppCompatActivity {
                                 recyclerView.setHasFixedSize(true);
                                 recyclerView.setAdapter(adapter);
                             }
-
 
                         }
 
@@ -353,11 +358,7 @@ public class ActivityListKaryawan extends AppCompatActivity {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-
-
         String urldata = generator.listemployeeurl;
-        String passeddata = "" ;
-        String keterangan="";
 
         public retrivetotal(Context context)
         {
@@ -365,7 +366,6 @@ public class ActivityListKaryawan extends AppCompatActivity {
             this.username = generator.username;
             this.password = generator.password;
             this.error = error ;
-
         }
 
         String TAG = getClass().getSimpleName();
@@ -513,11 +513,8 @@ public class ActivityListKaryawan extends AppCompatActivity {
         SharedPreferences prefs ;
         JSONObject result = null ;
         JSONObject result1 = null ;
-
         int karyawanjumlah=0;
-
         String urldata = generator.getabsensidateurl;
-        String passeddata = "" ;
 
         public retriveabsen(Context context,int karyawanjumlah)
         {
@@ -552,8 +549,6 @@ public class ActivityListKaryawan extends AppCompatActivity {
                     RequestBody body = new FormBody.Builder()
                             .add("date",settanggal)
                             .build();
-
-                    Log.e(TAG, settanggal);
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
@@ -643,9 +638,7 @@ public class ActivityListKaryawan extends AppCompatActivity {
                         }
                         else {
                             String tempcall = "";
-
                             boolean hadir;
-                            Log.e("Total karyawan",""+karyawanjumlah);
                             for (int j = 0; j < karyawanjumlah; j++) {
                                 hadir = false;
                                 for (int i = 0; i < pengsarray.length(); i++) {
@@ -710,9 +703,7 @@ public class ActivityListKaryawan extends AppCompatActivity {
         String password = "" ;
         SharedPreferences prefs ;
         JSONObject result = null ;
-
         String urldata = generator.karyawanjabatanurl;
-        String passeddata = "" ;
         String jabatan="";
 
         public retrivelistkaryawan(Context context, String jabatan)
@@ -747,8 +738,6 @@ public class ActivityListKaryawan extends AppCompatActivity {
                             .add("jabatan",jabatan)
                             .add("date",settanggal)
                             .build();
-
-                    Log.e(TAG, jabatan);
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
@@ -812,19 +801,6 @@ public class ActivityListKaryawan extends AppCompatActivity {
             try {
                 if (result != null) {
                     try {
-                        //"data":[{"id":1,"kode_karyawan":"EMP-1","idfp":"KRY0001","nama":"Tes1","alamat":"1","tempat_lahir":"1","tgl_lahir":"2018-08-23T00:00:00.000Z",
-                        // "telepon":"12313","no_wali":"12321321321","email":"12312@sad.asd","tgl_masuk":"0000-00-00","kelamin":"laki-laki","status_nikah":"Menikah",
-                        // "pendidikan":"SMA Sederajat","wn":"Asing","agama":"Katholik","shift":"tidak","status_kerja":"non_aktif","ibu_kandung":"12312321","suami_istri":"12312321",
-                        // "tanggungan":123213,"npwp":"1318","gaji":32640000,"rekening":"12321312312133","id_bank":6,"id_departemen":1,"id_jabatan":1,"id_grup":8,"id_golongan":15,
-                        // "atas_nama":"tes1","foto":"","id_cabang":2,"start_date":null,"expired_date":null,"jab_index":0,"kontrak":"tidak","file_kontrak":"","otoritas":2,
-                        // "periode_gaji":"2-Mingguan","qrcode_file":"d8ea4629488be4b2dad4bfff524d5667.png","jabatan":"Admin Kantor","keterangan":"Jabatan","tunjangan":0},
-                        // {"id":23,"kode_karyawan":"EMP-99","idfp":"KRY0013","nama":"Astros","alamat":"asdsa","tempat_lahir":"1","tgl_lahir":"2018-09-26T00:00:00.000Z",
-                        // "telepon":"1231321321321","no_wali":"090909090909","email":"12312@sad.asd","tgl_masuk":"2018-09-26T00:00:00.000Z","kelamin":"laki-laki",
-                        // "status_nikah":"Menikah","pendidikan":"Sarjana S3","wn":"Indonesia","agama":"Protestan","shift":"ya","status_kerja":"aktif","ibu_kandung":"12312321",
-                        // "suami_istri":"assdaadsd","tanggungan":1,"npwp":"12312321","gaji":32640000,"rekening":"12312321","id_bank":5,"id_departemen":1,"id_jabatan":1,"id_grup":9,
-                        // "id_golongan":null,"atas_nama":"Astros","foto":"","id_cabang":2,"start_date":null,"expired_date":null,"jab_index":0,"kontrak":"tidak","file_kontrak":"",
-                        // "otoritas":4,"periode_gaji":"2-Mingguan","qrcode_file":"196d351656861176861dc93ac15a9fee.png","jabatan":"Admin Kantor","keterangan":"Jabatan","tunjangan":0}]}
-
                         Log.e(TAG, "daftar absensi" + result.toString());
                         if(items!=null){
                             items.clear();
@@ -906,12 +882,8 @@ public class ActivityListKaryawan extends AppCompatActivity {
         lyt_selectdate=findViewById(R.id.lyt_selectdate);
         searchView=(MaterialSearchView)findViewById(R.id.searchView);
         swipehome=findViewById(R.id.swipehome);
+
         dialog = new ProgressDialog(this);
-
-        dialog.setTitle("Memuat Data");
-        dialog.setMessage("Data Karyawan yang "+getIntent().getStringExtra("keterangan")+" sedang Dimuat.. mohon tunggu");
-
-        dialog.show();
 
         tanggal=findViewById(R.id.tanggal);
         tidakada=findViewById(R.id.tidakada);
@@ -919,7 +891,6 @@ public class ActivityListKaryawan extends AppCompatActivity {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         tanggalskrg=format.format(c.getTime());
         settanggal=tanggalskrg;
-        Log.e("Tanggal sekarang", tanggalskrg);
 
         c.add(Calendar.DATE,0);
         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
@@ -969,7 +940,6 @@ public class ActivityListKaryawan extends AppCompatActivity {
                         SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         settanggal=format.format(clickedDayCalendar.getTime());
-                        Log.e("Tanggal", settanggal);
                         tanggal.setText(format1.format(clickedDayCalendar.getTime()));
 
                     }
@@ -999,26 +969,7 @@ public class ActivityListKaryawan extends AppCompatActivity {
         swipehome.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-
-                dialog = new ProgressDialog(ActivityListKaryawan.this);
-                dialog.setMessage("Loading ...");
-                dialog.show();
-                if(items!=null){
-                    items.clear();
-                }
-                else{
-                    items=new ArrayList<>();
-                }
-                Calendar c = Calendar.getInstance();
-                c.add(Calendar.DATE,0);
-                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-                String formattedDate = df.format(c.getTime());
-                tanggal.setText(formattedDate);
-                if(adapter!=null){
-                    adapter.notifyDataSetChanged();
-                }
-                setretrive();
-
+                snackBarWithActionIndefinite();
             }
         });
     }
@@ -1030,22 +981,22 @@ public class ActivityListKaryawan extends AppCompatActivity {
         MenuItem item = menu.findItem(R.id.action_search);
 
         searchView.setMenuItem(item);
-
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 //Do some magic
-                adapter.getFilter().filter(query);
-                //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                if(adapter!=null) {
+                    adapter.getFilter().filter(query);
+                }
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String query) {
                 //Do some magic
-                Log.e("Text", "newText=" + query);
-                adapter.getFilter().filter(query);
-                //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                if(adapter!=null){
+                    adapter.getFilter().filter(query);
+                }
                 return false;
             }
         });
