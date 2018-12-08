@@ -117,7 +117,6 @@ public class AdapterGridCaller extends RecyclerView.Adapter<RecyclerView.ViewHol
                 Picasso.get().load("http://www.racemph.com/wp-content/uploads/2016/09/profile-image-placeholder.png").into(view.image);
                 //Picasso.get().load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ").into(view.image);
             }
-
             else{
                 Tools.displayImageOriginal(ctx, view.image, obj.getImagelink());
             }

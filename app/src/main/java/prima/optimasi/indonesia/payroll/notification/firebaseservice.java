@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -25,8 +26,19 @@ public class firebaseservice extends FirebaseMessagingService {
 
     String TAG = "firebse service";
 
-    public firebaseservice() {
+    @Override
+    public void onNewToken(String s) {
+        super.onNewToken(s);
+        sendRegistrationToServer(s);
+        Log.d("NEW_TOKEN",s);
+    }
 
+    private void sendRegistrationToServer(final String refreshedToken) {
+        getSharedPreferences("poipayroll",MODE_PRIVATE).edit().putString("tokennotif",refreshedToken).commit();
+        getSharedPreferences("poipayroll",MODE_PRIVATE).edit().putString("notiftoken",refreshedToken).commit();
+        getSharedPreferences("poipayroll",MODE_PRIVATE).edit().putInt("statustoken",0).commit();
+        SharedPreferences a =getSharedPreferences("poipayroll", MODE_PRIVATE);
+        Log.e(TAG, "tokenservernodejs" + a.getString("tokennotif",""));
     }
 
 
@@ -36,7 +48,10 @@ public class firebaseservice extends FirebaseMessagingService {
 
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        Log.d("Message", "From: " + remoteMessage.getFrom());
+        Log.e("Msgnodejsfrom", "From: " + remoteMessage.getFrom());
+        Log.e("Msgnodejsdata", "From: " + remoteMessage.getData());
+        Log.e("Msgnodejsnotific", "From: " + remoteMessage.getNotification());
+        Log.e("Msgnodejsbody", "From: " + remoteMessage.getNotification().getBody());
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
@@ -54,7 +69,8 @@ public class firebaseservice extends FirebaseMessagingService {
 
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
-            showNotification(remoteMessage.getNotification().getTitle(),remoteMessage.getNotification().getBody());
+
+            //showNotification(remoteMessage.getNotification().getTitle(),remoteMessage.getNotification().getBody());
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
         }
 

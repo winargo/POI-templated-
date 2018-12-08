@@ -174,7 +174,7 @@ public class viewkaryawan extends AppCompatActivity {
         indicator.setupWithViewPager(pager, true);
         */
 
-
+        Log.e("karyawan","invoked" );
 
         retrivekaryawan kar = new retrivekaryawan(this,getIntent().getStringExtra("idkaryawan"));
         kar.execute();
@@ -479,9 +479,6 @@ public class viewkaryawan extends AppCompatActivity {
                         pend.setText(obj.getString("pendidikan"));
                         gaji.setText("Rp "+ formatter.format(obj.getDouble("gaji")));
                         status.setText(obj.getString("status_kerja"));
-                        scount.setText("-");
-                        icount.setText("-");
-                        acount.setText("-");
                         String urlpath="";
                         if(obj.getString("foto").equals("")){
                             urlpath="http://www.racemph.com/wp-content/uploads/2016/09/profile-image-placeholder.png";
@@ -489,6 +486,7 @@ public class viewkaryawan extends AppCompatActivity {
                         else{
                             urlpath=generator.profileurl+"/"+obj.getString("foto");
                         }
+                        Log.e("urlfotoview",urlpath );
                         Picasso.get().load(urlpath).transform(new CircleTransform()).into(image);
                         final Bitmap[] bm = {null};
 

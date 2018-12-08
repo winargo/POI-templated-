@@ -28,6 +28,7 @@ import com.applandeo.materialcalendarview.CalendarView;
 import com.applandeo.materialcalendarview.EventDay;
 import com.applandeo.materialcalendarview.exceptions.OutOfDateRangeException;
 import com.applandeo.materialcalendarview.listeners.OnDayClickListener;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.varunest.sparkbutton.SparkButton;
 
 import org.json.JSONArray;
@@ -39,6 +40,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -61,7 +64,7 @@ import prima.optimasi.indonesia.payroll.utils.Tools;
 public class detail_dashboard_gaji extends AppCompatActivity {
 
     LinearLayout activatepengajian;
-    TextView dari, sampai, tidakada;
+    TextView tidakada;
     TextView ttlgajiawal, ttlgajibersih, ttlpotongan;
     RecyclerView recyclerView;
     AdapterListSectionedgajicust mAdapter;
@@ -70,12 +73,22 @@ public class detail_dashboard_gaji extends AppCompatActivity {
     List<datagajiperiode> items;
     private View parent_view;
     ProgressDialog pd;
+    MaterialSpinner spinnerdates;
+
 
     Double tempbpjs=0.0d,temptelat=0.0d,temptunjangan=0.0d,temptunlain=0.0d,tempreward=0.0d,temppunishment=0.0d,tempbersih=0.0d,temptotal=0.0d;
+
+    String[] months = new String[]{"January","February","March","April","May","June","July"," August","September","October","November","December"};
 
     SparkButton proses;
 
     List<datagajiperiode> datagaji = new ArrayList<>();
+
+    List<String> preview = new ArrayList<>();
+    List<String> dt1 = new ArrayList<>();
+    List<String> dt2 = new ArrayList<>();
+
+    String dari="",sampai="";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,6 +96,37 @@ public class detail_dashboard_gaji extends AppCompatActivity {
         setContentView(R.layout.activity_report_pengajian_cust);
 
         pd = new ProgressDialog(this);
+
+        Calendar cal = Calendar.getInstance();
+
+        cal.add(Calendar.MONTH,-11);
+
+
+        for(int i = 0; i< 12; i++) {
+
+            preview.add(months[cal.get(Calendar.MONTH)]);
+            Log.e("Month data",(cal.get(Calendar.MONTH)+1)+" / "+cal.get(Calendar.YEAR) );
+
+            String dat1 = cal.get(Calendar.YEAR)+"-"+(cal.get(Calendar.MONTH)+1)+"-0"+1;
+            String dat2 = cal.get(Calendar.YEAR)+"-"+(cal.get(Calendar.MONTH)+1)+"-"+cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+            Log.e("datesdata",dat1+"  " +dat2 );
+            dt1.add(dat1);
+            dt2.add(dat2);
+            cal.add(Calendar.MONTH, 1);
+        }
+        Collections.reverse(preview);
+        Collections.reverse(dt1);
+        Collections.reverse(dt2);
+
+        spinnerdates = (MaterialSpinner) findViewById(R.id.spinnerdate);
+        spinnerdates.setItems(preview);
+        spinnerdates.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+
+            @Override public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                dari = dt1.get(position);
+                sampai = dt2.get(position);
+            }
+        });
 
         pd.setTitle("Loading Data Penggajian");
         pd.setMessage("Please Wait...");
@@ -98,37 +142,26 @@ public class detail_dashboard_gaji extends AppCompatActivity {
         ttlgajibersih = findViewById(R.id.ttlgajibersih);
         ttlpotongan = findViewById(R.id.ttlpotongan);
 
-        dari=findViewById(R.id.dari);
-        sampai=findViewById(R.id.sampai);
         tidakada=findViewById(R.id.tidakada);
         SimpleDateFormat format1 = new SimpleDateFormat("dd/MM/yyyy");
         SimpleDateFormat fomat = new SimpleDateFormat("yyyy-MM-dd");
         String msk=getIntent().getStringExtra("tanggal_masuk");
         String klr=getIntent().getStringExtra("tanggal_keluar");
 
-        Calendar cal = Calendar.getInstance();
-
-        cal.setTime(new Date());
-
-        cal.add(Calendar.MONTH,-1);
-
-        final String[] dat1 = {cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-01"};
-        final String[] dat2 = {cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + cal.getActualMaximum(Calendar.DAY_OF_MONTH)};
 
         if(getIntent().getStringExtra("estimasi").equals("0")){
 
         }
         else {
-            cal.add(Calendar.MONTH,1);
+            /*cal.add(Calendar.MONTH,1);
             dat1[0] = cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-01";
 
-            dat2[0] = fomat.format(new Date());
+            dat2[0] = fomat.format(new Date());*/
         }
 
 
         try{
-            dari.setText(format1.format(fomat.parse(dat1[0])));
-            sampai.setText(format1.format(fomat.parse(dat2[0])));
+            //
         }
         catch(Exception e){
             Log.e("DATE : ", ""+msk+klr);
@@ -141,7 +174,7 @@ public class detail_dashboard_gaji extends AppCompatActivity {
         final Long[] selecteddate1 = {0L};
         final Long[] selecteddate2 = {0L};
 
-        dari.setOnClickListener(new View.OnClickListener() {
+        /*dari.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String[] tanggal = {""};
@@ -277,7 +310,7 @@ public class detail_dashboard_gaji extends AppCompatActivity {
                 });
                 dial.show();
             }
-        });
+        });*/
 
         proses.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -286,24 +319,18 @@ public class detail_dashboard_gaji extends AppCompatActivity {
                     pd.show();
                     proses.playAnimation();
                     proses.setChecked(true);
-                    if(format1.parse(dari.getText().toString()).after(format1.parse(sampai.getText().toString()))){
-                        Snackbar.make(parent_view,"Pilihan tanggal tidak sesuai",Snackbar.LENGTH_SHORT).show();
+                    if(!pd.isShowing()){
+
+                    }
+                    if(getIntent().getStringExtra("estimasi").equals("0")){
+                        retrivegaji gaji = new retrivegaji(detail_dashboard_gaji.this,pd, dari, sampai);
+                        gaji.execute();
                     }
                     else {
-                        if(!pd.isShowing()){
-
-                        }
-                        if(getIntent().getStringExtra("estimasi").equals("0")){
-                            retrivegaji gaji = new retrivegaji(detail_dashboard_gaji.this,pd, dat1[0], dat2[0]);
-                            gaji.execute();
-                        }
-                        else {
-                            retriveestimasi gaji = new retriveestimasi(detail_dashboard_gaji.this,pd, dat1[0], dat2[0]);
-                            gaji.execute();
-                        }
+                        retriveestimasi gaji = new retriveestimasi(detail_dashboard_gaji.this,pd, dari, sampai);
+                        gaji.execute();
                     }
-
-                } catch (ParseException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -313,13 +340,15 @@ public class detail_dashboard_gaji extends AppCompatActivity {
         initToolbar();
 
         if(getIntent().getStringExtra("estimasi").equals("0")){
-            retrivegaji gaji = new retrivegaji(this,pd, dat1[0], dat2[0]);
+            retrivegaji gaji = new retrivegaji(this,pd, dari, sampai);
             gaji.execute();
         }
         else {
-            retriveestimasi gaji = new retriveestimasi(this,pd, dat1[0], dat2[0]);
+            retriveestimasi gaji = new retriveestimasi(this,pd, dari, sampai);
             gaji.execute();
         }
+
+
 
         if(getIntent().getStringExtra("estimasi").equals("0")){
             mAdapter = new AdapterListSectionedgajicust(detail_dashboard_gaji.this,datagaji);
@@ -375,7 +404,7 @@ public class detail_dashboard_gaji extends AppCompatActivity {
         SharedPreferences prefs ;
         JSONObject result = null ;
         ProgressDialog dialog ;
-        String urldata = generator.laporanpengajianurl;
+        String urldata = generator.dashboardpenggajiannurl;
         String dt1="";
         String dt2="";
 
@@ -483,6 +512,32 @@ public class detail_dashboard_gaji extends AppCompatActivity {
                 if (result != null) {
 
                     if(result.getString("status").equals("true")){
+                        JSONArray arrydata = result.getJSONArray("data");
+
+                        List<String> datapayroll = new ArrayList<>();
+                        for(int i=0;i<arrydata.length();i++){
+                            JSONObject obj = arrydata.getJSONObject(i);
+                            if(datapayroll.size()==0){
+                                datapayroll.add(obj.getString("kode_payroll"));
+                            }
+                            else {
+                                for(int j=0;j<datapayroll.size();j++){
+                                    if(datapayroll.get(j).equals(obj.getString("kode_payroll"))){
+                                        break;
+                                    }
+                                    if (datapayroll.size()-1==j){
+                                        datapayroll.add(obj.getString("kode_payroll"));
+                                    }
+                                }
+                            }
+                        }
+
+                        for(da)
+                        Log.e("listpenggajianpayroll",datapayroll.toString() );
+                    }
+
+
+                    /*if(result.getString("status").equals("true")){
                         JSONArray objects = result.getJSONArray("data");
 
                         String tanggal1 = "", tanggal2 = "";
@@ -574,7 +629,7 @@ public class detail_dashboard_gaji extends AppCompatActivity {
                         if (pd.isShowing()) {
                             pd.dismiss();
                         }
-                    }
+                    }*/
                     if(proses.isChecked()){
                         proses.setChecked(false);
                     }

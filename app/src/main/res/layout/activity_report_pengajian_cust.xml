@@ -36,48 +36,17 @@
                 android:textSize="7pt"
                 android:gravity="left"
                 android:layout_gravity="center"
-                android:text="Dari"
+                android:text="Periode"
                 android:layout_height="wrap_content" />
-            <TextView
-                android:id="@+id/dari"
-                android:background="@drawable/layout_textviewround"
-                android:backgroundTint="@color/red_500"
-                android:layout_height="40sp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textSize="7pt"
-                android:layout_gravity="center"
-                android:textColor="@color/overlay_light_90"
+            <com.jaredrummler.materialspinner.MaterialSpinner
+                android:layout_margin="4sp"
+                android:id="@+id/spinnerdate"
                 android:layout_width="0sp"
-                android:textAlignment="center"
-                android:text="00/00/0000"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_margin="@dimen/spacing_middle"
-                android:textSize="7pt"
-                android:layout_gravity="center"
-                android:gravity="right"
-                android:text=" - "
-                android:layout_height="wrap_content" />
-            <TextView
-                android:id="@+id/sampai"
-                android:background="@drawable/layout_textviewround"
-                android:backgroundTint="@color/red_500"
-                android:layout_height="40sp"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:textSize="7pt"
-                android:layout_gravity="center"
-                android:textColor="@color/overlay_light_90"
-                android:layout_width="0sp"
-                android:textAlignment="center"
-                android:text="00/00/0000"
-                />
+                android:layout_height="wrap_content"/>
             <com.varunest.sparkbutton.SparkButton
-                android:layout_width="0sp"
+                android:layout_width="50sp"
                 android:id="@+id/proceedselected"
-                android:layout_weight="0.5"
                 android:backgroundTint="@color/green_500"
                 android:layout_gravity="end"
                 app:sparkbutton_animationSpeed="1.0"

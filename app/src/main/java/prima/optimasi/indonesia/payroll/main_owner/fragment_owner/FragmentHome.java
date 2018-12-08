@@ -1935,24 +1935,27 @@ public class FragmentHome extends Fragment {
                 if (result != null) {
 
                     Log.e(TAG, "total gaji" + result.toString());
+                    if(result.getString("status").equals("true")) {
+                        try {
+                            //JSONArray pengsarray = result.getJSONArray("data");
+                            DecimalFormat formatter = new DecimalFormat("###,###,###.00");
+                            if (tipe.equals("bersih")) {
+                                JSONObject obj = result.getJSONObject("data");
 
-                    try {
-                        //JSONArray pengsarray = result.getJSONArray("data");
-                        DecimalFormat formatter = new DecimalFormat("###,###,###.00");
-                        if(tipe.equals("bersih")){
-                            JSONObject obj = result.getJSONObject("data");
+                                tv.setText("RP " + formatter.format(Double.parseDouble(obj.getString("gajiBersih"))));
 
-                            tv.setText("RP "+formatter.format(Double.parseDouble(obj.getString("gajiBersih"))));
+                            } else {
+                                tv.setText("RP " + formatter.format(Double.parseDouble(result.getString("data"))));
+                                Log.e("gaji", urldata + " " + tv.getText().toString());
 
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.e(TAG, "onPostExecute: " + e.getMessage());
                         }
-                        else{
-                            tv.setText("RP "+formatter.format(Double.parseDouble(result.getString("data"))));
-                            Log.e("gaji",urldata+" "+ tv.getText().toString() );
-
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+                    else {
+                        tv.setText("RP .00");
                     }
 
 
