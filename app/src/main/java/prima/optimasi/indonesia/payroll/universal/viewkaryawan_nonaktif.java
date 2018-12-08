@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,11 +13,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
@@ -31,14 +28,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 import prima.optimasi.indonesia.payroll.R;
 import prima.optimasi.indonesia.payroll.core.generator;
-import prima.optimasi.indonesia.payroll.main_kabag.adapter.Adapterviewkaryawan;
 import prima.optimasi.indonesia.payroll.main_owner.adapter_owner.AdapterGridCaller;
 import prima.optimasi.indonesia.payroll.objects.listkaryawan;
 import prima.optimasi.indonesia.payroll.utils.ItemAnimation;
@@ -48,29 +42,50 @@ import prima.optimasi.indonesia.payroll.widget.SpacingItemDecoration;
 public class viewkaryawan_nonaktif extends AppCompatActivity {
 
     CoordinatorLayout parent_view;
-
-    private SwipeRefreshLayout refreshkabag;
     private SwipeRefreshLayout refreshkaryawan;
-
     private RecyclerView recyclerViewkaryawan;
-
     private AdapterGridCaller mAdapterkaryawan;
-
     MaterialSearchView searchView;
-    BottomNavigationView bottomnac;
-
-    TextView selectdate;
-
     List<listkaryawan> itemskaryawan;
+    Snackbar snackbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_employee);
-        refreshkaryawan = findViewById(R.id.swipekaryawan);
-        parent_view= findViewById(R.id.employeecoordinator);
         initToolbar();
         initComponent();
+    }
 
+    private void snackBarWithActionIndefinite() {
+        if(generator.checkInternet(viewkaryawan_nonaktif.this)) {
+            if(snackbar!=null) {
+                snackbar.dismiss();
+            }
+            if(itemskaryawan!=null){
+                itemskaryawan.clear();
+            }
+            else{
+                itemskaryawan= new ArrayList<>();
+            }
+            if(mAdapterkaryawan!=null){
+                mAdapterkaryawan.notifyDataSetChanged();
+            }
+            retrivekaryawanrefersh ref = new retrivekaryawanrefersh(viewkaryawan_nonaktif.this);
+            ref.execute();
+        }
+        else {
+            if(refreshkaryawan.isRefreshing()){
+                refreshkaryawan.setRefreshing(false);
+            }
+            snackbar = Snackbar.make(parent_view, R.string.no_connection, Snackbar.LENGTH_INDEFINITE)
+                    .setAction("COBA LAGI", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            snackBarWithActionIndefinite();
+                        }
+                    });
+            snackbar.show();
+        }
     }
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -80,7 +95,11 @@ public class viewkaryawan_nonaktif extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Tools.setSystemBarColor(this, R.color.colorPrimary);
     }
+
     private void initComponent() {
+        refreshkaryawan = findViewById(R.id.swipekaryawan);
+        parent_view= findViewById(R.id.employeecoordinator);
+
         recyclerViewkaryawan = (RecyclerView) findViewById(R.id.recyclerView_karyawan);
         recyclerViewkaryawan.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerViewkaryawan.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(this, 3), true));
@@ -88,56 +107,13 @@ public class viewkaryawan_nonaktif extends AppCompatActivity {
         recyclerViewkaryawan.setNestedScrollingEnabled(false);
         searchView=findViewById(R.id.searchView);
 
-        /*
-        EditText search=findViewById(R.id.search_text_karyawan);
-
-        TextWatcher filterTextWatcher = new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count,
-                                          int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before,
-                                      int count) {
-                mAdapterkaryawan.getFilter().filter(s);
-            }
-        };
-        search.addTextChangedListener(filterTextWatcher);*/
-        /*
-        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
-            @Override
-            public void onSearchViewShown() {
-                //Do some magic
-            }
-
-            @Override
-            public void onSearchViewClosed() {
-                //Do some magic
-            }
-        });
-        */
         refreshkaryawan.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(itemskaryawan!=null){
-                    itemskaryawan.clear();
-                }
-                else{
-                    itemskaryawan= new ArrayList<>();
-                }
-                if(mAdapterkaryawan!=null){
-                    mAdapterkaryawan.notifyDataSetChanged();
-                }
-                retrivekaryawanrefersh ref = new retrivekaryawanrefersh(viewkaryawan_nonaktif.this);
-                ref.execute();
+                snackBarWithActionIndefinite();
             }
         });
-
-        retrivekaryawan karyawan = new retrivekaryawan(this);
-        karyawan.execute();
+        snackBarWithActionIndefinite();
 
     }
 
@@ -151,7 +127,6 @@ public class viewkaryawan_nonaktif extends AppCompatActivity {
         JSONObject result = null ;
         ProgressDialog dialog ;
         String urldata = generator.listemployeeurl;
-        String passeddata = "" ;
 
         public retrivekaryawan(Context context)
         {
@@ -229,7 +204,6 @@ public class viewkaryawan_nonaktif extends AppCompatActivity {
                 response = "Error Occured, PLease Contact Administrator/Support";
             }
 
-
             return response;
         }
 
@@ -255,94 +229,45 @@ public class viewkaryawan_nonaktif extends AppCompatActivity {
                             JSONObject obj = pengsarray.getJSONObject(i);
                             if (!obj.getString("status_kerja").equals("aktif")) {
                                 if (obj.getString("otoritas").equals("1")) {
-                                /*if(!tempcall.equals(obj.getString("otoritas"))){
-                                    if(tempcall.equals("")){
-                                        listkaryawan kar = new listkaryawan();
-                                        kar.setJabatan("Karyawan");
-                                        kar.setSection(true);
-                                        tempcall = obj.getString("otoritas");
-                                        items.add(kar);
-                                    }
-                                    else{
-                                        listkaryawan kar = new listkaryawan();
-                                        kar.setJabatan("Karyawan");
-                                        kar.setSection(true);
-                                        tempcall = obj.getString("otoritas");
-                                        items.add(kar);
-                                    }
-                                }*/
                                     listkaryawan kar = new listkaryawan();
                                     kar.setSection(false);
                                     kar.setJabatan("Karyawan");
                                     kar.setIskar(obj.getString("id"));
                                     if (!obj.getString("foto").equals("")) {
                                         kar.setImagelink(generator.profileurl + obj.getString("foto"));
-                                        Log.e(TAG, "image data" + kar.getImagelink());
                                     } else {
                                         kar.setImagelink("");
-                                        Log.e(TAG, "image data" + kar.getImagelink());
                                     }
-
+                                    Log.e(TAG, "image data" + kar.getImagelink());
                                     kar.setNama(obj.getString("nama"));
                                     kar.setDesc(obj.getString("jabatan"));
                                     kar.setStatus(obj.getString("status_kerja"));
                                     itemskaryawan.add(kar);
                                 } else if (obj.getString("otoritas").equals("2")) {
-                                    if (!tempcall.equals(obj.getString("otoritas"))) {
-                                    /*if(tempcall.equals("")){
-                                        listkaryawan kar = new listkaryawan();
-                                        kar.setJabatan("Kepala Bagian");
-                                        kar.setSection(true);
-                                        tempcall = obj.getString("otoritas");
-                                        items.add(kar);
-                                    }
-                                    else{
-                                        listkaryawan kar = new listkaryawan();
-                                        kar.setJabatan("Kepala Bagian");
-                                        kar.setSection(true);
-                                        tempcall = obj.getString("otoritas");
-                                        items.add(kar);
-                                    }*/
-                                    }
                                     listkaryawan kar = new listkaryawan();
                                     kar.setSection(false);
                                     kar.setJabatan("Kepala Bagian");
                                     kar.setIskar(obj.getString("id"));
                                     if (!obj.getString("foto").equals("")) {
                                         kar.setImagelink(generator.profileurl + obj.getString("foto"));
-                                        Log.e(TAG, "image data" + kar.getImagelink());
                                     } else {
                                         kar.setImagelink("");
-                                        Log.e(TAG, "image data" + kar.getImagelink());
                                     }
-
+                                    Log.e(TAG, "image data" + kar.getImagelink());
                                     kar.setNama(obj.getString("nama"));
                                     kar.setDesc(obj.getString("jabatan"));
                                     kar.setStatus(obj.getString("status_kerja"));
                                     itemskaryawan.add(kar);
                                 } else if (obj.getString("otoritas").equals("3")) {
-                                /*if(!tempcall.equals(obj.getString("otoritas"))){
-                                    /*if(tempcall.equals("")){
-                                        listkaryawan kar = new listkaryawan();
-                                        kar.setJabatan("HRD");
-                                        kar.setSection(true);
-                                        tempcall = obj.getString("otoritas");
-                                        items.add(kar);
-                                    }
-                                    else{
-                                        listkaryawan kar = new listkaryawan();
-                                        kar.setJabatan("HRD");
-                                        kar.setSection(true);
-                                        tempcall = obj.getString("otoritas");
-                                        items.add(kar);
-                                    }
-                                }*/
                                     listkaryawan kar = new listkaryawan();
                                     kar.setSection(false);
                                     kar.setJabatan("HRD");
                                     kar.setIskar(obj.getString("id"));
-                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
-
+                                    if (!obj.getString("foto").equals("")) {
+                                        kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                    } else {
+                                        kar.setImagelink("");
+                                    }
                                     Log.e(TAG, "image data" + kar.getImagelink());
 
                                     kar.setNama(obj.getString("nama"));
@@ -356,26 +281,17 @@ public class viewkaryawan_nonaktif extends AppCompatActivity {
                                     kar.setIskar(obj.getString("id"));
                                     if (!obj.getString("foto").equals("")) {
                                         kar.setImagelink(generator.profileurl + obj.getString("foto"));
-                                        Log.e(TAG, "image data" + kar.getImagelink());
                                     } else {
                                         kar.setImagelink("");
-                                        Log.e(TAG, "image data" + kar.getImagelink());
                                     }
-
+                                    Log.e(TAG, "image data" + kar.getImagelink());
                                     kar.setNama(obj.getString("nama"));
                                     kar.setDesc(obj.getString("jabatan"));
                                     kar.setStatus(obj.getString("status_kerja"));
                                     itemskaryawan.add(kar);
                                 }
-
                             }
                         }
-
-
-
-
-                        //mAdapter = new AdapterListSectioned(getActivity(), items, ItemAnimation.LEFT_RIGHT);
-
                         mAdapterkaryawan = new AdapterGridCaller(viewkaryawan_nonaktif.this, itemskaryawan,ItemAnimation.FADE_IN);
                         recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
                         generator.adapterkar=mAdapterkaryawan;
@@ -418,7 +334,6 @@ public class viewkaryawan_nonaktif extends AppCompatActivity {
         JSONObject result = null ;
         ProgressDialog dialog ;
         String urldata = generator.listemployeeurl;
-        String passeddata = "" ;
 
         public retrivekaryawanrefersh(Context context)
         {
@@ -521,107 +436,46 @@ public class viewkaryawan_nonaktif extends AppCompatActivity {
                             JSONObject obj = pengsarray.getJSONObject(i);
                             if (!obj.getString("status_kerja").equals("aktif")) {
                                 if (obj.getString("otoritas").equals("1")) {
-                                /*if(!tempcall.equals(obj.getString("otoritas"))){
-                                    if(tempcall.equals("")){
-                                        listkaryawan kar = new listkaryawan();
-                                        kar.setJabatan("Karyawan");
-                                        kar.setSection(true);
-                                        tempcall = obj.getString("otoritas");
-                                        items.add(kar);
-                                    }
-                                    else{
-                                        listkaryawan kar = new listkaryawan();
-                                        kar.setJabatan("Karyawan");
-                                        kar.setSection(true);
-                                        tempcall = obj.getString("otoritas");
-                                        items.add(kar);
-                                    }
-                                }*/
                                     listkaryawan kar = new listkaryawan();
                                     kar.setSection(false);
                                     kar.setJabatan("Karyawan");
                                     kar.setIskar(obj.getString("id"));
                                     if (!obj.getString("foto").equals("")) {
                                         kar.setImagelink(generator.profileurl + obj.getString("foto"));
-                                        Log.e(TAG, "image data" + kar.getImagelink());
                                     } else {
                                         kar.setImagelink("");
-                                        Log.e(TAG, "image data" + kar.getImagelink());
                                     }
-
+                                    Log.e(TAG, "image data" + kar.getImagelink());
                                     kar.setNama(obj.getString("nama"));
                                     kar.setDesc(obj.getString("jabatan"));
                                     kar.setStatus(obj.getString("status_kerja"));
                                     itemskaryawan.add(kar);
                                 } else if (obj.getString("otoritas").equals("2")) {
-                                    if (!tempcall.equals(obj.getString("otoritas"))) {
-                                    /*if(tempcall.equals("")){
-                                        listkaryawan kar = new listkaryawan();
-                                        kar.setJabatan("Kepala Bagian");
-                                        kar.setSection(true);
-                                        tempcall = obj.getString("otoritas");
-                                        items.add(kar);
-                                    }
-                                    else{
-                                        listkaryawan kar = new listkaryawan();
-                                        kar.setJabatan("Kepala Bagian");
-                                        kar.setSection(true);
-                                        tempcall = obj.getString("otoritas");
-                                        items.add(kar);
-                                    }*/
-                                    }
                                     listkaryawan kar = new listkaryawan();
                                     kar.setSection(false);
                                     kar.setJabatan("Kepala Bagian");
                                     kar.setIskar(obj.getString("id"));
                                     if (!obj.getString("foto").equals("")) {
                                         kar.setImagelink(generator.profileurl + obj.getString("foto"));
-                                        Log.e(TAG, "image data" + kar.getImagelink());
                                     } else {
                                         kar.setImagelink("");
-                                        Log.e(TAG, "image data" + kar.getImagelink());
                                     }
-
+                                    Log.e(TAG, "image data" + kar.getImagelink());
                                     kar.setNama(obj.getString("nama"));
                                     kar.setDesc(obj.getString("jabatan"));
                                     kar.setStatus(obj.getString("status_kerja"));
                                     itemskaryawan.add(kar);
                                 } else if (obj.getString("otoritas").equals("3")) {
-                                /*if(!tempcall.equals(obj.getString("otoritas"))){
-                                    /*if(tempcall.equals("")){
-                                        listkaryawan kar = new listkaryawan();
-                                        kar.setJabatan("HRD");
-                                        kar.setSection(true);
-                                        tempcall = obj.getString("otoritas");
-                                        items.add(kar);
-                                    }
-                                    else{
-                                        listkaryawan kar = new listkaryawan();
-                                        kar.setJabatan("HRD");
-                                        kar.setSection(true);
-                                        tempcall = obj.getString("otoritas");
-                                        items.add(kar);
-                                    }
-                                }
-                                listkaryawan kar = new listkaryawan();
-                                kar.setSection(false);
-                                kar.setJabatan("HRD");
-                                kar.setIskar(obj.getString("id"));
-                                kar.setImagelink(generator.profileurl+obj.getString("foto"));
-
-                                Log.e(TAG, "image data" + kar.getImagelink() );
-
-                                kar.setNama(obj.getString("nama"));
-                                kar.setDesc(obj.getString("jabatan"));
-                                items.add(kar);*/
                                     listkaryawan kar = new listkaryawan();
                                     kar.setSection(false);
                                     kar.setJabatan("HRD");
                                     kar.setIskar(obj.getString("id"));
-                                    kar.setImagelink(generator.profileurl + obj.getString("foto"));
-
+                                    if (!obj.getString("foto").equals("")) {
+                                        kar.setImagelink(generator.profileurl + obj.getString("foto"));
+                                    } else {
+                                        kar.setImagelink("");
+                                    }
                                     Log.e(TAG, "image data" + kar.getImagelink());
-
                                     kar.setNama(obj.getString("nama"));
                                     kar.setDesc(obj.getString("jabatan"));
                                     kar.setStatus(obj.getString("status_kerja"));
@@ -633,34 +487,26 @@ public class viewkaryawan_nonaktif extends AppCompatActivity {
                                     kar.setIskar(obj.getString("id"));
                                     if (!obj.getString("foto").equals("")) {
                                         kar.setImagelink(generator.profileurl + obj.getString("foto"));
-                                        Log.e(TAG, "image data" + kar.getImagelink());
                                     } else {
                                         kar.setImagelink("");
-                                        Log.e(TAG, "image data" + kar.getImagelink());
                                     }
-
+                                    Log.e(TAG, "image data" + kar.getImagelink());
                                     kar.setNama(obj.getString("nama"));
                                     kar.setDesc(obj.getString("jabatan"));
                                     kar.setStatus(obj.getString("status_kerja"));
                                     itemskaryawan.add(kar);
                                 }
-                            /*int sect_count = 0;
-                            int sect_idx = 0;
-                            List<String> months = DataGenerator.getStringsMonth(getActivity());
-                            for (int i = 0; i < items.size() / 6; i++) {
-                                items.add(sect_count, new People(months.get(sect_idx), true));
-                                sect_count = sect_count + 5;
-                                sect_idx++;
-                            }*/
                             }
                         }
-
-                        //mAdapter = new AdapterListSectioned(getActivity(), items, ItemAnimation.LEFT_RIGHT);
 
                         if(mAdapterkaryawan!=null){
                             mAdapterkaryawan.notifyDataSetChanged();
                         }
-
+                        else{
+                            mAdapterkaryawan = new AdapterGridCaller(viewkaryawan_nonaktif.this, itemskaryawan,ItemAnimation.FADE_IN);
+                            recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                            generator.adapterkar=mAdapterkaryawan;
+                        }
                         refreshkaryawan.setRefreshing(false);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -685,7 +531,6 @@ public class viewkaryawan_nonaktif extends AppCompatActivity {
                 dialog.dismiss();
             }
 
-
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
@@ -699,22 +544,22 @@ public class viewkaryawan_nonaktif extends AppCompatActivity {
         MenuItem item = menu.findItem(R.id.action_search);
 
         searchView.setMenuItem(item);
-
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 //Do some magic
-                mAdapterkaryawan.getFilter().filter(query);
-                //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                if(mAdapterkaryawan!=null) {
+                    mAdapterkaryawan.getFilter().filter(query);
+                }
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String query) {
                 //Do some magic
-                Log.e("Text", "newText=" + query);
-                mAdapterkaryawan.getFilter().filter(query);
-                //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                if(mAdapterkaryawan!=null) {
+                    mAdapterkaryawan.getFilter().filter(query);
+                }
                 return false;
             }
         });
@@ -727,14 +572,12 @@ public class viewkaryawan_nonaktif extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home) {
             finish();
         } else if (id == R.id.action_search) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
 
     }

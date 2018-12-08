@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
 
@@ -20,21 +21,34 @@
             android:text="Tanggal"
             android:textAppearance="@style/TextAppearance.AppCompat.Title"
             android:textColor="@color/colorPrimary" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1sp"
+            android:layout_marginTop="@dimen/spacing_medium"
+            android:background="@color/blue_700"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/spacing_large">
-            <LinearLayout
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/karviewizin"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:id="@+id/karviewizin"
                 android:layout_height="match_parent"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:gravity="center"
-                android:orientation="vertical">
-
+                android:layout_marginBottom="@dimen/spacing_medium"
+                android:layout_marginLeft="@dimen/spacing_middle"
+                android:layout_marginRight="@dimen/spacing_middle"
+                android:layout_marginTop="@dimen/spacing_xsmall"
+                android:visibility="visible"
+                app:cardCornerRadius="@dimen/spacing_small"
+                app:cardElevation="2dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center">
                 <TextView
                     android:id="@+id/karyizin"
                     android:layout_width="wrap_content"
@@ -50,19 +64,27 @@
                     android:text="Izin"
                     android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                     android:textColor="@color/grey_60" />
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
 
-            </LinearLayout>
 
-            <LinearLayout
+            <android.support.v7.widget.CardView
+                android:id="@+id/karviewsakit"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:id="@+id/karviewsakit"
                 android:layout_height="match_parent"
-
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:gravity="center"
-                android:orientation="vertical">
+                android:layout_marginBottom="@dimen/spacing_medium"
+                android:layout_marginLeft="@dimen/spacing_middle"
+                android:layout_marginRight="@dimen/spacing_middle"
+                android:layout_marginTop="@dimen/spacing_xsmall"
+                android:visibility="visible"
+                app:cardCornerRadius="@dimen/spacing_small"
+                app:cardElevation="2dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
 
                 <TextView
                     android:id="@+id/karysakit"
@@ -81,17 +103,25 @@
                     android:textColor="@color/grey_60" />
 
             </LinearLayout>
+            </android.support.v7.widget.CardView>
 
-            <LinearLayout
+            <android.support.v7.widget.CardView
                 android:id="@+id/karviewcuti"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
-
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:gravity="center"
-                android:orientation="vertical">
+                android:layout_marginBottom="@dimen/spacing_medium"
+                android:layout_marginLeft="@dimen/spacing_middle"
+                android:layout_marginRight="@dimen/spacing_middle"
+                android:layout_marginTop="@dimen/spacing_xsmall"
+                android:visibility="visible"
+                app:cardCornerRadius="@dimen/spacing_small"
+                app:cardElevation="2dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
 
                 <TextView
                     android:id="@+id/karycuti"
@@ -110,21 +140,30 @@
                     android:textColor="@color/grey_60" />
 
             </LinearLayout>
+            </android.support.v7.widget.CardView>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/spacing_large">
-            <LinearLayout
+            <android.support.v7.widget.CardView
+                android:id="@+id/karviewabsen"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:id="@+id/karviewabsen"
                 android:layout_height="match_parent"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:gravity="center"
-                android:orientation="vertical">
+                android:layout_marginBottom="@dimen/spacing_medium"
+                android:layout_marginLeft="@dimen/spacing_middle"
+                android:layout_marginRight="@dimen/spacing_middle"
+                android:layout_marginTop="@dimen/spacing_xsmall"
+                android:visibility="visible"
+                app:cardCornerRadius="@dimen/spacing_small"
+                app:cardElevation="2dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
 
                 <TextView
                     android:id="@+id/karyabsen"
@@ -143,17 +182,25 @@
                     android:textColor="@color/grey_60" />
 
             </LinearLayout>
+            </android.support.v7.widget.CardView>
 
-            <LinearLayout
+            <android.support.v7.widget.CardView
+                android:id="@+id/karviewtelat"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:id="@+id/karviewtelat"
                 android:layout_height="match_parent"
-
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:gravity="center"
-                android:orientation="vertical">
+                android:layout_marginBottom="@dimen/spacing_medium"
+                android:layout_marginLeft="@dimen/spacing_middle"
+                android:layout_marginRight="@dimen/spacing_middle"
+                android:layout_marginTop="@dimen/spacing_xsmall"
+                android:visibility="visible"
+                app:cardCornerRadius="@dimen/spacing_small"
+                app:cardElevation="2dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
 
                 <TextView
                     android:id="@+id/karytelat"
@@ -172,17 +219,25 @@
                     android:textColor="@color/grey_60" />
 
             </LinearLayout>
+            </android.support.v7.widget.CardView>
 
-            <LinearLayout
+            <android.support.v7.widget.CardView
                 android:id="@+id/karviewdinas"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="match_parent"
-
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:gravity="center"
-                android:orientation="vertical">
+                android:layout_marginBottom="@dimen/spacing_medium"
+                android:layout_marginLeft="@dimen/spacing_middle"
+                android:layout_marginRight="@dimen/spacing_middle"
+                android:layout_marginTop="@dimen/spacing_xsmall"
+                android:visibility="visible"
+                app:cardCornerRadius="@dimen/spacing_small"
+                app:cardElevation="2dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
 
                 <TextView
                     android:id="@+id/karydinas"
@@ -201,6 +256,7 @@
                     android:textColor="@color/grey_60" />
 
             </LinearLayout>
+            </android.support.v7.widget.CardView>
 
 
 

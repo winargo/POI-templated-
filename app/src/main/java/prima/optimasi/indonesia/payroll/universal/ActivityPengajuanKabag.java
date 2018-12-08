@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
@@ -78,6 +79,7 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
     String[] kets={"Izin","Sakit","Cuti","Dinas"};
     ProgressDialog dialog;
     String idkar="";
+    Snackbar snackbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,8 +87,74 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         initToolbar();
         initComponent();
         initListener();
-        retrivekaryawan kar=new retrivekaryawan(ActivityPengajuanKabag.this, dialog);
-        kar.execute();
+        if(generator.checkInternet(ActivityPengajuanKabag.this)) {
+            retrivekaryawan kar = new retrivekaryawan(ActivityPengajuanKabag.this, dialog);
+            kar.execute();
+        }
+        else{
+            snackBarWithActionIndefinite();
+        }
+    }
+
+    private void snackBarWithActionIndefinite() {
+        if(generator.checkInternet(ActivityPengajuanKabag.this)) {
+            if(snackbar!=null) {
+                snackbar.dismiss();
+            }
+            dialog.setMessage("Loading ...");
+            dialog.show();
+            if(items!=null){
+                items.clear();
+            }
+            else{
+                items=new ArrayList<>();
+            }
+            if(itemskaryawan!=null){
+                itemskaryawan.clear();
+            }
+            else{
+                itemskaryawan = new ArrayList<>();
+            }
+            if(listnama!=null){
+                listnama.clear();
+            }
+            else{
+                listnama = new ArrayList<>();
+            }
+            if(listid!=null){
+                listid.clear();
+            }
+            else{
+                listid = new ArrayList<>();
+            }
+            if(pengajuan!=null){
+                pengajuan.notifyDataSetChanged();
+            }
+            spinner.setSelectedIndex(0);
+
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.DATE,0);
+            SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            String formattedDate = df.format(c.getTime());
+            tglmasuk.setText(formattedDate);
+            tglkeluar.setText(formattedDate);
+            keterangan.setText("");
+            retrivekaryawan kar=new retrivekaryawan(ActivityPengajuanKabag.this,dialog);
+            kar.execute();
+        }
+        else {
+            if(swipehome.isRefreshing()){
+                swipehome.setRefreshing(false);
+            }
+            snackbar = Snackbar.make(parent_view, R.string.no_connection, Snackbar.LENGTH_INDEFINITE)
+                    .setAction("COBA LAGI", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            snackBarWithActionIndefinite();
+                        }
+                    });
+            snackbar.show();
+        }
     }
 
     private class retrivekaryawan extends AsyncTask<Void, Integer, String>
@@ -99,7 +167,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         JSONObject result = null ;
         ProgressDialog dialog ;
         String urldata = generator.kabaggrupkaryawanurl;
-        String passeddata = "" ;
 
         public retrivekaryawan(Context context, ProgressDialog dialog)
         {
@@ -180,7 +247,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                 response = "Error Occured, PLease Contact Administrator/Support";
             }
 
-
             return response;
         }
 
@@ -221,18 +287,11 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                                         listid.add(obj.getString("id"));
                                         if (!obj.getString("foto").equals("")) {
                                             kar.setImagelink(generator.profileurl + obj.getString("foto"));
-                                            Log.e(TAG, "image data" + kar.getImagelink());
                                         }
                                         else{
                                             kar.setImagelink("");
-                                            Log.e(TAG, "image data" + kar.getImagelink());
                                         }
-                                        /*
-                                        else{
-                                            kar.setImagelink("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qlAqV8WwUWaqr0SDbTj5Ht9lQ");
-                                            Log.e(TAG, "image data" + kar.getImagelink());
-                                        }*/
-
+                                        Log.e(TAG, "image data" + kar.getImagelink());
                                         kar.setNama(obj.getString("nama"));
                                         listnama.add(obj.getString("nama"));
                                         kar.setDesc("Karyawan");
@@ -298,7 +357,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         JSONObject result = null ;
         ProgressDialog dialog ;
         String urldata ;
-        String passeddata = "" ;
         String keterangan="";
         String id="";
         public retrivegetketerangan(Context context, ProgressDialog dialog, String keterangan, String id)
@@ -348,10 +406,7 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
 
                     RequestBody body = new FormBody.Builder()
                             .add("id",id)
-
                             .build();
-
-                    Log.e(TAG, prefs.getString("id", ""));
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
@@ -411,7 +466,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         protected void onPostExecute(String result1) {
 
             try {
-                //
                 if (result != null) {
                     try {
                         Log.e(TAG, "data json result" + result.toString());
@@ -459,13 +513,11 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                             else{
                                 ajukan.setStatus("Pending");
                             }
-
                             if (keterangans.equals("")) {
-                                Log.e(TAG, "data json result" + "KOSONG");
+                                ajukan.setKeterangan("-");
                             } else {
                                 ajukan.setKeterangan(keterangans);
                             }
-                            Log.e(TAG, "data json result" + keterangans);
 
                             items.add(ajukan);
                         }
@@ -474,7 +526,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                             Collections.sort(items, new Comparator<listkaryawanpengajuan>() {
                                 @Override
                                 public int compare(listkaryawanpengajuan listkaryawanpengajuan, listkaryawanpengajuan t1) {
-                                    //Log.e("ABSEN",""+listperingkatkaryawan.getAbsen().compareTo(t1.getAbsen()));
                                     if(listkaryawanpengajuan.getTanggal_masuk().compareTo(t1.getTanggal_masuk())==0){
                                         if(listkaryawanpengajuan.getTanggal_keluar().compareTo(t1.getTanggal_keluar())==0){
                                             if(listkaryawanpengajuan.getJenis().compareTo(t1.getJenis())==0){
@@ -532,7 +583,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         JSONObject result = null ;
         //ProgressDialog dialog ;
         String urldata ;
-        String passeddata = "" ;
         String keterangan="";
         String id="";
 
@@ -582,10 +632,7 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
 
                     RequestBody body = new FormBody.Builder()
                             .add("id",id)
-
                             .build();
-
-                    Log.e(TAG, prefs.getString("id", ""));
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
@@ -645,7 +692,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         protected void onPostExecute(String result1) {
 
             try {
-                //
                 if (result != null) {
                     try {
                         Log.e(TAG, "data json result" + result.toString());
@@ -693,11 +739,10 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                             }
 
                             if (keterangans.equals("")) {
-                                Log.e(TAG, "data json result" + "KOSONG");
+                                ajukan.setKeterangan("-");
                             } else {
                                 ajukan.setKeterangan(keterangans);
                             }
-                            Log.e(TAG, "data json result" + keterangans);
 
                             items.add(ajukan);
                         }
@@ -706,7 +751,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                             Collections.sort(items, new Comparator<listkaryawanpengajuan>() {
                                 @Override
                                 public int compare(listkaryawanpengajuan listkaryawanpengajuan, listkaryawanpengajuan t1) {
-                                    //Log.e("ABSEN",""+listperingkatkaryawan.getAbsen().compareTo(t1.getAbsen()));
                                     if(listkaryawanpengajuan.getTanggal_masuk().compareTo(t1.getTanggal_masuk())==0){
                                         if(listkaryawanpengajuan.getTanggal_keluar().compareTo(t1.getTanggal_keluar())==0){
                                             if(listkaryawanpengajuan.getJenis().compareTo(t1.getJenis())==0){
@@ -723,16 +767,17 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                             if(pengajuan!=null){
                                 pengajuan.notifyDataSetChanged();
                             }
+                            else{
+                                pengajuan = new Adapterhistorypengajuankabag(ActivityPengajuanKabag.this, items, ItemAnimation.LEFT_RIGHT);
+                                recyclerView.setLayoutManager(new LinearLayoutManager(ActivityPengajuanKabag.this));
+                                recyclerView.setHasFixedSize(true);
+                                recyclerView.setAdapter(pengajuan);
+                            }
                             if(dialog.isShowing()){
                                 dialog.dismiss();
                             }
                             swipehome.setRefreshing(false);
-                            /*
-                            pengajuan = new Adapterhistorypengajuan(ActivityPengajuan.this, items, ItemAnimation.LEFT_RIGHT);
-                            recyclerView.setLayoutManager(new LinearLayoutManager(ActivityPengajuan.this));
-                            recyclerView.addItemDecoration(new SpacingItemDecoration(2, Tools.dpToPx(ActivityPengajuan.this, 3), true));
-                            recyclerView.setHasFixedSize(true);
-                            recyclerView.setAdapter(pengajuan);*/
+
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -758,7 +803,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
             }*/
 
 
-
             Log.d(TAG + " onPostExecute", "" + result1);
         }
     }
@@ -767,11 +811,9 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         parent_view=findViewById(R.id.parent_view);
         recyclerView=findViewById(R.id.recyclerView);
         swipehome=findViewById(R.id.swipehome);
-
         keterangan=findViewById(R.id.keterangan);
 
         spinner = (MaterialSpinner) findViewById(R.id.spinner);
-
         spinner.setItems("Pilih Pengajuan","Cuti", "Izin", "Dinas", "Sakit");
 
         spinnerkar = (MaterialSpinner) findViewById(R.id.spinnerkar);
@@ -802,7 +844,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
             public void onClick(View view) {
                 dialogDatePickerDark(tglmasuk,"masuk");
             }
-
         });
         tglkeluar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -813,7 +854,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("NEXT DATE : ", "" + tanggal_masuk.compareTo(tanggal_keluar));
                 SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
                 try {
                     tgl_masuk = df.parse(tglmasuk.getText().toString());
@@ -850,21 +890,13 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                                     dialog.show();
                                     dialog.getWindow().setAttributes(lp);
                                 } else {
-                                    Log.e("NEXT DATE : ", "Berhasil");
-
-
-                                    Log.e("NEXT DATE : ", "" + tanggal_masuk1 + " " + tanggal_keluar1);
-
-                                    if (!keterangan.getText().toString().trim().equals("")) {
-                                        for(int i=0;i<itemskaryawan.size();i++){
-                                            if(itemskaryawan.get(i).getNama().equals(spinnerkar.getText().toString())){
-                                                idkar=itemskaryawan.get(i).getIskar();
-
-                                            }
+                                    for(int i=0;i<itemskaryawan.size();i++){
+                                        if(itemskaryawan.get(i).getNama().equals(spinnerkar.getText().toString())){
+                                            idkar=itemskaryawan.get(i).getIskar();
                                         }
-                                        if(!idkar.equals("")) {
-                                            //Snackbar.make(parent_view, idkar, Snackbar.LENGTH_SHORT).show();
-
+                                    }
+                                    if(!idkar.equals("")) {
+                                        if(generator.checkInternet(ActivityPengajuanKabag.this)) {
                                             if (spinner.getText().equals("Cuti")) {
                                                 retrivepengajuancuti cuti = new retrivepengajuancuti(ActivityPengajuanKabag.this);
                                                 cuti.execute();
@@ -880,13 +912,12 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                                             }
                                         }
                                         else{
-                                            Log.e("retrivekaryawan", "bermasalah");
+                                            Toast.makeText(ActivityPengajuanKabag.this, R.string.no_connection,Toast.LENGTH_SHORT).show();
                                         }
-
-                                    } else {
-                                        Log.e("NEXT DATE : ", "Isi Keterangan Anda");
                                     }
-
+                                    else{
+                                        Log.e("retrivekaryawan", "bermasalah");
+                                    }
                                 }
                             }
                         } else if (spinner.getText().equals("Pilih Pengajuan")) {
@@ -896,10 +927,8 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                         Snackbar.make(parent_view, "Pilih Karyawan", Snackbar.LENGTH_SHORT).show();
                     }
 
-
                 } catch (Exception e) {
                     Log.e("NEXT DATE : ", "" + tanggal_masuk.compareTo(tanggal_keluar));
-                    Log.e("NEXT DATE : ", "" + tanggal_masuk1 + " " + tanggal_keluar1);
                 }
             }
         });
@@ -907,50 +936,7 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         swipehome.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-
-                //dialog = new ProgressDialog(ActivityPengajuanKabag.this);
-                dialog.setMessage("Loading ...");
-                dialog.show();
-                if(items!=null){
-                    items.clear();
-                }
-                else{
-                    items=new ArrayList<>();
-                }
-                if(itemskaryawan!=null){
-                    itemskaryawan.clear();
-                }
-                else{
-                    itemskaryawan = new ArrayList<>();
-                }
-                if(listnama!=null){
-                    listnama.clear();
-                }
-                else{
-                    listnama = new ArrayList<>();
-                }
-                if(listid!=null){
-                    listid.clear();
-                }
-                else{
-                    listid = new ArrayList<>();
-                }
-                if(pengajuan!=null){
-                    pengajuan.notifyDataSetChanged();
-                }
-                spinner.setSelectedIndex(0);
-
-
-                Calendar c = Calendar.getInstance();
-                c.add(Calendar.DATE,0);
-                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-                String formattedDate = df.format(c.getTime());
-                tglmasuk.setText(formattedDate);
-                tglkeluar.setText(formattedDate);
-                keterangan.setText("");
-                retrivekaryawan kar=new retrivekaryawan(ActivityPengajuanKabag.this,dialog);
-                kar.execute();
-
+                snackBarWithActionIndefinite();
             }
         });
     }
@@ -965,7 +951,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         JSONObject result = null ;
         ProgressDialog dialog ;
         String urldata = generator.pengajuancutiurl;
-        String passeddata = "" ;
 
         public retrivepengajuancuti(Context context)
         {
@@ -1006,8 +991,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                             .add("lama", ""+lama)
                             .add("keterangan",keterangan.getText().toString().trim())
                             .build();
-
-                    Log.e(TAG, prefs.getString("id", "")+" "+format.format(tgl_masuk)+" "+format.format(tgl_keluar)+" "+lama+" "+keterangan.getText().toString()+" " );
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
@@ -1071,7 +1054,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                 if (result != null) {
                     try {
                         Log.e(TAG, "data json result" + result.toString());
-                        //items = new ArrayList<>();
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         boolean status=result.getBoolean("status");
                         if(!status){
@@ -1123,7 +1105,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         JSONObject result = null ;
         ProgressDialog dialog ;
         String urldata = generator.pengajuanizinurl;
-        String passeddata = "" ;
 
         public retrivepengajuanizin(Context context)
         {
@@ -1165,8 +1146,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                             .add("keterangan",keterangan.getText().toString().trim())
                             .build();
 
-                    Log.e(TAG, prefs.getString("id", "")+" "+format.format(tgl_masuk)+" "+format.format(tgl_keluar)+" "+lama+" "+keterangan.getText().toString()+" " );
-
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
                             .post(body)
@@ -1225,7 +1204,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         protected void onPostExecute(String result1) {
 
             try {
-                //
                 if (result != null) {
                     try {
                         Log.e(TAG, "data json result" + result.toString());
@@ -1249,7 +1227,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
                     }
-
 
                 } else {
                     Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
@@ -1279,7 +1256,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         JSONObject result = null ;
         ProgressDialog dialog ;
         String urldata = generator.pengajuandinasurl;
-        String passeddata = "" ;
 
         public retrivepengajuandinas(Context context)
         {
@@ -1321,8 +1297,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                             .add("keterangan",keterangan.getText().toString().trim())
                             .build();
 
-                    Log.e(TAG, prefs.getString("id", "")+" "+format.format(tgl_masuk)+" "+format.format(tgl_keluar)+" "+lama+" "+keterangan.getText().toString()+" " );
-
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
                             .post(body)
@@ -1381,7 +1355,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         protected void onPostExecute(String result1) {
 
             try {
-                //
                 if (result != null) {
                     try {
                         Log.e(TAG, "data json result" + result.toString());
@@ -1435,7 +1408,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         JSONObject result = null ;
         ProgressDialog dialog ;
         String urldata = generator.pengajuansakiturl;
-        String passeddata = "" ;
 
         public retrivepengajuansakit(Context context)
         {
@@ -1476,8 +1448,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                             .add("lama", ""+lama)
                             .add("keterangan",keterangan.getText().toString().trim())
                             .build();
-
-                    Log.e(TAG, prefs.getString("id", "")+" "+format.format(tgl_masuk)+" "+format.format(tgl_keluar)+" "+lama+" "+keterangan.getText().toString()+" " );
 
                     Request request = new Request.Builder()
                             .header("Authorization",prefs.getString("Authorization",""))
@@ -1537,7 +1507,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
         protected void onPostExecute(String result1) {
 
             try {
-                //
                 if (result != null) {
                     try {
                         Log.e(TAG, "data json result" + result.toString());
@@ -1562,7 +1531,6 @@ public class ActivityPengajuanKabag extends AppCompatActivity {
                         e.printStackTrace();
                         Log.e(TAG, "onPostExecute: " + e.getMessage());
                     }
-
 
                 } else {
                     Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();

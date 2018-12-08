@@ -72,7 +72,6 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
         ctx = context;
         this.animation_type = animation_type;
         this.itemsfilter = items;
-
     }
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
@@ -87,11 +86,7 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
             image =  v.findViewById(R.id.image);
             nama = (TextView) v.findViewById(R.id.nama);
             lyt_parent = (View) v.findViewById(R.id.lyt_parent);
-
             layout = v.findViewById(R.id.layout_allkaryawan);
-            //bt_expand = (View) v.findViewById(R.id.bt_expand);
-            //lyt_expand = (View) v.findViewById(R.id.lyt_expand);
-
         }
     }
 
@@ -112,12 +107,8 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
 
             view.nama.setText(p.getNama());
             view.jabatan.setText(p.getJabatan());
-            //view.image.setVisibility(View.VISIBLE);
-            //view.image.setImageResource(R.drawable.baseline_account_circle_black_24dp);
-
             if(p.getImagelink().equals("")){
                 Picasso.get().load("http://www.racemph.com/wp-content/uploads/2016/09/profile-image-placeholder.png").transform(new CircleTransform()).into(view.image);
-                //Picasso.get().load("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQM1rF7DteSU8zDGipqBKZgmLHv7qIAqV8WwUWaqr0SDbTj5Ht9lQ").into(view.image);
             }
 
             else{
@@ -126,11 +117,9 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
 
             try{
                 if(p.getJenis().equals("cekgaji")){
-
                     view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-
                             gaji=0.0d;
                             potongan=0.0d;
                             retrivegaji g=new retrivegaji(ctx,p.getIskar());
@@ -144,32 +133,12 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
                 view.lyt_parent.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
                         Intent viewkaryawans = new Intent(ctx,viewkaryawan.class);
-
                         viewkaryawans.putExtra("idkaryawan",p.getIskar());
-
                         ctx.startActivity(viewkaryawans);
                     }
                 });
             }
-
-            /*
-            view.bt_expand.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    boolean show = toggleLayoutExpand(!p.expanded, v, view.lyt_expand);
-                    items.get(position).expanded = show;
-                }
-            });
-            // void recycling view
-            if(p.expanded){
-                view.lyt_expand.setVisibility(View.VISIBLE);
-            } else {
-                view.lyt_expand.setVisibility(View.GONE);
-            }
-            Tools.toggleArrow(p.expanded, view.bt_expand, false);
-            */
             setAnimation(view.itemView, position);
         }
     }
@@ -183,7 +152,6 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
         SharedPreferences prefs ;
         JSONObject result = null ;
         String urldata = generator.pengajiangajikaryawanurl;
-        String passeddata = "" ;
         String id="";
         public retrivegaji(Context context, String id)
         {
@@ -223,8 +191,6 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
                             .url(urldata)
                             .build();
                     Response responses = null;
-
-                    Log.e(TAG,prefs.getString("Authorization","")+" "+id);
                     try {
                         responses = client.newCall(request).execute();
                     } catch (IOException e) {
@@ -282,7 +248,6 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
                     Log.e(TAG, "Gaji" + result.toString());
 
                     try {
-                        //JSONArray pengsarray = result.getJSONArray("data");
                         JSONObject obj = result.getJSONObject("data");
                         JSONArray GB = obj.getJSONArray("gajiBersih");
                         JSONArray GT = obj.getJSONArray("gajiTotal");
@@ -396,10 +361,7 @@ public class AdapterListKaryawan extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public Filter getFilter() {
-        //this.itemsfilter=items;
         return new Filter() {
-
-
             @Override
             protected Filter.FilterResults performFiltering(CharSequence constraint) {
                 Filter.FilterResults filterResults = new Filter.FilterResults();

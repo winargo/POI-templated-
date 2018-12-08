@@ -15,6 +15,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
@@ -46,6 +48,7 @@ public class ActivityPengumuman extends AppCompatActivity {
     List<pengumuman> items;
     SwipeRefreshLayout refresh;
     MaterialSearchView searchView;
+    Snackbar snackbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,8 +56,45 @@ public class ActivityPengumuman extends AppCompatActivity {
         initToolbar();
         initComponent();
         initListener();
-        retrivepengumuman peng = new retrivepengumuman(ActivityPengumuman.this,prefs.getString("Authorization",""));
-        peng.execute();
+        if(generator.checkInternet(ActivityPengumuman.this)) {
+            retrivepengumuman peng = new retrivepengumuman(ActivityPengumuman.this, prefs.getString("Authorization", ""));
+            peng.execute();
+        }
+        else{
+            snackBarWithActionIndefinite();
+        }
+    }
+
+    private void snackBarWithActionIndefinite() {
+        if(generator.checkInternet(ActivityPengumuman.this)) {
+            if(snackbar!=null) {
+                snackbar.dismiss();
+            }
+            if (items != null) {
+                items.clear();
+            } else {
+                items = new ArrayList<>();
+            }
+            if (mAdapter != null) {
+                mAdapter.notifyDataSetChanged();
+            }
+            retrivepengumumanref peng = new retrivepengumumanref(ActivityPengumuman.this, prefs.getString("Authorization", ""));
+            peng.execute();
+
+        }
+        else {
+            if(refresh.isRefreshing()){
+                refresh.setRefreshing(false);
+            }
+            snackbar = Snackbar.make(parent_view, R.string.no_connection, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.try_again, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            snackBarWithActionIndefinite();
+                        }
+                    });
+            snackbar.show();
+        }
     }
 
     private void initToolbar() {
@@ -81,17 +121,7 @@ public class ActivityPengumuman extends AppCompatActivity {
                     Log.i("siwped", "onRefresh called from SwipeRefreshLayout");
                     // This method performs the actual data-refresh operation.
                     // The method calls setRefreshing(false) when it's finished.
-                    if(items!=null){
-                        items.clear();
-                    }
-                    else{
-                        items=new ArrayList<>();
-                    }
-                    if(mAdapter!=null){
-                        mAdapter.notifyDataSetChanged();
-                        retrivepengumumanref peng = new retrivepengumumanref(ActivityPengumuman.this,prefs.getString("Authorization",""));
-                        peng.execute();
-                    }
+                    snackBarWithActionIndefinite();
                 }
             }
         );
@@ -111,7 +141,6 @@ public class ActivityPengumuman extends AppCompatActivity {
 
         public retrivepengumuman(Context context, String kodeauth)
         {
-            Log.e(TAG, "code: "+kodeauth );
             dialog = new ProgressDialog(context);
             passeddata = kodeauth;
             this.username = generator.username;
@@ -205,7 +234,6 @@ public class ActivityPengumuman extends AppCompatActivity {
 
                         for (int i = 0; i < pengsarray.length(); i++) {
                             JSONObject obj = pengsarray.getJSONObject(i);
-                            Log.e(TAG, " data peng " + obj.getString("penulis"));
                             pengumuman peng = new pengumuman(obj.getString("judul"), obj.getString("penulis"), format.parse(obj.getString("tanggal").substring(0, 9)), generator.getpicpengumumanurl + obj.getString("foto"), obj.getString("isi"));
                             peng.setIdpengumuman(obj.getString("id_pengumuman"));
                             items.add(peng);
@@ -215,7 +243,6 @@ public class ActivityPengumuman extends AppCompatActivity {
                         recyclerView.setLayoutManager(new GridLayoutManager(ActivityPengumuman.this, 1));
                         recyclerView.setHasFixedSize(true);
                         recyclerView.setAdapter(mAdapter);
-                        // on item list clicked
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -308,7 +335,6 @@ public class ActivityPengumuman extends AppCompatActivity {
                         Log.e(TAG, "NULL");
                     }
                     else {
-
                         result = new JSONObject(responses.body().string());
                     }
                 } catch (JSONException e) {
@@ -347,27 +373,24 @@ public class ActivityPengumuman extends AppCompatActivity {
                 Log.e(TAG, "data json result" + result.toString());
                 if (result != null) {
                     try {
-                        if(items!=null){
-                            items.clear();
-                        }
-                        else{
-                            items=new ArrayList<>();
-                        }
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         JSONArray pengsarray = result.getJSONArray("rows");
 
                         for (int i = 0; i < pengsarray.length(); i++) {
                             JSONObject obj = pengsarray.getJSONObject(i);
-                            Log.e(TAG, " data peng " + obj.getString("penulis"));
                             pengumuman peng = new pengumuman(obj.getString("judul"), obj.getString("penulis"), format.parse(obj.getString("tanggal").substring(0, 9)), generator.getpicpengumumanurl + obj.getString("foto"), obj.getString("isi"));
                             peng.setIdpengumuman(obj.getString("id_pengumuman"));
                             items.add(peng);
                         }
-
                         if(mAdapter!=null) {
                             mAdapter.notifyDataSetChanged();
                         }
-
+                        else{
+                            mAdapter = new AdapterGridTwoLineLight(ActivityPengumuman.this, items,parent_view);
+                            recyclerView.setLayoutManager(new GridLayoutManager(ActivityPengumuman.this, 1));
+                            recyclerView.setHasFixedSize(true);
+                            recyclerView.setAdapter(mAdapter);
+                        }
                         refresh.setRefreshing(false);
 
                     } catch (JSONException e) {
@@ -408,17 +431,17 @@ public class ActivityPengumuman extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 //Do some magic
-                mAdapter.getFilter().filter(query);
-                //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                if(mAdapter!=null) {
+                    mAdapter.getFilter().filter(query);
+                }
                 return false;
             }
-
             @Override
             public boolean onQueryTextChange(String query) {
                 //Do some magic
-                Log.e("Text", "newText=" + query);
-                mAdapter.getFilter().filter(query);
-                //recyclerViewkaryawan.setAdapter(mAdapterkaryawan);
+                if(mAdapter!=null) {
+                    mAdapter.getFilter().filter(query);
+                }
                 return false;
             }
         });
@@ -438,7 +461,6 @@ public class ActivityPengumuman extends AppCompatActivity {
         else if(id==R.id.action_search){
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 

@@ -9,6 +9,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -460,7 +462,6 @@ public class mainmenu_kabag extends AppCompatActivity implements NavigationView.
             public void onClick(View view) {
                 Intent intent = new Intent(mainmenu_kabag.this, ActivityLogAbsensi.class);
                 startActivity(intent);
-
                 /*
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.parent_view,new FragmentAbsensi()).addToBackStack("Home").commit();*/
@@ -479,16 +480,23 @@ public class mainmenu_kabag extends AppCompatActivity implements NavigationView.
         cekgaji.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                gaji = 0.0d;
+                potongan = 0.0d;
+                if(generator.checkInternet(mainmenu_kabag.this)) {
+                    retrivegaji gajis = new retrivegaji(mainmenu_kabag.this);
+                    gajis.execute();
+                }
+                else{
+                    Toast.makeText(mainmenu_kabag.this, R.string.no_connection,Toast.LENGTH_SHORT).show();
+                }
+                /*
                 String[] colors = {"Gaji Karyawan", "Gaji Sendiri"};
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(mainmenu_kabag.this);
                 builder.setTitle("Cek Gaji");
 
                 builder.setItems(colors, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(mainmenu_kabag.this, colors[which], Toast.LENGTH_LONG);
-
                         if (which == 1) {
                             gaji = 0.0d;
                             potongan = 0.0d;
@@ -502,7 +510,7 @@ public class mainmenu_kabag extends AppCompatActivity implements NavigationView.
                         }
                     }
                 });
-                builder.show();
+                builder.show();*/
             }
         });
         pengajuan.setOnClickListener(new View.OnClickListener() {
@@ -534,10 +542,8 @@ public class mainmenu_kabag extends AppCompatActivity implements NavigationView.
         absensi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 boolean permissionGranted = ActivityCompat.checkSelfPermission(mainmenu_kabag.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-
-                if(permissionGranted) {
+                if (permissionGranted) {
                     //generator.lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
                     //generator.lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                     //generator.location = generator.lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -548,7 +554,6 @@ public class mainmenu_kabag extends AppCompatActivity implements NavigationView.
                 } else {
                     ActivityCompat.requestPermissions(mainmenu_kabag.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 4011);
                 }
-
             }
         });
         cekjadwal.setOnClickListener(new View.OnClickListener() {
@@ -600,6 +605,7 @@ public class mainmenu_kabag extends AppCompatActivity implements NavigationView.
         });
     }
 
+    /*
     private class retrivekaryawan extends AsyncTask<Void, Integer, String> {
         String response = "";
         String error = "";
@@ -925,6 +931,151 @@ public class mainmenu_kabag extends AppCompatActivity implements NavigationView.
                 E.printStackTrace();
                 Log.e(TAG, "onPostExecute: " + E.getMessage().toString());
                 Snackbar.make(parent_view, E.getMessage().toString(), Snackbar.LENGTH_SHORT).show();
+            }
+
+            Log.d(TAG + " onPostExecute", "" + result1);
+        }
+    }*/
+
+    private class retrivegaji extends AsyncTask<Void, Integer, String>
+    {
+        String response = "";
+        String error = "";
+        String username=  "" ;
+        String password = "" ;
+        SharedPreferences prefs ;
+        JSONObject result = null ;
+        ProgressDialog dialog ;
+        String urldata = generator.pengajiangajikaryawanurl;
+        String passeddata = "" ;
+        Context ctx;
+        public retrivegaji(Context context)
+        {
+            prefs = context.getSharedPreferences("poipayroll",Context.MODE_PRIVATE);
+            this.username = generator.username;
+            this.password = generator.password;
+            this.error = error ;
+            this.ctx=context;
+        }
+
+        String TAG = getClass().getSimpleName();
+
+        protected void onPreExecute (){
+            super.onPreExecute();
+            //this.dialog.setMessage("Getting Data...");
+            Log.d(TAG + " PreExceute","On pre Exceute......");
+        }
+
+        protected String doInBackground(Void...arg0) {
+            Log.d(TAG + " DoINBackGround","On doInBackground...");
+
+            try {
+                //this.dialog.setMessage("Loading Data...");
+
+                JSONObject jsonObject;
+
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    RequestBody body = new FormBody.Builder()
+                            .add("id",prefs.getString("id",""))
+                            .build();
+
+                    Request request = new Request.Builder()
+                            .header("Authorization",prefs.getString("Authorization",""))
+                            .post(body)
+                            .url(urldata)
+                            .build();
+                    Response responses = null;
+
+                    try {
+                        responses = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        jsonObject =  null;
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        jsonObject = null;
+                    }
+
+                    if (responses==null){
+                        jsonObject = null;
+                        Log.e(TAG, "NULL");
+                    }
+                    else {
+
+                        result = new JSONObject(responses.body().string());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } catch (IOException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "IO Exception" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error IOException";
+            } catch (NullPointerException e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", "null data" + e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Please check Connection and Server";
+            } catch (Exception e) {
+                //this.dialog.dismiss();
+                Log.e("doInBackground: ", e.getMessage());
+                generator.jsondatalogin = null;
+                response = "Error Occured, PLease Contact Administrator/Support";
+            }
+
+
+            return response;
+        }
+
+        protected void onProgressUpdate(Integer...a){
+            super.onProgressUpdate(a);
+            Log.d(TAG + " onProgressUpdate", "You are in progress update ... " + a[0]);
+        }
+
+        protected void onPostExecute(String result1) {
+
+            try {
+
+                if (result != null) {
+
+                    Log.e(TAG, "Gaji" + result.toString());
+
+                    try {
+                        JSONObject obj = result.getJSONObject("data");
+                        JSONArray GB = obj.getJSONArray("gajiBersih");
+                        JSONArray GT = obj.getJSONArray("gajiTotal");
+                        JSONObject sumGB = GB.getJSONObject(0);
+                        JSONObject sumGT = GT.getJSONObject(0);
+                        if(!sumGB.getString("gajiBersih").equals("null") || !sumGT.getString("gajiTotal").equals("null")) {
+                            gaji += Double.parseDouble(sumGB.getString("gajiBersih"));
+                            potongan += Double.parseDouble(sumGT.getString("gajiTotal"));
+                            potongan -= Double.parseDouble(sumGB.getString("gajiBersih"));
+                        }
+                        else{
+                            gaji=0.0d;
+                            potongan=0.0d;
+                        }
+
+                        showgaji("Gaji",gaji,potongan);
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onPostExecute: " + e.getMessage());
+                    }
+
+
+                } else {
+                    Snackbar.make(parent_view, "Terjadi Kesalahan Koneksi" + result, Snackbar.LENGTH_SHORT).show();
+                }
+            }catch (Exception E){
+                E.printStackTrace();
+                Log.e(TAG, "onPostExecute: "+E.getMessage().toString() );
+                Snackbar.make(parent_view,E.getMessage().toString(),Snackbar.LENGTH_SHORT).show();
             }
 
             Log.d(TAG + " onPostExecute", "" + result1);

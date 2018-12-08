@@ -17,6 +17,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -42,28 +43,20 @@ import qrcodescanner.QrCodeActivity;
 
 public class ActivityAbsensi extends AppCompatActivity {
     CoordinatorLayout parent_view;
-
     public static String jabatan="JABATAN";
     int checker = 0;
-
-    FloatingActionButton checkin, checkout, breakin, breakout, extrain, extraout, absensi, absensiwajah, scan;
+    FloatingActionButton checkin, checkout, breakin, breakout, absensi, scan;
     SharedPreferences prefs;
+    Snackbar snackbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_absensi_security);
         //prefs = getSharedPreferences("poipayroll",MODE_PRIVATE);
         Log.e("Jabatan : ", getIntent().getStringExtra("jabatan"));
-
         initToolbar();
         initComponent();
         initListener();
-
-        //absensiwajah=findViewById(R.id.lyt_parent_absensiwajah);
-        //absensiwajah.setVisibility(View.GONE);
-        //TextView absensiwajahteks=findViewById(R.id.nameabsensiwajah);
-        //absensiwajahteks.setVisibility(View.GONE);
-        //recyclerView = findViewById(R.id.recyclerView);
     }
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

@@ -37,5 +37,8 @@
     <string name="qr_code_camera_not_found">Could not detect camera</string>
     <string name="title_cek_jadwal">Cek Jadwal</string>
 
+    <string name="no_connection">Tidak tersambung ke internet, cek koneksi Anda</string>
+    <string name="try_again">COBA LAGI</string>
+
 
 </resources>
